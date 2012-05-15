@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
+  <includeClasses>
+    <classEntry path="com.astoolkit.workflow.parsley.SendParsleyMessage"/>
+    <classEntry path="com.astoolkit.workflow.parsley.IParsleyEnabledWorkflow"/>
+    <classEntry path="com.astoolkit.workflow.parsley.IParsleyCommandObserverTask"/>
+    <classEntry path="com.astoolkit.workflow.parsley.IParsleyEnabledWorkflowContext"/>
+    <classEntry path="com.astoolkit.workflow.parsley.ParsleyWorkflowContext"/>
+    <classEntry path="com.astoolkit.workflow.task.parsley.AbstractParsleyTask"/>
+    <classEntry path="com.astoolkit.workflow.task.parsley.ObserveCommand"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests/>
+</flexLibProperties>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<overviews> 
+    <packages> 
+        <package name="com.astoolkit.workflow"> 
+            <shortDescription> 
+                <![CDATA[ 
+                    Check package documentation for details 
+                ]]> 
+            </shortDescription> 
+            <description> 
+                <![CDATA[ 
+                    The Workflow toolkit provides an API for declarative style tasks management. 
+                    If you're familiar with Cairngorm 3, the basic concept is similar to the Task 
+                    library (http://sourceforge.net/adobe/cairngorm/wiki/CairngormLibraries/#Task) 
+                    although the Workflow toolkit is a far more advanced framework with data 
+                    management features and greater flow control capabilities.<br/><br/>
+					Extensions are provided to support Spicelib Parsley, 
+					ASToolkit XmlMapping and Adobe AIR specific tasks. 
+                ]]> 
+            </description> 
+        </package> 
+    </packages> 
+</overviews>
