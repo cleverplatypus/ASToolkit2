@@ -17,7 +17,7 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.plugin
+package org.astoolkit.workflow.plugin.parsley
 {
 	import org.astoolkit.workflow.api.*;
 	

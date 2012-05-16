@@ -21,7 +21,7 @@ package org.astoolkit.workflow.task.parsley
 {
 	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.api.IContextPlugIn;
-	import org.astoolkit.workflow.plugin.ParsleyPlugIn;
+	import org.astoolkit.workflow.plugin.parsley.ParsleyPlugIn;
 	
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
