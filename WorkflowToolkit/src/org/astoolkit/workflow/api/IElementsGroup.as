@@ -4,6 +4,13 @@ package org.astoolkit.workflow.api
 
 	public interface IElementsGroup extends IWorkflowElement
 	{
+		
+		/**
+		 * a list of <code>Insert</code> objects to perform
+		 * runtime modification of groups.
+		 * 
+		 * @see org.astoolkit.workflow.core.Insert
+		 */
 		function set insert( inInserts : Vector.<Insert> ) : void;
 		function get insert() : Vector.<Insert>;
 

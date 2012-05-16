@@ -72,13 +72,24 @@ package org.astoolkit.workflow.core
 	 */
 	public class Switch extends Group
 	{
-		
+		/**
+		 * @private
+		 */
 		private var _cases : Vector.<ISwitchCase>;
 		
+		/**
+		 * @private
+		 */
 		private var _source : *;
 		
+		/**
+		 * @private
+		 */
 		private var _default : Default;
 		
+		/**
+		 * @private
+		 */
 		private var _joinedChildren : Vector.<IWorkflowElement>;
 		
 		/**
@@ -127,7 +138,9 @@ package org.astoolkit.workflow.core
 			}
 			return _joinedChildren;
 		}
-		
+		/**
+		 * The value to compare to the children cases
+		 */
 		public function set source( inValue : * ) : void
 		{
 			_source = inValue;
@@ -152,6 +165,9 @@ package org.astoolkit.workflow.core
 
 		}
 		
+		/**
+		 * @private
+		 */
 		private function checkCaseValues( inCase : Case, inValue : * ) : Boolean
 		{
 			for each( var val : * in inCase.values )

@@ -118,6 +118,9 @@ package org.astoolkit.workflow.core
 		extends BaseElement
 		implements IWorkflowTask
 	{
+		/**
+		 * @private
+		 */
 		private static const LOGGER : ILogger = 
 			Log.getLogger( getQualifiedClassName( BaseTask ).replace(/:+/g, "." ) );
 		
@@ -224,6 +227,9 @@ package org.astoolkit.workflow.core
 		 */
 		protected var _injectableProperties : Object;
 		
+		/**
+		 * @private
+		 */
 		public function BaseTask()
 		{
 			super();
@@ -345,6 +351,9 @@ package org.astoolkit.workflow.core
 		}
 		
 		[Inspectable(defaultValue="cascade", enumeration="cascade,abort,suspend,ignore,continue,log-debug,log-info,log-warn,log-error")]
+		/**
+		 * @inheritDoc
+		 */
 		public function get failurePolicy() : String
 		{
 			return _failurePolicy;
@@ -355,6 +364,9 @@ package org.astoolkit.workflow.core
 			_failurePolicy = inPolicy;
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function get currentProgress() : Number
 		{
 			return _currentProgress;
@@ -771,45 +783,9 @@ package org.astoolkit.workflow.core
 			_delegate.onComplete( this );
 		}
 		
-		
-		/** 
-		 * the message to use in case of failure.
-		 * 
-		 * <p>This is the text that is either sent as <code>WorkflowEvent</code>
-		 * when <code>failurePolicy="abort"</code> or logged when
-		 * <code>failurePolicy="log-<i>[LEVEL]</i>"</code>.</p>
-		 * 
-		 * <p>Placeholders {<i>n</i>} can be used to include context
-		 * information in the message</p>
-		 * <ul>
-		 * <li>{0} the task's description</li> 
-		 * <li>{1} the Error message if any</li> 
-		 * <li>{2} the Error stackTrace if any</li>
-		 * <li>{3} the pipelineData dump</li>
-		 * </ul>
-		 * <p>The implementation should provide a default message.</p>
-		 * 
-		 * @example Aborting with custom message
-		 * <listing>
-		 * &lt;ProcessUser
-		 *		failurePolicy="abort"
-		 * 		failureMessage="Cannot process user: {3} for error '{1}'"
-		 * 		/&gt;
-		 * </listing>
-		 * The above task would dispatch a <code>WorkflowEvent</code>
-		 * containing a message like:
-		 * <listing>
-		 * Cannot process user:
-		 * 
-		 * (com.myapp.model.User)#0
-         *		username = "dracula"
-		 * 		firstName = "Bram"
-		 * 		lastName = "Stoker"
-		 * 		email = (Null)
-		 * 
-		 * for error: 'Error #1009: Cannot access a property or method of a null object reference'
-		 * </listing>
-		*/
+		/**
+		 * @inheritDoc
+		 */
         public function set failureMessage(inValue:String):void
         {
             _failureMessage = inValue;
@@ -840,6 +816,27 @@ package org.astoolkit.workflow.core
 					w.onContextBound( this );
 		}
         
+		/**
+		 * call this method if a failure occurs during a task's execution.
+		 * 
+		 * @param inMessage the text to be logged or passed to a
+		 * 					fail event. Placeholders {<em>n</em>} can be used
+		 * 					to perform text substitution
+		 * @param inRest optional parameters for text substitution
+		 * 
+		 * @example Calling fail()
+		 * <listing version="3.0">
+		 * try 
+		 * {
+		 *    ...
+		 * }
+		 * catch( e : Error )
+		 * {
+		 *     fail( "Task failed with code {0}", e.code );
+		 *     return;
+		 * }
+		 * </listing>
+		 */
 		protected function fail( inMessage : String, ... inRest ) : void
 		{
 			if( _status == TaskStatus.ABORTED )
@@ -873,6 +870,19 @@ package org.astoolkit.workflow.core
 			_delegate.onFault( this, inMessage );
 		}
 		
+		/**
+		 * @example Custom failure status.
+		 * 			<p>In the following example, our task is failing using a custom
+		 * 			networkUnavailable exit status code</p>
+		 * 
+		 * <listing version="3.0">
+		 * exitStatus = new ExitStatus( "networkUnavailable", "Task failed because the network is unavailable", null, true );
+		 * fail();
+		 * </listing>
+		 * 
+		 * @see org.astoolkit.workflow.core.ExitStatus
+ 		 * @inheritDoc
+		 */
 		public function set exitStatus( inStatus : ExitStatus ) : void
 		{
 			_exitStatus = inStatus;
@@ -882,7 +892,10 @@ package org.astoolkit.workflow.core
 		{
 			return _exitStatus;
 		}
-		
+
+		/**
+		* @inheritDoc
+		*/
 		override public function initialize() : void
 		{
 			if( _status != TaskStatus.STOPPED )
@@ -910,6 +923,9 @@ package org.astoolkit.workflow.core
 				_document = this;
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		override public function prepare() : void
 		{
 			if( parent )
@@ -937,6 +953,9 @@ package org.astoolkit.workflow.core
 			}
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function abort() : void
 		{
 			LOGGER.debug( "abort() '{0}' ({1})", description, getQualifiedClassName( this ) );
@@ -946,6 +965,9 @@ package org.astoolkit.workflow.core
 			_delegate.onAbort( this, "Aborted: " + description );
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function suspend() : void
 		{
 			if( _status != TaskStatus.SUSPENDED )
@@ -955,6 +977,9 @@ package org.astoolkit.workflow.core
 			}
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function resume() : void
 		{
 			if( _status != TaskStatus.RUNNING )
@@ -987,6 +1012,9 @@ package org.astoolkit.workflow.core
 			}
 		}
 		
+		/**
+		 * @private
+		 */
 		protected function dispatchTaskEvent( 
 			inEventType : String, 
 			inTask : IWorkflowTask, 
@@ -1015,11 +1043,17 @@ package org.astoolkit.workflow.core
 			}
 		}
 		
+		/**
+		 * @private
+		 */
 		override public function toString() : String
 		{
 			return getQualifiedClassName( this ) + " : " + description;
 		}
 		
+		/**
+		 * @private
+		 */
 		protected function onTimeout( inOriginalThread : int ) : void
 		{
 			if( currentThread != inOriginalThread )

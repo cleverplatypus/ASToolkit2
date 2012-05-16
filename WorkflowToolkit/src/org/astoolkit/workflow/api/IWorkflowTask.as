@@ -82,14 +82,44 @@ package org.astoolkit.workflow.api
 		function get invalidPipelinePolicy() : String;
 		function set invalidPipelinePolicy( inValue : String ) : void;
 		
-		/**
+		/** 
 		 * the message to use in case of failure.
 		 * 
 		 * <p>This is the text that is either sent as <code>WorkflowEvent</code>
 		 * when <code>failurePolicy="abort"</code> or logged when
-		 * <code>failurePolicy="log-[LEVEL]"</code>.</p>
+		 * <code>failurePolicy="log-<i>[LEVEL]</i>"</code>.</p>
 		 * 
-		*/ 
+		 * <p>Placeholders {<i>n</i>} can be used to include context
+		 * information in the message</p>
+		 * <ul>
+		 * <li>{0} the task's description</li> 
+		 * <li>{1} the Error message if any</li> 
+		 * <li>{2} the Error stackTrace if any</li>
+		 * <li>{3} the pipelineData dump</li>
+		 * </ul>
+		 * <p>The implementation should provide a default message.</p>
+		 * 
+		 * @example Aborting with custom message
+		 * <listing>
+		 * &lt;ProcessUser
+		 *		failurePolicy="abort"
+		 * 		failureMessage="Cannot process user: {3} for error '{1}'"
+		 * 		/&gt;
+		 * </listing>
+		 * The above task would dispatch a <code>WorkflowEvent</code>
+		 * containing a message like:
+		 * <listing>
+		 * Cannot process user:
+		 * 
+		 * (com.myapp.model.User)#0
+		 *		username = "dracula"
+		 * 		firstName = "Bram"
+		 * 		lastName = "Stoker"
+		 * 		email = (Null)
+		 * 
+		 * for error: 'Error #1009: Cannot access a property or method of a null object reference'
+		 * </listing>
+		 */
 		function set failureMessage( inValue : String ) : void;
 		function get failureMessage() : String;
 
@@ -143,8 +173,6 @@ package org.astoolkit.workflow.api
 				
 		/**
 		 * called by user defined code or by aborted wrapping workflow.
-		 * implementations should take care of cancelling any pending async 
-		 * operations or event listeners
 		 */  
 		function abort() : void;
 		
@@ -161,6 +189,10 @@ package org.astoolkit.workflow.api
 		function resume() : void;
 
 		
+		/**
+		 * set this before calling <code>complete()</code> or <code>fail()</code>
+		 * if you want to set a custom exit status.
+		 */ 
 		function set exitStatus( inStatus : ExitStatus ) : void;
 		function get exitStatus() : ExitStatus;
 		

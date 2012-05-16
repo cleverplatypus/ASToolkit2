@@ -46,7 +46,27 @@ package org.astoolkit.workflow.api
 	[Bindable]
 	public interface IWorkflow extends IWorkflowTask, IRepeater, IElementsGroup
 	{
-		
+		/**
+		 * Execution entry point for the root <code>IWorkflow</code>.
+		 * <p>The optional parameter sets the pipeline data.</p>
+		 * <p>If the workflow completes synchronously, this method
+		 * returns the workflow's output, <code>undefined</code> otherwise.</p>
+		 * 
+		 * @param myInputData optional data for the pipeline
+		 * 
+		 * @return the workflow's output if the latter completes synchronously, <code>undefined</code> otherwise
+		 * 
+		 * @example Executing a sync workflow.
+		 * 			<p>In this example we're running a workflow that
+		 * 			does some filtering on the input data andcompletes synchronously</p>
+		 * 
+		 * <listing version="3.0">
+		 * public function runFilterDataWorkflow() : void
+		 * {
+		 *     var output : Array = filterDataWorkflow.run( myInputData );
+		 * }
+		 * </listing>
+		 */
 		function run( inTaskInput : * = undefined ) : *;
 		
 		function get contextFactory() : IFactory;

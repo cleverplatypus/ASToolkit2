@@ -10,7 +10,9 @@ package org.astoolkit.workflow.api
 	{
 
 		/**
-		 * a description for this element.
+		 * an optional human readable description for this element.
+		 * <p>If not defined, a string containing the branch this element
+		 * belongs to is generated</p>
 		 */
 		function get description() : String;
 		function set description( inName : String ) : void;
@@ -23,24 +25,24 @@ package org.astoolkit.workflow.api
 		function set enabled( inEnabled : Boolean ) : void;
 		
 		/**
-		 * called by parent workflow when root workflow begins
-		 * Users should not call this method directly.
+		 * called by parent workflow when root workflow begins.
+		 * <p>Override this method in custom elements to allocate
+		 * resources which lifetime spans the root workflow's lifetime.</p>
+		 * Do not call this method directly.
 		 */
 		function initialize() : void;
 		
 		/**
 		 * called by parent workflow before begin.
-		 * If this task has state, this is the place to put code to 
-		 * reset any value for next invocation.
-		 * A "prepare" event must be dispatched first. 
-		 * Listeners might perform dependency injection at this point.
+		 * <p>If this task has state, override this method and
+		 * reset any value for next invocation.</p>
 		 */
 		function prepare() : void;
 
 		/**
 		 * called when the root workflow completes.
-		 * implementations should release any allocated resource
-		 * or listener used during the whole task's lifetime
+		 * <p>Implementations should override this method to release 
+		 * any allocated resource.</p>
 		 */
 		function cleanUp() : void;
 
@@ -50,15 +52,29 @@ package org.astoolkit.workflow.api
 		function get parent() : IElementsGroup;
 		function set parent( inParent : IElementsGroup ) : void;
 
+		/**
+		 * the workflow context for this element. Set by the wrapping workflow.
+		 */
 		function get context() : IWorkflowContext;
 		function set context( inContext : IWorkflowContext ) : void;
 		
+		/**
+		 * @private
+		 * 
+		 * the wrapping workflow's iterator if any
+		 */
 		function set currentIterator( inValue : IIterator ) : void;
 
 		function set delegate( inValue : IWorkflowDelegate ) : void;
 
+		/**
+		 * the MXML id string
+		 */
 		function get id() : String;
 		
+		/**
+		 * the class defined as MXML document this element belongs to
+		 */
 		function get document() : Object;
 
 	}

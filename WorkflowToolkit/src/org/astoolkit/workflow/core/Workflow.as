@@ -228,6 +228,27 @@ package org.astoolkit.workflow.core
 			child.parent = this;
 		}
 		
+		/**
+		 * @example Adding a logging task to an existing workflow.
+		 * <listing version="3.0">
+		 * &lt;wf:DoSomethingWorkflow
+		 *     id=&quot;w_doSomethingWF&quot;
+		 *     &gt;
+		 *     &lt;wf:insert&gt;
+		 *         &lt;Insert
+		 *             parent=&quot;{ w_doSomethingWF }&quot;
+		 *             relativeTo=&quot;{ w_doSomethingWF.t_sendMessage }&quot;
+		 *             mode=&quot;after&quot;
+		 *             &gt;
+		 *             &lt;log:WriteLog
+		 *                 level=&quot;info&quot;
+		 *                 /&gt;
+		 *         &lt;/Insert&gt;
+		 *     &lt;/wf:insert&gt;
+		 * &lt;/wf:DoSomethingWorkflow&gt;
+		 * </listing>
+		 * @inheritDoc
+		 */
 		public function set insert(inInsert: Vector.<Insert>):void
 		{
 			if( _insert )

@@ -20,9 +20,20 @@ package org.astoolkit.workflow.core
 	
 	
 	[Bindable]
+	/**
+	 * Base implementation of <code>IWorkflowElement</code>.
+	 * <p>Any non-task element must extend this class.</p>
+	 * <tutorial id="tutorial23">Creating a task</tutorial>
+	 * 
+	 * @see org.astoolkit.workflow.core.BaseTask
+	 * @see org.astoolkit.workflow.core.Group
+	 */
 	public class BaseElement extends EventDispatcher implements IWorkflowElement
 	{
 		
+		/**
+		 * @private
+		 */
 		protected var _id : String;
 		/**
 		 * @private
@@ -30,10 +41,19 @@ package org.astoolkit.workflow.core
 		protected var _document : Object;
 		
 
+		/**
+		 * @private
+		 */
 		protected var _ancestryString : String;
 		
+		/**
+		 * @private
+		 */
 		protected var _currentIterator : IIterator;
 
+		/**
+		 * @private
+		 */
 		protected var _unsetProperties : Object;
 		
 		/**
@@ -41,7 +61,13 @@ package org.astoolkit.workflow.core
 		 */
 		protected var _delegate : IWorkflowDelegate;
 
+		/**
+		 * @private
+		 */
 		protected var _thread : uint;
+		/**
+		 * @private
+		 */
 		protected var _overriddenProperties : Array;
 		/**
 		 * @private
@@ -61,32 +87,44 @@ package org.astoolkit.workflow.core
 		 */
 		protected var _enabled : Boolean = true;
 		
-		private var _cws : Object;
+		/**
+		 * @private
+		 */
+		private var _initialWatchers : Object;
+		/**
+		 * @private
+		 */
 		public function BaseElement()
 		{
 			super();
 			_unsetProperties = {};
-			_cws  = {};
+			_initialWatchers  = {};
 			for each( var f : FieldInfo in ClassInfo.forType( this ).getFields() )
 			{
 				if( f.fullAccess )
 				{
 					_unsetProperties[ f.name ] = true;;
-					_cws[ f.name ] =
+					_initialWatchers[ f.name ] =
 						ChangeWatcher.watch(
 							this, f.name, onPropertyEarlySet, false, false ) ;
 				}
 			}
 		}
 			
+		/**
+		 * @private
+		 */
 		private function onPropertyEarlySet( inEvent : PropertyChangeEvent ) : void
 		{
-			if( _cws.hasOwnProperty( inEvent.property ) )
-				_cws[ inEvent.property ].unwatch();
+			if( _initialWatchers.hasOwnProperty( inEvent.property ) )
+				_initialWatchers[ inEvent.property ].unwatch();
 			if( _unsetProperties.hasOwnProperty( inEvent.property ) )
 				delete _unsetProperties[ inEvent.property ]
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function get description():String
 		{
 			if( _description != NO_DESCRIPTION )
@@ -100,6 +138,9 @@ package org.astoolkit.workflow.core
 			_description = inName;
 		}
 		
+		/**
+		 * whether this element is enabled for processing
+		 */
 		public function get enabled():Boolean
 		{
 			return _enabled;
@@ -110,6 +151,9 @@ package org.astoolkit.workflow.core
 			_enabled = inEnabled;
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function get context() : IWorkflowContext
 		{
 			return _context;
@@ -120,21 +164,32 @@ package org.astoolkit.workflow.core
 			_context = inContext;
 		}
 		
-		
+		/**
+		 * @inheritDoc
+		 */
 		public function initialize():void
 		{
 			BindingUtility.disableAllBindings( _document, this );
 		}
 		
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function prepare():void
 		{
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function cleanUp():void
 		{
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function get parent():IElementsGroup
 		{
 			return _parent;
@@ -146,6 +201,10 @@ package org.astoolkit.workflow.core
 			
 		}
 		
+		/**
+		 * utility method to get a string representing the
+		 * branch this element belongs to.
+		 */
 		public function getAncestryString() : String
 		{
 			if( !_ancestryString )
@@ -197,13 +256,16 @@ package org.astoolkit.workflow.core
 			{
 				if( BindingUtility.propertyHasBindings( _document, this, name ) )
 					delete _unsetProperties[ name ];
-				if( _cws.hasOwnProperty( name ) )
-					_cws[ name ].unwatch();
+				if( _initialWatchers.hasOwnProperty( name ) )
+					_initialWatchers[ name ].unwatch();
 			}
-			_cws = null;
+			_initialWatchers = null;
 
 		}
 		
+		/**
+		 * @private
+		 */
 		astoolkit_private function propertyIsUserDefined( inPropertyName : String ) : Boolean
 		{
 			return !_unsetProperties.hasOwnProperty( inPropertyName );

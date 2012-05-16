@@ -23,9 +23,9 @@ package org.astoolkit.workflow.core
 
 	[DefaultProperty("elements")]
 	/**
-	 * An entry for the <code>IWorkflow</code>'s insert list.
+	 * An entry for the <code>IElementsGroup</code>'s insert list.
 	 * 
-	 * @see org.astoolkit.workflow.core.IWorkflow#insert
+	 * @see org.astoolkit.workflow.core.IElementsGroup#insert
 	 */
 	public final class Insert
 	{
