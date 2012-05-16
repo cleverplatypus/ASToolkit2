@@ -23,11 +23,37 @@ package org.astoolkit.commons.io.filter.api
 
 	public interface IIOFilter
 	{
+		/**
+		 * evaluates the inFilterData content and filters the inDataObject.
+		 * 
+		 * @param inFilterData the object representing the filter
+		 * @param inData the object to be filtered
+		 * @param inTarget (optional) the object calling the filtering method
+		 *  
+		 * @return the filtering result
+		 */
 		function filter( inData : Object, inFilterData : Object, inTarget : Object = null ) : Object
+		/**
+		 * an int for ordering filtering priorities.
+		 */
 		function get priority() : int;
+		/**
+		 * the list of types that can be used as sources (inData) for
+		 * the <code>filter()</code> method
+		 */ 
 		function get supportedDataTypes() : Vector.<Class>;
+		
+		/**
+		 * the list of types that can be used as filter descriptor (inFilterData) for
+		 * the <code>filter()</code> method
+		 */ 
 		function get supportedFilterTypes() : Vector.<Class>;
-		function isValidFilter( inType : Object ) : Boolean;
+		
+		/**
+		 * returns true if the passed filter data is successfully
+		 * validated (e.g. expression syntax checks)
+		 */
+		function isValidFilter( inFilterData : Object ) : Boolean;
 		
 	}
 }
