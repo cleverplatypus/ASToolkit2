@@ -7,4 +7,6 @@ bin-release/
 .flexProperties
 .settings/
 .project
-ASToolkitCommons/.DS_Store
+.DS_Store
+*.swc
+*.swf
