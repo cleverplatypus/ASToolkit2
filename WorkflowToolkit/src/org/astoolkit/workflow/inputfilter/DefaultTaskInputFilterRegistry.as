@@ -22,6 +22,8 @@ Version 2.x
 	import org.astoolkit.commons.io.filter.api.IIOFilterRegistry;
 	
 	import flash.utils.getQualifiedClassName;
+	import org.astoolkit.commons.io.filter.FunctionReferenceTaskInputFilter;
+	import org.astoolkit.commons.io.filter.ObjectPropertyChainInputFilter;
 
 	public class DefaultTaskInputFilterRegistry implements IIOFilterRegistry
 	{
@@ -31,7 +33,7 @@ Version 2.x
 		public function DefaultTaskInputFilterRegistry()
 		{
 			_filters = new Vector.<IIOFilter>();
-			registerFilter( StringInputFilter );
+			registerFilter( ObjectPropertyChainInputFilter );
 			registerFilter( FunctionReferenceTaskInputFilter );
 		}
 		

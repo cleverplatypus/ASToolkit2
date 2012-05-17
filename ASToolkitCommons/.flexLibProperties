@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
+  <includeClasses>
+    <classEntry path="com.astoolkit.commons.mapping.MapTo"/>
+    <classEntry path="com.astoolkit.commons.reflection.FieldInfo"/>
+    <classEntry path="com.astoolkit.commons.reflection.BaseInfo"/>
+    <classEntry path="org.astoolkit.commons.io.filter.FunctionReferenceTaskInputFilter"/>
+    <classEntry path="org.astoolkit.commons.io.filter.ObjectPropertyChainInputFilter"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests/>
+</flexLibProperties>

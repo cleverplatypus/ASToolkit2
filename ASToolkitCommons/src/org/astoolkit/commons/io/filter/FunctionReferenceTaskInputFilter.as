@@ -17,33 +17,22 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.inputfilter
+package org.astoolkit.commons.io.filter
 {
-	import org.astoolkit.commons.io.filter.api.IIOFilter;
 	import org.astoolkit.workflow.api.*;
-	
-	public class StringInputFilter implements IIOFilter
+	import org.astoolkit.commons.io.filter.api.IIOFilter;
+
+	public class FunctionReferenceTaskInputFilter implements IIOFilter
 	{
-		
-		public function StringInputFilter()
-		{
-		}
-		
+				
 		public function filter( inData : Object, inFilterData : Object, inTarget : Object = null ) : Object
 		{
-			if( inData == null )
-				return null;
-			var val : Object = inData;
-			for each( var k : String in inFilterData.split( "." ) )
-			{
-				val = val[ k ];
-			}
-			return val;
+			return ( inFilterData as Function )( inData, inTarget );
 		}
 		
 		public function isValidFilter( inFilterData : Object ) : Boolean
 		{
-			return inFilterData is String && ( inFilterData as String ).match( /^\w+(\.\w+)*$/ );
+			return inFilterData is Function; 
 		}
 		
 		public function get priority():int
@@ -55,14 +44,13 @@ package org.astoolkit.workflow.inputfilter
 		public function get supportedFilterTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
-			out.push( String );
+			out.push( Function );
 			return out;
 		}
-
+		
 		public function get supportedDataTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
-			out.push( Object );
 			return out;
 		}
 		
