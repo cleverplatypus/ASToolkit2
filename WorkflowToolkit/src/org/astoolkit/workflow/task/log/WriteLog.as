@@ -20,25 +20,25 @@ Version 2.x
 
 package org.astoolkit.workflow.task.log
 {
-	import org.astoolkit.workflow.core.BaseTask;
-	
 	import flash.utils.getQualifiedClassName;
-	import flash.utils.setTimeout;
 	
 	import mx.logging.ILogger;
 	import mx.logging.Log;
 	import mx.logging.LogEventLevel;
 	import mx.utils.ObjectUtil;
+	
+	import org.astoolkit.workflow.core.BaseTask;
 
 	/**
-	 * Writes to the currently registered Logger instances.<br><br>
-	 * 
+	 * Writes to the currently registered Logger instances at the specified level
+	 * <p>
 	 * <b>Input</b>
 	 * <ul>
 	 * <li>a value to be logged. If a non-String is passed, 
 	 * <code>ObjectUtil.toString( value )</code> is used</li>
 	 * </ul>
 	 * <b>No Output</b>
+	 * </p>
 	 * <p>
 	 * <b>Params</b>
 	 * <ul>
@@ -54,12 +54,27 @@ package org.astoolkit.workflow.task.log
 			Log.getLogger( getQualifiedClassName( WriteLog ).replace(/:+/g, "." ) );
 		
 		[Bindable][InjectPipeline]
+		/**
+		 * the text to log. 
+		 * <p>{<em>n</em>} placeholders can be used for text substitution.</p>
+		 */
 		public var message : String = null;
+		
+		/**
+		 * parameters for text substitution in the message
+		 */
 		public var parameters : Array = [];
 		
 		[Inspectable(defaultValue="debug", enumeration="debug,info,warn,error,fatal")]
+		/**
+		 * debug level.
+		 * <p>Either debug,info,warn,error or fatal</p>
+		 */
 		public var level : String = "debug";
 		
+		/**
+		 * @private
+		 */
 		private var _levels : Object =
 			{
 				debug : LogEventLevel.DEBUG,
@@ -69,6 +84,9 @@ package org.astoolkit.workflow.task.log
 				fatal : LogEventLevel.FATAL
 			};
 		
+		/**
+		 * @private
+		 */
 		override public function begin() : void
 		{
 			super.begin();

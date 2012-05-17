@@ -20,9 +20,10 @@ Version 2.x
 
 package org.astoolkit.workflow.api
 {
-	import org.astoolkit.workflow.core.Insert;
-	
 	import mx.core.IFactory;
+	
+	import org.astoolkit.commons.collection.api.IRepeater;
+	import org.astoolkit.workflow.core.Insert;
 	
 	[Event(
         name="started",

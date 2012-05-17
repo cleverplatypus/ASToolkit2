@@ -145,12 +145,9 @@ package org.astoolkit.workflow.core
 		protected var _timeout : int = -1;
 		
 		/**
-		 * The task's exit status.
-		 * <p>Set this property before calling <code>complete( ... )</code> or <code>fail( ... )</code> 
-		 * <u>only if</u> you want to set a custom exit status. <code>BaseTask</code> takes care of
-		 * setting the default exit status values on completion or failure.</p>
+		 * @private
 		 * 
-		 * @see org.astoolkit.workflow.core.ExitStatus
+		 * The task's exit status.
 		 */
 		protected var _exitStatus : ExitStatus;
 		
@@ -313,12 +310,18 @@ package org.astoolkit.workflow.core
 				}
 			}
 		}
-				
+		
+		/**
+		 * @private
+		 */ 
 		protected function get _status() : String
 		{
 			return __status;
 		}
 		
+		/**
+		 * @private
+		 */ 
 		protected function set _status( inStatus : String ) : void
 		{
 			var oldValue : String = __status;
@@ -590,7 +593,6 @@ package org.astoolkit.workflow.core
 			_context.removeEventListener( WorkflowEvent.RESUMED, onContextResumed );
 			_context.suspendableFunctions.cleanUp();
 			_context = null;
-			initializePropertyInjection();
 		}
 			
 		public function begin() : void

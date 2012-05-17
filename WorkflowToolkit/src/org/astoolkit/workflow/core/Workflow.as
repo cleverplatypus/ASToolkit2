@@ -30,6 +30,7 @@ package org.astoolkit.workflow.core
 	import mx.logging.Log;
 	
 	import org.astoolkit.commons.collection.api.IIterator;
+	import org.astoolkit.commons.collection.api.IRepeater;
 	import org.astoolkit.commons.databinding.BindingUtility;
 	import org.astoolkit.commons.factory.DynamicPoolFactoryDelegate;
 	import org.astoolkit.commons.factory.PooledFactory;
@@ -673,7 +674,7 @@ package org.astoolkit.workflow.core
 					}
 					if( currentIterator != null &&  currentIterator.hasNext() )
 					{
-						_dataProvider = filteredPipelineData;
+						//_dataProvider = filteredPipelineData;
 						nextData();
 						prepareChildren();
 
@@ -783,7 +784,10 @@ package org.astoolkit.workflow.core
 		{
 			var aContext : IWorkflowContext = _context; //super.cleanup() makes _context == null
 			super.cleanUp();
-			_dataProvider = null;
+			if ( _actuallyInjectableProperties.indexOf( "dataProvider" ) > -1 )
+			{
+				_dataProvider = null;
+			}
 			for each( var child : IWorkflowElement in runtimeTasks )
 			{
 				child.cleanUp();

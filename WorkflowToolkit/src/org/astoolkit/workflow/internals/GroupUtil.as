@@ -20,14 +20,15 @@ Version 2.x
 
 package org.astoolkit.workflow.internals
 {
+	import mx.utils.ArrayUtil;
+	
+	import org.astoolkit.commons.collection.api.IRepeater;
 	import org.astoolkit.commons.reflection.AnnotationUtil;
 	import org.astoolkit.commons.reflection.ClassInfo;
 	import org.astoolkit.commons.reflection.FieldInfo;
 	import org.astoolkit.workflow.annotation.OverrideChildrenProperty;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.core.Insert;
-	
-	import mx.utils.ArrayUtil;
 
 	public final class GroupUtil
 	{
@@ -104,11 +105,15 @@ package org.astoolkit.workflow.internals
 			return inElement.parent as IWorkflow;
 		}
 		
-		public static function getParentRepeater( inElement : IWorkflowElement ) : IRepeater
+		public static function getParentRepeater( inElement : IWorkflowElement, inParentCount : int = 0 ) : IRepeater
 		{
-			while( inElement.parent != null && !( inElement.parent is IRepeater ) )
+			while( inElement.parent != null && inParentCount > -1 )
+			{
+				if( inElement.parent is IRepeater )
+					inParentCount--;
 				inElement = inElement.parent;
-			return inElement.parent as IRepeater;
+			}
+			return inElement as IRepeater;
 		}
 		
 				
