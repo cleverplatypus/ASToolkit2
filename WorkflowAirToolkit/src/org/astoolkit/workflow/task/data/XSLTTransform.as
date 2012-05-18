@@ -121,8 +121,8 @@ package org.astoolkit.workflow.task.data
 			}
 			if( !xml )
 			{
-				if( filteredPipelineData is XML )
-					xml = filteredPipelineData as XML;
+				if( filteredInput is XML )
+					xml = filteredInput as XML;
 				else
 				{
 					fail( "xml not set" );
@@ -131,8 +131,8 @@ package org.astoolkit.workflow.task.data
 			}
 			if( !xslt )
 			{
-				if( filteredPipelineData is XML )
-					xslt = filteredPipelineData as XML;
+				if( filteredInput is XML )
+					xslt = filteredInput as XML;
 				else
 				{
 					fail( "xslt not set" );

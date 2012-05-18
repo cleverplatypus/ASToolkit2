@@ -19,7 +19,6 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
-	import flash.system.System;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
 	
@@ -28,11 +27,10 @@ package org.astoolkit.workflow.core
 	import mx.events.PropertyChangeEventKind;
 	import mx.logging.ILogger;
 	import mx.logging.Log;
-	import mx.rpc.events.FaultEvent;
 	import mx.utils.StringUtil;
 	
 	import org.astoolkit.commons.databinding.BindingUtility;
-	import org.astoolkit.commons.io.filter.api.IIOFilter;
+	import org.astoolkit.commons.io.transform.api.IIODataTransform;
 	import org.astoolkit.commons.reflection.ClassInfo;
 	import org.astoolkit.commons.reflection.FieldInfo;
 	import org.astoolkit.workflow.annotation.InjectPipeline;
@@ -272,6 +270,9 @@ package org.astoolkit.workflow.core
 			*/
 		}
 		
+		/**
+		 * @private
+		 */
 		protected function initializePropertyInjection() : void
 		{
 			_injectablePropertiesWatchers = {};
@@ -287,6 +288,9 @@ package org.astoolkit.workflow.core
 			}
 		}
 		
+		/**
+		 * @private
+		 */
 		protected function onInjectablePropertyChange( inEvent : PropertyChangeEvent ) : void
 		{
 			var index : int = _actuallyInjectableProperties.indexOf( inEvent.property );
@@ -343,6 +347,9 @@ package org.astoolkit.workflow.core
 			return _status;
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
 		public function get delay():int
 		{
 			return _delay;
@@ -477,11 +484,11 @@ package org.astoolkit.workflow.core
 		 * If a filter has been defined, filteredPipelineData will return
 		 * the filtered data. Otherwise it will return the raw data.
 		 */ 
-		public function get filteredPipelineData() : Object
+		public function get filteredInput() : Object
 		{
 			if( _inputFilter )
 			{
-				var filter : IIOFilter = _context.config.inputFilterRegistry.getFilter( _inputData, _inputFilter );
+				var filter : IIODataTransform = _context.config.inputFilterRegistry.getTransformer( _inputData, _inputFilter );
 				if( !filter )
 				{
 					var filterData : String = _inputFilter is String ?
@@ -493,7 +500,7 @@ package org.astoolkit.workflow.core
 						filterData );
 					throw new Error( "Error filtering input data for task \"" + description + "\"" ); 
 				}
-				return filter.filter( _inputData, _inputFilter, this );
+				return filter.transform( _inputData, _inputFilter, this );
 			}
 			else
 				return _inputData;
@@ -628,7 +635,7 @@ package org.astoolkit.workflow.core
 		{
 			var ci : ClassInfo = ClassInfo.forType( this );
 			var fields : Vector.<FieldInfo> = ci.getFieldsWithAnnotation( InjectPipeline );
-			var data : Object = filteredPipelineData;
+			var data : Object = filteredInput;
 			var defaultPropSet : Boolean;
 			var annotation : InjectPipeline;
 			
@@ -649,7 +656,7 @@ package org.astoolkit.workflow.core
 					}
 					else if( annotation.filterText != null )
 					{
-						this[ field.name ] = annotation.getFilterInstance( data ).filter( 
+						this[ field.name ] = annotation.getFilterInstance( data ).transform( 
 								data, annotation.filterText, this );
 					}
 					if( watchInfo )

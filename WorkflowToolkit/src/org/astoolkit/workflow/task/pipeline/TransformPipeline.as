@@ -32,14 +32,14 @@ package org.astoolkit.workflow.task.pipeline
 			var out : *;
 			if( hasEventListener( TransformPipelineEvent.TRANSFORM ) )
 			{
-				var e : TransformPipelineEvent = new TransformPipelineEvent( filteredPipelineData );
+				var e : TransformPipelineEvent = new TransformPipelineEvent( filteredInput );
 				dispatchEvent( e );
 				out = e.pipelineData;
 			}
 			else
 			{
 				//apply filters
-				out = filteredPipelineData;
+				out = filteredInput;
 			}
 			complete( out );
 		}

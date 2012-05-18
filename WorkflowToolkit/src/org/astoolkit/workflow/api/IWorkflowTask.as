@@ -71,7 +71,7 @@ package org.astoolkit.workflow.api
 		function set inputFilter( inValue : Object ) : void;
 		function get inputFilter() : Object;
 		
-		function get filteredPipelineData() : Object;
+		function get filteredInput() : Object;
 
 		function set inlet( inInlet : Object ) : void;
 		function get inlet() : Object;

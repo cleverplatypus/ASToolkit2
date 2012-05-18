@@ -57,7 +57,7 @@ package org.astoolkit.workflow.task.log
 			super.begin();
 			var outText : String = text;
 			if( outText == null ) 
-				outText = ObjectUtil.toString( filteredPipelineData );
+				outText = ObjectUtil.toString( filteredInput );
 			trace( outText );
 			complete();
 		}

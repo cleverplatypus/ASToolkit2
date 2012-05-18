@@ -45,8 +45,8 @@ package org.astoolkit.workflow.task.net
 		override public function begin() : void
 		{
 			super.begin();
-			if( !localFile && filteredPipelineData is FileReference )
-				localFile = filteredPipelineData as FileReference;
+			if( !localFile && filteredInput is FileReference )
+				localFile = filteredInput as FileReference;
 			if( !localFile )
 				fail( "No localFile provided" );
 			if( !url )

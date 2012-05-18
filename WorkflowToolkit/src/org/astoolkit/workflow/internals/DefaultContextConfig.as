@@ -21,14 +21,14 @@ package org.astoolkit.workflow.internals
 {
 	import org.astoolkit.commons.collection.DefaultIteratorFactory;
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
-	import org.astoolkit.commons.io.filter.api.IIOFilterRegistry;
+	import org.astoolkit.commons.io.transform.api.IIODataTransformRegistry;
 	import org.astoolkit.workflow.api.IContextConfig;
 	import org.astoolkit.workflow.api.IPropertyOverrideRule;
 	import org.astoolkit.workflow.inputfilter.DefaultTaskInputFilterRegistry;
 	
 	public class DefaultContextConfig implements IContextConfig
 	{
-		private var _inputFilterFactory : IIOFilterRegistry;
+		private var _inputFilterFactory : IIODataTransformRegistry;
 		private var _propertyOverrideRule : IPropertyOverrideRule;
 		private var _iteratorFactory : IIteratorFactory;
 		
@@ -52,12 +52,12 @@ package org.astoolkit.workflow.internals
 			_propertyOverrideRule = inValue;
 		}
 
-		public function get inputFilterRegistry():IIOFilterRegistry
+		public function get inputFilterRegistry() : IIODataTransformRegistry
 		{
 			return _inputFilterFactory;
 		}
 		
-		public function set inputFilterRegistry(inValue:IIOFilterRegistry):void
+		public function set inputFilterRegistry( inValue : IIODataTransformRegistry ) : void
 		{
 			_inputFilterFactory = inValue;
 		}

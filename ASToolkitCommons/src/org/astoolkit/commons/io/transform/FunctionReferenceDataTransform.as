@@ -17,30 +17,44 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.io.filter
+package org.astoolkit.commons.io.transform
 {
-	import org.astoolkit.workflow.api.*;
-	import org.astoolkit.commons.io.filter.api.IIOFilter;
+	import org.astoolkit.commons.io.transform.api.IIODataTransform;
 
-	public class FunctionReferenceTaskInputFilter implements IIOFilter
+	/**
+	 * input filter that expects <code>inExpression</code> to be a 
+	 * function with signature 
+	 * <code>function( inData : Object, inTarget : Object ) : Object</code>
+	 */
+	public class FunctionReferenceDataTransform implements IIODataTransform
 	{
-				
-		public function filter( inData : Object, inFilterData : Object, inTarget : Object = null ) : Object
+		/**
+		 * @private
+		 */
+		public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
 		{
-			return ( inFilterData as Function )( inData, inTarget );
+			return ( inExpression as Function )( inData, inTarget );
 		}
 		
-		public function isValidFilter( inFilterData : Object ) : Boolean
+		/**
+		 * @private
+		 */
+		public function isValidFilter( inExpression : Object ) : Boolean
 		{
-			return inFilterData is Function; 
+			return inExpression is Function; 
 		}
 		
+		/**
+		 * @private
+		 */
 		public function get priority():int
 		{
-			// TODO Auto Generated method stub
 			return -100;
 		}
 		
+		/**
+		 * @private
+		 */
 		public function get supportedFilterTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
@@ -48,6 +62,9 @@ package org.astoolkit.commons.io.filter
 			return out;
 		}
 		
+		/**
+		 * @private
+		 */
 		public function get supportedDataTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();

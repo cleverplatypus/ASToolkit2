@@ -17,11 +17,11 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.io.filter.api
+package org.astoolkit.commons.io.transform.api
 {
-	public interface IIOFilterRegistry
+	public interface IIODataTransformRegistry
 	{
-		function getFilter( inData : Object, inFilterData : Object ) : IIOFilter;
-		function registerFilter( inObject : Object ) : void;
+		function getTransformer( inData : Object, inExpression : Object ) : IIODataTransform;
+		function registerTransformer( inObject : Object ) : void;
 	}
 }

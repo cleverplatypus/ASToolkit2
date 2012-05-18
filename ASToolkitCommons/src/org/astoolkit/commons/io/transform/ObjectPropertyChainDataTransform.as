@@ -17,43 +17,52 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.io.filter
+package org.astoolkit.commons.io.transform
 {
-	import org.astoolkit.commons.io.filter.api.IIOFilter;
-	import org.astoolkit.workflow.api.*;
+	import org.astoolkit.commons.io.transform.api.IIODataTransform;
 	
-	public class ObjectPropertyChainInputFilter implements IIOFilter
+	/**
+	 * Input filter to drill into objects using the dot notation.
+	 * <p>"." will return the filtered object itself.</p>
+	 */ 
+	public class ObjectPropertyChainDataTransform implements IIODataTransform
 	{
-		
-		public function ObjectPropertyChainInputFilter()
-		{
-		}
-		
-		public function filter( inData : Object, inFilterData : Object, inTarget : Object = null ) : Object
+		/**
+		 * returns the value of <code>inData</code>'s property chain <code>inExpression</code>
+		 */
+		public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
 		{
 			if( inData == null )
 				return null;
-			if( inFilterData == "." )
+			if( inExpression == "." )
 				return inData;
 			var val : Object = inData;
-			for each( var k : String in inFilterData.split( "." ) )
+			for each( var k : String in inExpression.split( "." ) )
 			{
 				val = val[ k ];
 			}
 			return val;
 		}
 		
-		public function isValidFilter( inFilterData : Object ) : Boolean
+		/**
+		 * @private
+		 */
+		public function isValidFilter( inExpression : Object ) : Boolean
 		{
-			return inFilterData is String && ( inFilterData as String ).match( /^\w+(\.\w+)*$/ );
+			return inExpression is String && ( inExpression as String ).match( /^\w+(\.\w+)*$/ );
 		}
 		
+		/**
+		 * @private
+		 */
 		public function get priority():int
 		{
-			// TODO Auto Generated method stub
 			return -100;
 		}
 		
+		/**
+		 * @private
+		 */
 		public function get supportedFilterTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
@@ -61,6 +70,9 @@ package org.astoolkit.commons.io.filter
 			return out;
 		}
 
+		/**
+		 * @private
+		 */
 		public function get supportedDataTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();

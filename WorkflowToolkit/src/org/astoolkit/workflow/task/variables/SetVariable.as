@@ -43,7 +43,7 @@ package org.astoolkit.workflow.task.variables
 			if( value != undefined )
 				context.variables[ name ] = value;
 			else
-				context.variables[ name ] = filteredPipelineData;
+				context.variables[ name ] = filteredInput;
 			complete();
 		}
 	}

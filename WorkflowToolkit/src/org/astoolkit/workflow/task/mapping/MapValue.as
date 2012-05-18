@@ -19,9 +19,9 @@ package org.astoolkit.workflow.task.mapping
 				"Use the 'map' property instead" );
 		}
 		
-		public function set map( inFilterData : Object ) : void
+		public function set map( inExpression : Object ) : void
 		{
-			_inputFilter = inFilterData;
+			_inputFilter = inExpression;
 		}
 		
 		override public function begin():void
@@ -38,7 +38,7 @@ package org.astoolkit.workflow.task.mapping
 			if( astoolkit_private::propertyIsUserDefined( "value" )  )
 				target[ propertyName ] = value;
 			else
-				target[ propertyName ] = filteredPipelineData;
+				target[ propertyName ] = filteredInput;
 			complete();
 		}
 		

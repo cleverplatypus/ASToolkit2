@@ -19,11 +19,12 @@ Version 2.x
 */
 package org.astoolkit.commons.reflection
 {
-	import org.astoolkit.commons.io.filter.api.IIOFilter;
 	
 	import flash.utils.describeType;
 	
 	import mx.utils.StringUtil;
+	
+	import org.astoolkit.commons.io.transform.api.IIODataTransform;
 	
 	public class Metadata implements IAnnotation
 	{
@@ -64,7 +65,7 @@ package org.astoolkit.commons.reflection
 
 		}
 		
-		public function getFilter( inArgName : String = "" ) : IIOFilter
+		public function getFilter( inArgName : String = "" ) : IIODataTransform
 		{
 			// TODO Auto Generated method stub
 			return null;

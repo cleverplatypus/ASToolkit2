@@ -18,42 +18,41 @@ Version 2.x
 
 */
 
-package org.astoolkit.commons.io.filter.api
+package org.astoolkit.commons.io.transform.api
 {
-
-	public interface IIOFilter
+	public interface IIODataTransform
 	{
 		/**
-		 * evaluates the inFilterData content and filters the inDataObject.
+		 * evaluates the inExpression content and transforms the inDataObject.
 		 * 
-		 * @param inFilterData the object representing the filter
-		 * @param inData the object to be filtered
-		 * @param inTarget (optional) the object calling the filtering method
+		 * @param inExpression the transformation expression
+		 * @param inData the object to be transformed
+		 * @param inTarget (optional) the object calling the transform method
 		 *  
-		 * @return the filtering result
+		 * @return the transforming result
 		 */
-		function filter( inData : Object, inFilterData : Object, inTarget : Object = null ) : Object
+		function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
 		/**
-		 * an int for ordering filtering priorities.
+		 * an int for ordering transforming priorities.
 		 */
 		function get priority() : int;
 		/**
 		 * the list of types that can be used as sources (inData) for
-		 * the <code>filter()</code> method
+		 * the <code>transform()</code> method
 		 */ 
 		function get supportedDataTypes() : Vector.<Class>;
 		
 		/**
-		 * the list of types that can be used as filter descriptor (inFilterData) for
-		 * the <code>filter()</code> method
+		 * the list of types that can be used as transform descriptor (inExpression) for
+		 * the <code>transform()</code> method
 		 */ 
 		function get supportedFilterTypes() : Vector.<Class>;
 		
 		/**
-		 * returns true if the passed filter data is successfully
+		 * returns true if the passed transform data is successfully
 		 * validated (e.g. expression syntax checks)
 		 */
-		function isValidFilter( inFilterData : Object ) : Boolean;
+		function isValidFilter( inExpression : Object ) : Boolean;
 		
 	}
 }

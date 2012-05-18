@@ -21,14 +21,13 @@ Version 2.x
 package org.astoolkit.workflow.internals
 {
 	import flash.events.EventDispatcher;
-	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	
 	import mx.logging.ILogger;
 	import mx.logging.Log;
 	
 	import org.astoolkit.commons.factory.IPooledFactory;
-	import org.astoolkit.commons.io.filter.api.IIOFilter;
+	import org.astoolkit.commons.io.transform.api.IIODataTransform;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.TaskStatus;
 	
@@ -178,9 +177,9 @@ package org.astoolkit.workflow.internals
 				LOGGER.info( "Adding task livecycle watcher: " + 
 					getQualifiedClassName( inObject ) );
 			}
-			if( inObject is IIOFilter )
+			if( inObject is IIODataTransform )
 			{
-				_config.inputFilterRegistry.registerFilter( inObject as IIOFilter );
+				_config.inputFilterRegistry.registerTransformer( inObject as IIODataTransform );
 				LOGGER.info( "Registering IIOFilter : " + 
 					getQualifiedClassName( inObject ) );
 			}			

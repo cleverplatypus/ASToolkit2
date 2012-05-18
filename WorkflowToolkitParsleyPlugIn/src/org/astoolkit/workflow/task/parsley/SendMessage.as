@@ -166,7 +166,7 @@ package org.astoolkit.workflow.task.parsley
 		{
 			super.begin();
 			var aMessage : Object = messageFactory != null ? messageFactory : message;
-			var pData : Object = filteredPipelineData;
+			var pData : Object = filteredInput;
 			if( !aMessage )
 			{
 				aMessage = pData;

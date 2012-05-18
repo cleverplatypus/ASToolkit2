@@ -40,7 +40,7 @@ package org.astoolkit.workflow.task.misc
 			if( value != null )
 				target[ property ] = value;
 			else
-				target[ property ] = filteredPipelineData;
+				target[ property ] = filteredInput;
 			complete();
 		}
 	}

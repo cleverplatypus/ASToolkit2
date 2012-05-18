@@ -96,7 +96,7 @@ package org.astoolkit.workflow.task.log
 				if( !outMessage )
 				{
 					
-					outMessage = ObjectUtil.toString( filteredPipelineData );
+					outMessage = ObjectUtil.toString( filteredInput );
 				}
 				var varName : String;
 				var re : RegExp;

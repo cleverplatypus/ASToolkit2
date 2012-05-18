@@ -86,7 +86,7 @@ package org.astoolkit.workflow.task.spark
 			}
 			
 			if( animation.target == null )
-				animation.target = filteredPipelineData;
+				animation.target = filteredInput;
 			animation.play();
 			if( blocking )
 			{

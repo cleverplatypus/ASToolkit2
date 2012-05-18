@@ -16,30 +16,31 @@ limitations under the License.
 
 Version 2.x
 
-*/package org.astoolkit.workflow.inputfilter
+*/
+package org.astoolkit.workflow.inputfilter
 {
-	import org.astoolkit.commons.io.filter.api.IIOFilter;
-	import org.astoolkit.commons.io.filter.api.IIOFilterRegistry;
-	
 	import flash.utils.getQualifiedClassName;
-	import org.astoolkit.commons.io.filter.FunctionReferenceTaskInputFilter;
-	import org.astoolkit.commons.io.filter.ObjectPropertyChainInputFilter;
+	
+	import org.astoolkit.commons.io.transform.FunctionReferenceDataTransform;
+	import org.astoolkit.commons.io.transform.ObjectPropertyChainDataTransform;
+	import org.astoolkit.commons.io.transform.api.*;
 
-	public class DefaultTaskInputFilterRegistry implements IIOFilterRegistry
+
+	public class DefaultTaskInputFilterRegistry implements IIODataTransformRegistry
 	{
-		private var _filters : Vector.<IIOFilter>;
+		private var _filters : Vector.<IIODataTransform>;
 		private var _filtersBySelector : Object;
 		
 		public function DefaultTaskInputFilterRegistry()
 		{
-			_filters = new Vector.<IIOFilter>();
-			registerFilter( ObjectPropertyChainInputFilter );
-			registerFilter( FunctionReferenceTaskInputFilter );
+			_filters = new Vector.<IIODataTransform>();
+			registerTransformer( ObjectPropertyChainDataTransform );
+			registerTransformer( FunctionReferenceDataTransform );
 		}
 		
-		public function getFilter( inData : Object, inFilterData : Object ) : IIOFilter
+		public function getTransformer( inData : Object, inExpression : Object ) : IIODataTransform
 		{
-			for each( var f : IIOFilter in _filters )
+			for each( var f : IIODataTransform in _filters )
 			{
 				for each( var dataType : Class in f.supportedDataTypes )
 				{
@@ -47,7 +48,7 @@ Version 2.x
 					{
 						for each( var filterType : Class in f.supportedFilterTypes )
 						{
-							if( inFilterData is filterType && f.isValidFilter( inFilterData ) )
+							if( inExpression is filterType && f.isValidFilter( inExpression ) )
 							{
 								return f;
 							}
@@ -58,7 +59,7 @@ Version 2.x
 			return null;
 		}
 
-		private function sortFilters( inFilterA : IIOFilter, inFilterB : IIOFilter  ) : int
+		private function sortFilters( inFilterA : IIODataTransform, inFilterB : IIODataTransform  ) : int
 		{
 			if( inFilterA.priority < inFilterB.priority )
 				return 1;
@@ -67,13 +68,13 @@ Version 2.x
 			return 0;
 		}
 		
-		public function registerFilter( inObject : Object ) : void
+		public function registerTransformer( inObject : Object ) : void
 		{
 			var o : Object = inObject is Class ? new inObject() : inObject;
-			if( !( o is IIOFilter ) )
+			if( !( o is IIODataTransform ) )
 				throw new Error( "Attempt to register unrelated class " + 
-					getQualifiedClassName( o ) + " as IIOFilter" );
-			_filters.push( o as IIOFilter );
+					getQualifiedClassName( o ) + " as IIODataTransform" );
+			_filters.push( o as IIODataTransform );
 			_filters = _filters.sort( sortFilters );
 		}
 		

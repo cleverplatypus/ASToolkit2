@@ -110,7 +110,7 @@ package org.astoolkit.workflow.internals
 		{
 			if( !_runningTask )
 				return null;
-			return _runningTask.filteredPipelineData;
+			return _runningTask.filteredInput;
 		}
 		
 		public function set data( inValue : Object ) : void

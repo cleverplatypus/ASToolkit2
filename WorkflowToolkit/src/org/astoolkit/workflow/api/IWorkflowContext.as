@@ -25,7 +25,6 @@ package org.astoolkit.workflow.api
 	import mx.utils.ObjectProxy;
 	
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
-	import org.astoolkit.commons.io.filter.api.IIOFilterRegistry;
 	import org.astoolkit.workflow.internals.ContextVariablesProvider;
 	import org.astoolkit.workflow.internals.SuspendableFunctionRegistry;
 	

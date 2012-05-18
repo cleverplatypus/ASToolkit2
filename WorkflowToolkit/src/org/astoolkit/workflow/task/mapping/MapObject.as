@@ -55,7 +55,7 @@ package org.astoolkit.workflow.task.mapping
 		{
 			if( map && source && context )
 			{
-				context.config.inputFilterRegistry.getFilter( source, map ).filter( source, map );
+				context.config.inputFilterRegistry.getTransformer( source, map ).transform( source, map );
 			}
 			return source;
 		}

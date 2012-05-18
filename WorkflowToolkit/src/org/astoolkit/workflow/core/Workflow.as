@@ -304,7 +304,7 @@ package org.astoolkit.workflow.core
 			return _feed;
 		}
 		
-		[Inspectable(defaultValue="currentData", enumeration="pipeline,currentData")]
+		[Inspectable(defaultValue="auto", enumeration="auto,pipeline,currentData")]
 		public function set feed( inFeed : String ) : void
 		{
 			_feed = inFeed;
@@ -504,14 +504,14 @@ package org.astoolkit.workflow.core
 									if( sOutlet.charAt( 0 ) == "|" )
 										_subPipelineData[ sOutlet.substr(1) ] = inTask.output;
 									else
-										inTask.filteredPipelineData[ sOutlet ] = inTask.output
+										inTask.filteredInput[ sOutlet ] = inTask.output
 								}
 								catch( e : Error )
 								{
 									fail( "Injecting task {0} output failed. {1} class doesn't have " +
 										"the \"{2}\" property.",
 										inTask.description,
-										(sOutlet.charAt( 0 ) == "|" ? _subPipelineData : inTask.filteredPipelineData ),
+										(sOutlet.charAt( 0 ) == "|" ? _subPipelineData : inTask.filteredInput ),
 										sOutlet.replace( /^|/, "" ) );
 									return;
 								}
@@ -670,7 +670,7 @@ package org.astoolkit.workflow.core
 						if( _dataProvider )
 							currentIterator = getIterator( _dataProvider );
 						else
-							currentIterator = getIterator( filteredPipelineData );
+							currentIterator = getIterator( filteredInput );
 					}
 					if( currentIterator != null &&  currentIterator.hasNext() )
 					{
@@ -686,7 +686,7 @@ package org.astoolkit.workflow.core
 							fail( "Workflow \"{0}\" failed because" +
 								" no data iterator was found for type {1}", 
 								description,
-								getQualifiedClassName( _dataProvider != null ? _dataProvider : filteredPipelineData )
+								getQualifiedClassName( _dataProvider != null ? _dataProvider : filteredInput )
 							);
 							return;
 						}
@@ -869,12 +869,12 @@ package org.astoolkit.workflow.core
 			if( _subPipelineData == UNDEFINED )
 			{
 				if( _feed == Feed.PIPELINE ||
-					( _feed == Feed.AUTO && _dataProvider == null ) )
+					( _feed == Feed.AUTO && _iterator == null ) )
 				{
-					_subPipelineData = filteredPipelineData;
+					_subPipelineData = filteredInput;
 				}
 				else if( _feed == Feed.CURRENT_DATA ||
-					( _feed == Feed.AUTO && _dataProvider != null ) )
+					( _feed == Feed.AUTO && _iterator != null ) )
 				{
 					_subPipelineData = _iterator.current();
 				}
@@ -910,7 +910,7 @@ package org.astoolkit.workflow.core
 					{
 						for( var k : String in inTask.inlet )
 						{
-							inTask[ k ] = inTask.filteredPipelineData[ inTask.inlet[ k ] ];
+							inTask[ k ] = inTask.filteredInput[ inTask.inlet[ k ] ];
 						}
 					}
 					catch( e : Error )

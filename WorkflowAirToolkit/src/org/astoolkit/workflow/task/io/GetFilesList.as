@@ -80,7 +80,7 @@ package org.astoolkit.workflow.task.io
 			var aLocation : String = location;
 			if( !aLocation )
 			{
-				aLocation = filteredPipelineData as String;
+				aLocation = filteredInput as String;
 				if( !aLocation )
 				{
 					fail( "No location provided either explicitly or via the pipeline" );

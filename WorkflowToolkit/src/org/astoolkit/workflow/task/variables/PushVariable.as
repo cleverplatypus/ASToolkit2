@@ -52,9 +52,9 @@ package org.astoolkit.workflow.task.variables
 			if( !context.variables.hasOwnProperty( name ) )
 				context.variables[ name ] = varInstance;
 			if( varInstance is Array )
-				( varInstance as Array ).push( filteredPipelineData );
+				( varInstance as Array ).push( filteredInput );
 			else if( varInstance is IList ) 
-				IList( varInstance ).addItem( filteredPipelineData );
+				IList( varInstance ).addItem( filteredInput );
 			else
 			{
 				fail( "Attempt to push pipeline data to an unknown list type" );

@@ -49,7 +49,7 @@ package org.astoolkit.workflow.task.io
 			super.prepare();
 			destinationFile = null;
 			if( sourceUrl == null )
-				sourceUrl = filteredPipelineData as String;
+				sourceUrl = filteredInput as String;
 			if( sourceUrl == null )
 				fail( "Invalid source URL" );
 		}

@@ -1,7 +1,7 @@
 package org.astoolkit.workflow.api
 {
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
-	import org.astoolkit.commons.io.filter.api.IIOFilterRegistry;
+	import org.astoolkit.commons.io.transform.api.IIODataTransformRegistry;
 
 	/**
 	 * Contract for in IWorkflowContext configuration object.
@@ -13,8 +13,8 @@ package org.astoolkit.workflow.api
 		 * access to all the registered IIOFilter implementations
 		 * made available to the <code>IWorkflowContext</code>
 		 */
-		function get inputFilterRegistry() : IIOFilterRegistry;
-		function set inputFilterRegistry( inValue : IIOFilterRegistry ) : void;
+		function get inputFilterRegistry() : IIODataTransformRegistry;
+		function set inputFilterRegistry( inValue : IIODataTransformRegistry ) : void;
 		
 		/**
 		 * an instance of <code>IIteratorFactory</code> providing
