@@ -1,0 +1,387 @@
+<report>
+  <scripts>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/collection/api/IIterator.as" mod="1337293989000" size="1812" optimizedsize="416">
+      <def id="org.astoolkit.commons.collection.api:IIterator" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/io/transform/ObjectPropertyChainDataTransform.as" mod="1337419718000" size="1831" optimizedsize="831">
+      <def id="org.astoolkit.commons.io.transform:ObjectPropertyChainDataTransform" />
+      <pre id="org.astoolkit.commons.io.transform.api:IIODataTransform" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/reflection/BaseInfo.as" mod="1337293989000" size="1598" optimizedsize="789">
+      <def id="org.astoolkit.commons.reflection:BaseInfo" />
+      <pre id="Object" />
+      <dep id="org.astoolkit.commons.reflection:IAnnotation" />
+      <dep id="flash.utils:getQualifiedClassName" />
+      <dep id="AS3" />
+      <dep id="__AS3__.vec:Vector" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/reflection/Metadata.as" mod="1337336812000" size="2097" optimizedsize="1144">
+      <def id="org.astoolkit.commons.reflection:Metadata" />
+      <pre id="org.astoolkit.commons.reflection:IAnnotation" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="mx.utils:StringUtil" />
+      <dep id="XML" />
+      <dep id="XMLList" />
+      <dep id="org.astoolkit.commons.io.transform.api:IIODataTransform" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/io/transform/api/IIODataTransformRegistry.as" mod="1337358372000" size="938" optimizedsize="305">
+      <def id="org.astoolkit.commons.io.transform.api:IIODataTransformRegistry" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="org.astoolkit.commons.io.transform.api:IIODataTransform" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/factory/IPooledFactoryDelegate.as" mod="1337293989000" size="1149" optimizedsize="330">
+      <def id="org.astoolkit.commons.factory:IPooledFactoryDelegate" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/deng/fzip/FZip.as" mod="1337293989000" size="6287" optimizedsize="3523">
+      <def id="deng.fzip:FZip" />
+      <pre id="flash.events:EventDispatcher" />
+      <dep id="flash.events:Event" />
+      <dep id="flash.net:URLRequest" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="flash.utils:IDataOutput" />
+      <dep id="flash.net:URLStream" />
+      <dep id="deng.fzip:FZipEvent" />
+      <dep id="flash.events:IOErrorEvent" />
+      <dep id="flash.utils:IDataInput" />
+      <dep id="flash.events:SecurityErrorEvent" />
+      <dep id="Error" />
+      <dep id="flash.events:HTTPStatusEvent" />
+      <dep id="deng.fzip:FZipErrorEvent" />
+      <dep id="flash.events:ProgressEvent" />
+      <dep id="AS3" />
+      <dep id="flash.utils:Endian" />
+      <dep id="deng.fzip:FZipFile" />
+      <dep id="flash.utils:Dictionary" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/deng/utils/ChecksumUtil.as" mod="1337293989000" size="1476" optimizedsize="884">
+      <def id="deng.utils:ChecksumUtil" />
+      <pre id="Object" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="AS3" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/reflection/FieldInfo.as" mod="1337293989000" size="2080" optimizedsize="1153">
+      <def id="org.astoolkit.commons.reflection:FieldInfo" />
+      <pre id="org.astoolkit.commons.reflection:BaseInfo" />
+      <dep id="org.astoolkit.commons.reflection:IAnnotation" />
+      <dep id="flash.utils:getQualifiedClassName" />
+      <dep id="AS3" />
+      <dep id="__AS3__.vec:Vector" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/collection/api/IIteratorFactory.as" mod="1337293989000" size="722" optimizedsize="302">
+      <def id="org.astoolkit.commons.collection.api:IIteratorFactory" />
+      <pre id="org.astoolkit.commons.factory:IPooledFactory" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="org.astoolkit.commons.collection.api:IIterator" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/newloop/air/moduleloading/LimitedSignatureDereferencer.as" mod="1337293989000" size="1849" optimizedsize="1293">
+      <def id="newloop.air.moduleloading:LimitedSignatureDereferencer" />
+      <pre id="flash.security:IURIDereferencer" />
+      <pre id="Object" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="AS3" />
+      <dep id="XML" />
+      <dep id="XMLList" />
+      <dep id="flash.utils:IDataInput" />
+      <dep id="Error" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/mapping/MappingError.as" mod="1337293989000" size="528" optimizedsize="222">
+      <def id="org.astoolkit.commons.mapping:MappingError" />
+      <pre id="Error" />
+      <dep id="AS3" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/deng/fzip/FZipEvent.as" mod="1337293989000" size="701" optimizedsize="357">
+      <def id="deng.fzip:FZipEvent" />
+      <pre id="flash.events:Event" />
+      <dep id="AS3" />
+      <dep id="deng.fzip:FZipFile" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/collection/CountIterator.as" mod="1337293989000" size="1944" optimizedsize="802">
+      <def id="org.astoolkit.commons.collection:CountIterator" />
+      <pre id="org.astoolkit.commons.collection.api:IIterator" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/deng/fzip/FZipFile.as" mod="1337293989000" size="9054" optimizedsize="5448">
+      <def id="deng.fzip:FZipFile" />
+      <pre id="Object" />
+      <dep id="flash.utils:describeType" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="Date" />
+      <dep id="AS3" />
+      <dep id="flash.utils:Endian" />
+      <dep id="flash.utils:IDataOutput" />
+      <dep id="Math" />
+      <dep id="flash.utils:IDataInput" />
+      <dep id="flash.utils:Dictionary" />
+      <dep id="Error" />
+      <dep id="deng.utils:ChecksumUtil" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/mapping/MapTo.as" mod="1337293989000" size="2696" optimizedsize="1355">
+      <def id="org.astoolkit.commons.mapping:MapTo" />
+      <pre id="org.astoolkit.commons.mapping:IPropertiesMapper" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="mx.core:IFactory" />
+      <dep id="org.astoolkit.commons.factory:IPooledFactory" />
+      <dep id="org.astoolkit.commons.mapping:SimplePropertiesMapper" />
+      <dep id="org.astoolkit.commons.factory:PooledFactory" />
+      <dep id="Error" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/mapping/SimplePropertiesMapper.as" mod="1337293989000" size="2652" optimizedsize="1538">
+      <def id="org.astoolkit.commons.mapping:SimplePropertiesMapper" />
+      <pre id="org.astoolkit.commons.mapping:IPropertiesMapper" />
+      <pre id="Object" />
+      <dep id="flash.utils:getQualifiedClassName" />
+      <dep id="mx.utils:ObjectUtil" />
+      <dep id="org.astoolkit.commons.mapping:MappingError" />
+      <dep id="AS3" />
+      <dep id="mx.core:IFactory" />
+      <dep id="Error" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/reflection/AnnotationUtil.as" mod="1337293989000" size="2059" optimizedsize="1378">
+      <def id="org.astoolkit.commons.reflection:AnnotationUtil" />
+      <pre id="Object" />
+      <dep id="flash.utils:describeType" />
+      <dep id="org.astoolkit.commons.reflection:IAnnotation" />
+      <dep id="flash.utils:getQualifiedClassName" />
+      <dep id="AS3" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="mx.core:IFactory" />
+      <dep id="XML" />
+      <dep id="XMLList" />
+      <dep id="org.astoolkit.commons.reflection:Metadata" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/ns/astoolkit_private.as" mod="1337293989000" size="279" optimizedsize="140">
+      <def id="org.astoolkit.commons.ns:astoolkit_private" />
+      <dep id="AS3" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/deng/fzip/FZipErrorEvent.as" mod="1337293989000" size="719" optimizedsize="355">
+      <def id="deng.fzip:FZipErrorEvent" />
+      <pre id="flash.events:Event" />
+      <dep id="AS3" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/factory/PooledFactory.as" mod="1337293989000" size="3833" optimizedsize="2240">
+      <def id="org.astoolkit.commons.factory:PooledFactory" />
+      <pre id="org.astoolkit.commons.factory:IPooledFactory" />
+      <pre id="Object" />
+      <dep id="flash.utils:setTimeout" />
+      <dep id="flash.utils:getQualifiedClassName" />
+      <dep id="mx.utils:UIDUtil" />
+      <dep id="org.astoolkit.commons.factory:IPooledFactoryDelegate" />
+      <dep id="mx.logging:ILogger" />
+      <dep id="AS3" />
+      <dep id="mx.logging:Log" />
+      <dep id="mx.core:ClassFactory" />
+      <dep id="mx.utils:ArrayUtil" />
+      <dep id="Error" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/factory/DynamicPoolFactoryDelegate.as" mod="1337293989000" size="1395" optimizedsize="552">
+      <def id="org.astoolkit.commons.factory:DynamicPoolFactoryDelegate" />
+      <pre id="org.astoolkit.commons.factory:IPooledFactoryDelegate" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/factory/IPooledFactory.as" mod="1337293989000" size="1659" optimizedsize="466">
+      <def id="org.astoolkit.commons.factory:IPooledFactory" />
+      <pre id="mx.core:IFactory" />
+      <pre id="Object" />
+      <dep id="org.astoolkit.commons.factory:IPooledFactoryDelegate" />
+      <dep id="AS3" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/databinding/BindingUtility.as" mod="1337293989000" size="3179" optimizedsize="1693">
+      <def id="org.astoolkit.commons.databinding:BindingUtility" />
+      <pre id="Object" />
+      <dep id="org.astoolkit.commons.reflection:ClassInfo" />
+      <dep id="mx.binding:IBindingClient" />
+      <dep id="AS3" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="org.astoolkit.commons.reflection:FieldInfo" />
+      <dep id="flash.utils:getDefinitionByName" />
+      <dep id="mx.core:mx_internal" />
+      <dep id="flash.utils:Dictionary" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/deng/fzip/FZipLibrary.as" mod="1337293989000" size="4686" optimizedsize="3011">
+      <def id="deng.fzip:FZipLibrary" />
+      <pre id="flash.events:EventDispatcher" />
+      <dep id="flash.events:Event" />
+      <dep id="ReferenceError" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="flash.display:BitmapData" />
+      <dep id="trace" />
+      <dep id="deng.fzip:FZip" />
+      <dep id="deng.fzip:FZipEvent" />
+      <dep id="flash.events:IOErrorEvent" />
+      <dep id="RegExp" />
+      <dep id="flash.display:Loader" />
+      <dep id="Error" />
+      <dep id="deng.fzip:FZipErrorEvent" />
+      <dep id="AS3" />
+      <dep id="flash.display:DisplayObject" />
+      <dep id="deng.fzip:FZipFile" />
+      <dep id="flash.display:Bitmap" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/reflection/IAnnotation.as" mod="1337293989000" size="1297" optimizedsize="371">
+      <def id="org.astoolkit.commons.reflection:IAnnotation" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="XML" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/collection/ListIterator.as" mod="1337293989000" size="2552" optimizedsize="1266">
+      <def id="org.astoolkit.commons.collection:ListIterator" />
+      <pre id="org.astoolkit.commons.collection.api:IIterator" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="XMLList" />
+      <dep id="Error" />
+      <dep id="mx.collections:IList" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/reflection/ClassInfo.as" mod="1337293989000" size="3498" optimizedsize="2315">
+      <def id="org.astoolkit.commons.reflection:ClassInfo" />
+      <pre id="org.astoolkit.commons.reflection:BaseInfo" />
+      <dep id="flash.utils:setTimeout" />
+      <dep id="flash.utils:describeType" />
+      <dep id="org.astoolkit.commons.reflection:IAnnotation" />
+      <dep id="flash.utils:getQualifiedClassName" />
+      <dep id="AS3" />
+      <dep id="__AS3__.vec:Vector" />
+      <dep id="org.astoolkit.commons.reflection:FieldInfo" />
+      <dep id="flash.utils:getDefinitionByName" />
+      <dep id="XML" />
+      <dep id="org.astoolkit.commons.reflection:AnnotationUtil" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/io/transform/api/IIODataTransform.as" mod="1337419717000" size="1411" optimizedsize="404">
+      <def id="org.astoolkit.commons.io.transform.api:IIODataTransform" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="_61c70c0de19a8f6006578fad382e90d114b53c7de01f8b7417e9050b7ee578de_flash_display_Sprite.as" mod="1337611163437" size="1095" optimizedsize="562">
+      <def id="_61c70c0de19a8f6006578fad382e90d114b53c7de01f8b7417e9050b7ee578de_flash_display_Sprite" />
+      <pre id="flash.display:Sprite" />
+      <dep id="flash.system:Security" />
+      <dep id="AS3" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/collection/DefaultIteratorFactory.as" mod="1337293989000" size="2371" optimizedsize="1547">
+      <def id="org.astoolkit.commons.collection:DefaultIteratorFactory" />
+      <pre id="org.astoolkit.commons.collection.api:IIteratorFactory" />
+      <pre id="org.astoolkit.commons.factory:PooledFactory" />
+      <dep id="flash.utils:describeType" />
+      <dep id="flash.utils:getQualifiedClassName" />
+      <dep id="AS3" />
+      <dep id="org.astoolkit.commons.collection:CountIterator" />
+      <dep id="org.astoolkit.commons.collection:ListIterator" />
+      <dep id="flash.utils:getDefinitionByName" />
+      <dep id="XML" />
+      <dep id="org.astoolkit.commons.collection.api:IIterator" />
+      <dep id="XMLList" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/newloop/air/moduleloading/PackageSignatureCheck.as" mod="1337293989000" size="7751" optimizedsize="4724">
+      <def id="newloop.air.moduleloading:PackageSignatureCheck" />
+      <pre id="flash.events:EventDispatcher" />
+      <dep id="flash.events:Event" />
+      <dep id="flash.security:ReferencesValidationSetting" />
+      <dep id="flash.utils:ByteArray" />
+      <dep id="mx.utils:Base64Decoder" />
+      <dep id="flash.security:XMLSignatureValidator" />
+      <dep id="XMLList" />
+      <dep id="mx.utils:Base64Encoder" />
+      <dep id="flash.filesystem:FileMode" />
+      <dep id="flash.security:RevocationCheckSettings" />
+      <dep id="Error" />
+      <dep id="flash.security:IURIDereferencer" />
+      <dep id="AS3" />
+      <dep id="flash.filesystem:FileStream" />
+      <dep id="XML" />
+      <dep id="mx.utils:SHA256" />
+      <dep id="flash.filesystem:File" />
+      <dep id="newloop.air.moduleloading:LimitedSignatureDereferencer" />
+      <dep id="flash.security:SignatureStatus" />
+      <dep id="flash.events:ErrorEvent" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/io/transform/FunctionReferenceDataTransform.as" mod="1337419718000" size="1622" optimizedsize="682">
+      <def id="org.astoolkit.commons.io.transform:FunctionReferenceDataTransform" />
+      <pre id="org.astoolkit.commons.io.transform.api:IIODataTransform" />
+      <pre id="Object" />
+      <dep id="AS3" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/collection/api/IRepeater.as" mod="1337293989000" size="1005" optimizedsize="266">
+      <def id="org.astoolkit.commons.collection.api:IRepeater" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="org.astoolkit.commons.collection.api:IIterator" />
+    </script>
+    <script name="/Users/aekidna/Development/Projects/ASToolkit/ASToolkit/ASToolkitCommons/src/main/flex/org/astoolkit/commons/mapping/IPropertiesMapper.as" mod="1337293989000" size="1535" optimizedsize="399">
+      <def id="org.astoolkit.commons.mapping:IPropertiesMapper" />
+      <pre id="Object" />
+      <dep id="AS3" />
+      <dep id="mx.core:IFactory" />
+    </script>
+  </scripts>
+  <external-defs>
+    <ext id="flash.display:DisplayObject" />
+    <ext id="flash.display:Bitmap" />
+    <ext id="mx.logging:ILogger" />
+    <ext id="flash.utils:setTimeout" />
+    <ext id="flash.utils:Dictionary" />
+    <ext id="flash.events:SecurityErrorEvent" />
+    <ext id="flash.security:XMLSignatureValidator" />
+    <ext id="mx.utils:SHA256" />
+    <ext id="XML" />
+    <ext id="mx.core:ClassFactory" />
+    <ext id="flash.events:ProgressEvent" />
+    <ext id="__AS3__.vec:Vector" />
+    <ext id="mx.utils:Base64Decoder" />
+    <ext id="flash.events:Event" />
+    <ext id="Date" />
+    <ext id="flash.utils:IDataInput" />
+    <ext id="flash.events:HTTPStatusEvent" />
+    <ext id="mx.collections:IList" />
+    <ext id="mx.core:mx_internal" />
+    <ext id="flash.filesystem:File" />
+    <ext id="mx.utils:StringUtil" />
+    <ext id="flash.utils:getDefinitionByName" />
+    <ext id="flash.events:EventDispatcher" />
+    <ext id="mx.utils:ObjectUtil" />
+    <ext id="flash.security:ReferencesValidationSetting" />
+    <ext id="flash.system:Security" />
+    <ext id="RegExp" />
+    <ext id="flash.display:BitmapData" />
+    <ext id="mx.utils:UIDUtil" />
+    <ext id="flash.events:ErrorEvent" />
+    <ext id="trace" />
+    <ext id="Object" />
+    <ext id="XMLList" />
+    <ext id="AS3" />
+    <ext id="flash.events:IOErrorEvent" />
+    <ext id="flash.utils:Endian" />
+    <ext id="mx.utils:Base64Encoder" />
+    <ext id="flash.filesystem:FileMode" />
+    <ext id="mx.utils:ArrayUtil" />
+    <ext id="Math" />
+    <ext id="ReferenceError" />
+    <ext id="flash.utils:describeType" />
+    <ext id="flash.display:Loader" />
+    <ext id="flash.security:RevocationCheckSettings" />
+    <ext id="flash.security:IURIDereferencer" />
+    <ext id="Error" />
+    <ext id="mx.core:IFactory" />
+    <ext id="flash.net:URLStream" />
+    <ext id="flash.utils:getQualifiedClassName" />
+    <ext id="flash.utils:ByteArray" />
+    <ext id="flash.net:URLRequest" />
+    <ext id="mx.binding:IBindingClient" />
+    <ext id="flash.utils:IDataOutput" />
+    <ext id="mx.logging:Log" />
+    <ext id="flash.filesystem:FileStream" />
+    <ext id="flash.security:SignatureStatus" />
+    <ext id="flash.display:Sprite" />
+  </external-defs>
+</report>

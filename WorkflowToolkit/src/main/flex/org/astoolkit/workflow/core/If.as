@@ -27,8 +27,9 @@ package org.astoolkit.workflow.core
 	 * <p>The default property <code>Execute</code> is a Vector of elements
 	 * that are enabled if <code>condition == true</code><br><br>
 	 * An <code>&lt;Else&gt;...&lt;/Else&gt;</code> block can also be declared
-	 * for <code>condition == false</code>.<br><br>
-	 * 
+	 * for <code>condition == false</code>.
+	 * </p>
+	 * <p>
 	 * <b>Params</b>
 	 * <ul>
 	 * <li><code>condition</code>: a <code>Boolean</code> or boolean expression</li>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report>
+  <swf size="83840" compressedSize="37285">
+
+    <!-- Header data (SWF attributes, product info, markers, etc.) -->
+    <headerData totalSize="431">
+      <data type="metaData" size="329"/>
+      <data type="productInfo" size="28"/>
+      <data type="swfHeader" size="21"/>
+      <data type="debugID" size="18"/>
+      <data type="enableDebugger" size="16"/>
+      <data type="fileAttributes" size="6"/>
+      <data type="scriptLimits" size="6"/>
+      <data type="backgroundColor" size="5"/>
+      <data type="endMarker" size="2"/>
+    </headerData>
+
+    <!-- Cumulative frame size summary. -->
+    <frames totalSize="83409">
+      <frame size="83409" frame="1"/>
+    </frames>
+
+    <!-- Actionscript code and constant data. -->
+    <actionScript totalSize="83310">
+      <abc name="deng/fzip/FZipFile" size="9083" frame="1"/>
+      <abc name="newloop/air/moduleloading/PackageSignatureCheck" size="7809" frame="1"/>
+      <abc name="deng/fzip/FZip" size="6312" frame="1"/>
+      <abc name="deng/fzip/FZipLibrary" size="4718" frame="1"/>
+      <abc name="org/astoolkit/commons/factory/PooledFactory" size="3887" frame="1"/>
+      <abc name="org/astoolkit/commons/reflection/ClassInfo" size="3551" frame="1"/>
+      <abc name="org/astoolkit/commons/databinding/BindingUtility" size="3238" frame="1"/>
+      <abc name="org/astoolkit/commons/mapping/MapTo" size="2742" frame="1"/>
+      <abc name="org/astoolkit/commons/mapping/SimplePropertiesMapper" size="2715" frame="1"/>
+      <abc name="org/astoolkit/commons/collection/ListIterator" size="2608" frame="1"/>
+      <abc name="org/astoolkit/commons/collection/DefaultIteratorFactory" size="2437" frame="1"/>
+      <abc name="org/astoolkit/commons/reflection/Metadata" size="2149" frame="1"/>
+      <abc name="org/astoolkit/commons/reflection/FieldInfo" size="2133" frame="1"/>
+      <abc name="org/astoolkit/commons/reflection/AnnotationUtil" size="2117" frame="1"/>
+      <abc name="org/astoolkit/commons/collection/CountIterator" size="2001" frame="1"/>
+      <abc name="newloop/air/moduleloading/LimitedSignatureDereferencer" size="1914" frame="1"/>
+      <abc name="org/astoolkit/commons/io/transform/ObjectPropertyChainDataTransform" size="1909" frame="1"/>
+      <abc name="org/astoolkit/commons/collection/api/IIterator" size="1869" frame="1"/>
+      <abc name="org/astoolkit/commons/factory/IPooledFactory" size="1714" frame="1"/>
+      <abc name="org/astoolkit/commons/io/transform/FunctionReferenceDataTransform" size="1698" frame="1"/>
+      <abc name="org/astoolkit/commons/reflection/BaseInfo" size="1650" frame="1"/>
+      <abc name="org/astoolkit/commons/mapping/IPropertiesMapper" size="1593" frame="1"/>
+      <abc name="deng/utils/ChecksumUtil" size="1510" frame="1"/>
+      <abc name="org/astoolkit/commons/io/transform/api/IIODataTransform" size="1477" frame="1"/>
+      <abc name="org/astoolkit/commons/factory/DynamicPoolFactoryDelegate" size="1462" frame="1"/>
+      <abc name="org/astoolkit/commons/reflection/IAnnotation" size="1352" frame="1"/>
+      <abc name="org/astoolkit/commons/factory/IPooledFactoryDelegate" size="1212" frame="1"/>
+      <abc name="_61c70c0de19a8f6006578fad382e90d114b53c7de01f8b7417e9050b7ee578de_flash_display_Sprite" size="1192" frame="1"/>
+      <abc name="org/astoolkit/commons/collection/api/IRepeater" size="1062" frame="1"/>
+      <abc name="org/astoolkit/commons/io/transform/api/IIODataTransformRegistry" size="1012" frame="1"/>
+      <abc name="org/astoolkit/commons/collection/api/IIteratorFactory" size="786" frame="1"/>
+      <abc name="deng/fzip/FZipErrorEvent" size="754" frame="1"/>
+      <abc name="deng/fzip/FZipEvent" size="731" frame="1"/>
+      <abc name="org/astoolkit/commons/mapping/MappingError" size="581" frame="1"/>
+      <abc name="org/astoolkit/commons/ns/astoolkit_private" size="332" frame="1"/>
+    </actionScript>
+
+    <!-- Additional frame tags (symbolClass, exportAssets, showFrame, etc). -->
+    <frameData totalSize="99">
+      <tag type="symbolClass" size="97" frame="1"/>
+      <tag type="showFrame" size="2" frame="1"/>
+    </frameData>
+  </swf>
+</report>
