@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.astoolkit</groupId>
   <artifactId>astoolkit</artifactId>
-  <version>${BASE_VERSION}.${BUILD_NUMBER}-SNAPSHOT</version>
+  <version>${BASE_VERSION}.${env.BUILD_NUMBER}-SNAPSHOT</version>
   <name>ASToolkit Project</name>
   <packaging>pom</packaging>
 	<properties>

@@ -4,7 +4,7 @@
 	<groupId>org.astoolkit</groupId>
 	<artifactId>WorkflowToolkit</artifactId>
   
-  <version>${BASE_VERSION}.${BUILD_NUMBER}-SNAPSHOT</version>
+  <version>${BASE_VERSION}.${env.BUILD_NUMBER}-SNAPSHOT</version>
 	<name>Workflow Toolkit</name>
 	<packaging>swc</packaging>
 	<properties>
@@ -14,14 +14,14 @@
 	<parent>
     <artifactId>astoolkit</artifactId>
     <groupId>org.astoolkit</groupId>
-    <version>${BASE_VERSION}.${BUILD_NUMBER}-SNAPSHOT</version>
+    <version>${BASE_VERSION}.${env.BUILD_NUMBER}-SNAPSHOT</version>
   </parent>
   
   <dependencies>
   	<dependency>
   		<artifactId>ASToolkitCommons</artifactId>
 	    <groupId>org.astoolkit</groupId>
-	    <version>${BASE_VERSION}.${BUILD_NUMBER}-SNAPSHOT</version>
+	    <version>${BASE_VERSION}.${env.BUILD_NUMBER}-SNAPSHOT</version>
 	    <type>swc</type>
   	</dependency>
   </dependencies>
