@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.astoolkit</groupId>
   <artifactId>astoolkit</artifactId>
-  <version>2.0.1</version>
+  <version>2.0.0-SNAPSHOT</version>
   <name>ASToolkit Project</name>
   <packaging>pom</packaging>
 	<properties>
@@ -136,5 +136,10 @@
       </dependency>
 	</dependencies>
 
-  
+  <distributionManagement>
+    <repository>
+      <id>local-repository</id>
+      <url>file:///var/apache/www_astoolkit_org/htdocs/static/snapshot/</url>
+    </repository>
+  </distributionManagement>
 </project>
