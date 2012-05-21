@@ -39,7 +39,7 @@ package org.astoolkit.commons.io.transform
 		/**
 		 * @private
 		 */
-		public function isValidFilter( inExpression : Object ) : Boolean
+		public function isValidExpression( inExpression : Object ) : Boolean
 		{
 			return inExpression is Function; 
 		}
@@ -55,7 +55,7 @@ package org.astoolkit.commons.io.transform
 		/**
 		 * @private
 		 */
-		public function get supportedFilterTypes() : Vector.<Class>
+		public function get supportedExpressionTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
 			out.push( Function );

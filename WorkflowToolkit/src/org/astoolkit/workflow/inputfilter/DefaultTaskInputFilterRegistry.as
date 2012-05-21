@@ -46,9 +46,9 @@ package org.astoolkit.workflow.inputfilter
 				{
 					if( inData is dataType )
 					{
-						for each( var filterType : Class in f.supportedFilterTypes )
+						for each( var filterType : Class in f.supportedExpressionTypes )
 						{
-							if( inExpression is filterType && f.isValidFilter( inExpression ) )
+							if( inExpression is filterType && f.isValidExpression( inExpression ) )
 							{
 								return f;
 							}

@@ -95,7 +95,7 @@ package org.astoolkit.workflow.plugin.xpath
 		/**
 		 * returns true if <code>inExpression</code> is a valid XPath expression string
 		 */
-		public function isValidFilter( inExpression : Object ) : Boolean
+		public function isValidExpression( inExpression : Object ) : Boolean
 		{
 			if( inExpression is String )
 			{
@@ -114,7 +114,7 @@ package org.astoolkit.workflow.plugin.xpath
 		/**
 		 * @private
 		 */
-		public function get supportedFilterTypes() : Vector.<Class>
+		public function get supportedExpressionTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
 			out.push( String );

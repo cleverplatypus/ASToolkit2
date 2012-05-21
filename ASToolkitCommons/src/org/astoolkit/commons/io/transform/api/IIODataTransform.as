@@ -33,7 +33,7 @@ package org.astoolkit.commons.io.transform.api
 		 */
 		function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
 		/**
-		 * an int for ordering transforming priorities.
+		 * an int for ordering transformers priorities.
 		 */
 		function get priority() : int;
 		/**
@@ -46,13 +46,13 @@ package org.astoolkit.commons.io.transform.api
 		 * the list of types that can be used as transform descriptor (inExpression) for
 		 * the <code>transform()</code> method
 		 */ 
-		function get supportedFilterTypes() : Vector.<Class>;
+		function get supportedExpressionTypes() : Vector.<Class>;
 		
 		/**
 		 * returns true if the passed transform data is successfully
 		 * validated (e.g. expression syntax checks)
 		 */
-		function isValidFilter( inExpression : Object ) : Boolean;
+		function isValidExpression( inExpression : Object ) : Boolean;
 		
 	}
 }

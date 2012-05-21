@@ -58,7 +58,7 @@ package org.astoolkit.workflow.core
 	 *             /&gt;
 	 *     &lt;/Case&gt;
 	 *     &lt;Default&gt;
-	 *         &lt;parsley:SendMessage
+	 *         &lt;msg:SendMessage
 	 *             msg=&quot;{ new ShowPublicHomeMessage() }&quot;
 	 *             /&gt;
 	 *     &lt;/Default&gt;
