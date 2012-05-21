@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.astoolkit</groupId>
 	<artifactId>WorkflowAirToolkit</artifactId>
-	<version>${BASE_VERSION}.${env.BUILD_NUMBER}-SNAPSHOT</version>
+	<version>${project.version}</version>
 	<name>Workflow Air Toolkit</name>
 	<packaging>swc</packaging>
 	<properties>
@@ -12,19 +12,19 @@
 	<parent>
 		<artifactId>astoolkit</artifactId>
 		<groupId>org.astoolkit</groupId>
-		<version>${BASE_VERSION}.${env.BUILD_NUMBER}-SNAPSHOT</version>
+		<version>${project.version}</version>
 	</parent>
 	<dependencies>
 		<dependency>
 			<artifactId>ASToolkitCommons</artifactId>
 			<groupId>org.astoolkit</groupId>
-			<version>${BASE_VERSION}.${env.BUILD_NUMBER}-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<type>swc</type>
 		</dependency>
 		<dependency>
 			<artifactId>WorkflowToolkit</artifactId>
 			<groupId>org.astoolkit</groupId>
-			<version>${BASE_VERSION}.${env.BUILD_NUMBER}-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<type>swc</type>
 		</dependency>
 	</dependencies>
