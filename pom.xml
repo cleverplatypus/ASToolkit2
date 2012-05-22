@@ -107,8 +107,6 @@
 			</snapshots>
 		</repository>
 	</repositories>
-
-
   	<pluginRepositories>
 		<pluginRepository>
 			<id>flex-mojos-plugin-repository</id>
