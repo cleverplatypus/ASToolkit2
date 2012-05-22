@@ -28,6 +28,11 @@
 		<finalName>${project.artifactId}</finalName>
 		<sourceDirectory>src/main/flex</sourceDirectory>
 		<testSourceDirectory>src/test/flex</testSourceDirectory>
+		<extension>
+			<groupId>org.apache.maven.wagon</groupId>
+			<artifactId>wagon-webdav-jackrabbit</artifactId>
+			<version>1.0-beta-7</version>
+		</extension>
 		<plugins>
 			<plugin>
 				<groupId>org.sonatype.flexmojos</groupId>
