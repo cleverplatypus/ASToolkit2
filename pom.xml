@@ -146,6 +146,10 @@
 		</dependency>
 	</dependencies>
 	<distributionManagement>
+		<repository>
+			<id>snapshotWebDir</id>
+			<url>dav:http://www.astoolkit.org/snapshot/</url>
+		</repository>
 		<site>
 			<id>snapshotWebDir</id>
 			<url>dav:http://www.astoolkit.org/snapshot/</url>
