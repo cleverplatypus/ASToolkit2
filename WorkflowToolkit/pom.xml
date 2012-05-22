@@ -3,23 +3,20 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.astoolkit</groupId>
 	<artifactId>WorkflowToolkit</artifactId>
-  
-  <version>2.0.0-SNAPSHOT</version>
+	<version>${BASE_VERSION}.${BUILD_NUMBER}-SNAPSHOT</version>
 	<name>Workflow Toolkit</name>
 	<packaging>swc</packaging>
-	
 	<parent>
-    <artifactId>astoolkit</artifactId>
-    <groupId>org.astoolkit</groupId>
-    <version>2.0.0-SNAPSHOT</version>
-  </parent>
-  
-  <dependencies>
-  	<dependency>
-  		<artifactId>ASToolkitCommons</artifactId>
-	    <groupId>org.astoolkit</groupId>
-	    <version>2.0.0-SNAPSHOT</version>
-	    <type>swc</type>
-  	</dependency>
-  </dependencies>
+		<artifactId>astoolkit</artifactId>
+		<groupId>org.astoolkit</groupId>
+		<version>2.0.0-SNAPSHOT</version>
+	</parent>
+	<dependencies>
+		<dependency>
+			<artifactId>ASToolkitCommons</artifactId>
+			<groupId>org.astoolkit</groupId>
+			<version>2.0.0-SNAPSHOT</version>
+			<type>swc</type>
+		</dependency>
+	</dependencies>
 </project>

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.astoolkit</groupId>
 	<artifactId>WorkflowToolkitXPathPlugIn</artifactId>
-	<version>2.0.0-SNAPSHOT</version>
+	<version>${BASE_VERSION}.${BUILD_NUMBER}-SNAPSHOT</version>
 	<name>Workflow XPath Plugin</name>
 	<packaging>swc</packaging>
 	<parent>
@@ -15,13 +15,13 @@
 		<dependency>
 			<artifactId>ASToolkitCommons</artifactId>
 			<groupId>org.astoolkit</groupId>
-			<version>2.0.0-SNAPSHOT</version>
+			<version>${BASE_VERSION}.${BUILD_NUMBER}-SNAPSHOT</version>
 			<type>swc</type>
 		</dependency>
 		<dependency>
 			<artifactId>WorkflowToolkit</artifactId>
 			<groupId>org.astoolkit</groupId>
-			<version>2.0.0-SNAPSHOT</version>
+			<version>${BASE_VERSION}.${BUILD_NUMBER}-SNAPSHOT</version>
 			<type>swc</type>
 		</dependency>
 		<dependency>
