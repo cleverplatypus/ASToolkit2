@@ -1,10 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.astoolkit</groupId>
-  <artifactId>astoolkit</artifactId>
-  <version>[COMPLETE_BUILD_VERSION]</version>
-  <name>ASToolkit Project</name>
-  <packaging>pom</packaging>
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.astoolkit</groupId>
+	<artifactId>astoolkit</artifactId>
+	<version>[COMPLETE_BUILD_VERSION]</version>
+	<name>ASToolkit Project</name>
+	<packaging>pom</packaging>
 	<properties>
 		<flex.flashPlayer.command>FlashPlayerDebugger.exe</flex.flashPlayer.command>
 		<flex.version>${FLEX_VERSION}</flex.version>
@@ -12,13 +17,13 @@
 		<sonar.dynamicAnalysis>false</sonar.dynamicAnalysis>
 		<sonar.branch>astoolkit</sonar.branch>
 	</properties>
-  <modules>
-    <module>ASToolkitCommons</module>
-    <module>WorkflowToolkit</module>
-    <module>WorkflowAirToolkit</module>
-    <module>WorkflowToolkitParsleyPlugIn</module>
-    <module>WorkflowToolkitXPathPlugIn</module>
-  </modules>
+	<modules>
+		<module>ASToolkitCommons</module>
+		<module>WorkflowToolkit</module>
+		<module>WorkflowAirToolkit</module>
+		<module>WorkflowToolkitParsleyPlugIn</module>
+		<module>WorkflowToolkitXPathPlugIn</module>
+	</modules>
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<sourceDirectory>src/main/flex</sourceDirectory>
@@ -107,7 +112,7 @@
 			</snapshots>
 		</repository>
 	</repositories>
-  	<pluginRepositories>
+	<pluginRepositories>
 		<pluginRepository>
 			<id>flex-mojos-plugin-repository</id>
 			<url>http://repository.sonatype.org/content/groups/flexgroup</url>
@@ -127,17 +132,16 @@
 			<type>pom</type>
 		</dependency>
 		<dependency>
-        <groupId>org.spicefactory</groupId>
-        <artifactId>parsley-flex4</artifactId>
-        <version>2.4.1</version>
-        <type>swc</type>
-      </dependency>
+			<groupId>org.spicefactory</groupId>
+			<artifactId>parsley-flex4</artifactId>
+			<version>2.4.1</version>
+			<type>swc</type>
+		</dependency>
 	</dependencies>
-
-  <!--<distributionManagement>
-    <repository>
-      <id>local-repository</id>
-      <url>file:///var/apache/www_astoolkit_org/htdocs/static/snapshot/</url>
-    </repository>
-  </distributionManagement>-->
+	<distributionManagement>
+		<repository>
+			<id>local-repository</id>
+			<url>file:///var/apache/www_astoolkit_org/htdocs/static/snapshot/</url>
+		</repository>
+	</distributionManagement>
 </project>
