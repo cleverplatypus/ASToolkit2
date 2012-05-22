@@ -141,7 +141,7 @@
 	<distributionManagement>
 		<repository>
 			<id>dav-repository</id>
-			<url>dav:http://www.astoolkit.org/snapshot/</url>
+			<url>http://www.astoolkit.org/snapshot/</url>
 		</repository>
 	</distributionManagement>
 </project>
