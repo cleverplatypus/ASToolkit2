@@ -6,9 +6,6 @@
 	<version>2.0.0-SNAPSHOT</version>
 	<name>Workflow Air Toolkit</name>
 	<packaging>swc</packaging>
-	<properties>
-		<sonar.branch>workflowairtoolkit</sonar.branch>
-	</properties>
 	<parent>
 		<artifactId>astoolkit</artifactId>
 		<groupId>org.astoolkit</groupId>
