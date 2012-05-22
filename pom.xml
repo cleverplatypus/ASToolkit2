@@ -136,10 +136,10 @@
       </dependency>
 	</dependencies>
 
-  <distributionManagement>
+  <!--<distributionManagement>
     <repository>
       <id>local-repository</id>
       <url>file:///var/apache/www_astoolkit_org/htdocs/static/snapshot/</url>
     </repository>
-  </distributionManagement>
+  </distributionManagement>-->
 </project>
