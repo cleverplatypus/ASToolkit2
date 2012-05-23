@@ -148,11 +148,7 @@
 	<distributionManagement>
 		<repository>
 			<id>snapshotWebDir</id>
-			<url>dav:http://www.astoolkit.org/snapshot/</url>
+			<url>http://www.astoolkit.org:8080/ASToolkitOrg/DeploySnapshot</url>
 		</repository>
-		<site>
-			<id>snapshotWebDir</id>
-			<url>dav:http://www.astoolkit.org/snapshot/</url>
-		</site>
 	</distributionManagement>
 </project>
