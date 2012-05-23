@@ -145,10 +145,4 @@
 			<type>swc</type>
 		</dependency>
 	</dependencies>
-	<distributionManagement>
-		<repository>
-			<id>snapshotWebDir</id>
-			<url>http://www.astoolkit.org:8080/ASToolkitOrg/DeploySnapshot</url>
-		</repository>
-	</distributionManagement>
 </project>
