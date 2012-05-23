@@ -2,13 +2,13 @@
 <project>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.astoolkit</groupId>
-	<version>[COMPLETE_BUILD_VERSION]</version>
+	<version>0.0.0-SNAPSHOT</version>
 	<artifactId>ASToolkitCommons</artifactId>
 	<name>ASToolkit Commons</name>
 	<packaging>swc</packaging>
 	<parent>
 		<artifactId>astoolkit</artifactId>
 		<groupId>org.astoolkit</groupId>
-		<version>[COMPLETE_BUILD_VERSION]</version>
+		<version>0.0.0-SNAPSHOT</version>
 	</parent>
 </project>
