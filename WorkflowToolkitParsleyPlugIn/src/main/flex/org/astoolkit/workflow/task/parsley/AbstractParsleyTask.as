@@ -19,23 +19,24 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.parsley
 {
-	import org.astoolkit.workflow.core.BaseTask;
-	import org.astoolkit.workflow.api.IContextPlugIn;
-	import org.astoolkit.workflow.plugin.parsley.ParsleyPlugIn;
-	
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	
+	import org.astoolkit.workflow.api.IContextPlugIn;
+	import org.astoolkit.workflow.core.BaseTask;
+	import org.astoolkit.workflow.plugin.parsley.ParsleyPlugIn;
 	import org.spicefactory.parsley.core.context.Context;
 	import org.spicefactory.parsley.core.messaging.command.CommandStatus;
 	import org.spicefactory.parsley.core.messaging.receiver.CommandObserver;
 	
+	[Bindable]
 	public class AbstractParsleyTask extends BaseTask
 	{
 		protected var _parsleyHelper : ParsleyPlugIn;
 		private var _parsleyContext : Context;
 		
-		public var scope : String;
+		public var scope : Object;
+		
 		
 		public function AbstractParsleyTask()
 		{
@@ -48,7 +49,7 @@ package org.astoolkit.workflow.task.parsley
 		{
 			parsleyContext
 			.scopeManager
-				.getScope( scope )
+				.getScope( scope as String )
 				.messageReceivers
 				.addCommandObserver( inObserver );
 		}
@@ -57,7 +58,7 @@ package org.astoolkit.workflow.task.parsley
 		{
 			parsleyContext
 			.scopeManager
-				.getScope( scope )
+				.getScope( scope as String )
 				.messageReceivers
 				.removeCommandObserver( inObserver );
 		}
@@ -164,7 +165,7 @@ class Observer implements CommandObserver
 		{
 			var result : Object = 
 				returnValue is AsyncToken ?  
-					ResultEvent( AsyncToken( returnValue ).result ).result : returnValue;
+					AsyncToken( returnValue ).result : returnValue;
 				_handler( result, inProcessor.message );
 		}
 		else if( status.key == CommandStatus.ERROR.key )
