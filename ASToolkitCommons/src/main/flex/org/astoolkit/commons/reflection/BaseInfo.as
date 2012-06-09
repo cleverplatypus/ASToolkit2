@@ -53,14 +53,19 @@ package org.astoolkit.commons.reflection
 				return _annotationsForType.hasOwnProperty( getQualifiedClassName( inValue ) );
 			return false;
 		}
+		
 		public function getAnnotationsOfType( inClass : Class ) : Vector.<IAnnotation>
 		{
-			return _annotationsForType[ getQualifiedClassName( inClass ) ];
+			if( _annotationsForType.hasOwnProperty( getQualifiedClassName( inClass ) ) )
+				return _annotationsForType[ getQualifiedClassName( inClass ) ];
+			return null;
 		}
 		
 		public function getAnnotationsWithName( inName : String ) : Vector.<IAnnotation>
 		{
-			return _annotationsForType[ inName ];
+			if( _annotationsForType.hasOwnProperty( inName ) )
+				return _annotationsForType[ inName ];
+			return null;
 		}
 	}
 }

@@ -31,7 +31,7 @@ package org.astoolkit.workflow.task.flowcontrol
 			{
 				systemManager.addEventListener( 
 					FlexEvent.IDLE,
-					onIdle );
+					threadSafe( onIdle ) );
 			}
 		}
 		
@@ -40,7 +40,5 @@ package org.astoolkit.workflow.task.flowcontrol
 			if( systemManager.mx_internal::idleCounter >= ( ( idleTime - 1000  ) / 100 ) )
 				complete();
 		}
-		
-		
 	}
 }

@@ -19,9 +19,9 @@ Version 2.x
 */
 package org.astoolkit.commons.factory
 {
+	
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
-	
 	import mx.core.ClassFactory;
 	import mx.logging.ILogger;
 	import mx.logging.Log;
@@ -30,24 +30,17 @@ package org.astoolkit.commons.factory
 	
 	public class PooledFactory implements IPooledFactory
 	{
-		private static const LOGGER : ILogger = 
+		private static const LOGGER : ILogger =
 			Log.getLogger( getQualifiedClassName( PooledFactory ).replace(/:+/g, "." ) );
-
 		private var _pool : Array = [];
 		private var _busyObjects : Array = [];
-		
 		private var _defaultType : Class;
 		public var defaultProperties : Object;
-		
 		public var poolCleanupDelay : int = 5000;
 		public var minimumStock : int = 1;
-		
 		private var _delegate : IPooledFactoryDelegate;
-		
 		private var _backupProperties : Array;
-		
 		private var _propertiesBackup : Object = {};
-		
 		private var _genericFactory : ClassFactory = new ClassFactory();
 		
 		public function set delegate( inDelegate : IPooledFactoryDelegate ) : void
@@ -59,19 +52,21 @@ package org.astoolkit.commons.factory
 		{
 			_backupProperties = inProperties;
 		}
-
+		
 		/**
 		 * creates a new instance of the give type or of <code>defaultType</code> class
 		 * or returns a pooled instance
 		 */
 		public function getInstance( inType : Class = null, inProperties : Object = null ) : *
 		{
-			if( !inType )
+			if ( !inType )
 				inType = defaultType;
-			if( !inProperties )
+			
+			if ( !inProperties )
 				inProperties = defaultProperties;
 			var out : Object;
-			if( _delegate && _delegate.delegateInstantiation )
+			
+			if ( _delegate && _delegate.delegateInstantiation )
 				out = _delegate.newInstance( inType, inProperties );
 			else
 			{
@@ -79,19 +74,25 @@ package org.astoolkit.commons.factory
 				_genericFactory.generator = inType;
 				out = _genericFactory.newInstance();
 			}
+			
+			if ( _delegate )
+				_delegate.onPostCreate( out );
 			_pool.push( out );
-			if( _backupProperties && _backupProperties.length > 0 )
+			
+			if ( _backupProperties && _backupProperties.length > 0 )
 			{
-				var backup : Object = 
+				var backup : Object =
 					_propertiesBackup.hasOwnProperty( UIDUtil.getUID( out ) );
-				if( !backup )
+				
+				if ( !backup )
 				{
 					backup = {};
 					_propertiesBackup[ UIDUtil.getUID( out ) ] = backup;
 				}
-				for each( var p : String in _backupProperties ) 
+				
+				for each ( var p : String in _backupProperties )
 				{
-					if( out.hasOwnProperty( p ) )
+					if ( out.hasOwnProperty( p ) )
 						backup[ p ] = out[ p ];
 					else
 						LOGGER.warn( "{0} doesn't have a '{1}' property", getQualifiedClassName( out ), p );
@@ -112,19 +113,23 @@ package org.astoolkit.commons.factory
 		{
 			_busyObjects.splice( ArrayUtil.getItemIndex( inObject, _busyObjects ), 1 );
 			_pool.push( inObject );
-			if( _backupProperties && _backupProperties.length > 0 )
+			
+			if ( _backupProperties && _backupProperties.length > 0 )
 			{
-				var backup : Object = 
+				var backup : Object =
 					_propertiesBackup[ UIDUtil.getUID( inObject ) ];
-				for each( var p : String in _backupProperties ) 
+				
+				for each ( var p : String in _backupProperties )
 				{
-					if( inObject.hasOwnProperty( p ) )
+					if ( inObject.hasOwnProperty( p ) )
 						inObject[ p ] = backup[ p ];
 				}
 			}
-			if( _delegate )
+			
+			if ( _delegate )
 				_delegate.onRelease( inObject );
-			if( _busyObjects.length == 0 )
+			
+			if ( _busyObjects.length == 0 )
 				setTimeout( vacuum, poolCleanupDelay );
 		}
 		
@@ -133,28 +138,30 @@ package org.astoolkit.commons.factory
 		 */
 		public function vacuum( inType : Object = null ) : void
 		{
-			if( _busyObjects.length == 0 )
+			if ( _busyObjects.length == 0 )
 			{
-				while( _pool.length > minimumStock )
+				while ( _pool.length > minimumStock )
 				{
 					var object : Object = _pool.pop();
-					if( _propertiesBackup.hasOwnProperty( UIDUtil.getUID( object ) ) )
+					
+					if ( _propertiesBackup.hasOwnProperty( UIDUtil.getUID( object ) ) )
 						delete _propertiesBackup[ UIDUtil.getUID( object ) ];
-					if( _delegate )
+					
+					if ( _delegate )
 						_delegate.onDestroy( object );
 				}
 			}
-
 		}
 		
 		public function cleanup() : void
 		{
-			if( _busyObjects.length > 0 )
+			if ( _busyObjects.length > 0 )
 				throw new Error( 
 					"Error cleaning up the pool. Some objects are still in use" );
-			if( _delegate )
+			
+			if ( _delegate )
 			{
-				for each( var object : Object in _pool )
+				for each ( var object : Object in _pool )
 				{
 					_delegate.onDestroy( object );
 				}
@@ -162,21 +169,20 @@ package org.astoolkit.commons.factory
 			_pool = [];
 		}
 		
-		
-		public function newInstance():*
+		public function newInstance() : *
 		{
-			if( defaultType )
+			if ( defaultType )
 				return getInstance( defaultType, defaultProperties );
 			LOGGER.warn( "PooledFactory newInstance() is returning an instance of Object " +
 				"because defaultType wasn't set" );
 			return {};
 		}
 		
-		public function get defaultType():Class
+		public function get defaultType() : Class
 		{
 			return _defaultType;
 		}
-
+		
 		public function set defaultType( inValue : Class ) : void
 		{
 			_defaultType = inValue;
@@ -191,8 +197,5 @@ package org.astoolkit.commons.factory
 			out.delegate = inDelegate;
 			return out;
 		}
-			
-
-		
 	}
 }

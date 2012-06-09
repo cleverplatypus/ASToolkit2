@@ -17,20 +17,10 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.task.pipeline
+package org.astoolkit.workflow.api
 {
-	import flash.events.Event;
-	
-	public class TransformPipelineEvent extends Event
+	public interface ITaskTemplate extends IWorkflowElement
 	{
-		public static const TRANSFORM : String = "transform";
-		
-		public var pipelineData : *;
-		
-		public function TransformPipelineEvent( inPipelineData : * )
-		{
-			super( TRANSFORM );
-			pipelineData = inPipelineData;
-		}
+		function get templateImplementation() : IWorkflowTask;
 	}
 }

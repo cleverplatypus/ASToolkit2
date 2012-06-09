@@ -17,16 +17,20 @@ limitations under the License.
 Version 2.x
 
 */
-
-package org.astoolkit.workflow.constant
+package org.astoolkit.commons.utils
 {
-	/**
-	 * Constant for BaseTask's outlet to prevent a task's output to be
-	 * put in the wrapping workflow's pipeline
-	 */
-	public const CLOSED_OUTLET : PrivateClosedOutlet = new PrivateClosedOutlet();
-}
-class PrivateClosedOutlet
-{
-	
+	public function isDynamic( inObject : Object ) : Boolean
+	{
+		try
+		{
+			inObject[ "ajldhsdjsalhjkdfshfdjhkfdlhjlkdf8ahfdsl98asdnlkfdasodsafnildsf9" ] = "";
+			delete inObject[ "ajldhsdjsalhjkdfshfdjhkfdlhjlkdf8ahfdsl98asdnlkfdasodsafnildsf9" ];
+			return true;
+		}
+		catch ( e : Error )
+		{
+			return false;
+		}
+		return false;
+	}
 }

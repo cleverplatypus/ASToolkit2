@@ -20,6 +20,7 @@ Version 2.x
 package org.astoolkit.workflow.plugin.parsley
 {
 	import org.astoolkit.workflow.api.*;
+	import org.astoolkit.workflow.task.parsley.SendMessage;
 	import org.spicefactory.parsley.core.context.Context;
 
 	/**
@@ -73,6 +74,8 @@ package org.astoolkit.workflow.plugin.parsley
 	 */
 	public class ParsleyPlugIn implements IContextPlugIn
 	{
+		private var _disabledExtensions : Array;
+		
 		[Inject]
 		/**
 		 * the injected Parsley context
@@ -89,13 +92,19 @@ package org.astoolkit.workflow.plugin.parsley
 		/**
 		 * @private
 		 */
-		public function getExtensions() : Array
+		public function get extensions() : Array
 		{
-			return null;
+			return [ SendMessage ];
 		}
 		
+		public function get disabledExtensions() : Array
+		{
+			return _disabledExtensions;
+		}
 		
-		
-		
+		public function set disabledExtensions( inValue : Array ) : void
+		{
+			_disabledExtensions = inValue;
+		}
 	}
 }

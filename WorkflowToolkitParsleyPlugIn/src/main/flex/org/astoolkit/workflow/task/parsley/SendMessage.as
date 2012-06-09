@@ -17,14 +17,8 @@ limitations under the License.
 Version 2.x
 
 */
-
 package org.astoolkit.workflow.task.parsley
 {
-	import org.astoolkit.commons.mapping.IPropertiesMapper;
-	import org.astoolkit.commons.mapping.MappingError;
-	import org.astoolkit.commons.mapping.SimplePropertiesMapper;
-	import org.astoolkit.workflow.constant.FailurePolicy;
-	
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	
@@ -33,6 +27,11 @@ package org.astoolkit.workflow.task.parsley
 	import mx.logging.Log;
 	import mx.utils.StringUtil;
 	
+	import org.astoolkit.commons.mapping.IPropertiesMapper;
+	import org.astoolkit.commons.mapping.MappingError;
+	import org.astoolkit.commons.mapping.SimplePropertiesMapper;
+	import org.astoolkit.workflow.constant.FailurePolicy;
+	import org.astoolkit.workflow.task.api.ISendMessage;
 	import org.spicefactory.parsley.core.messaging.command.CommandObserverProcessor;
 	import org.spicefactory.parsley.core.messaging.command.CommandStatus;
 	import org.spicefactory.parsley.core.messaging.receiver.CommandObserver;
@@ -44,7 +43,7 @@ package org.astoolkit.workflow.task.parsley
 	 * Otherwise it will complete straight after sending the message. 
 	 */
 	[Bindable]
-	public class SendMessage extends AbstractParsleyTask
+	public class SendMessage extends AbstractParsleyTask implements ISendMessage
 	{
 		
 		private static const LOGGER : ILogger = 
@@ -147,8 +146,6 @@ package org.astoolkit.workflow.task.parsley
 			fail( inErrorMessage );
 		}
 		
-		
-		
 		override public function cleanUp():void
 		{
 			super.cleanUp();
@@ -219,7 +216,7 @@ package org.astoolkit.workflow.task.parsley
 				registerCommandObserver( _completeObserver );
 				registerCommandObserver( _errorObserver );
 			}
-			parsleyContext.scopeManager.getScope( scope ).dispatchMessage( aMessage, selector );
+			parsleyContext.scopeManager.getScope( scope as String ).dispatchMessage( aMessage, selector );
 			if( !isCommand )
 				complete();
 		}
@@ -231,6 +228,11 @@ package org.astoolkit.workflow.task.parsley
 				inProperty,
 				getQualifiedClassName( inSource ),
 				getQualifiedClassName(inTarget ) );
+		}
+		
+		override protected function complete(inOutputData:*=null):void
+		{
+			super.complete( inOutputData );
 		}
 	}
 }

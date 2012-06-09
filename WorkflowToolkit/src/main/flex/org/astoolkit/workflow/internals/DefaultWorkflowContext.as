@@ -17,26 +17,25 @@ limitations under the License.
 Version 2.x
 
 */
-
 package org.astoolkit.workflow.internals
 {
+	
 	import flash.events.EventDispatcher;
 	import flash.utils.getQualifiedClassName;
-	
 	import mx.logging.ILogger;
 	import mx.logging.Log;
-	
 	import org.astoolkit.commons.factory.IPooledFactory;
-	import org.astoolkit.commons.io.transform.api.IIODataTransform;
+	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
+	import org.astoolkit.commons.reflection.ClassInfo;
+	import org.astoolkit.workflow.annotation.Template;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.TaskStatus;
 	
 	[Bindable]
 	public class DefaultWorkflowContext extends EventDispatcher implements IWorkflowContext
 	{
-		private static const LOGGER : ILogger = 
+		private static const LOGGER : ILogger =
 			Log.getLogger( getQualifiedClassName( DefaultWorkflowContext ).replace(/:+/g, "." ) );
-
 		private var _initialized : Boolean;
 		private var _status : String;
 		private var _variables : ContextVariablesProvider;
@@ -50,31 +49,25 @@ package org.astoolkit.workflow.internals
 		private var _data : Object;
 		private var _dropIns : Object;
 		
-		public function get taskLiveCycleWatchers():Vector.<ITaskLiveCycleWatcher>
+		public function get taskLiveCycleWatchers() : Vector.<ITaskLiveCycleWatcher>
 		{
 			return _taskLiveCycleWatchers;
 		}
 		
-		
-		public function set runningTask(inTask:IWorkflowTask):void
+		public function set runningTask(inTask:IWorkflowTask) : void
 		{
 			_runninTask = inTask;
-			
 		}
 		
-		public function get runningStack():Vector.<IWorkflowTask>
+		public function get runningStack() : Vector.<IWorkflowTask>
 		{
 			return _runningStack.concat();
 		}
 		
-		
-		
-		
-		public function get runningTask():IWorkflowTask
+		public function get runningTask() : IWorkflowTask
 		{
 			return _runninTask;
 		}
-		
 		
 		public function get status() : String
 		{
@@ -84,7 +77,8 @@ package org.astoolkit.workflow.internals
 		public function set status( inStatus :String ) : void
 		{
 			_status = inStatus;
-			if( _status == TaskStatus.STOPPED )
+			
+			if ( _status == TaskStatus.STOPPED )
 				_initialized = false;
 		}
 		
@@ -113,38 +107,37 @@ package org.astoolkit.workflow.internals
 			return _suspendableFunctions;
 		}
 		
-		
 		public function get initialized() : Boolean
 		{
 			return _initialized;
 		}
-				
-		public function set config(inValue:IContextConfig):void
+		
+		public function set config(inValue:IContextConfig) : void
 		{
-			if( !_config )
+			if ( !_config )
 				_config = inValue;
 		}
 		
-		public function get config():IContextConfig
+		public function get config() : IContextConfig
 		{
 			return _config;
 		}
 		
-		
 		public function init() : void
 		{
 			LOGGER.info( "Initializing context" );
-			_variables  = new ContextVariablesProvider();
+			_variables = new ContextVariablesProvider( this );
 			_data = {};
 			_taskLiveCycleWatchers = new Vector.<ITaskLiveCycleWatcher>();
 			_taskLiveCycleWatchers.push( _variables );
-			if( !_config )
+			
+			if ( !_config )
 				_config = new DefaultContextConfig();
 			LOGGER.info( "Initializing context configuration" );
 			_config.init();
-			
 			_plugIns = new Vector.<IContextPlugIn>();
-			for each( var dropIn : Object in _dropIns )
+			
+			for each ( var dropIn : Object in _dropIns )
 			{
 				inspectExtension( dropIn );
 			}
@@ -154,52 +147,66 @@ package org.astoolkit.workflow.internals
 			_suspendableFunctions.initResumeCallBacks();
 			_initialized = true;
 			LOGGER.info( "Context initialized" );
-
 		}
 		
 		private function inspectExtension( inObject : Object ) : void
 		{
-			if( inObject is IContextPlugIn )
+			if ( inObject is IContextPlugIn )
 			{
 				_plugIns.push( inObject );
 				LOGGER.info( "Adding context plug-in: " + 
 					getQualifiedClassName( inObject ) );
 				IContextPlugIn( inObject ).init();
-				for each( var e : Object in IContextPlugIn( inObject ).getExtensions() )
+				
+				for each ( var e : Object in IContextPlugIn( inObject ).extensions )
 				{
 					inspectExtension( e );
 				}
 			}
+			var classInfo : ClassInfo = ClassInfo.forType( inObject );
+			var templateInterfaces : Vector.<ClassInfo> =
+				classInfo.getInterfacesWithAnnotationsOfType( Template );
 			
-			if( inObject is ITaskLiveCycleWatcher )
+			if ( templateInterfaces.length > 0
+				&& !( classInfo.type is ITaskTemplate ) )
+			{
+				config.templateRegistry.registerImplementation( inObject );
+				LOGGER.info( "Registering template implementation for interface: " + 
+					getQualifiedClassName( ClassInfo( templateInterfaces[ 0 ] ).type ) );
+			}
+			
+			if ( inObject is ITaskLiveCycleWatcher )
 			{
 				_taskLiveCycleWatchers.push( inObject );
 				LOGGER.info( "Adding task livecycle watcher: " + 
 					getQualifiedClassName( inObject ) );
 			}
-			if( inObject is IIODataTransform )
+			
+			if ( inObject is IIODataTransformer )
 			{
-				_config.inputFilterRegistry.registerTransformer( inObject as IIODataTransform );
+				_config.inputFilterRegistry.registerTransformer( inObject as IIODataTransformer );
 				LOGGER.info( "Registering IIOFilter : " + 
 					getQualifiedClassName( inObject ) );
-			}			
+			}
 		}
-
+		
 		public function get plugIns() : Vector.<IContextPlugIn>
 		{
 			return _plugIns;
 		}
 		
-		public function cleanup():void
+		public function cleanup() : void
 		{
 			_data = null;
-			if( _config.inputFilterRegistry is IPooledFactory )
+			
+			if ( _config.inputFilterRegistry is IPooledFactory )
 				IPooledFactory( _config.inputFilterRegistry ).cleanup();
-			if( _config.iteratorFactory is IPooledFactory )
+			
+			if ( _config.iteratorFactory is IPooledFactory )
 				IPooledFactory( _config.iteratorFactory ).cleanup();
 		}
 		
-		public function get data():Object
+		public function get data() : Object
 		{
 			return _data;
 		}
@@ -208,17 +215,16 @@ package org.astoolkit.workflow.internals
 		{
 			_dropIns = inValue;
 		}
-
+		
 		public function addTaskLiveCycleWatcher( inValue : ITaskLiveCycleWatcher ) : void
 		{
 			_taskLiveCycleWatchers.push( inValue );
 		}
 		
-		public function removeTaskLiveCycleWatcher(inValue:ITaskLiveCycleWatcher):void
+		public function removeTaskLiveCycleWatcher(inValue:ITaskLiveCycleWatcher) : void
 		{
-			if( _taskLiveCycleWatchers.indexOf( inValue ) > -1 )
+			if ( _taskLiveCycleWatchers.indexOf( inValue ) > -1 )
 				_taskLiveCycleWatchers.splice( _taskLiveCycleWatchers.indexOf( inValue ), 1 );
 		}
-		
 	}
 }

@@ -25,25 +25,32 @@ package org.astoolkit.workflow.task.variables
 	/**
 	 * Sets the value of the current's context variable.
 	 * If a value is not specified, it uses the current 
-	 * pipeline data as value
+	 * pipeline data as value.
+	 * <p>If <code>name</code> is not specified a random unique name is created.
+	 * This can be useful for variables that need to be found by type</p>
 	 */
 	public class SetVariable extends BaseTask
 	{
 		public var name : String;
-		public var value : *;
+		private var _value : *;
+		
+		public function set value( inValue : * ) : void
+		{
+			_value = inValue;
+		}
 		
 		override public function begin() : void
 		{
 			super.begin();
-			if( !name )
+			var aName : String = name;
+			if( !aName )
 			{
-				fail( "No variable name provided" );
-				return;
+				aName = ( new Date().getTime() + Math.random().toString() ).replace( ".", "_" );
 			}
-			if( value != undefined )
-				context.variables[ name ] = value;
+			if( _value != undefined )
+				context.variables[ aName ] = _value;
 			else
-				context.variables[ name ] = filteredInput;
+				context.variables[ aName ] = filteredInput;
 			complete();
 		}
 	}

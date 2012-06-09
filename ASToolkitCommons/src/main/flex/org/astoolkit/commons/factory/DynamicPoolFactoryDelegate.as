@@ -19,39 +19,49 @@ Version 2.x
 */
 package org.astoolkit.commons.factory
 {
+	
 	public class DynamicPoolFactoryDelegate implements IPooledFactoryDelegate
 	{
 		private var _newInstanceHandler : Function;
 		private var _destroyHandler : Function;
 		private var _releaseHandler : Function;
+		private var _postCreateHandler : Function;
 		
 		public function DynamicPoolFactoryDelegate( 
 			inNewInstanceHandler : Function = null,
+			inPostCreateHandler : Function = null,
 			inDestryoHandler : Function = null,
 			inReleaseHandler : Function = null
 			)
 		{
 			_newInstanceHandler = inNewInstanceHandler;
+			_postCreateHandler = inPostCreateHandler;
 			_releaseHandler = inReleaseHandler;
 			_destroyHandler = inDestryoHandler;
 		}
 		
-		public function get delegateInstantiation():Boolean
+		public function get delegateInstantiation() : Boolean
 		{
 			return _newInstanceHandler != null;
 		}
 		
-		public function newInstance(inClass:Class, inProperties:Object):Object
+		public function newInstance(inClass:Class, inProperties:Object) : Object
 		{
 			return _newInstanceHandler( inClass, inProperties );
 		}
 		
-		public function onDestroy(inTask:Object):void
+		public function onDestroy(inTask:Object) : void
 		{
 		}
 		
-		public function onRelease(inTask:Object):void
+		public function onRelease(inTask:Object) : void
 		{
+		}
+		
+		public function onPostCreate(inInstance:Object) : void
+		{
+			if ( _postCreateHandler != null )
+				_postCreateHandler( inInstance );
 		}
 	}
 }

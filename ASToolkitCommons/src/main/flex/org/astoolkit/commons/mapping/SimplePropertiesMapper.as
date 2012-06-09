@@ -19,25 +19,39 @@ Version 2.x
 */
 package org.astoolkit.commons.mapping
 {
+	
 	import flash.utils.describeType;
 	import flash.utils.getQualifiedClassName;
-	
 	import mx.core.IFactory;
 	import mx.utils.ObjectUtil;
-
+	import org.astoolkit.commons.io.transform.DefaultDataTransformRegistry;
+	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
+	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
+	import org.astoolkit.commons.utils.isDynamic;
+	
 	public class SimplePropertiesMapper implements IPropertiesMapper
 	{
-		public var mapping : Object; 
+		public var mapping : Object;
+		
 		private var _classFactory : IFactory;
+		
 		private var _strict : Boolean = false;
+		
 		private var _failDelegate : Function;
+		
 		private var _target : Object;
 		
-		public function hasTarget():Boolean
+		private var _transformerRegistry : IIODataTransformerRegistry;
+		
+		public function set transformerRegistry( inValue : IIODataTransformerRegistry ) : void
+		{
+			_transformerRegistry = inValue;
+		}
+		
+		public function hasTarget() : Boolean
 		{
 			return _target != null;
 		}
-		
 		
 		public function set mapFailDelegate( inFunction : Function ) : void
 		{
@@ -64,53 +78,79 @@ package org.astoolkit.commons.mapping
 			return mapWith( inSource, mapping, _target != null ? _target : inTarget );
 		}
 		
-		public function mapWith(inSource:Object, inMapping:Object, inTarget : Object = null ) : *
+		public function mapWith( 
+			inSource : Object, 
+			inMapping : Object, 
+			inTarget : Object = null ) : *
 		{
-			var localTarget : Object = inTarget;
-			if( !localTarget )
-				localTarget = _target;
-			if( !localTarget )
-				localTarget = _classFactory ? _classFactory.newInstance() : {};
-
-			var isDynamicTarget : Boolean = ObjectUtil.isDynamicObject( localTarget ); 
-			for( var k : String in inMapping )
+			if ( !_transformerRegistry )
 			{
-				if( ( inMapping[ k ] == "." || localTarget.hasOwnProperty( k ) || isDynamicTarget ) )
+				_transformerRegistry = new DefaultDataTransformRegistry();
+			}
+			var localTarget : Object = inTarget;
+			
+			if ( !localTarget )
+				localTarget = _target;
+			
+			if ( !localTarget )
+				localTarget = _classFactory ? _classFactory.newInstance() : {};
+			var isDynamicTarget : Boolean = isDynamic( localTarget );
+			var transformer : IIODataTransformer;
+			var value : *;
+			
+			for ( var k : String in inMapping )
+			{
+				try
 				{
-					try
+					transformer = _transformerRegistry.getTransformer( inSource, inMapping[ k ] );
+					value = transformer.transform( inSource, inMapping[ k ] )
+					localTarget[ k ] = value;
+				}
+				catch ( e : Error )
+				{
+					if ( _strict )
 					{
-						if( inMapping[ k ] == "." )
-							localTarget[ k ] = inSource;
-						else
-							localTarget[ k ] = inSource[ inMapping[ k ] ];
+						var className : String = getQualifiedClassName( !inSource.hasOwnProperty( inMapping[ k ] ) ? inSource : localTarget );
+						var propName : String = !inSource.hasOwnProperty( inMapping[ k ] ) ? inMapping[ k ] : k;
+						throw new MappingError( className + " has no \"" + propName + "\" property" );
 					}
-					catch( e : Error )
+					else
 					{
-						if( _strict )
-						{
-							var className : String  =
-								getQualifiedClassName( 
-									!inSource.hasOwnProperty( inMapping[ k ] ) ?
-										inSource :
-										localTarget );
-							var propName : String = 
-								!inSource.hasOwnProperty( inMapping[ k ] ) ?
-									inMapping[ k ] :
-									k;
-							throw new MappingError( className + " has no \"" + propName + "\" property" );
-						}
-						else
-						{
-							if( _failDelegate is Function )
-								_failDelegate( k );
-							continue;
-						}
+						if ( _failDelegate is Function )
+							_failDelegate( k );
+						continue;
 					}
 				}
+				/*				if ( ( inMapping[ k ] == "." || localTarget.hasOwnProperty( k ) || isDynamicTarget ) )
+								{
+								try
+								{
+										if ( inMapping[ k ] == "." )
+											localTarget[ k ] = inSource;
+										else
+											localTarget[ k ] = inSource[ inMapping[ k ] ];
+									}
+									catch ( e : Error )
+									{
+										if ( _strict )
+										{
+											var className : String = getQualifiedClassName( !inSource.hasOwnProperty( inMapping[ k ] ) ? inSource : localTarget );
+											var propName : String = !inSource.hasOwnProperty( inMapping[ k ] ) ? inMapping[ k ] : k;
+											throw new MappingError( className + " has no \"" + propName + "\" property" );
+										}
+										else
+										{
+											if ( _failDelegate is Function )
+												_failDelegate( k );
+											continue;
+										}
+									}
+								}
+				*/
 			}
-			if( inTarget == null && _target == null ) 
+			
+			if ( inTarget == null && _target == null )
 				return localTarget;
 		}
-		
 	}
 }

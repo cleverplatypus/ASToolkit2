@@ -2,7 +2,7 @@ package org.astoolkit.commons.collection
 {
 	import org.astoolkit.commons.collection.api.IIterator;
 
-	[IteratorSource("null")]
+	[IteratorSource("Number,int,uint")]
 	public class CountIterator implements IIterator
 	{
 		
@@ -13,12 +13,12 @@ package org.astoolkit.commons.collection
 		public var countFrom : int = 0;
 		public var countTo : int;
 		
-		
 		public function CountIterator()
 		{
-			countTo = int.MAX_VALUE
+			countTo = int.MIN_VALUE;
 		}
-		public function set source(inValue:*):void
+		
+		public function set source( inValue : * ) : void
 		{
 			if( !isNaN( inValue ) && inValue != null )
 				countTo = int( inValue );
@@ -26,7 +26,7 @@ package org.astoolkit.commons.collection
 		
 		public function hasNext():Boolean
 		{
-			return _currentCount < countTo;
+			return countTo != int.MIN_VALUE && _currentCount < countTo;
 		}
 		
 		public function next():Object
@@ -40,9 +40,10 @@ package org.astoolkit.commons.collection
 			return _currentCount;
 		}
 		
-		public function reset():void
+		public function reset() : void
 		{
 			_currentCount = countFrom -1;
+			countTo = int.MIN_VALUE;
 			_isAborted = false;
 		}
 		
@@ -51,9 +52,9 @@ package org.astoolkit.commons.collection
 			return _currentCount;
 		}
 		
-		public function supportsSource(inObject:*):Boolean
+		public function supportsSource( inObject : * ) : Boolean
 		{
-			return inObject == null;
+			return !isNaN( inObject );
 		}
 		
 		public function get progress():Number

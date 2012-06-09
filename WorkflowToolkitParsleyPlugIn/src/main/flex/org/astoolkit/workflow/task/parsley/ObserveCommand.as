@@ -27,7 +27,7 @@ package org.astoolkit.workflow.task.parsley
 			_observer = this.createThreadSafeObserver( status,selector, messageType, 1, onMessage );
 			parsleyContext
 				.scopeManager
-				.getScope( scope )
+				.getScope( scope as String )
 				.messageReceivers
 				.addCommandObserver( _observer );
 			

@@ -1,5 +1,7 @@
 package org.astoolkit.workflow.task.mapping
 {
+	
+	import mx.core.IFactory;
 	import org.astoolkit.commons.ns.astoolkit_private;
 	import org.astoolkit.workflow.api.IMapTask;
 	import org.astoolkit.workflow.core.BaseTask;
@@ -7,11 +9,17 @@ package org.astoolkit.workflow.task.mapping
 	public class MapValue extends BaseTask implements IMapTask
 	{
 		
-		public var propertyName : String;
+		[Bindable]
+		public var property : String;
 		
 		public var value : Object;
 		
+		[Bindable]
+		public var target : Object;
+		
 		public var mandatory : Boolean = true;
+		
+		private var _target : IFactory;
 		
 		override public function set inputFilter( inValue : Object ) : void
 		{
@@ -24,48 +32,46 @@ package org.astoolkit.workflow.task.mapping
 			_inputFilter = inExpression;
 		}
 		
-		override public function begin():void
+		override public function begin() : void
 		{
 			super.begin();
-			if( !target || !propertyName || !target.hasOwnProperty( propertyName ) )
+			var targetObject : Object = targetClass.newInstance();
+			
+			if ( !targetObject || !property || !targetObject.hasOwnProperty( property ) )
 			{
-				if( !mandatory )
+				if ( !mandatory )
 				{
 					complete();
 					return;
 				}
 			}
-			if( astoolkit_private::propertyIsUserDefined( "value" )  )
-				target[ propertyName ] = value;
+			
+			if ( astoolkit_private::propertyIsUserDefined( "value" ) )
+				targetObject[ property ] = value;
 			else
-				target[ propertyName ] = filteredInput;
+				targetObject[ property ] = filteredInput;
 			complete();
 		}
 		
-		
-		public function set source(inValue:Object):void
+		public function set source(inValue:Object) : void
 		{
 			// TODO Auto Generated method stub
-			
 		}
 		
-		public function get source():Object
-		{
-			// TODO Auto Generated method stub
-			return null;
-		}
-		
-		public function set target(inValue:Object):void
-		{
-			// TODO Auto Generated method stub
-			
-		}
-		
-		public function get target():Object
+		public function get source() : Object
 		{
 			// TODO Auto Generated method stub
 			return null;
 		}
 		
+		public function set targetClass(inValue:IFactory) : void
+		{
+			_target = inValue;
+		}
+		
+		public function get targetClass() : IFactory
+		{
+			return _target;
+		}
 	}
 }

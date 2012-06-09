@@ -44,6 +44,11 @@ package org.astoolkit.commons.collection.api
 		function set iterator( inValue : IIterator ) : void;
 		function get iterator() : IIterator;
 
+		/**
+		 * a dictionary of properties to be assigned to the iterator
+		 * at instanciation time.
+		 */
+		function set iteratorConfig( inValue : Object ) : void;
 		
 	}
 }

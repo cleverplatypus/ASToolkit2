@@ -62,7 +62,7 @@ Version 2.x
 			_fileSelector = new File();
 			_fileSelector.addEventListener( Event.SELECT, onFileSelect );
 			_fileSelector.addEventListener( Event.CANCEL, onSelectCancel );
-			_fileSelector.browseForSave( message );
+			_fileSelector.browseForSave( message ? message : "" );
 		}
 		
 		private function onFileSelect( inEvent : Event ) : void
@@ -98,7 +98,7 @@ Version 2.x
 		private function onSelectCancel( inEvent : Event ) : void
 		{
 			_exitStatus = new ExitStatus( ExitStatus.USER_CANCELED );
-			complete();
+			fail( "User canceled file save" );
 		}
 	}
 }

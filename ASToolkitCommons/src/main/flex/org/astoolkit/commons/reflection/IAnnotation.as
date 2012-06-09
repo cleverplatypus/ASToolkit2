@@ -19,13 +19,16 @@ Version 2.x
 */
 package org.astoolkit.commons.reflection
 {
+	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
+
 	public interface IAnnotation
 	{
 		function initialize( inMetadata : XML ) : void;
 		function get tagName() : String;
-		function getArray( inArgName : String = "") : Array;
-		function getString( inArgName : String = "" ) : String;
-		function getNumber( inArgName : String = "" ) : Number;
-		function getBoolean( inArgName : String = "" ) : Boolean;
+		function getArray( inArgName : String = "", inOrDefault : Boolean = false ) : Array;
+		function getString( inArgName : String = "", inOrDefault : Boolean = false ) : String;
+		function getNumber( inArgName : String = "", inOrDefault : Boolean = false ) : Number;
+		function getBoolean( inArgName : String = "", inOrDefault : Boolean = false ) : Boolean;
+		function getClass( inArgName : String = "", inOrDefault : Boolean = false ) : Class;
 	}
 }

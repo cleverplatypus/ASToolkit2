@@ -47,7 +47,7 @@ package org.astoolkit.workflow.task.parsley
 				)					
 			parsleyContext
 				.scopeManager
-				.getScope( scope )
+				.getScope( scope as String )
 				.messageReceivers
 				.addTarget( _messageTarget );
 			
@@ -58,7 +58,7 @@ package org.astoolkit.workflow.task.parsley
 		{
 			parsleyContext
 				.scopeManager
-				.getScope( scope )
+				.getScope( scope as String )
 				.messageReceivers
 				.removeTarget( _messageTarget );
 			_messageTarget = null;

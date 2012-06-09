@@ -1,7 +1,8 @@
 package org.astoolkit.commons.collection.api
 {
+	
 	import mx.collections.IList;
-
+	
 	public interface IIterator
 	{
 		function set source( inValue : * ) : void;

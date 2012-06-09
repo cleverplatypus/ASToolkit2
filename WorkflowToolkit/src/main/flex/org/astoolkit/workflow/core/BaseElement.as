@@ -1,3 +1,22 @@
+/*
+
+Copyright 2009 Nicola Dal Pont
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Version 2.x
+
+*/
 package org.astoolkit.workflow.core
 {
 	import flash.events.EventDispatcher;
@@ -28,7 +47,7 @@ package org.astoolkit.workflow.core
 	 * @see org.astoolkit.workflow.core.BaseTask
 	 * @see org.astoolkit.workflow.core.Group
 	 */
-	public class BaseElement extends EventDispatcher implements IWorkflowElement
+	public class BaseElement extends ObjectProxy implements IWorkflowElement
 	{
 		
 		/**
@@ -123,6 +142,15 @@ package org.astoolkit.workflow.core
 		}
 		
 		/**
+		 * override this getter to prevent data binding from being
+		 * disabled while in idle status
+		 */
+		protected function get suspendBinding() : Boolean
+		{
+			return true;
+		}
+		
+		/**
 		 * @inheritDoc
 		 */
 		public function get description():String
@@ -169,7 +197,8 @@ package org.astoolkit.workflow.core
 		 */
 		public function initialize():void
 		{
-			BindingUtility.disableAllBindings( _document, this );
+			if( suspendBinding && _document != null )
+				BindingUtility.disableAllBindings( _document, this );
 		}
 		
 		
@@ -260,7 +289,8 @@ package org.astoolkit.workflow.core
 					_initialWatchers[ name ].unwatch();
 			}
 			_initialWatchers = null;
-
+			if( suspendBinding && _document != null )
+				BindingUtility.disableAllBindings( _document, this );
 		}
 		
 		/**

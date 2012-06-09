@@ -19,29 +19,15 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.pipeline
 {
+	
 	import org.astoolkit.workflow.core.BaseTask;
 	
-	import flash.events.Event;
-	
-	[Event(name="transform", type="org.astoolkit.workflow.task.pipeline.TransformPipelineEvent")]
 	public class TransformPipeline extends BaseTask
 	{
 		override public function begin() : void
 		{
 			super.begin();
-			var out : *;
-			if( hasEventListener( TransformPipelineEvent.TRANSFORM ) )
-			{
-				var e : TransformPipelineEvent = new TransformPipelineEvent( filteredInput );
-				dispatchEvent( e );
-				out = e.pipelineData;
-			}
-			else
-			{
-				//apply filters
-				out = filteredInput;
-			}
-			complete( out );
+			complete( filteredInput );
 		}
 	}
 }

@@ -19,25 +19,28 @@ Version 2.x
 */
 package org.astoolkit.commons.io.transform
 {
-	import org.astoolkit.commons.io.transform.api.IIODataTransform;
+	
+	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 	
 	/**
 	 * Input filter to drill into objects using the dot notation.
 	 * <p>"." will return the filtered object itself.</p>
-	 */ 
-	public class ObjectPropertyChainDataTransform implements IIODataTransform
+	 */
+	public class ObjectPropertyChainDataTransform implements IIODataTransformer
 	{
 		/**
 		 * returns the value of <code>inData</code>'s property chain <code>inExpression</code>
 		 */
 		public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
 		{
-			if( inData == null )
+			if ( inData == null )
 				return null;
-			if( inExpression == "." )
+			
+			if ( inExpression == "." )
 				return inData;
 			var val : Object = inData;
-			for each( var k : String in inExpression.split( "." ) )
+			
+			for each ( var k : String in inExpression.split( "." ) )
 			{
 				val = val[ k ];
 			}
@@ -49,13 +52,15 @@ package org.astoolkit.commons.io.transform
 		 */
 		public function isValidExpression( inExpression : Object ) : Boolean
 		{
-			return inExpression is String && ( inExpression as String ).match( /^\w+(\.\w+)*$/ );
+			var exp : String = inExpression as String;
+			return exp != null &&
+				( exp == "." || exp.match( /^\w+(\.\w+)*$/ ) );
 		}
 		
 		/**
 		 * @private
 		 */
-		public function get priority():int
+		public function get priority() : int
 		{
 			return -100;
 		}
@@ -69,7 +74,7 @@ package org.astoolkit.commons.io.transform
 			out.push( String );
 			return out;
 		}
-
+		
 		/**
 		 * @private
 		 */
@@ -79,6 +84,5 @@ package org.astoolkit.commons.io.transform
 			out.push( Object );
 			return out;
 		}
-		
 	}
 }

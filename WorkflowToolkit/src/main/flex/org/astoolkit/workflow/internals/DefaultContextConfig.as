@@ -19,27 +19,38 @@ Version 2.x
 */
 package org.astoolkit.workflow.internals
 {
+	
 	import org.astoolkit.commons.collection.DefaultIteratorFactory;
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
-	import org.astoolkit.commons.io.transform.api.IIODataTransformRegistry;
+	import org.astoolkit.commons.io.transform.DefaultDataTransformRegistry;
+	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 	import org.astoolkit.workflow.api.IContextConfig;
 	import org.astoolkit.workflow.api.IPropertyOverrideRule;
-	import org.astoolkit.workflow.inputfilter.DefaultTaskInputFilterRegistry;
+	import org.astoolkit.workflow.api.ITaskTemplateRegistry;
 	
 	public class DefaultContextConfig implements IContextConfig
 	{
-		private var _inputFilterFactory : IIODataTransformRegistry;
+		private var _inputFilterFactory : IIODataTransformerRegistry;
+		
 		private var _propertyOverrideRule : IPropertyOverrideRule;
+		
 		private var _iteratorFactory : IIteratorFactory;
+		
+		private var _templateRegistry : ITaskTemplateRegistry;
 		
 		public function init() : void
 		{
-			if( !_inputFilterFactory )
-				_inputFilterFactory = new DefaultTaskInputFilterRegistry();
-			if( !_iteratorFactory )
+			if ( !_inputFilterFactory )
+				_inputFilterFactory = new DefaultDataTransformRegistry();
+			
+			if ( !_iteratorFactory )
 				_iteratorFactory = new DefaultIteratorFactory();
-			if( !_propertyOverrideRule )
+			
+			if ( !_propertyOverrideRule )
 				_propertyOverrideRule = new DefaultPropertyOverrideRule();
+			
+			if ( !_templateRegistry )
+				_templateRegistry = new DefaultTaskTemplateRegistry();
 		}
 		
 		public function get propertyOverrideRule() : IPropertyOverrideRule
@@ -51,13 +62,13 @@ package org.astoolkit.workflow.internals
 		{
 			_propertyOverrideRule = inValue;
 		}
-
-		public function get inputFilterRegistry() : IIODataTransformRegistry
+		
+		public function get inputFilterRegistry() : IIODataTransformerRegistry
 		{
 			return _inputFilterFactory;
 		}
 		
-		public function set inputFilterRegistry( inValue : IIODataTransformRegistry ) : void
+		public function set inputFilterRegistry( inValue : IIODataTransformerRegistry ) : void
 		{
 			_inputFilterFactory = inValue;
 		}
@@ -72,5 +83,14 @@ package org.astoolkit.workflow.internals
 			_iteratorFactory = inValue;
 		}
 		
+		public function get templateRegistry() : ITaskTemplateRegistry
+		{
+			return _templateRegistry;
+		}
+		
+		public function set templateRegistry( inValue : ITaskTemplateRegistry ) : void
+		{
+			_templateRegistry = inValue;
+		}
 	}
 }

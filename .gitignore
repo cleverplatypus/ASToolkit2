@@ -1,9 +1,11 @@
 # Build and Release Folders
 bin-debug/
 bin-release/
+target/
 
 # Project property files
 .actionScriptProperties
+.flexLibProperties
 .flexProperties
 .settings/
 .project
@@ -11,3 +13,5 @@ bin-release/
 *.swc
 *.swf
 WorkflowAirToolkit/.flexLibProperties
+
+WorkflowAirToolkit/target/WorkflowAirToolkit-configs.xml

@@ -19,14 +19,15 @@ Version 2.x
 */
 package org.astoolkit.commons.io.transform
 {
-	import org.astoolkit.commons.io.transform.api.IIODataTransform;
-
+	
+	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
+	
 	/**
-	 * input filter that expects <code>inExpression</code> to be a 
-	 * function with signature 
+	 * input filter that expects <code>inExpression</code> to be a
+	 * function with signature
 	 * <code>function( inData : Object, inTarget : Object ) : Object</code>
 	 */
-	public class FunctionReferenceDataTransform implements IIODataTransform
+	public class FunctionReferenceDataTransform implements IIODataTransformer
 	{
 		/**
 		 * @private
@@ -41,13 +42,13 @@ package org.astoolkit.commons.io.transform
 		 */
 		public function isValidExpression( inExpression : Object ) : Boolean
 		{
-			return inExpression is Function; 
+			return inExpression is Function;
 		}
 		
 		/**
 		 * @private
 		 */
-		public function get priority():int
+		public function get priority() : int
 		{
 			return -100;
 		}
@@ -68,8 +69,8 @@ package org.astoolkit.commons.io.transform
 		public function get supportedDataTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
+			out.push( Object );
 			return out;
 		}
-		
 	}
 }

@@ -20,12 +20,6 @@ Version 2.x
 package org.astoolkit.workflow.parsleysupport
 {
 	
-	import org.astoolkit.commons.factory.DynamicPoolFactoryDelegate;
-	import org.astoolkit.commons.factory.IPooledFactory;
-	import org.astoolkit.commons.factory.PooledFactory;
-	import org.astoolkit.workflow.api.*;
-	import org.astoolkit.workflow.core.WorkflowEvent;
-	
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
@@ -36,6 +30,11 @@ package org.astoolkit.workflow.parsleysupport
 	import mx.rpc.events.ResultEvent;
 	import mx.utils.UIDUtil;
 	
+	import org.astoolkit.commons.factory.DynamicPoolFactoryDelegate;
+	import org.astoolkit.commons.factory.IPooledFactory;
+	import org.astoolkit.commons.factory.PooledFactory;
+	import org.astoolkit.workflow.api.*;
+	import org.astoolkit.workflow.core.WorkflowEvent;
 	import org.spicefactory.lib.reflect.ClassInfo;
 	import org.spicefactory.parsley.core.context.Context;
 	import org.spicefactory.parsley.core.context.provider.Provider;
@@ -56,7 +55,7 @@ package org.astoolkit.workflow.parsleysupport
 	 * If the referenced context object is defined as DynamicObject, 
 	 * a new instance is created or an instance from the pool is retrieved everytime the trigger message is received.
 	 * This is useful when workflows need to be invoked repetedly as
-	 * singleton objects would fail if begin() is called when a
+	 * singleton objects would fail if run() is called when a
 	 * workflow is still executing.
 	 */ 
   	[DefaultProperty("workflow")]

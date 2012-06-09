@@ -22,6 +22,7 @@ package org.astoolkit.workflow.api
 	public interface IContextPlugIn
 	{
 		function init() : void;
-		function getExtensions() : Array;
+		function get extensions() : Array;
+		function get disabledExtensions() : Array;
 	}
 }

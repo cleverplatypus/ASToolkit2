@@ -1,29 +1,29 @@
 package org.astoolkit.workflow.annotation
 {
-	import org.astoolkit.commons.io.transform.api.IIODataTransform;
-	import org.astoolkit.commons.io.transform.api.IIODataTransformRegistry;
+	
+	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
+	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 	import org.astoolkit.commons.reflection.Metadata;
 	
-	[Metadata(name="InjectPipeline", target="field")]
-	[MetaArg(name="filter",type="String",mandatory="false")]
+	[Metadata( name="InjectPipeline", target="field" )]
+	[MetaArg( name="filter", type="String", mandatory="false" )]
 	public class InjectPipeline extends Metadata
-	{		
-		private var _filterFactory : IIODataTransformRegistry;
+	{
+		private var _filterFactoryFunction : Function;
 		
-		public function InjectPipeline( inFilterFactory : IIODataTransformRegistry )
+		public function InjectPipeline( inFilterFactoryFunction : Function )
 		{
-			_filterFactory = inFilterFactory;
+			_filterFactoryFunction = inFilterFactoryFunction;
 		}
 		
 		public function get filterText() : String
 		{
-			return getString( "filter" );
+			return getString( "filter", true );
 		}
 		
-		public function getFilterInstance( inData : Object ) : IIODataTransform
+		public function getFilterInstance( inData : Object ) : IIODataTransformer
 		{
-			return _filterFactory.getTransformer( inData, getString( "filter" ) );
+			return IIODataTransformerRegistry( _filterFactoryFunction() ).getTransformer( inData, getString( "filter", true ) );
 		}
-		
 	}
 }

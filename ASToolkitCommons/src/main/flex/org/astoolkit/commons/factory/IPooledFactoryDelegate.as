@@ -19,12 +19,13 @@ Version 2.x
 */
 package org.astoolkit.commons.factory
 {
+	
 	public interface IPooledFactoryDelegate
 	{
 		function get delegateInstantiation() : Boolean;
 		function newInstance( inClass : Class, inProperties : Object ) : Object;
-		function onDestroy( inTask : Object ) : void;
-		function onRelease( inTask : Object ) : void;
-
+		function onDestroy( inInstance : Object ) : void;
+		function onRelease( inInstance : Object ) : void;
+		function onPostCreate( inInstance : Object ) : void;
 	}
 }

@@ -19,14 +19,18 @@ Version 2.x
 */
 package org.astoolkit.commons.mapping
 {
+	
 	import mx.core.IFactory;
-
+	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
+	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
+	
 	public interface IPropertiesMapper
 	{
 		function set mapFailDelegate( inFunction : Function ) : void;
 		function set strict( inValue : Boolean ) : void;
 		function set targetClass( inClass : IFactory ) : void;
 		function set target( inValue : Object ) : void;
+		function set transformerRegistry( inValue : IIODataTransformerRegistry ) : void;
 		function map( inSource : Object, inTarget : Object = null ) : *;
 		function mapWith( inSource : Object, inMapping : Object, inTarget : Object = null ) : *;
 		function hasTarget() : Boolean;

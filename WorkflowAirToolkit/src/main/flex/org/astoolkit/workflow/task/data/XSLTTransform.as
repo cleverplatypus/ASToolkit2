@@ -19,8 +19,8 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.data
 {
-	import org.astoolkit.workflow.core.BaseTask;
 	
+	import org.astoolkit.workflow.core.BaseTask;
 	import flash.events.Event;
 	import flash.events.ProgressEvent;
 	import flash.events.ServerSocketConnectEvent;
@@ -31,34 +31,34 @@ package org.astoolkit.workflow.task.data
 	
 	public class XSLTTransform extends BaseTask
 	{
-		
-		[Bindable][InjectPipeline]
+		[Bindable]
+		[InjectPipeline]
 		public var xml : XML;
-		
-		[Bindable][InjectPipeline]
+		[Bindable]
+		[InjectPipeline]
 		public var xslt : XML;
-		
 		private var _htmlBridge : HTMLLoader;
-		
-		[Inspectable(enumeration="xml,text")]
+		[Inspectable( enumeration = "xml,text" )]
 		public var outputFormat : String = xml;
 		public var server : ServerSocket;
 		private var _port : int = 1024;
 		
-		override public function initialize():void
+		override public function initialize() : void
 		{
 			super.initialize();
-			if( _htmlBridge )
+			
+			if ( _htmlBridge )
 				return;
 			server = new ServerSocket();
-			while( true )
+			
+			while ( true )
 			{
 				try
 				{
 					server.bind( _port, "127.0.0.1" );
 					break;
 				}
-				catch( e : Error )
+				catch ( e : Error )
 				{
 					_port++;
 				}
@@ -69,15 +69,17 @@ package org.astoolkit.workflow.task.data
 			_htmlBridge.load( new URLRequest( "http://127.0.0.1:" + _port ) );
 		}
 		
-		override public function cleanUp():void
+		override public function cleanUp() : void
 		{
 			super.cleanUp();
-			if( _htmlBridge.loaded && server )
+			
+			if ( _htmlBridge.loaded && server )
 			{
 				server.close();
 				server = null;
 			}
 		}
+		
 		private function onClientConnect( inEvent : ServerSocketConnectEvent ) : void
 		{
 			inEvent.socket.addEventListener( ProgressEvent.SOCKET_DATA, onSockedData );
@@ -114,14 +116,16 @@ package org.astoolkit.workflow.task.data
 		override public function begin() : void
 		{
 			super.begin()
-			if( !xml && !xslt )
+			
+			if ( !xml && !xslt )
 			{
 				fail( "Either or both xml/xslt not set" );
 				return;
 			}
-			if( !xml )
+			
+			if ( !xml )
 			{
-				if( filteredInput is XML )
+				if ( filteredInput is XML )
 					xml = filteredInput as XML;
 				else
 				{
@@ -129,9 +133,10 @@ package org.astoolkit.workflow.task.data
 					return;
 				}
 			}
-			if( !xslt )
+			
+			if ( !xslt )
 			{
-				if( filteredInput is XML )
+				if ( filteredInput is XML )
 					xslt = filteredInput as XML;
 				else
 				{
@@ -139,33 +144,34 @@ package org.astoolkit.workflow.task.data
 					return;
 				}
 			}
-			if( _htmlBridge.loaded )
-				transform();
+			
+			if ( _htmlBridge.loaded )
+				xsltTransform();
 			else
 			{
 				_htmlBridge.addEventListener( Event.COMPLETE, onHtmlBridgeComplete );
-				
 			}
 		}
 		
 		private function onHtmlBridgeComplete( inEvent : Event ) : void
 		{
-			transform();
+			xsltTransform();
 		}
 		
-		private function transform() : void
+		private function xsltTransform() : void
 		{
 			try
 			{
-				var result:String = _htmlBridge.window.transformXML(xml,xslt);
+				var result : String = _htmlBridge.window.transformXML(xml,xslt);
 				var out : *;
-				if( outputFormat == "xml" )
+				
+				if ( outputFormat == "xml" )
 					out = new XML( result );
 				else
 					out = result;
 				complete( out );
 			}
-			catch( e : Error )
+			catch ( e : Error )
 			{
 				fail( "XSLT transformation failed. \nCause:\n" + e.getStackTrace() );
 				return;

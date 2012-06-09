@@ -31,6 +31,7 @@ package org.astoolkit.workflow.task.io
 		private function onBrowseCancel( inEvent : Event ) : void
 		{
 			exitStatus = new ExitStatus( ExitStatus.USER_CANCELED );
+			fail( "User canceled directory selection" );
 			return;
 		}
 		

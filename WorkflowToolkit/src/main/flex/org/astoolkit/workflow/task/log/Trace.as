@@ -17,16 +17,17 @@ limitations under the License.
 Version 2.x
 
 */
-
 package org.astoolkit.workflow.task.log
 {
-	import flash.utils.setInterval;
 	
+	import flash.utils.setInterval;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.http.HTTPService;
 	import mx.utils.ObjectUtil;
-	
+	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 	import org.astoolkit.workflow.core.BaseTask;
+	import org.astoolkit.workflow.core.Case;
+	import org.astoolkit.workflow.internals.GroupUtil;
 	
 	/**
 	 * Prints on the console.
@@ -35,9 +36,13 @@ package org.astoolkit.workflow.task.log
 	 */
 	public class Trace extends BaseTask
 	{
-		
 		private var _text : String;
-
+		
+		public var expression : *;
+		
+		[Inspectable( enumeration="pipeline,parent,context,config,previousTask", defaultValue="pipeline" )]
+		public var source : String = "pipeline";
+		
 		/**
 		 * the text to output to console. If omitted, the pipeline data is used.
 		 */
@@ -50,17 +55,64 @@ package org.astoolkit.workflow.task.log
 		{
 			return _text;
 		}
-			
 		
 		override public function begin() : void
 		{
 			super.begin();
-			var outText : String = text;
-			if( outText == null ) 
+			var aSource : Object = filteredInput;
+			
+			switch ( source )
+			{
+				case "pipeline":
+				{
+					aSource = filteredInput;
+					break;
+				}
+				case "parent":
+				{
+					aSource = parent;
+					break;
+				}
+				case "parentWorkflow":
+				{
+					aSource = GroupUtil.getParentWorkflow( this );
+					break;
+				}
+				case "context":
+				{
+					aSource = context;
+					break;
+				}
+				case "config":
+				{
+					aSource = context.config;
+					break;
+				}
+			}
+			var outText : String;
+			
+			if ( expression != undefined )
+			{
+				var transformer : IIODataTransformer =
+					context
+					.config
+					.inputFilterRegistry
+					.getTransformer( aSource, expression );
+				
+				if ( !transformer )
+				{
+					fail( "Cannot use expression to transform {0}", source );
+					return;
+				}
+				outText = transformer.transform( aSource, expression ).toString();
+			}
+			else
+				outText = text;
+			
+			if ( outText == null )
 				outText = ObjectUtil.toString( filteredInput );
 			trace( outText );
 			complete();
 		}
-		
 	}
 }

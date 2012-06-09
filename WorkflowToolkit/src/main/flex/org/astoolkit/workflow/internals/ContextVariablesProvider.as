@@ -19,16 +19,16 @@ Version 2.x
 */
 package org.astoolkit.workflow.internals
 {
-	import flash.utils.flash_proxy;
 	
+	import flash.utils.flash_proxy;
 	import mx.utils.ObjectProxy;
 	import mx.utils.UIDUtil;
-	
 	import org.astoolkit.commons.collection.api.IRepeater;
+	import org.astoolkit.commons.mapping.DataMap;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.core.ExitStatus;
-	
 	use namespace flash_proxy;
+	
 	[Bindable]
 	/**
 	 * The workflow's context variables provider.
@@ -38,31 +38,36 @@ package org.astoolkit.workflow.internals
 	 * <code>IWorkflow</code> and children. To set a variable
 	 * with wide scope, declare it (e.g. with <code>&lt;SetProperty /&gt;</code> or
 	 * in a task's outlet) in an outer workflow and then use it in inner ones.</p>
-	 * 
+	 *
 	 * @see org.astoolkit.workflow.IWorkflowTask#$
-	 */ 
-	public dynamic class ContextVariablesProvider 
-		extends ObjectProxy 
-		implements ITaskLiveCycleWatcher
+	 */
+	public dynamic class ContextVariablesProvider extends ObjectProxy implements ITaskLiveCycleWatcher
 	{
-		
+		/**
+		 * @private
+		 */
+		private var _context : IWorkflowContext;
 		
 		/**
 		 * @private
 		 */
 		private var _namespaces : Object;
+		
 		/**
 		 * @private
 		 */
 		private var _runningTask : IWorkflowTask;
+		
 		/**
 		 * @private
 		 */
 		private var _local : Object;
+		
 		/**
 		 * @private
 		 */
 		private var _runningWorkflow : IWorkflow;
+		
 		/**
 		 * @private
 		 */
@@ -71,25 +76,73 @@ package org.astoolkit.workflow.internals
 		/**
 		 * @private
 		 */
-		public function ContextVariablesProvider() : void
+		private var _dataMap : DataMap;
+		
+		/**
+		 * @private
+		 */
+		public function ContextVariablesProvider( inContext : IWorkflowContext ) : void
 		{
+			_context = inContext;
 			_namespaces = {};
 			_local = {};
 		}
-
+		
+		public function byType( inType : Class ) : *
+		{
+			var parent : IElementsGroup = GroupUtil.getParentWorkflow( _runningTask );
+			var n : String;
+			
+			do
+			{
+				n = UIDUtil.getUID( parent );
+				
+				if ( _namespaces.hasOwnProperty( n ) )
+				{
+					for each ( var val : * in _namespaces[ n ] )
+					{
+						if ( val is inType )
+							return val;
+					}
+				}
+				parent = GroupUtil.getParentWorkflow( parent );
+			} while ( parent != null );
+			return undefined;
+		}
+		
+		public function get mapTo() : DataMap
+		{
+			if ( !_dataMap )
+			{
+				_dataMap = new DataMap();
+				_dataMap.transformerRegistry = _context.config.inputFilterRegistry;
+			}
+			return _dataMap;
+		}
+		
+		public function get context() : IWorkflowContext
+		{
+			return _context;
+		}
+		
+		public function get config() : IContextConfig
+		{
+			return _context.config;
+		}
+		
 		/**
 		 * the currently running task
 		 */
-		public function get self() : IWorkflowTask
+		public function get self() : *
 		{
 			return _runningTask;
 		}
 		
-		public function set self( inValue : IWorkflowTask ) : void
+		public function set self( inValue : * ) : void
 		{
 			throw new Error( "\"self\" is a read-only reserved word.")
-
 		}
+		
 		/**
 		 * the previously executed task's exit status
 		 */
@@ -108,7 +161,7 @@ package org.astoolkit.workflow.internals
 		 */
 		public function get data() : Object
 		{
-			if( !_runningTask )
+			if ( !_runningTask )
 				return null;
 			return _runningTask.filteredInput;
 		}
@@ -123,7 +176,7 @@ package org.astoolkit.workflow.internals
 		 */
 		public function get rawData() : Object
 		{
-			if( !_runningWorkflow )
+			if ( !_runningWorkflow )
 				return null;
 			return _runningWorkflowPipelineData;
 		}
@@ -138,7 +191,7 @@ package org.astoolkit.workflow.internals
 		 */
 		public function get parent() : IElementsGroup
 		{
-			if( !_runningTask )
+			if ( !_runningTask )
 				return null;
 			return _runningTask.parent;
 		}
@@ -153,7 +206,7 @@ package org.astoolkit.workflow.internals
 		 */
 		public function get parentWorkflow() : IWorkflow
 		{
-			if( !_runningTask )
+			if ( !_runningTask )
 				return null;
 			return GroupUtil.getParentWorkflow( _runningTask );
 		}
@@ -168,7 +221,7 @@ package org.astoolkit.workflow.internals
 		 * <p>It can be used with a trailing index number (0-<em>n</em>) to access outer
 		 * iterator indexes.</p>
 		 * <p>i and i0 are equivalent</p>.
-		 * 
+		 *
 		 * @example Accessing grand-parent's iterator index.
 		 * 			<p>In the first cycle the <code>Trace</code>
 		 * 			tasks will output "0","0", "0", in the second
@@ -195,10 +248,11 @@ package org.astoolkit.workflow.internals
 		 */
 		public function get i() : int
 		{
-			if( _runningTask )
+			if ( _runningTask )
 			{
 				var pi : IRepeater = GroupUtil.getParentRepeater( _runningTask );
-				if( pi && pi.iterator )
+				
+				if ( pi && pi.iterator )
 					return pi.iterator.currentIndex();
 			}
 			return -1;
@@ -206,21 +260,21 @@ package org.astoolkit.workflow.internals
 		
 		/**
 		 * @private
-		 * 
-		 * returns the current index of the ancestor <code>IWorkflow</code>'s IIterator, 
+		 *
+		 * returns the current index of the ancestor <code>IWorkflow</code>'s IIterator,
 		 * <code>inParentCount</code> levels up, if any; -1 otherwise.
 		 */
 		private function getAncestorI( inParentCount : int = 0 ) : int
 		{
-			if( _runningTask )
+			if ( _runningTask )
 			{
 				var pi : IRepeater = GroupUtil.getParentRepeater( _runningTask, inParentCount );
-				if( pi && pi.iterator )
+				
+				if ( pi && pi.iterator )
 					return pi.iterator.currentIndex();
 			}
 			return -1;
 		}
-		
 		
 		public function set i( inValue : int ) : void
 		{
@@ -229,27 +283,27 @@ package org.astoolkit.workflow.internals
 		
 		/**
 		 * @private
-		 * 
-		 * returns the current data of the ancestor <code>IWorkflow</code>'s IIterator, 
+		 *
+		 * returns the current data of the ancestor <code>IWorkflow</code>'s IIterator,
 		 * <code>inParentCount</code> levels up, if any; <code>undefined</code> otherwise.
 		 */
 		private function getAncestorCurrentData( inParentCount : int = 0 ) : Object
 		{
-			if( !_runningTask )
+			if ( !_runningTask )
 				return undefined;
 			var p : IRepeater = GroupUtil.getParentRepeater( _runningTask, inParentCount );
-			if( p && p.iterator )
+			
+			if ( p && p.iterator )
 				return p.iterator.current();
 			return undefined;
 		}
-		
 		
 		/**
 		 * the current data of the parent <code>IWorkflow</code>'s IIterator, if any; undefined otherwise.
 		 * <p>It can be used with a trailing index number (0-<em>n</em>) to access outer
 		 * iterator current data.</p>
 		 * <p>currentData and currentData0 are equivalent</p>.
-		 * 
+		 *
 		 * @example Accessing grand-parent's iterator currentData.
 		 * 			<p>In the first cycle the <code>Trace</code>
 		 * 			tasks will output "a","a", "10", in the second
@@ -276,10 +330,11 @@ package org.astoolkit.workflow.internals
 		 */
 		public function get currentData() : Object
 		{
-			if( !_runningTask )
+			if ( !_runningTask )
 				return undefined;
 			var p : IRepeater = GroupUtil.getParentRepeater( _runningTask );
-			if( p && p.iterator )
+			
+			if ( p && p.iterator )
 				return p.iterator.current();
 			return undefined;
 		}
@@ -292,17 +347,20 @@ package org.astoolkit.workflow.internals
 		/**
 		 * @private
 		 */
-		override flash_proxy function setProperty( inName:*, inValue:*):void
+		override flash_proxy function setProperty( inName:*, inValue:*) : void
 		{
+			super.setProperty( inName, inValue );
 			var parent : IWorkflow = GroupUtil.getParentWorkflow( _runningTask );
 			var n : String = UIDUtil.getUID( parent );
-			if( !parent )
+			
+			if ( !parent )
 				parent = _runningTask as IWorkflow;
-			if( !inName.localName.match( /^_.*/ ) )
+			
+			if ( !inName.localName.match( /^_.*/ ) )
 			{
-				for( var ln : String in _namespaces )
+				for ( var ln : String in _namespaces )
 				{
-					if( _namespaces[ ln ].hasOwnProperty( inName.localName ) &&
+					if ( _namespaces[ ln ].hasOwnProperty( inName.localName ) &&
 						namespaceIsAncestor( ln ) )
 					{
 						n = ln;
@@ -310,7 +368,8 @@ package org.astoolkit.workflow.internals
 					}
 				}
 			}
-			if( !_namespaces.hasOwnProperty( n ) )
+			
+			if ( !_namespaces.hasOwnProperty( n ) )
 				_namespaces[ n ] = {};
 			_namespaces[ n ][ inName.localName ] = inValue;
 		}
@@ -321,9 +380,10 @@ package org.astoolkit.workflow.internals
 		private function namespaceIsAncestor( inNamespace : String ) : Boolean
 		{
 			var element : IWorkflowElement = _runningTask;
-			while( element != null )
+			
+			while ( element != null )
 			{
-				if( UIDUtil.getUID( element ) == inNamespace )
+				if ( UIDUtil.getUID( element ) == inNamespace )
 					return true;
 				element = element.parent;
 			}
@@ -335,56 +395,54 @@ package org.astoolkit.workflow.internals
 		 */
 		override flash_proxy function getProperty( inName : * ) : *
 		{
-			if( inName.localName.match( /^i\d+$/ ) )
+			if ( inName.localName.match( /^i\d+$/ ) )
 			{
-				return getAncestorI( int( inName.localName.match( /^i(\d+)$/ )[1] ) ) ;
+				return getAncestorI( int( inName.localName.match( /^i(\d+)$/ )[1] ) );
 			}
 			
-			if( inName.localName.match( /^currentData\d+$/ ) )
+			if ( inName.localName.match( /^currentData\d+$/ ) )
 			{
-				return getAncestorCurrentData( int( inName.localName.match( /^currentData(\d+)$/ )[1] ) ) ;
+				return getAncestorCurrentData( int( inName.localName.match( /^currentData(\d+)$/ )[1] ) );
 			}
-			
 			var parent : IElementsGroup = GroupUtil.getParentWorkflow( _runningTask );
 			var n : String;
+			
 			do
-			{	
-				n  = UIDUtil.getUID( parent );
-				if( _namespaces.hasOwnProperty( n ) && 
+			{
+				n = UIDUtil.getUID( parent );
+				
+				if ( _namespaces.hasOwnProperty( n ) &&
 					_namespaces[ n ].hasOwnProperty( inName.localName ) )
 				{
 					return _namespaces[ n ][ inName.localName ];
 				}
 				parent = GroupUtil.getParentWorkflow( parent );
-			} while( parent != null );
+			} while ( parent != null );
 			return undefined;
 		}
 		
-		
 		/**
 		 * @private
 		 */
-		public function afterTaskBegin(inTask:IWorkflowTask):void
+		public function afterTaskBegin(inTask:IWorkflowTask) : void
 		{
 			// TODO Auto Generated method stub
-			
 		}
 		
 		/**
 		 * @private
 		 */
-		public function afterTaskDataSet(inTask:IWorkflowTask):void
+		public function afterTaskDataSet(inTask:IWorkflowTask) : void
 		{
 			// TODO Auto Generated method stub
-			
 		}
 		
 		/**
 		 * @private
 		 */
-		public function beforeTaskBegin(inTask:IWorkflowTask):void
+		public function beforeTaskBegin(inTask:IWorkflowTask) : void
 		{
-			if( !( inTask is IWorkflow ) )
+			if ( !( inTask is IWorkflow ) )
 			{
 				_runningTask = inTask;
 			}
@@ -393,7 +451,7 @@ package org.astoolkit.workflow.internals
 		/**
 		 * @private
 		 */
-		public function onTaskAbort(inTask:IWorkflowTask):void
+		public function onTaskAbort(inTask:IWorkflowTask) : void
 		{
 			// TODO Auto Generated method stub
 		}
@@ -401,7 +459,7 @@ package org.astoolkit.workflow.internals
 		/**
 		 * @private
 		 */
-		public function onTaskBegin(inTask:IWorkflowTask):void
+		public function onTaskBegin(inTask:IWorkflowTask) : void
 		{
 			// TODO Auto Generated method stub
 		}
@@ -409,25 +467,25 @@ package org.astoolkit.workflow.internals
 		/**
 		 * @private
 		 */
-		public function onTaskComplete(inTask:IWorkflowTask):void
+		public function onTaskComplete(inTask:IWorkflowTask) : void
 		{
-			if( inTask is IWorkflow && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
+			if ( inTask is IWorkflow && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
 				delete _namespaces[ UIDUtil.getUID( inTask ) ];
 		}
 		
 		/**
 		 * @private
 		 */
-		public function onTaskFail(inTask:IWorkflowTask):void
+		public function onTaskFail(inTask:IWorkflowTask) : void
 		{
-			if( inTask is IWorkflow && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
+			if ( inTask is IWorkflow && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
 				delete _namespaces[ UIDUtil.getUID( inTask ) ];
 		}
 		
 		/**
 		 * @private
 		 */
-		public function onTaskInitialize(inTask:IWorkflowTask):void
+		public function onTaskInitialize(inTask:IWorkflowTask) : void
 		{
 			// TODO Auto Generated method stub
 		}
@@ -435,7 +493,7 @@ package org.astoolkit.workflow.internals
 		/**
 		 * @private
 		 */
-		public function onTaskSuspend(inTask:IWorkflowTask):void
+		public function onTaskSuspend(inTask:IWorkflowTask) : void
 		{
 			// TODO Auto Generated method stub
 		}
@@ -443,15 +501,22 @@ package org.astoolkit.workflow.internals
 		/**
 		 * @private
 		 */
-		public function onTaskExitStatus( inTask : IWorkflowTask, inStatus : ExitStatus):void
+		public function onTaskExitStatus( inTask : IWorkflowTask, inStatus : ExitStatus) : void
 		{
 			var parent : IWorkflow = GroupUtil.getParentWorkflow( _runningTask );
-			if( !parent )
+			
+			if ( !parent )
 				parent = _runningTask as IWorkflow;
 			var n : String = UIDUtil.getUID( parent );
-			if( !_namespaces.hasOwnProperty( n ) )
+			
+			if ( !_namespaces.hasOwnProperty( n ) )
 				_namespaces[ n ] = {};
 			_namespaces[ n ][ "exitStatus" ] = inStatus;
+		}
+		
+		public function bind( inValue : * ) : *
+		{
+			return inValue;
 		}
 		
 		/**
@@ -470,7 +535,6 @@ package org.astoolkit.workflow.internals
 		 */
 		public function onContextBound( inTask : IWorkflowTask ) : void
 		{
-			
 		}
 	}
 }

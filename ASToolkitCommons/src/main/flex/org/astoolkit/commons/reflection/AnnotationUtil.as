@@ -19,15 +19,15 @@ Version 2.x
 */
 package org.astoolkit.commons.reflection
 {
-	import org.astoolkit.commons.factory.IPooledFactory;
-	import org.astoolkit.commons.reflection.ClassInfo;
-	import org.astoolkit.commons.reflection.IAnnotation;
-	
 	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	
 	import mx.core.IFactory;
+	
+	import org.astoolkit.commons.factory.IPooledFactory;
+	import org.astoolkit.commons.reflection.ClassInfo;
+	import org.astoolkit.commons.reflection.IAnnotation;
 
 	public final class AnnotationUtil
 	{
@@ -40,15 +40,9 @@ package org.astoolkit.commons.reflection
 		
 		public static function registerAnnotation( inFactory : IFactory ) : void
 		{
-			var instance : Object = inFactory.newInstance();
+			var instance : Metadata = inFactory.newInstance() as Metadata;
 			var classInfo : XML = describeType( instance );
-			var tagName : String;
-			if( classInfo..metadata.(@name == "Metadata").length() > 0 )
-			{
-				var descriptor : XML = classInfo..metadata.(@name == "Metadata")[0];
-				tagName = descriptor.arg.(@key == "name" )[0].@value.toString();
-			}
-			_annotations[ tagName ] = inFactory;
+			_annotations[ instance.tagName ] = inFactory;
 			_annotationsByAnnotationType[ getQualifiedClassName( instance ) ] = inFactory;
 		}
 				

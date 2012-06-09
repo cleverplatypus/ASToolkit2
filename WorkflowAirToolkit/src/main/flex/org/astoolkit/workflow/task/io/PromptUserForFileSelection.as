@@ -18,14 +18,14 @@ Version 2.x
 
 */package org.astoolkit.workflow.task.io
 {
-	import org.astoolkit.workflow.core.BaseTask;
-	import org.astoolkit.workflow.core.ExitStatus;
-	import org.astoolkit.workflow.task.io.util.FileFilter;
-	
 	import flash.events.Event;
 	import flash.events.FileListEvent;
 	import flash.filesystem.File;
 	import flash.net.FileReference;
+	
+	import org.astoolkit.workflow.core.BaseTask;
+	import org.astoolkit.workflow.core.ExitStatus;
+	import org.astoolkit.workflow.task.io.util.FileFilter;
 	
 	/**
 	 * Opens the OS's file open dialog.
@@ -50,32 +50,39 @@ Version 2.x
 		public var filters : Vector.<FileFilter>;
 		public var message : String = "Select file";
 		public var multiple : Boolean;
+		public var selectDirectory : Boolean;
 		
 		override public function begin() : void
 		{
 			super.begin();
 			_file = new File();
 			
-			if( multiple )
+			if( multiple && !selectDirectory )
 				_file.addEventListener( FileListEvent.SELECT_MULTIPLE, threadSafe( onMultipleFilesSelect ) );
 			else
 				_file.addEventListener( Event.SELECT, threadSafe( onFileSelect ) );
-			
 			_file.addEventListener( Event.CANCEL, threadSafe( onBrowseCancel ) );
 			var fFilters : Array = [];
-			for each( var filter : FileFilter in filters )
-				fFilters.push( new flash.net.FileFilter( filter.description, filter.extension ) );
-			if( multiple )
-				_file.browseForOpenMultiple( message, fFilters );
+			if( selectDirectory )
+			{
+				_file.browseForDirectory( message );
+			}
 			else
-				_file.browseForOpen( message, fFilters );
+			{
+				for each( var filter : FileFilter in filters )
+					fFilters.push( new flash.net.FileFilter( filter.description, filter.extension ) );
+				if( multiple )
+					_file.browseForOpenMultiple( message, fFilters );
+				else
+					_file.browseForOpen( message, fFilters );
+			}
 			
 		}
 		
 		private function onBrowseCancel( inEvent : Event ) : void
 		{
 			exitStatus = new ExitStatus( ExitStatus.USER_CANCELED );
-			complete();
+			fail( "User canceled file selection" );
 		}
 		
 		private function onMultipleFilesSelect( inEvent : FileListEvent ) : void
