@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <overviews> 
     <packages> 
-        <package name="com.astoolkit.workflow"> 
+        <package name="org.astoolkit.workflow"> 
             <shortDescription> 
                 <![CDATA[ 
                     Check package documentation for details 
