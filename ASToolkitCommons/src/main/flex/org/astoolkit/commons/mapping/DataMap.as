@@ -19,53 +19,53 @@ Version 2.x
 */
 package org.astoolkit.commons.mapping
 {
-	
+
 	import org.astoolkit.commons.factory.DynamicPoolFactoryDelegate;
 	import org.astoolkit.commons.factory.IPooledFactory;
 	import org.astoolkit.commons.factory.PooledFactory;
 	import org.astoolkit.commons.io.transform.DefaultDataTransformRegistry;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
-	
+
 	public final class DataMap
 	{
 		private static var _factory : PooledFactory;
-		
+
 		private static var _staticInstance : DataMap;
-		
+
 		private static var _transformerRegistry : IIODataTransformerRegistry;
-		
+
 		public static function clearSingleton() : void
 		{
 			_staticInstance = null;
 		}
-		
+
 		public static function get to() : DataMap
 		{
-			if(!_staticInstance)
+			if( !_staticInstance )
 				_staticInstance = new DataMap();
 			return _staticInstance;
 		}
-		
+
 		public function object( inTarget : Object, inMapping : Object, inStrict : Boolean = true ) : IPropertiesMapper
 		{
 			return new MapperWrapper( factory, inMapping, inTarget, inStrict );
 		}
-		
+
 		public function property( inTarget : Object, inPropertyName : String ) : IPropertiesMapper
 		{
 			var map : Object = {};
-			map[inPropertyName] = ".";
+			map[ inPropertyName ] = ".";
 			return object( inTarget, map, true );
 		}
-		
+
 		public function set transformerRegistry( inValue : IIODataTransformerRegistry ) : void
 		{
 			_transformerRegistry = inValue;
 		}
-		
+
 		private function get factory() : IPooledFactory
 		{
-			if(!_factory)
+			if( !_factory )
 			{
 				_factory = new PooledFactory();
 				_factory.defaultType = SimplePropertiesMapper;
@@ -74,15 +74,16 @@ package org.astoolkit.commons.mapping
 			}
 			return _factory;
 		}
-		
+
 		private function postCreateFactoryHandler( inInstance : SimplePropertiesMapper ) : void
 		{
-			if(!_transformerRegistry)
+			if( !_transformerRegistry )
 				_transformerRegistry = new DefaultDataTransformRegistry();
 			inInstance.transformerRegistry = _transformerRegistry;
 		}
 	}
 }
+
 import mx.core.IFactory;
 import org.astoolkit.commons.factory.IPooledFactory;
 import org.astoolkit.commons.io.transform.api.IIODataTransformer;
@@ -104,22 +105,22 @@ class MapperWrapper implements IPropertiesMapper
 		_mapping = inMapping;
 		_factory = inFactory;
 	}
-	
+
 	private var _factory : IPooledFactory;
-	
+
 	private var _mapping : Object;
-	
+
 	private var _strict : Boolean;
-	
+
 	private var _target : Object;
-	
+
 	private var _transformerRegistry : IIODataTransformerRegistry;
-	
+
 	public function hasTarget() : Boolean
 	{
 		return true;
 	}
-	
+
 	public function map( inSource : Object, inTarget : Object = null ) : *
 	{
 		var mapper : IPropertiesMapper = create();
@@ -127,11 +128,11 @@ class MapperWrapper implements IPropertiesMapper
 		_factory.release( mapper );
 		return out;
 	}
-	
+
 	public function set mapFailDelegate( inFunction : Function ) : void
 	{
 	}
-	
+
 	public function mapWith( inSource : Object, inMapping : Object, inTarget : Object = null ) : *
 	{
 		var mapper : IPropertiesMapper = create();
@@ -139,25 +140,25 @@ class MapperWrapper implements IPropertiesMapper
 		_factory.release( mapper );
 		return out;
 	}
-	
+
 	public function set strict( inValue : Boolean ) : void
 	{
 	}
-	
+
 	public function set target( inValue : Object ) : void
 	{
 		_target = inValue;
 	}
-	
+
 	public function set targetClass( inClass : IFactory ) : void
 	{
 	}
-	
+
 	public function set transformerRegistry( inValue : IIODataTransformerRegistry ) : void
 	{
 		_transformerRegistry = inValue;
 	}
-	
+
 	private function create() : IPropertiesMapper
 	{
 		var mapper : SimplePropertiesMapper = _factory.newInstance();

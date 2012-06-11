@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.net
 {
-	
+
 	import mx.messaging.ChannelSet;
 	import mx.rpc.AbstractOperation;
 	import mx.rpc.AsyncToken;
@@ -28,23 +28,23 @@ package org.astoolkit.workflow.task.net
 	import mx.rpc.events.ResultEvent;
 	import mx.rpc.remoting.RemoteObject;
 	import org.astoolkit.workflow.core.BaseTask;
-	
+
 	public class InvokeRemoteProcedure extends BaseTask
 	{
 		public var channelSet : ChannelSet;
-		
+
 		public var destination : String;
-		
+
 		public var ignoreResult : Boolean = true;
-		
+
 		public var methodName : String;
-		
+
 		public var params : Array;
-		
+
 		public var remoteObject : RemoteObject;
-		
+
 		public var result : *;
-		
+
 		override public function begin() : void
 		{
 			super.begin();
@@ -52,39 +52,39 @@ package org.astoolkit.workflow.task.net
 			remoteObject.destination = destination;
 			remoteObject.channelSet = channelSet;
 			var op : AbstractOperation = remoteObject.getOperation( methodName );
-			
-			if(params && params.length > 0)
+
+			if( params && params.length > 0 )
 			{
 				var paramsObj : Object = {};
-				
-				for(var i : int = 0; i < params.length; i++)
+
+				for( var i : int = 0; i < params.length; i++ )
 				{
-					paramsObj["p" + i] = params[i];
+					paramsObj[ "p" + i ] = params[ i ];
 				}
 			}
 			var token : AsyncToken = op.send();
-			
-			if(ignoreResult)
+
+			if( ignoreResult )
 			{
 				complete();
 			}
 			else
 			{
-				token.addResponder( new Responder( threadSafe( onResult ), threadSafe( onFault )));
+				token.addResponder( new Responder( threadSafe( onResult ), threadSafe( onFault ) ) );
 			}
 		}
-		
+
 		override public function prepare() : void
 		{
 			super.prepare();
 			result = null;
 		}
-		
+
 		private function onFault( inEvent : FaultEvent ) : void
 		{
 			fail( inEvent.fault.message, inEvent.fault );
 		}
-		
+
 		private function onResult( inEvent : ResultEvent ) : void
 		{
 			result = inEvent.result;

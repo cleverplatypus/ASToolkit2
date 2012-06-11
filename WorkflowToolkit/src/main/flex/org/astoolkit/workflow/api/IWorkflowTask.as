@@ -19,14 +19,14 @@ Version 2.x
 */
 package org.astoolkit.workflow.api
 {
-	
+
 	import flash.events.IEventDispatcher;
 	import mx.core.IFactory;
 	import mx.rpc.Fault;
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.mapping.DataMap;
 	import org.astoolkit.workflow.core.ExitStatus;
-	
+
 	[Event(
 		name="started",
 		type="org.astoolkit.workflow.core.WorkflowEvent" )]

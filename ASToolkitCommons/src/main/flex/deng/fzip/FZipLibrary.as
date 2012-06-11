@@ -19,14 +19,14 @@
  */
 package deng.fzip
 {
-	
+
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
 	import flash.events.*;
 	import flash.utils.ByteArray;
-	
+
 	/**
 	 * Dispatched when all pending files have been processed.
 	 *
@@ -84,37 +84,37 @@ package deng.fzip
 	 */
 	public class FZipLibrary extends EventDispatcher
 	{
-		private static const FORMAT_BITMAPDATA : uint = (1 << 0);
-		
-		private static const FORMAT_DISPLAYOBJECT : uint = (1 << 1);
-		
+		private static const FORMAT_BITMAPDATA : uint = ( 1 << 0 );
+
+		private static const FORMAT_DISPLAYOBJECT : uint = ( 1 << 1 );
+
 		/**
 		 * Constructor
 		 */
 		public function FZipLibrary()
 		{
 		}
-		
+
 		private var bitmapDataFormat : RegExp = /[]/;
-		
+
 		private var bitmapDataList : Object = {};
-		
+
 		private var currentFilename : String;
-		
+
 		private var currentLoader : Loader;
-		
+
 		private var currentState : uint = 0;
-		
+
 		private var currentZip : FZip;
-		
+
 		private var displayObjectFormat : RegExp = /[]/;
-		
+
 		private var displayObjectList : Object = {};
-		
+
 		private var pendingFiles : Array = [];
-		
+
 		private var pendingZips : Array = [];
-		
+
 		/**
 		 * Use this method to add an FZip instance to the processing queue.
 		 * If the FZip instance specified is not active (currently receiving files)
@@ -127,7 +127,7 @@ package deng.fzip
 			pendingZips.unshift( zip );
 			processNext();
 		}
-		
+
 		/**
 		 * Used to indicate a file extension that triggers formatting to BitmapData.
 		 *
@@ -137,7 +137,7 @@ package deng.fzip
 		{
 			bitmapDataFormat = addExtension( bitmapDataFormat, ext );
 		}
-		
+
 		/**
 		 * Used to indicate a file extension that triggers formatting to DisplayObject.
 		 *
@@ -147,7 +147,7 @@ package deng.fzip
 		{
 			displayObjectFormat = addExtension( displayObjectFormat, ext );
 		}
-		
+
 		/**
 		 * Request a file that has been formatted as BitmapData.
 		 * A ReferenceError is thrown if the file does not exist as a
@@ -157,13 +157,13 @@ package deng.fzip
 		 */
 		public function getBitmapData( filename : String ) : BitmapData
 		{
-			if(!bitmapDataList[filename] is BitmapData)
+			if( !bitmapDataList[ filename ] is BitmapData )
 			{
 				throw new Error( "File \"" + filename + "\" was not found as a BitmapData" );
 			}
-			return bitmapDataList[filename] as BitmapData;
+			return bitmapDataList[ filename ] as BitmapData;
 		}
-		
+
 		/**
 		 * Retrieve a definition (like a class) from a SWF file that has
 		 * been formatted as a DisplayObject.
@@ -174,12 +174,12 @@ package deng.fzip
 		 */
 		public function getDefinition( filename : String, definition : String ) : Object
 		{
-			if(!displayObjectList.hasOwnProperty( filename ))
+			if( !displayObjectList.hasOwnProperty( filename ) )
 			{
 				throw new ReferenceError( "File \"" + filename + "\" was not found as a DisplayObject, " );
 			}
-			var disp : DisplayObject = displayObjectList[filename] as DisplayObject;
-			
+			var disp : DisplayObject = displayObjectList[ filename ] as DisplayObject;
+
 			try
 			{
 				return disp.loaderInfo.applicationDomain.getDefinition( definition );
@@ -190,7 +190,7 @@ package deng.fzip
 			}
 			return null;
 		}
-		
+
 		/**
 		 * Request a file that has been formatted as a DisplayObject.
 		 * A ReferenceError is thrown if the file does not exist as a
@@ -200,13 +200,13 @@ package deng.fzip
 		 */
 		public function getDisplayObject( filename : String ) : DisplayObject
 		{
-			if(!displayObjectList.hasOwnProperty( filename ))
+			if( !displayObjectList.hasOwnProperty( filename ) )
 			{
 				throw new ReferenceError( "File \"" + filename + "\" was not found as a DisplayObject" );
 			}
-			return displayObjectList[filename] as DisplayObject;
+			return displayObjectList[ filename ] as DisplayObject;
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -214,7 +214,7 @@ package deng.fzip
 		{
 			return new RegExp( ext.replace( /[^A-Za-z0-9]/, "\\$&" ) + "$|" + original.source );
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -223,30 +223,30 @@ package deng.fzip
 			pendingFiles.unshift( evt.file );
 			processNext();
 		}
-		
+
 		/**
 		 * @private
 		 */
 		private function loaderCompleteHandler( evt : Event ) : void
 		{
-			if((currentState & FORMAT_BITMAPDATA) === FORMAT_BITMAPDATA)
+			if( ( currentState & FORMAT_BITMAPDATA ) === FORMAT_BITMAPDATA )
 			{
-				if(currentLoader.content is Bitmap && (currentLoader.content as Bitmap).bitmapData is BitmapData)
+				if( currentLoader.content is Bitmap && ( currentLoader.content as Bitmap ).bitmapData is BitmapData )
 				{
-					var bitmapData : BitmapData = (currentLoader.content as Bitmap).bitmapData
-					bitmapDataList[currentFilename] = bitmapData.clone();
+					var bitmapData : BitmapData = ( currentLoader.content as Bitmap ).bitmapData
+					bitmapDataList[ currentFilename ] = bitmapData.clone();
 						//trace(currentFilename+" -> BitmapData ("+bitmapData.width+"x"+bitmapData.height+")");
 				}
-				else if(currentLoader.content is DisplayObject)
+				else if( currentLoader.content is DisplayObject )
 				{
 					var width : uint = uint( currentLoader.content.width );
 					var height : uint = uint( currentLoader.content.height );
-					
-					if(width && height)
+
+					if( width && height )
 					{
 						var bitmapData2 : BitmapData = new BitmapData( width, height, true, 0x00000000 );
 						bitmapData2.draw( currentLoader );
-						bitmapDataList[currentFilename] = bitmapData2;
+						bitmapDataList[ currentFilename ] = bitmapData2;
 							//trace(currentFilename+" -> BitmapData ("+bitmapData2.width+"x"+bitmapData2.height+")");
 					}
 					else
@@ -259,13 +259,13 @@ package deng.fzip
 					trace( "File \"" + currentFilename + "\" could not be converted to BitmapData" );
 				}
 			}
-			
-			if((currentState & FORMAT_DISPLAYOBJECT) === FORMAT_DISPLAYOBJECT)
+
+			if( ( currentState & FORMAT_DISPLAYOBJECT ) === FORMAT_DISPLAYOBJECT )
 			{
-				if(currentLoader.content is DisplayObject)
+				if( currentLoader.content is DisplayObject )
 				{
 					//trace(currentFilename+" -> DisplayObject");
-					displayObjectList[currentFilename] = currentLoader.content;
+					displayObjectList[ currentFilename ] = currentLoader.content;
 				}
 				else
 				{
@@ -279,32 +279,32 @@ package deng.fzip
 			}
 			currentLoader = null;
 			currentFilename = "";
-			currentState &= ~(FORMAT_BITMAPDATA | FORMAT_DISPLAYOBJECT);
+			currentState &= ~( FORMAT_BITMAPDATA | FORMAT_DISPLAYOBJECT );
 			processNext();
 		}
-		
+
 		/**
 		 * @private
 		 */
 		private function processNext( evt : Event = null ) : void
 		{
-			while(currentState === 0)
+			while( currentState === 0 )
 			{
-				if(pendingFiles.length > 0)
+				if( pendingFiles.length > 0 )
 				{
 					var nextFile : FZipFile = pendingFiles.pop();
-					
-					if(bitmapDataFormat.test( nextFile.filename ))
+
+					if( bitmapDataFormat.test( nextFile.filename ) )
 					{
 						currentState |= FORMAT_BITMAPDATA;
 					}
-					
-					if(displayObjectFormat.test( nextFile.filename ))
+
+					if( displayObjectFormat.test( nextFile.filename ) )
 					{
 						currentState |= FORMAT_DISPLAYOBJECT;
 					}
-					
-					if((currentState & (FORMAT_BITMAPDATA | FORMAT_DISPLAYOBJECT)) !== 0)
+
+					if( ( currentState & ( FORMAT_BITMAPDATA | FORMAT_DISPLAYOBJECT ) ) !== 0 )
 					{
 						currentFilename = nextFile.filename;
 						currentLoader = new Loader();
@@ -316,19 +316,19 @@ package deng.fzip
 						break;
 					}
 				}
-				else if(currentZip == null)
+				else if( currentZip == null )
 				{
-					if(pendingZips.length > 0)
+					if( pendingZips.length > 0 )
 					{
 						currentZip = pendingZips.pop();
 						var i : uint = currentZip.getFileCount();
-						
-						while(i > 0)
+
+						while( i > 0 )
 						{
-							pendingFiles.push( currentZip.getFileAt( --i ));
+							pendingFiles.push( currentZip.getFileAt( --i ) );
 						}
-						
-						if(currentZip.active)
+
+						if( currentZip.active )
 						{
 							currentZip.addEventListener( Event.COMPLETE, zipCompleteHandler );
 							currentZip.addEventListener( FZipEvent.FILE_LOADED, fileCompleteHandler );
@@ -342,7 +342,7 @@ package deng.fzip
 					}
 					else
 					{
-						dispatchEvent( new Event( Event.COMPLETE ));
+						dispatchEvent( new Event( Event.COMPLETE ) );
 						break;
 					}
 				}
@@ -352,7 +352,7 @@ package deng.fzip
 				}
 			}
 		}
-		
+
 		/**
 		 * @private
 		 */

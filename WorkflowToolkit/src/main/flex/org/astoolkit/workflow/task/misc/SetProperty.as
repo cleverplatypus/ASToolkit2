@@ -19,9 +19,9 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.misc
 {
-	
+
 	import org.astoolkit.workflow.core.BaseTask;
-	
+
 	/**
 	 * Sets an object's property value.
 	 * <p>
@@ -63,38 +63,38 @@ package org.astoolkit.workflow.task.misc
 		 * the target's property name
 		 */
 		public var property : String;
-		
+
 		/**
 		 * the object to which to set the <code>property</code>.
 	   * Defaults to the current document
-			   */
+				  */
 		public var target : Object;
-		
+
 		[Bindable]
 		[InjectPipeline]
 		/**
 		 * any value to be set to <code>target[ property ]</code>
 		 */
 		public var value : *;
-		
+
 		/**
 		 * @private
 		 */
 		override public function begin() : void
 		{
 			super.begin();
-			
-			if(!target)
+
+			if( !target )
 				target = document;
-			
-			if(!property || !target.hasOwnProperty( property ))
+
+			if( !property || !target.hasOwnProperty( property ) )
 			{
 				fail( "SetProperty started without a property name or property name not found on target" );
 				return;
 			}
-			
-			if(value != undefined)
-				target[property] = value;
+
+			if( value != undefined )
+				target[ property ] = value;
 			complete();
 		}
 	}

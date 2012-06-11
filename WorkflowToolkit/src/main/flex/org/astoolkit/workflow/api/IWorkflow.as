@@ -19,11 +19,11 @@ Version 2.x
 */
 package org.astoolkit.workflow.api
 {
-	
+
 	import mx.core.IFactory;
 	import org.astoolkit.commons.collection.api.IRepeater;
 	import org.astoolkit.workflow.core.Insert;
-	
+
 	[Event(
 		name="started",
 		type="org.astoolkit.workflow.core.WorkflowEvent" )]

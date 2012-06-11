@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
-	
+
 	/**
 	 * Tasks' completion information wrapper.
 	 * <p>Upon execution, each task has access to the previously executed task's exit status
@@ -47,17 +47,17 @@ package org.astoolkit.workflow.core
 	public final class ExitStatus
 	{
 		public static const ABORTED : String = "aborted";
-		
+
 		public static const COMPLETE : String = "complete";
-		
+
 		public static const DEFAULT_STATUS : ExitStatus = new ExitStatus( COMPLETE );
-		
+
 		public static const FAILED : String = "failed";
-		
+
 		public static const TIME_OUT : String = "timeOut";
-		
+
 		public static const USER_CANCELED : String = "userCanceled";
-		
+
 		public function ExitStatus( inCode : String, inMessage : String = null, inData : Object = null, inInterrupted : Boolean = false )
 		{
 			_code = inCode;
@@ -65,15 +65,15 @@ package org.astoolkit.workflow.core
 			_data = inData;
 			_interrupted = inInterrupted || _code == FAILED || _code == TIME_OUT || _code == USER_CANCELED;
 		}
-		
+
 		private var _code : String;
-		
+
 		private var _data : Object;
-		
+
 		private var _interrupted : Boolean;
-		
+
 		private var _message : String;
-		
+
 		/**
 		 * status code
 		 */
@@ -81,7 +81,7 @@ package org.astoolkit.workflow.core
 		{
 			return _code;
 		}
-		
+
 		/**
 		 * (optional) any data related to the status (e.g. an <code>Error</code> that caused a failure)
 		 */
@@ -89,7 +89,7 @@ package org.astoolkit.workflow.core
 		{
 			return _data;
 		}
-		
+
 		/**
 		 * whether the task didn't complete normally.
 		 */
@@ -97,7 +97,7 @@ package org.astoolkit.workflow.core
 		{
 			return _interrupted;
 		}
-		
+
 		/**
 		 * (optional) human readable information about the status (e.g. an error message)
 		 */

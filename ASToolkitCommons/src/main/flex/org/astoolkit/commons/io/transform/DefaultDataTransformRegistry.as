@@ -19,10 +19,10 @@ Version 2.x
 */
 package org.astoolkit.commons.io.transform
 {
-	
+
 	import flash.utils.getQualifiedClassName;
 	import org.astoolkit.commons.io.transform.api.*;
-	
+
 	public class DefaultDataTransformRegistry implements IIODataTransformerRegistry
 	{
 		public function DefaultDataTransformRegistry()
@@ -32,22 +32,22 @@ package org.astoolkit.commons.io.transform
 			registerTransformer( FunctionReferenceDataTransform );
 			registerTransformer( RegExpDataTransform );
 		}
-		
+
 		private var _transformers : Vector.<IIODataTransformer>;
-		
+
 		private var _transformersBySelector : Object;
-		
+
 		public function getTransformer( inData : Object, inExpression : Object ) : IIODataTransformer
 		{
-			for each(var f : IIODataTransformer in _transformers)
+			for each( var f : IIODataTransformer in _transformers )
 			{
-				for each(var dataType : Class in f.supportedDataTypes)
+				for each( var dataType : Class in f.supportedDataTypes )
 				{
-					if(inData is dataType)
+					if( inData is dataType )
 					{
-						for each(var filterType : Class in f.supportedExpressionTypes)
+						for each( var filterType : Class in f.supportedExpressionTypes )
 						{
-							if(inExpression is filterType && f.isValidExpression( inExpression ))
+							if( inExpression is filterType && f.isValidExpression( inExpression ) )
 							{
 								return f;
 							}
@@ -57,23 +57,23 @@ package org.astoolkit.commons.io.transform
 			}
 			return null;
 		}
-		
+
 		public function registerTransformer( inObject : Object ) : void
 		{
 			var o : Object = inObject is Class ? new inObject() : inObject;
-			
-			if(!(o is IIODataTransformer))
+
+			if( !( o is IIODataTransformer ) )
 				throw new Error( "Attempt to register unrelated class " +
 					getQualifiedClassName( o ) + " as IIODataTransform" );
 			_transformers.push( o as IIODataTransformer );
 			_transformers = _transformers.sort( sort );
 		}
-		
+
 		private function sort( inFilterA : IIODataTransformer, inFilterB : IIODataTransformer ) : int
 		{
-			if(inFilterA.priority < inFilterB.priority)
+			if( inFilterA.priority < inFilterB.priority )
 				return 1;
-			else if(inFilterA.priority > inFilterB.priority)
+			else if( inFilterA.priority > inFilterB.priority )
 				return -1;
 			return 0;
 		}

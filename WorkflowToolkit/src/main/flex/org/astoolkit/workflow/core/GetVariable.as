@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
-	
+
 	/**
 	 * Gets a variable either by name or by type from the context
 	 * and outputs it.
@@ -59,50 +59,50 @@ package org.astoolkit.workflow.core
 	public class GetVariable extends BaseTask
 	{
 		public var clear : Boolean = false;
-		
+
 		public var defaultValue : *;
-		
+
 		public var type : Class;
-		
+
 		private var _name : String;
-		
+
 		override public function begin() : void
 		{
 			super.begin();
-			
-			if(!_name && !type)
+
+			if( !_name && !type )
 			{
 				fail( "No variable name or type provided" );
 				return;
 			}
 			var out : *;
 			var localName : String = _name;
-			
-			if(!localName)
+
+			if( !localName )
 			{
 				var d : * = $.byType( type, true );
-				
-				if(d !== undefined)
+
+				if( d !== undefined )
 				{
 					localName = d.name;
 				}
 			}
-			
-			if(localName && context.variables.hasOwnProperty( localName ))
+
+			if( localName && context.variables.hasOwnProperty( localName ) )
 			{
-				out = context.variables[localName];
-				
-				if(clear)
-					delete context.variables[localName];
+				out = context.variables[ localName ];
+
+				if( clear )
+					delete context.variables[ localName ];
 			}
 			else
 				out = defaultValue;
 			complete( out );
 		}
-		
+
 		public function set name( inValue : String ) : void
 		{
-			if(inValue)
+			if( inValue )
 				_name = inValue.replace( /^[\$\.]+/ );
 			else
 				_name = null;

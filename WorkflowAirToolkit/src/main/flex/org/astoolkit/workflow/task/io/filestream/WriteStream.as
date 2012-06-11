@@ -1,9 +1,9 @@
 package org.astoolkit.workflow.task.io.filestream
 {
-	
+
 	import flash.filesystem.FileStream;
 	import org.astoolkit.workflow.core.BaseTask;
-	
+
 	/**
 	 * Writes data to a <code>flash.filesystem.FileStream</code>.<br><br>
 	 * The value is written using the stream's appropriate <code>writeXXX</code>
@@ -25,41 +25,41 @@ package org.astoolkit.workflow.task.io.filestream
 	public class WriteStream extends BaseTask
 	{
 		public var closeAfterWrite : Boolean;
-		
+
 		[Bindable]
 		[InjectPipeline]
 		public var data : Object;
-		
+
 		public var stream : FileStream;
-		
+
 		override public function begin() : void
 		{
 			super.begin();
-			
-			if(!stream)
+
+			if( !stream )
 			{
 				fail( "stream property not defined" );
 				return;
 			}
-			
-			if(!data)
+
+			if( !data )
 			{
 				fail( "data property not defined" );
 				return;
 			}
-			
-			if(data is String)
+
+			if( data is String )
 				stream.writeUTFBytes( data as String );
-			else if(data is Boolean)
+			else if( data is Boolean )
 				stream.writeBoolean( data as Boolean );
-			else if(data is int)
+			else if( data is int )
 				stream.writeInt( data as int );
-			else if(data is Number)
+			else if( data is Number )
 				stream.writeDouble( data as Number );
 			else
 				stream.writeObject( data );
-			
-			if(closeAfterWrite)
+
+			if( closeAfterWrite )
 				stream.close();
 			complete();
 		}

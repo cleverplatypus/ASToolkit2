@@ -19,16 +19,16 @@ Version 2.x
 */
 package org.astoolkit.workflow.internals
 {
-	
+
 	import org.astoolkit.workflow.api.IElementsGroup;
 	import org.astoolkit.workflow.api.IPropertyOverrideRule;
 	import org.astoolkit.workflow.api.IWorkflowElement;
-	
+
 	public class DefaultPropertyOverrideRule implements IPropertyOverrideRule
 	{
 		public function shouldOverride( inProperty : String, inTarget : IWorkflowElement, inParent : IElementsGroup ) : Boolean
 		{
-			switch(inProperty)
+			switch( inProperty )
 			{
 				case "enabled":
 					return !inParent.enabled && inTarget.enabled;

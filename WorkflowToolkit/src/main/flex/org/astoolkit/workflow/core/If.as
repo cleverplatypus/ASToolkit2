@@ -19,9 +19,9 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
-	
+
 	import org.astoolkit.workflow.api.IWorkflowElement;
-	
+
 	[DefaultProperty( "Execute" )]
 	/**
 	 * Group for conditional execution of tasks.
@@ -95,22 +95,22 @@ package org.astoolkit.workflow.core
 		 * @private
 		 */
 		private var _condition : Boolean;
-		
+
 		/**
 		 * @private
 		 */
 		private var _isFalseGroup : Group;
-		
+
 		/**
 		 * @private
 		 */
 		private var _isTrueGroup : Group;
-		
+
 		/**
 		 * @private
 		 */
 		private var _joinedChildren : Vector.<IWorkflowElement>;
-		
+
 		/**
 		 * (optional) the tasks to enable with <code>condition == false</code>
 		 */
@@ -119,7 +119,7 @@ package org.astoolkit.workflow.core
 			_isFalseGroup = new Group();
 			_isFalseGroup.children = inValue;
 		}
-		
+
 		/**
 		 * the tasks to enable with <code>condition == true</code>
 		 */
@@ -128,25 +128,25 @@ package org.astoolkit.workflow.core
 			_isTrueGroup = new Group();
 			_isTrueGroup.children = inValue;
 		}
-		
+
 		/**
 		 * @private
 		 */
 		override public function get children() : Vector.<IWorkflowElement>
 		{
-			if(_joinedChildren == null)
+			if( _joinedChildren == null )
 			{
 				_joinedChildren = new Vector.<IWorkflowElement>();
-				
-				if(_isTrueGroup)
+
+				if( _isTrueGroup )
 					_joinedChildren.push( _isTrueGroup );
-				
-				if(_isFalseGroup)
+
+				if( _isFalseGroup )
 					_joinedChildren.push( _isFalseGroup );
 			}
 			return _joinedChildren;
 		}
-		
+
 		/**
 		 * the Boolean evaluated for conditional execution.
 		 *
@@ -156,30 +156,30 @@ package org.astoolkit.workflow.core
 		public function set condition( inValue : Boolean ) : void
 		{
 			_condition = inValue;
-			
-			if(_isTrueGroup)
+
+			if( _isTrueGroup )
 				_isTrueGroup.enabled = _condition;
-			
-			if(_isFalseGroup)
+
+			if( _isFalseGroup )
 				_isFalseGroup.enabled = !_condition;
 		}
-		
+
 		/**
 		 * @private
 		 */
 		override public function initialize() : void
 		{
 			super.initialize();
-			
-			if(_isTrueGroup != null)
+
+			if( _isTrueGroup != null )
 			{
 				_isTrueGroup.delegate = _delegate;
 				_isTrueGroup.context = _context;
 				_isTrueGroup.parent = this;
 				_isTrueGroup.initialize();
 			}
-			
-			if(_isFalseGroup != null)
+
+			if( _isFalseGroup != null )
 			{
 				_isFalseGroup.delegate = _delegate;
 				_isFalseGroup.context = _context;
@@ -187,30 +187,30 @@ package org.astoolkit.workflow.core
 				_isFalseGroup.initialize();
 			}
 		}
-		
+
 		/**
 		 * @private
 		 */
 		override public function initialized( inDocument : Object, inId : String ) : void
 		{
 			super.initialized( inDocument, inId );
-			
-			if(_isFalseGroup)
+
+			if( _isFalseGroup )
 				_isFalseGroup.document = inDocument;
-			
-			if(_isTrueGroup)
+
+			if( _isTrueGroup )
 				_isTrueGroup.document = inDocument;
 		}
-		
+
 		/**
 		 * @private
 		 */
 		override public function prepare() : void
 		{
-			if(_isTrueGroup != null)
+			if( _isTrueGroup != null )
 				_isTrueGroup.prepare();
-			
-			if(_isFalseGroup != null)
+
+			if( _isFalseGroup != null )
 				_isFalseGroup.prepare();
 		}
 	}

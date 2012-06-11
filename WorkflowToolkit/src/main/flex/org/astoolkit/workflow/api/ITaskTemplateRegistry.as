@@ -1,6 +1,6 @@
 package org.astoolkit.workflow.api
 {
-	
+
 	public interface ITaskTemplateRegistry
 	{
 		function getImplementation( inTemplate : ITaskTemplate ) : IWorkflowTask;

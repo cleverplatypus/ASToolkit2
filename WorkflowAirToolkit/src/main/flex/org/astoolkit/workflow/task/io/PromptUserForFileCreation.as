@@ -19,14 +19,14 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.io
 {
-	
+
 	import flash.events.Event;
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
 	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.core.ExitStatus;
-	
+
 	/**
 	 * Opens the OS's file save dialog.
 	 *
@@ -47,19 +47,19 @@ package org.astoolkit.workflow.task.io
 	public class PromptUserForFileCreation extends BaseTask
 	{
 		public static const OUTPUT_FILE : String = "file";
-		
+
 		public static const OUTPUT_STREAM : String = "stream";
-		
+
 		[Inspectable( enumeration="write,append,read,update", defaultValue="write" )]
 		public var fileMode : String = "write";
-		
+
 		public var message : String;
-		
+
 		[Inspectable( enumeration="file,stream", defaultValue="file" )]
 		public var outputType : String;
-		
+
 		private var _fileSelector : File;
-		
+
 		override public function begin() : void
 		{
 			super.begin();
@@ -68,16 +68,16 @@ package org.astoolkit.workflow.task.io
 			_fileSelector.addEventListener( Event.CANCEL, onSelectCancel );
 			_fileSelector.browseForSave( message ? message : "" );
 		}
-		
+
 		private function onFileSelect( inEvent : Event ) : void
 		{
-			if(outputType == OUTPUT_STREAM)
+			if( outputType == OUTPUT_STREAM )
 			{
 				var stream : FileStream = new FileStream();
 				var out : *;
 				var m : String;
-				
-				switch(fileMode)
+
+				switch( fileMode )
 				{
 					case "write":
 						m = FileMode.WRITE;
@@ -99,7 +99,7 @@ package org.astoolkit.workflow.task.io
 				out = _fileSelector;
 			complete( out );
 		}
-		
+
 		private function onSelectCancel( inEvent : Event ) : void
 		{
 			_exitStatus = new ExitStatus( ExitStatus.USER_CANCELED );

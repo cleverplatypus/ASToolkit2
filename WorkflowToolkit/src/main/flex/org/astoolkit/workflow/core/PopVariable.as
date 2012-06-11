@@ -19,11 +19,11 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
-	
+
 	import flash.utils.getQualifiedClassName;
 	import mx.collections.IList;
 	import org.astoolkit.workflow.internals.GroupUtil;
-	
+
 	/**
 	 * Removes and outputs the last element of the list variable <code>name</code>.
 	 * <p>If the named list is not found <code>emptyListPolicy</code>
@@ -80,73 +80,73 @@ package org.astoolkit.workflow.core
 	 */
 	public class PopVariable extends BaseTask
 	{
-		
+
 		[Inspectable( enumeration="lastIteration,fail,break,returnNull", defaultValue="fail" )]
 		public var emptyListPolicy : String = "fail";
-		
+
 		/**
 		 * @private
 		 */
 		private var _name : String;
-		
+
 		/**
 		 * @private
 		 */
 		override public function begin() : void
 		{
 			super.begin();
-			
-			if(!_name || _name == "")
+
+			if( !_name || _name == "" )
 			{
 				fail( "Variable name not provided" );
 				return;
 			}
-			
-			if(!context.variables.hasOwnProperty( _name ))
+
+			if( !context.variables.hasOwnProperty( _name ) )
 			{
 				fail( "Variable {0} doesn't exist", _name );
 				return;
 			}
-			var varInstance : * = context.variables[_name];
-			
-			if(!(varInstance is Array ||
+			var varInstance : * = context.variables[ _name ];
+
+			if( !( varInstance is Array ||
 				getQualifiedClassName( varInstance ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) ||
-				varInstance is IList))
+				varInstance is IList ) )
 			{
 				fail( "Attempt to pop data from an unknown list type" );
 				return;
 			}
 			var out : *;
-			
-			if(varInstance is Array || getQualifiedClassName( varInstance ).match( /^__AS3__\.vec::Vector\.<.+>$/ ))
+
+			if( varInstance is Array || getQualifiedClassName( varInstance ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) )
 				out = varInstance.length > 0 ? varInstance.pop() : undefined;
-			else if(varInstance is IList)
+			else if( varInstance is IList )
 				out = IList( varInstance ).length > 0 ?
 					IList( varInstance ).removeItemAt( IList( varInstance ).length - 1 ) :
 					undefined;
-			
-			if(out !== undefined)
+
+			if( out !== undefined )
 				complete( out );
 			else
 			{
-				if(emptyListPolicy == "fail" ||
-					_currentIterator == null)
+				if( emptyListPolicy == "fail" ||
+					_currentIterator == null )
 				{
 					fail( "Destination list is empty" );
 					return;
 				}
-				else if(_currentIterator != null && emptyListPolicy == "lastIteration")
+				else if( _currentIterator != null && emptyListPolicy == "lastIteration" )
 					_currentIterator.abort();
-				else if(emptyListPolicy == "break")
+				else if( emptyListPolicy == "break" )
 					GroupUtil.getParentWorkflow( this ).abort();
-				else if(emptyListPolicy == "returnNull")
+				else if( emptyListPolicy == "returnNull" )
 					complete( null );
 			}
 		}
-		
+
 		public function set name( inValue : String ) : void
 		{
-			if(inValue)
+			if( inValue )
 				_name = inValue.replace( /^[\$\.]+/ );
 			else
 				_name = null;

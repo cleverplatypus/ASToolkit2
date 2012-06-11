@@ -19,58 +19,58 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.io.filestream
 {
-	
+
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
 	import org.astoolkit.workflow.core.BaseTask;
-	
+
 	public class OpenFileStream extends BaseTask
 	{
-		
+
 		[Bindable]
 		[InjectPipeline]
 		public var file : File;
-		
+
 		[Inspectable( enumeration="write,append,read,update", defaultValue="write" )]
 		public var mode : String;
-		
+
 		[Bindable]
 		[InjectPipeline]
 		public var path : String;
-		
+
 		override public function begin() : void
 		{
 			super.begin();
-			
-			if(!file && !path)
+
+			if( !file && !path )
 			{
 				fail( "No file or path property set" );
 				return;
 			}
 			var aFile : File;
-			
-			if(file)
+
+			if( file )
 				aFile = file;
 			else
 			{
 				aFile = new File();
-				
-				if(path.match( /^\w+:\// ))
+
+				if( path.match( /^\w+:\// ) )
 					aFile.url = path;
 				else
 					aFile.nativePath = path;
 			}
-			
-			if(mode == "read" && !aFile.exists)
+
+			if( mode == "read" && !aFile.exists )
 			{
 				fail( "Cannot open a read stream on a non existing file" );
 				return;
 			}
 			var stream : FileStream = new FileStream();
 			var m : String;
-			
-			switch(mode)
+
+			switch( mode )
 			{
 				case "write":
 					m = FileMode.WRITE;

@@ -19,10 +19,10 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.text
 {
-	
+
 	import org.astoolkit.commons.collection.api.IRepeater;
 	import org.astoolkit.workflow.core.BaseTask;
-	
+
 	/**
 	 * Takes <code>source</code> and <code>text</code>
 	 * and concatenate them.
@@ -55,19 +55,19 @@ package org.astoolkit.workflow.task.text
 		 * of the <code>source</code> string
 		 */
 		public var leading : Boolean;
-		
+
 		/**
 		 * the original string
 		 */
 		public var source : String;
-		
+
 		[Bindable]
 		[InjectPipeline]
 		/**
 		 * (injectable) the text to concat
 		 */
 		public var text : String;
-		
+
 		override public function begin() : void
 		{
 			super.begin();

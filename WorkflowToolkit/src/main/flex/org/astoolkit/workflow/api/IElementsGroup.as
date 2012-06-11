@@ -1,8 +1,8 @@
 package org.astoolkit.workflow.api
 {
-	
+
 	import org.astoolkit.workflow.core.Insert;
-	
+
 	public interface IElementsGroup extends IWorkflowElement
 	{
 		/**

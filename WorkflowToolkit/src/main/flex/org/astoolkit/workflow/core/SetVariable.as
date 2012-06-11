@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
-	
+
 	/**
 	 * Sets the value of the current's context variable.
 	 * If a value is not specified, it uses the current
@@ -46,12 +46,12 @@ package org.astoolkit.workflow.core
 		 * @private
 		 */
 		private var _name : String;
-		
+
 		/**
 		 * @private
 		 */
 		private var _value : *;
-		
+
 		/**
 		 * @private
 		 */
@@ -59,27 +59,27 @@ package org.astoolkit.workflow.core
 		{
 			super.begin();
 			var aName : String = _name;
-			
-			if(!aName)
+
+			if( !aName )
 			{
-				aName = (new Date().getTime() + Math.random().toString()).replace( ".", "_" );
+				aName = ( new Date().getTime() + Math.random().toString() ).replace( ".", "_" );
 			}
-			
-			if(_value !== undefined)
-				context.variables[aName] = _value;
+
+			if( _value !== undefined )
+				context.variables[ aName ] = _value;
 			else
-				context.variables[aName] = filteredInput;
+				context.variables[ aName ] = filteredInput;
 			complete();
 		}
-		
+
 		public function set name( inValue : String ) : void
 		{
-			if(inValue)
+			if( inValue )
 				_name = inValue.replace( /^[\$\.]+/ );
 			else
 				_name = null;
 		}
-		
+
 		public function set value( inValue : * ) : void
 		{
 			_value = inValue;

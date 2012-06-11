@@ -19,13 +19,13 @@ Version 2.x
 */
 package org.astoolkit.workflow.constant
 {
-	
+
 	public final class Feed
 	{
 		public static const AUTO : String = "auto";
-		
+
 		public static const CURRENT_DATA : String = "currentData";
-		
+
 		public static const PIPELINE : String = "pipeline";
 	}
 }

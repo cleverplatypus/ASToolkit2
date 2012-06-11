@@ -19,13 +19,13 @@ Version 2.x
 */
 package org.astoolkit.workflow.constant
 {
-	
+
 	public final class Iterate
 	{
 		public static const DATA : String = "data";
-		
+
 		public static const LOOP : String = "loop";
-		
+
 		public static const ONCE : String = "once";
 	}
 }

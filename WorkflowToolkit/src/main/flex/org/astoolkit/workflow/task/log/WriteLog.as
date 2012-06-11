@@ -19,14 +19,14 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.log
 {
-	
+
 	import flash.utils.getQualifiedClassName;
 	import mx.logging.ILogger;
 	import mx.logging.Log;
 	import mx.logging.LogEventLevel;
 	import mx.utils.ObjectUtil;
 	import org.astoolkit.workflow.core.BaseTask;
-	
+
 	/**
 	 * Writes to the currently registered Logger instances at the specified level
 	 * <p>
@@ -49,15 +49,15 @@ package org.astoolkit.workflow.task.log
 	public class WriteLog extends BaseTask
 	{
 		private static const LOGGER : ILogger =
-			Log.getLogger( getQualifiedClassName( WriteLog ).replace( /:+/g, "." ));
-		
+			Log.getLogger( getQualifiedClassName( WriteLog ).replace( /:+/g, "." ) );
+
 		[Inspectable( defaultValue="debug", enumeration="debug,info,warn,error,fatal" )]
 		/**
 		 * debug level.
 		 * <p>Either debug,info,warn,error or fatal</p>
 		 */
 		public var level : String = "debug";
-		
+
 		[Bindable]
 		[InjectPipeline]
 		/**
@@ -65,12 +65,12 @@ package org.astoolkit.workflow.task.log
 		 * <p>{<em>n</em>} placeholders can be used for text substitution.</p>
 		 */
 		public var message : String = null;
-		
+
 		/**
 		 * parameters for text substitution in the message
 		 */
 		public var parameters : Array = [];
-		
+
 		/**
 		 * @private
 		 */
@@ -82,39 +82,39 @@ package org.astoolkit.workflow.task.log
 				error: LogEventLevel.ERROR,
 				fatal: LogEventLevel.FATAL
 			};
-		
+
 		/**
 		 * @private
 		 */
 		override public function begin() : void
 		{
 			super.begin();
-			
+
 			try
 			{
 				var outMessage : String = message;
-				
-				if(!outMessage)
+
+				if( !outMessage )
 				{
 					outMessage = ObjectUtil.toString( filteredInput );
 				}
 				var varName : String;
 				var re : RegExp;
-				
-				while(outMessage.match( /\$\w+/ ))
+
+				while( outMessage.match( /\$\w+/ ) )
 				{
-					varName = outMessage.match( /\$\w+/ )[0];
+					varName = outMessage.match( /\$\w+/ )[ 0 ];
 					re = new RegExp( "\\\u0024" + varName.substr( 1 ) + "", "g" );
-					outMessage = outMessage.replace( re, context.variables[varName.substr( 1 )]);
+					outMessage = outMessage.replace( re, context.variables[ varName.substr( 1 ) ] );
 				}
-				var args : Array = [ _levels[level], outMessage ];
+				var args : Array = [ _levels[ level ], outMessage ];
 				args = args.concat( parameters );
-				
-				if(LOGGER)
+
+				if( LOGGER )
 				{
-					var logFn : Function  = LOGGER["log"] as Function;
-					
-					if(logFn != null)
+					var logFn : Function  = LOGGER[ "log" ] as Function;
+
+					if( logFn != null )
 						logFn.apply( LOGGER, args );
 				}
 				complete( _inputData );

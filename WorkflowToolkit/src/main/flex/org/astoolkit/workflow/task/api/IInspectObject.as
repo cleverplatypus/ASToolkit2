@@ -1,6 +1,6 @@
 package org.astoolkit.workflow.task.api
 {
-	
+
 	[Bindable]
 	[Template]
 	/**

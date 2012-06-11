@@ -19,36 +19,36 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.events
 {
-	
+
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
 	import org.astoolkit.workflow.core.BaseTask;
-	
+
 	public class WaitForEvent extends BaseTask
 	{
 		public var eventType : String;
-		
+
 		public var priority : int = int.MIN_VALUE;
-		
+
 		public var target : IEventDispatcher;
-		
+
 		override public function begin() : void
 		{
 			super.begin();
 		}
-		
+
 		override public function prepare() : void
 		{
 			super.prepare();
-			
-			if(!target || !eventType)
+
+			if( !target || !eventType )
 			{
 				fail( "No target and/or eventType provided" );
 				return;
 			}
 			target.addEventListener( eventType, onEvent, false, priority );
 		}
-		
+
 		private function onEvent( inEvent : Event ) : void
 		{
 			target.removeEventListener( eventType, onEvent );

@@ -1,10 +1,10 @@
 package org.astoolkit.workflow.api
 {
-	
+
 	import flash.events.IEventDispatcher;
 	import mx.core.IMXMLObject;
 	import org.astoolkit.commons.collection.api.IIterator;
-	
+
 	public interface IWorkflowElement extends IEventDispatcher, IMXMLObject
 	{
 		/**

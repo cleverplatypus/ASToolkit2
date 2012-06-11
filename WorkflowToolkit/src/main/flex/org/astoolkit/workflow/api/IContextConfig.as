@@ -19,10 +19,10 @@ Version 2.x
 */
 package org.astoolkit.workflow.api
 {
-	
+
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
-	
+
 	/**
 	 * Contract for in IWorkflowContext configuration object.
 	 */

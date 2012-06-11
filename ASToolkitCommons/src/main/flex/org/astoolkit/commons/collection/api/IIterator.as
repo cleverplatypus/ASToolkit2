@@ -61,7 +61,7 @@ package org.astoolkit.commons.collection.api
 		function next() : Object;
 
 		/**
-		 * returns a value between 0 and 1 reppresenting
+		 * a value between 0 and 1 reppresenting
 		 * the iteration's progress
 		 */
 		function get progress() : Number;

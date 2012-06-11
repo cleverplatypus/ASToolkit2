@@ -19,38 +19,38 @@ Version 2.x
 */
 package org.astoolkit.workflow.template.message
 {
-	
+
 	import mx.core.IFactory;
 	import org.astoolkit.workflow.core.BaseTaskTemplate;
 	import org.astoolkit.workflow.task.api.ISendMessage;
-	
+
 	public dynamic class SendMessage extends BaseTaskTemplate implements ISendMessage
 	{
 		public function set isCommand( inValue : Boolean ) : void
 		{
 			setImplementationProperty( "isCommand", inValue );
 		}
-		
+
 		public function set message( inValue : Object ) : void
 		{
 			setImplementationProperty( "message", inValue );
 		}
-		
+
 		public function set messageFactory( inValue : IFactory ) : void
 		{
 			setImplementationProperty( "messageFactory", inValue );
 		}
-		
+
 		public function set messageMappingFailurePolicy( inValue : String ) : void
 		{
 			setImplementationProperty( "messageMappingFailurePolicy", inValue );
 		}
-		
+
 		public function set messagePropertiesMapping( inValue : Object ) : void
 		{
 			setImplementationProperty( "messagePropertiesMapping", inValue );
 		}
-		
+
 		public function set scope( inValue : Object ) : void
 		{
 			setImplementationProperty( "scope", inValue );

@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.internals
 {
-	
+
 	import flash.utils.flash_proxy;
 	import flash.utils.getQualifiedClassName;
 	import mx.utils.ObjectProxy;
@@ -28,8 +28,9 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.commons.mapping.DataMap;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.core.ExitStatus;
+
 	use namespace flash_proxy;
-	
+
 	[Bindable]
 	/**
 	 * The workflow's context variables provider.
@@ -53,42 +54,42 @@ package org.astoolkit.workflow.internals
 			_namespaces = {};
 			_local = {};
 		}
-		
+
 		/**
 		 * @private
 		 */
 		private var _context : IWorkflowContext;
-		
+
 		/**
 		 * @private
 		 */
 		private var _dataMap : DataMap;
-		
+
 		/**
 		 * @private
 		 */
 		private var _local : Object;
-		
+
 		/**
 		 * @private
 		 */
 		private var _namespaces : Object;
-		
+
 		/**
 		 * @private
 		 */
 		private var _runningTask : IWorkflowTask;
-		
+
 		/**
 		 * @private
 		 */
 		private var _runningWorkflow : IWorkflow;
-		
+
 		/**
 		 * @private
 		 */
 		private var _runningWorkflowPipelineData : Object;
-		
+
 		/**
 		 * @private
 		 */
@@ -96,7 +97,7 @@ package org.astoolkit.workflow.internals
 		{
 			// TODO Auto Generated method stub
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -104,56 +105,56 @@ package org.astoolkit.workflow.internals
 		{
 			// TODO Auto Generated method stub
 		}
-		
+
 		/**
 		 * @private
 		 */
 		public function beforeTaskBegin( inTask : IWorkflowTask ) : void
 		{
-			if(!(inTask is IWorkflow))
+			if( !( inTask is IWorkflow ) )
 			{
 				_runningTask = inTask;
 			}
 		}
-		
+
 		public function bind( inValue : * ) : *
 		{
 			trace( "bind called", inValue, getQualifiedClassName( _runningTask ), _runningTask ? _runningTask.status : "" );
 			return inValue;
 		}
-		
+
 		public function byType( inType : Class, inGetDescriptor : Boolean = false ) : *
 		{
 			var parent : IElementsGroup = GroupUtil.getParentWorkflow( _runningTask );
 			var n : String;
-			
+
 			do
 			{
 				n = UIDUtil.getUID( parent );
-				
-				if(_namespaces.hasOwnProperty( n ))
+
+				if( _namespaces.hasOwnProperty( n ) )
 				{
-					for each(var val : * in _namespaces[n])
+					for each( var val : * in _namespaces[ n ] )
 					{
-						if(val is inType)
+						if( val is inType )
 							return inGetDescriptor ? { name: n, value: val } : val;
 					}
 				}
 				parent = GroupUtil.getParentWorkflow( parent );
-			} while(parent != null);
+			} while( parent != null );
 			return undefined;
 		}
-		
+
 		public function get config() : IContextConfig
 		{
 			return _context.config;
 		}
-		
+
 		public function get context() : IWorkflowContext
 		{
 			return _context;
 		}
-		
+
 		/**
 		 * the current data of the parent <code>IWorkflow</code>'s IIterator, if any; undefined otherwise.
 		 * <p>It can be used with a trailing index number (0-<em>n</em>) to access outer
@@ -186,48 +187,48 @@ package org.astoolkit.workflow.internals
 		 */
 		public function get currentData() : Object
 		{
-			if(!_runningTask)
+			if( !_runningTask )
 				return undefined;
 			var p : IRepeater = GroupUtil.getParentRepeater( _runningTask );
-			
-			if(p && p.iterator)
+
+			if( p && p.iterator )
 				return p.iterator.current();
 			return undefined;
 		}
-		
+
 		public function set currentData( inValue : Object ) : void
 		{
 			throw new Error( "\"currentData\" is a read-only reserved word." )
 		}
-		
+
 		/**
 		 * the current filtered pipeline data
 		 */
 		public function get data() : Object
 		{
-			if(!_runningTask)
+			if( !_runningTask )
 				return null;
 			return _runningTask.filteredInput;
 		}
-		
+
 		public function set data( inValue : Object ) : void
 		{
 			throw new Error( "\"data\" is a read-only reserved word." )
 		}
-		
+
 		/**
 		 * the previously executed task's exit status
 		 */
 		public function get exitStatus() : ExitStatus
 		{
-			return getProperty( new QName( null, "exitStatus" ));
+			return getProperty( new QName( null, "exitStatus" ) );
 		}
-		
+
 		public function set exitStatus( inValue : ExitStatus ) : void
 		{
 			throw new Error( "\"exitStatus\" is a read-only reserved word." )
 		}
-		
+
 		/**
 		 * the current index of the parent <code>IWorkflow</code>'s IIterator, if any; -1 otherwise.
 		 * <p>It can be used with a trailing index number (0-<em>n</em>) to access outer
@@ -260,38 +261,38 @@ package org.astoolkit.workflow.internals
 		 */
 		public function get i() : int
 		{
-			if(_runningTask)
+			if( _runningTask )
 			{
 				var pi : IRepeater = GroupUtil.getParentRepeater( _runningTask );
-				
-				if(pi && pi.iterator)
+
+				if( pi && pi.iterator )
 					return pi.iterator.currentIndex();
 			}
 			return -1;
 		}
-		
+
 		public function set i( inValue : int ) : void
 		{
 			throw new Error( "\"i\" is a read-only reserved word." )
 		}
-		
+
 		public function get mapTo() : DataMap
 		{
-			if(!_dataMap)
+			if( !_dataMap )
 			{
 				_dataMap = new DataMap();
 				_dataMap.transformerRegistry = _context.config.inputFilterRegistry;
 			}
 			return _dataMap;
 		}
-		
+
 		/**
 		 * @private
 		 */
 		public function onContextBound( inTask : IWorkflowTask ) : void
 		{
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -299,7 +300,7 @@ package org.astoolkit.workflow.internals
 		{
 			// TODO Auto Generated method stub
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -307,41 +308,41 @@ package org.astoolkit.workflow.internals
 		{
 			// TODO Auto Generated method stub
 		}
-		
+
 		/**
 		 * @private
 		 */
 		public function onTaskComplete( inTask : IWorkflowTask ) : void
 		{
-			if(inTask is IWorkflow && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask )))
-				delete _namespaces[UIDUtil.getUID( inTask )];
+			if( inTask is IWorkflow && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
+				delete _namespaces[ UIDUtil.getUID( inTask ) ];
 		}
-		
+
 		/**
 		 * @private
 		 */
 		public function onTaskExitStatus( inTask : IWorkflowTask, inStatus : ExitStatus ) : void
 		{
 			var parent : IWorkflow = GroupUtil.getParentWorkflow( _runningTask );
-			
-			if(!parent)
+
+			if( !parent )
 				parent = _runningTask as IWorkflow;
 			var n : String = UIDUtil.getUID( parent );
-			
-			if(!_namespaces.hasOwnProperty( n ))
-				_namespaces[n] = {};
-			_namespaces[n]["exitStatus"] = inStatus;
+
+			if( !_namespaces.hasOwnProperty( n ) )
+				_namespaces[ n ] = {};
+			_namespaces[ n ][ "exitStatus" ] = inStatus;
 		}
-		
+
 		/**
 		 * @private
 		 */
 		public function onTaskFail( inTask : IWorkflowTask ) : void
 		{
-			if(inTask is IWorkflow && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask )))
-				delete _namespaces[UIDUtil.getUID( inTask )];
+			if( inTask is IWorkflow && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
+				delete _namespaces[ UIDUtil.getUID( inTask ) ];
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -349,7 +350,7 @@ package org.astoolkit.workflow.internals
 		{
 			// TODO Auto Generated method stub
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -357,7 +358,7 @@ package org.astoolkit.workflow.internals
 		{
 			// TODO Auto Generated method stub
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -368,52 +369,52 @@ package org.astoolkit.workflow.internals
 			_runningWorkflow = inWorkflow;
 			_runningWorkflowPipelineData = inPipelineData;
 		}
-		
+
 		/**
 		 * the parent group
 		 */
 		public function get parent() : IElementsGroup
 		{
-			if(!_runningTask)
+			if( !_runningTask )
 				return null;
 			return _runningTask.parent;
 		}
-		
+
 		public function set parent( inValue : IElementsGroup ) : void
 		{
 			throw new Error( "\"parent\" is a read-only reserved word." )
 		}
-		
+
 		/**
 		 * the first <code>IWorkflow</code> found in the parents chain
 		 */
 		public function get parentWorkflow() : IWorkflow
 		{
-			if(!_runningTask)
+			if( !_runningTask )
 				return null;
 			return GroupUtil.getParentWorkflow( _runningTask );
 		}
-		
+
 		public function set parentWorkflow( inValue : IWorkflow ) : void
 		{
 			throw new Error( "\"parentWorkflow\" is a read-only reserved word." )
 		}
-		
+
 		/**
 		 * the current non-filtered pipeline data
 		 */
 		public function get rawData() : Object
 		{
-			if(!_runningWorkflow)
+			if( !_runningWorkflow )
 				return null;
 			return _runningWorkflowPipelineData;
 		}
-		
+
 		public function set rawData( inValue : Object ) : void
 		{
 			throw new Error( "\"rawData\" is a read-only reserved word." )
 		}
-		
+
 		/**
 		 * the currently running task
 		 */
@@ -421,43 +422,43 @@ package org.astoolkit.workflow.internals
 		{
 			return _runningTask;
 		}
-		
+
 		public function set self( inValue : * ) : void
 		{
 			throw new Error( "\"self\" is a read-only reserved word." )
 		}
-		
+
 		/**
 		 * @private
 		 */
 		flash_proxy override function getProperty( inName : * ) : *
 		{
-			if(inName.localName.match( /^i\d+$/ ))
+			if( inName.localName.match( /^i\d+$/ ) )
 			{
-				return getAncestorI( int( inName.localName.match( /^i(\d+)$/ )[1]));
+				return getAncestorI( int( inName.localName.match( /^i(\d+)$/ )[ 1 ] ) );
 			}
-			
-			if(inName.localName.match( /^currentData\d+$/ ))
+
+			if( inName.localName.match( /^currentData\d+$/ ) )
 			{
-				return getAncestorCurrentData( int( inName.localName.match( /^currentData(\d+)$/ )[1]));
+				return getAncestorCurrentData( int( inName.localName.match( /^currentData(\d+)$/ )[ 1 ] ) );
 			}
 			var parent : IElementsGroup = GroupUtil.getParentWorkflow( _runningTask );
 			var n : String;
-			
+
 			do
 			{
 				n = UIDUtil.getUID( parent );
-				
-				if(_namespaces.hasOwnProperty( n ) &&
-					_namespaces[n].hasOwnProperty( inName.localName ))
+
+				if( _namespaces.hasOwnProperty( n ) &&
+					_namespaces[ n ].hasOwnProperty( inName.localName ) )
 				{
-					return _namespaces[n][inName.localName];
+					return _namespaces[ n ][ inName.localName ];
 				}
 				parent = GroupUtil.getParentWorkflow( parent );
-			} while(parent != null);
+			} while( parent != null );
 			return undefined;
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -466,28 +467,28 @@ package org.astoolkit.workflow.internals
 			super.setProperty( inName, inValue );
 			var parent : IWorkflow = GroupUtil.getParentWorkflow( _runningTask );
 			var n : String = UIDUtil.getUID( parent );
-			
-			if(!parent)
+
+			if( !parent )
 				parent = _runningTask as IWorkflow;
-			
-			if(!inName.localName.match( /^_.*/ ))
+
+			if( !inName.localName.match( /^_.*/ ) )
 			{
-				for(var ln : String in _namespaces)
+				for( var ln : String in _namespaces )
 				{
-					if(_namespaces[ln].hasOwnProperty( inName.localName ) &&
-						namespaceIsAncestor( ln ))
+					if( _namespaces[ ln ].hasOwnProperty( inName.localName ) &&
+						namespaceIsAncestor( ln ) )
 					{
 						n = ln;
 						break;
 					}
 				}
 			}
-			
-			if(!_namespaces.hasOwnProperty( n ))
-				_namespaces[n] = {};
-			_namespaces[n][inName.localName] = inValue;
+
+			if( !_namespaces.hasOwnProperty( n ) )
+				_namespaces[ n ] = {};
+			_namespaces[ n ][ inName.localName ] = inValue;
 		}
-		
+
 		/**
 		 * @private
 		 *
@@ -496,15 +497,15 @@ package org.astoolkit.workflow.internals
 		 */
 		private function getAncestorCurrentData( inParentCount : int = 0 ) : Object
 		{
-			if(!_runningTask)
+			if( !_runningTask )
 				return undefined;
 			var p : IRepeater = GroupUtil.getParentRepeater( _runningTask, inParentCount );
-			
-			if(p && p.iterator)
+
+			if( p && p.iterator )
 				return p.iterator.current();
 			return undefined;
 		}
-		
+
 		/**
 		 * @private
 		 *
@@ -513,26 +514,26 @@ package org.astoolkit.workflow.internals
 		 */
 		private function getAncestorI( inParentCount : int = 0 ) : int
 		{
-			if(_runningTask)
+			if( _runningTask )
 			{
 				var pi : IRepeater = GroupUtil.getParentRepeater( _runningTask, inParentCount );
-				
-				if(pi && pi.iterator)
+
+				if( pi && pi.iterator )
 					return pi.iterator.currentIndex();
 			}
 			return -1;
 		}
-		
+
 		/**
 		 * @private
 		 */
 		private function namespaceIsAncestor( inNamespace : String ) : Boolean
 		{
 			var element : IWorkflowElement = _runningTask;
-			
-			while(element != null)
+
+			while( element != null )
 			{
-				if(UIDUtil.getUID( element ) == inNamespace)
+				if( UIDUtil.getUID( element ) == inNamespace )
 					return true;
 				element = element.parent;
 			}

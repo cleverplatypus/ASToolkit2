@@ -19,63 +19,63 @@ Version 2.x
 */
 package org.astoolkit.workflow.internals
 {
-	
+
 	import org.astoolkit.commons.ns.astoolkit_private;
 	import org.astoolkit.workflow.api.IWorkflowDelegate;
 	import org.astoolkit.workflow.api.IWorkflowTask;
 	import org.astoolkit.workflow.core.Workflow;
 
 	use namespace astoolkit_private;
-	
+
 	public class DefaultWorkflowDelegate implements IWorkflowDelegate
 	{
 		public function DefaultWorkflowDelegate( inWorkflow : Workflow )
 		{
 			_workflow = inWorkflow;
 		}
-		
+
 		private var _workflow : Workflow;
-		
+
 		public function onAbort( inTask : IWorkflowTask, inMessage : String ) : void
 		{
 			_workflow.astoolkit_private::onSubtaskAbort( inTask, inMessage );
 		}
-		
+
 		public function onBegin( inTask : IWorkflowTask ) : void
 		{
 			_workflow.astoolkit_private::onSubtaskBegin( inTask );
 		}
-		
+
 		public function onComplete( inTask : IWorkflowTask ) : void
 		{
 			_workflow.astoolkit_private::onSubtaskCompleted( inTask );
 		}
-		
+
 		public function onFault( inTask : IWorkflowTask, inMessage : String ) : void
 		{
 			_workflow.astoolkit_private::onSubtaskFault( inTask, inMessage );
 		}
-		
+
 		public function onInitialize( inTask : IWorkflowTask ) : void
 		{
 			_workflow.astoolkit_private::onSubtaskInitialized( inTask );
 		}
-		
+
 		public function onPrepare( inTask : IWorkflowTask ) : void
 		{
 			_workflow.astoolkit_private::onSubtaskPrepared( inTask );
 		}
-		
+
 		public function onProgress( inTask : IWorkflowTask ) : void
 		{
 			_workflow.astoolkit_private::onSubtaskProgress( inTask );
 		}
-		
+
 		public function onResume( inTask : IWorkflowTask ) : void
 		{
 			_workflow.astoolkit_private::onSubtaskResumed( inTask );
 		}
-		
+
 		public function onSuspend( inTask : IWorkflowTask ) : void
 		{
 			_workflow.astoolkit_private::onSubtaskSuspended( inTask );

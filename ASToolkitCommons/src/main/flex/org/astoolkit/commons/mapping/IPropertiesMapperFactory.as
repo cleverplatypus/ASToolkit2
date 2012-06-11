@@ -1,6 +1,6 @@
 package org.astoolkit.commons.mapping
 {
-	
+
 	public interface IPropertiesMapperFactory
 	{
 		function object(

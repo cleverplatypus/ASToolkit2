@@ -19,13 +19,13 @@ Version 2.x
 */
 package org.astoolkit.workflow.api
 {
-	
+
 	import flash.events.IEventDispatcher;
 	import mx.utils.ObjectProxy;
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
 	import org.astoolkit.workflow.internals.ContextVariablesProvider;
 	import org.astoolkit.workflow.internals.SuspendableFunctionRegistry;
-	
+
 	[Bindable]
 	public interface IWorkflowContext extends IEventDispatcher
 	{

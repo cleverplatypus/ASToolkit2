@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.parsley
 {
-	
+
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	import org.astoolkit.workflow.api.IContextPlugIn;
@@ -28,29 +28,29 @@ package org.astoolkit.workflow.task.parsley
 	import org.spicefactory.parsley.core.context.Context;
 	import org.spicefactory.parsley.core.messaging.command.CommandStatus;
 	import org.spicefactory.parsley.core.messaging.receiver.CommandObserver;
-	
+
 	[Bindable]
 	public class AbstractParsleyTask extends BaseTask
 	{
 		public function AbstractParsleyTask()
 		{
 			super();
-			
-			if(getQualifiedClassName( this ) == getQualifiedClassName( AbstractParsleyTask ))
+
+			if( getQualifiedClassName( this ) == getQualifiedClassName( AbstractParsleyTask ) )
 				throw new Error( getQualifiedClassName( this ) + " is an abstract class." );
 		}
-		
+
 		public var scope : Object;
-		
+
 		protected var _parsleyHelper : ParsleyPlugIn;
-		
+
 		private var _parsleyContext : Context;
-		
+
 		override public function initialize() : void
 		{
 			super.initialize();
-			
-			if(!parsleyContext)
+
+			if( !parsleyContext )
 			{
 				fail( getQualifiedClassName( this ) + " cannot be ran because the provided " +
 					"implementation of IWorkflowContext doesn't provide access to an instance of " +
@@ -58,7 +58,7 @@ package org.astoolkit.workflow.task.parsley
 				return;
 			}
 		}
-		
+
 		protected function createThreadSafeObserver(
 			inStatus : CommandStatus,
 			inSelector : *,
@@ -71,16 +71,16 @@ package org.astoolkit.workflow.task.parsley
 				inSelector,
 				inMessageType,
 				inOrder,
-				threadSafe( inHandler ))
+				threadSafe( inHandler ) )
 		}
-		
+
 		protected function get parsleyContext() : Context
 		{
-			if(!_parsleyContext)
+			if( !_parsleyContext )
 			{
-				for each(var plugIn : IContextPlugIn in _context.plugIns)
+				for each( var plugIn : IContextPlugIn in _context.plugIns )
 				{
-					if(plugIn is ParsleyPlugIn)
+					if( plugIn is ParsleyPlugIn )
 					{
 						_parsleyContext = ParsleyPlugIn( plugIn ).context;
 						break;
@@ -89,7 +89,7 @@ package org.astoolkit.workflow.task.parsley
 			}
 			return _parsleyContext;
 		}
-		
+
 		protected function registerCommandObserver( inObserver : CommandObserver ) : void
 		{
 			parsleyContext
@@ -98,7 +98,7 @@ package org.astoolkit.workflow.task.parsley
 				.messageReceivers
 				.addCommandObserver( inObserver );
 		}
-		
+
 		protected function unregisterCommandObserver( inObserver : CommandObserver ) : void
 		{
 			parsleyContext
@@ -109,6 +109,7 @@ package org.astoolkit.workflow.task.parsley
 		}
 	}
 }
+
 import mx.rpc.AsyncToken;
 import mx.rpc.events.FaultEvent;
 import mx.rpc.events.ResultEvent;
@@ -132,35 +133,35 @@ class Observer implements CommandObserver
 		_handler = inHandler;
 		_order = inOrder
 	}
-	
+
 	private var _handler : Function;
-	
+
 	private var _messageType : Class;
-	
+
 	private var _order : int;
-	
+
 	private var _selector : *;
-	
+
 	private var _status : CommandStatus;
-	
+
 	public function get messageType() : Class
 	{
 		return _messageType;
 	}
-	
+
 	public function observeCommand(
 		inProcessor : CommandObserverProcessor ) : void
 	{
 		var returnValue : Object = inProcessor.command.returnValue;
-		
-		if(status.key == CommandStatus.COMPLETE.key)
+
+		if( status.key == CommandStatus.COMPLETE.key )
 		{
 			var result : Object =
 				returnValue is AsyncToken ?
 				AsyncToken( returnValue ).result : returnValue;
 			_handler( result, inProcessor.message );
 		}
-		else if(status.key == CommandStatus.ERROR.key)
+		else if( status.key == CommandStatus.ERROR.key )
 		{
 			var text : String = returnValue is AsyncToken ?
 				FaultEvent( AsyncToken( returnValue ).result ).fault.getStackTrace() :
@@ -170,17 +171,17 @@ class Observer implements CommandObserver
 		else
 			_handler( inProcessor.message );
 	}
-	
+
 	public function get order() : int
 	{
 		return _order;
 	}
-	
+
 	public function get selector() : *
 	{
 		return _selector;
 	}
-	
+
 	public function get status() : CommandStatus
 	{
 		return _status;

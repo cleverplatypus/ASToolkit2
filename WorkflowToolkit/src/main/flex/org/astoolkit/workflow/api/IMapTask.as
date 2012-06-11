@@ -1,8 +1,8 @@
 package org.astoolkit.workflow.api
 {
-	
+
 	import mx.core.IFactory;
-	
+
 	public interface IMapTask extends IWorkflowTask
 	{
 		function get property() : String;

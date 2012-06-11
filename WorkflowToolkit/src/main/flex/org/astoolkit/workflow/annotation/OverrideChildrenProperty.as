@@ -1,8 +1,8 @@
 package org.astoolkit.workflow.annotation
 {
-	
+
 	import org.astoolkit.commons.reflection.Metadata;
-	
+
 	[Metadata( name="OverrideChildrenProperty", target="field" )]
 	public class OverrideChildrenProperty extends Metadata
 	{

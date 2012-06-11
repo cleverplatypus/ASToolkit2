@@ -19,10 +19,10 @@
  */
 package deng.fzip
 {
-	
+
 	import flash.events.Event;
 	import deng.fzip.FZipFile;
-	
+
 	/**
 	 * FZip dispatches FZipEvent objects when a file contained in the
 	 * ZIP archive has finished loading and can be accessed. There is
@@ -34,7 +34,7 @@ package deng.fzip
 		* Defines the value of the type property of a FZipEvent object.
 		*/
 		public static const FILE_LOADED : String = "fileLoaded";
-		
+
 		/**
 		 * Constructor
 		 *
@@ -58,12 +58,12 @@ package deng.fzip
 			this.file = file;
 			super( type, bubbles, cancelable );
 		}
-		
+
 		/**
 		* The file that has finished loading.
 		*/
 		public var file : FZipFile;
-		
+
 		/**
 		 * Creates a copy of the FZipEvent object and sets the value
 		 * of each property to match that of the original.

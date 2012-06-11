@@ -19,9 +19,9 @@ Version 2.x
 */
 package org.astoolkit.commons.collection
 {
-	
+
 	import org.astoolkit.commons.collection.api.IIterator;
-	
+
 	[IteratorSource( "Number,int,uint" )]
 	public class CountIterator implements IIterator
 	{
@@ -29,64 +29,64 @@ package org.astoolkit.commons.collection
 		{
 			countTo = int.MIN_VALUE;
 		}
-		
+
 		public var countFrom : int = 0;
-		
+
 		public var countTo : int;
-		
+
 		private var _currentCount : int;
-		
+
 		private var _isAborted : Boolean;
-		
+
 		public function abort() : void
 		{
 			_isAborted = true;
 		}
-		
+
 		public function current() : Object
 		{
 			return _currentCount;
 		}
-		
+
 		public function currentIndex() : Number
 		{
 			return _currentCount;
 		}
-		
+
 		public function hasNext() : Boolean
 		{
 			return countTo != int.MIN_VALUE && _currentCount < countTo;
 		}
-		
+
 		public function get isAborted() : Boolean
 		{
 			return _isAborted;
 		}
-		
+
 		public function next() : Object
 		{
 			_currentCount++;
 			return _currentCount;
 		}
-		
+
 		public function get progress() : Number
 		{
 			return countFrom / countTo;
 		}
-		
+
 		public function reset() : void
 		{
 			_currentCount = countFrom - 1;
 			countTo = int.MIN_VALUE;
 			_isAborted = false;
 		}
-		
+
 		public function set source( inValue : * ) : void
 		{
-			if(!isNaN( inValue ) && inValue != null)
+			if( !isNaN( inValue ) && inValue != null )
 				countTo = int( inValue );
 		}
-		
+
 		public function supportsSource( inObject : * ) : Boolean
 		{
 			return !isNaN( inObject );

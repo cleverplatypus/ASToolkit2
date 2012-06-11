@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.log
 {
-	
+
 	import flash.utils.setInterval;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.http.HTTPService;
@@ -28,7 +28,7 @@ package org.astoolkit.workflow.task.log
 	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.core.Case;
 	import org.astoolkit.workflow.internals.GroupUtil;
-	
+
 	/**
 	 * Prints on the console.
 	 * <p>If <code>text</code> is not set this task
@@ -37,18 +37,18 @@ package org.astoolkit.workflow.task.log
 	public class Trace extends BaseTask
 	{
 		public var expression : *;
-		
+
 		[Inspectable( enumeration="pipeline,parent,context,config,previousTask", defaultValue="pipeline" )]
 		public var source : String = "pipeline";
-		
+
 		private var _text : String;
-		
+
 		override public function begin() : void
 		{
 			super.begin();
 			var aSource : Object = filteredInput;
-			
-			switch(source)
+
+			switch( source )
 			{
 				case "pipeline":
 				{
@@ -77,16 +77,16 @@ package org.astoolkit.workflow.task.log
 				}
 			}
 			var outText : String;
-			
-			if(expression != undefined)
+
+			if( expression != undefined )
 			{
 				var transformer : IIODataTransformer =
 					context
 					.config
 					.inputFilterRegistry
 					.getTransformer( aSource, expression );
-				
-				if(!transformer)
+
+				if( !transformer )
 				{
 					fail( "Cannot use expression to transform {0}", source );
 					return;
@@ -95,18 +95,18 @@ package org.astoolkit.workflow.task.log
 			}
 			else
 				outText = text;
-			
-			if(outText == null)
+
+			if( outText == null )
 				outText = ObjectUtil.toString( filteredInput );
 			trace( outText );
 			complete();
 		}
-		
+
 		public function get text() : String
 		{
 			return _text;
 		}
-		
+
 		/**
 		 * the text to output to console. If omitted, the pipeline data is used.
 		 */

@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.parsley
 {
-	
+
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	import mx.core.IFactory;
@@ -34,7 +34,7 @@ package org.astoolkit.workflow.task.parsley
 	import org.spicefactory.parsley.core.messaging.command.CommandObserverProcessor;
 	import org.spicefactory.parsley.core.messaging.command.CommandStatus;
 	import org.spicefactory.parsley.core.messaging.receiver.CommandObserver;
-	
+
 	/**
 	 * Sends a message through Parsley's message bus.<br><br>
 	 * If isCommand is set to <code>true</code>, the task will
@@ -45,8 +45,8 @@ package org.astoolkit.workflow.task.parsley
 	public class SendMessage extends AbstractParsleyTask implements ISendMessage
 	{
 		private static const LOGGER : ILogger =
-			Log.getLogger( getQualifiedClassName( SendMessage ).replace( /:+/g, "." ));
-		
+			Log.getLogger( getQualifiedClassName( SendMessage ).replace( /:+/g, "." ) );
+
 		/**
 		 * if true this task will add a responder to the message's destination
 		 * and will wait for a result or a fault event to be dispatched
@@ -58,14 +58,14 @@ package org.astoolkit.workflow.task.parsley
 		 *  <code>isCommand="false"</code>.
 		 */
 		public var isCommand : Boolean = false;
-		
+
 		/**
 		 * the message instance to be sent. Ignored if <code>messageFactory</code> is set.
 		 *
 		 * @see messageFactory
 		 */
 		public var message : Object;
-		
+
 		/**
 		 * a factory to create messages. If set, the <code>message</code> property is ignored.
 		 *
@@ -74,51 +74,51 @@ package org.astoolkit.workflow.task.parsley
 		 * that will be use as message .</p>
 		 */
 		public var messageFactory : IFactory;
-		
+
 		[Inspectable( enumeration="abort,ignore,log-error,log-warn,log-info,log-debug", defaultValue="abort" )]
 		public var messageMappingFailurePolicy : String = FailurePolicy.ABORT;
-		
+
 		/**
 		 * the message handler selector value
 		 */
 		public var selector : Object;
-		
+
 		private var _completeObserver : CommandObserver;
-		
+
 		private var _errorObserver : CommandObserver;
-		
+
 		private var _mapper : IPropertiesMapper;
-		
+
 		private var _mappingInfo : Object;
-		
+
 		private var _processor : CommandObserverProcessor;
-		
+
 		override public function begin() : void
 		{
 			super.begin();
 			var aMessage : Object = messageFactory != null ? messageFactory : message;
 			var pData : Object = filteredInput;
-			
-			if(!aMessage)
+
+			if( !aMessage )
 			{
 				aMessage = pData;
 			}
 			else
 			{
-				if(aMessage is IFactory)
+				if( aMessage is IFactory )
 				{
 					aMessage = IFactory( aMessage ).newInstance();
 				}
-				
-				if(mapper)
+
+				if( mapper )
 				{
 					try
 					{
 						mapper.strict = messageMappingFailurePolicy == FailurePolicy.ABORT;
 						mapper.mapFailDelegate = function( inProperty : String ) : void
 						{
-							if(messageMappingFailurePolicy.match( /^log\-/ ))
-								LOGGER[messageMappingFailurePolicy.replace( /^log\-/, "" )](
+							if( messageMappingFailurePolicy.match( /^log\-/ ) )
+								LOGGER[ messageMappingFailurePolicy.replace( /^log\-/, "" ) ](
 									getMappingErrorMessage( aMessage, pData, inProperty )
 									);
 						};
@@ -126,7 +126,7 @@ package org.astoolkit.workflow.task.parsley
 					}
 					catch( e : MappingError )
 					{
-						if(messageMappingFailurePolicy == FailurePolicy.ABORT)
+						if( messageMappingFailurePolicy == FailurePolicy.ABORT )
 						{
 							fail( e.message );
 							return;
@@ -134,10 +134,10 @@ package org.astoolkit.workflow.task.parsley
 					}
 				}
 			}
-			
-			if(isCommand)
+
+			if( isCommand )
 			{
-				var clazz : Class = getDefinitionByName( getQualifiedClassName( aMessage )) as Class;
+				var clazz : Class = getDefinitionByName( getQualifiedClassName( aMessage ) ) as Class;
 				_completeObserver = createThreadSafeObserver(
 					CommandStatus.COMPLETE,
 					selector,
@@ -154,16 +154,16 @@ package org.astoolkit.workflow.task.parsley
 				registerCommandObserver( _errorObserver );
 			}
 			parsleyContext.scopeManager.getScope( scope as String ).dispatchMessage( aMessage, selector );
-			
-			if(!isCommand)
+
+			if( !isCommand )
 				complete();
 		}
-		
+
 		override public function cleanUp() : void
 		{
 			super.cleanUp();
-			
-			if(isCommand)
+
+			if( isCommand )
 			{
 				unregisterCommandObserver( _completeObserver );
 				registerCommandObserver( _errorObserver );
@@ -171,7 +171,7 @@ package org.astoolkit.workflow.task.parsley
 				_errorObserver = null;
 			}
 		}
-		
+
 		/**
 		 * an optional object which name-value pairs represents the
 		 * mapping between the properties in the pipeline data object
@@ -192,46 +192,46 @@ package org.astoolkit.workflow.task.parsley
 		 */
 		public function set messagePropertiesMapping( inValue : Object ) : void
 		{
-			if(inValue is IPropertiesMapper)
+			if( inValue is IPropertiesMapper )
 				_mapper = inValue as IPropertiesMapper;
 			else
 				_mappingInfo = inValue;
 		}
-		
+
 		override public function prepare() : void
 		{
 			super.prepare();
 		}
-		
+
 		override protected function complete( inOutputData : * = null ) : void
 		{
 			super.complete( inOutputData );
 		}
-		
+
 		protected function get mapper() : IPropertiesMapper
 		{
-			if(!_mapper)
+			if( !_mapper )
 			{
 				_mapper = new SimplePropertiesMapper();
 				SimplePropertiesMapper( _mapper ).mapping = _mappingInfo;
 			}
 			return _mapper;
 		}
-		
+
 		private function getMappingErrorMessage( inSource : Object, inTarget : Object, inProperty : String ) : String
 		{
 			return StringUtil.substitute(
 				"Failed mapping property '{0}' from {1} to {2}",
 				inProperty,
 				getQualifiedClassName( inSource ),
-				getQualifiedClassName( inTarget ));
+				getQualifiedClassName( inTarget ) );
 		}
-		
+
 		private function onObserverCommandComplete( inData : Object, inMessage : Object ) : void
 		{
 			complete( inData );
 		}
-		
+
 		private function onObserverCommandFault( inErrorMessage : String, inMessage : Object ) : void
 		{
 			fail( inErrorMessage );

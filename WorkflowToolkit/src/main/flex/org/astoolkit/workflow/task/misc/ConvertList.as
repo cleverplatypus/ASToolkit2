@@ -19,12 +19,10 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.misc
 {
-	
-	import mx.collections.IList;
-	import avmplus.getQualifiedClassName;
+
 	import org.astoolkit.commons.utils.ListUtil;
 	import org.astoolkit.workflow.core.BaseTask;
-	
+
 	/**
 	 * Converts lists among <code>Array, Vector.&lt;&#42;&gt;, IList</code> types.
 	 * <p>
@@ -70,24 +68,24 @@ package org.astoolkit.workflow.task.misc
 		 * the list output class, either <code>Array, Vector.&lt;&#42;&gt;, IList</code>
 		 */
 		public var outputType : * = Array;
-		
+
 		[Bindable]
 		[InjectPipeline]
 		/**
 		 * a <code>Array, Vector.&lt;&#42;&gt;, IList</code> object
 		 */
 		public var source : Object;
-		
+
 		/**
 		 * @private
 		 */
 		override public function begin() : void
 		{
 			super.begin();
-			
+
 			try
 			{
-				complete( ListUtil.convert( source, outputType ));
+				complete( ListUtil.convert( source, outputType ) );
 			}
 			catch( e : Error )
 			{

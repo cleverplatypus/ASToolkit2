@@ -19,10 +19,10 @@ Version 2.x
 */
 package org.astoolkit.commons.utils
 {
-	
+
 	import flash.utils.getQualifiedClassName;
 	import mx.collections.IList;
-	
+
 	/**
 	 * Utility static class to convert between two list types
 	 */
@@ -37,30 +37,30 @@ package org.astoolkit.commons.utils
 		 */
 		public static function convert( inSource : Object, inDestinationClass : Class = null ) : Object
 		{
-			if(!inDestinationClass)
+			if( !inDestinationClass )
 				inDestinationClass = Array;
-			
-			if(!inSource ||
-				(!(inSource is Array) &&
+
+			if( !inSource ||
+				( !( inSource is Array ) &&
 				!getQualifiedClassName( inSource ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) &&
-				!(inSource is IList)))
+				!( inSource is IList ) ) )
 			{
 				throw new Error( "No suitable inSource list provided" );
 			}
-			
-			if((!(inDestinationClass === Array) &&
+
+			if( ( !( inDestinationClass === Array ) &&
 				!getQualifiedClassName( inDestinationClass ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) &&
-				!(inDestinationClass is IList)))
+				!( inDestinationClass is IList ) ) )
 			{
 				throw new Error( "No supported inDestinationClass provided" );
 			}
 			var out : * = new inDestinationClass();
-			
-			for each(var item : * in inSource)
+
+			for each( var item : * in inSource )
 			{
-				if(out is Array || getQualifiedClassName( out ).match( /^__AS3__\.vec::Vector\.<.+>$/ ))
+				if( out is Array || getQualifiedClassName( out ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) )
 					out.push( item );
-				else if(out is IList)
+				else if( out is IList )
 					out.addItem( item );
 			}
 			return out;

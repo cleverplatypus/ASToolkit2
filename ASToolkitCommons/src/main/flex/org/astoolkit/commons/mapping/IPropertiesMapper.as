@@ -19,11 +19,11 @@ Version 2.x
 */
 package org.astoolkit.commons.mapping
 {
-	
+
 	import mx.core.IFactory;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
-	
+
 	public interface IPropertiesMapper
 	{
 		function hasTarget() : Boolean;

@@ -48,25 +48,25 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.workflow.internals.*;
 
 	[Event(
-		name="subtaskInitialized"  ,
+		name="subtaskInitialized",
 		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="subtaskPrepared"  ,
+		name="subtaskPrepared",
 		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="subtaskStarted"  ,
+		name="subtaskStarted",
 		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="subtaskFault"  ,
+		name="subtaskFault",
 		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="subtaskCompleted"  ,
+		name="subtaskCompleted",
 		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="subtaskProgress"  ,
+		name="subtaskProgress",
 		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="subtaskAborted"  ,
+		name="subtaskAborted",
 		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Bindable]
 	[DefaultProperty( "children" )]
@@ -81,12 +81,12 @@ package org.astoolkit.workflow.core
 	 * that is instanciated if one supporting the <code>dataProvider</code>
 	 * type is registered in the current context.</p>
 	 */
-	public class Workflow extends BaseTask implements IWorkflow  , IRepeater
+	public class Workflow extends BaseTask implements IWorkflow, IRepeater
 	{
 		use namespace astoolkit_private;
 
 		protected static const LOGGER : ILogger =
-			Log.getLogger( getQualifiedClassName( Workflow ).replace( /:+/g  , "." ) );
+			Log.getLogger( getQualifiedClassName( Workflow ).replace( /:+/g, "." ) );
 
 		/**
 		 * @private
@@ -195,7 +195,7 @@ package org.astoolkit.workflow.core
 
 			if( runtimeTasks == null || runtimeTasks.length == 0 )
 			{
-				LOGGER.warn( "Workflow {0} has no tasks to perform"  , _description );
+				LOGGER.warn( "Workflow {0} has no tasks to perform", _description );
 				complete();
 				return;
 			}
@@ -232,14 +232,14 @@ package org.astoolkit.workflow.core
 						if( !currentIterator )
 						{
 							fail( "Workflow \"{0}\" failed because" +
-								" no data iterator was found for type {1}"  ,
-								description  ,
+								" no data iterator was found for type {1}",
+								description,
 								getQualifiedClassName( _dataProvider != null ? _dataProvider : filteredInput )
 								);
 							return;
 						}
 						else
-							LOGGER.info( "Workflow \"{0}\" completes with no data"  , description );
+							LOGGER.info( "Workflow \"{0}\" completes with no data", description );
 						complete();
 
 						if( !_parent )
@@ -253,7 +253,7 @@ package org.astoolkit.workflow.core
 					if( !getIterator( null ) )
 					{
 						fail( "Workflow \"{0}\" failed because" +
-							" no loop iterator was found for type"  ,
+							" no loop iterator was found for type",
 							description
 							);
 						return;
@@ -341,7 +341,7 @@ package org.astoolkit.workflow.core
 			return _feed;
 		}
 
-		[Inspectable( defaultValue="auto"  , enumeration="auto,pipeline,currentData" )]
+		[Inspectable( defaultValue="auto", enumeration="auto,pipeline,currentData" )]
 		public function set feed( inFeed : String ) : void
 		{
 			_feed = inFeed;
@@ -352,7 +352,7 @@ package org.astoolkit.workflow.core
 			return _flow;
 		}
 
-		[Inspectable( defaultValue="serial"  , enumeration="parallel,serial,none" )]
+		[Inspectable( defaultValue="serial", enumeration="parallel,serial,none" )]
 		public function set flow( inFlow : String ) : void
 		{
 			_flow = inFlow;
@@ -532,11 +532,11 @@ package org.astoolkit.workflow.core
 			}
 
 			if( inTask.invalidPipelinePolicy == InvalidPipelinePolicy.FAIL )
-				fail( "Unexpected taskInput type \"{0}\":  for task {1}. Expected type: {2}"  ,
-					getQualifiedClassName( _subPipelineData )  ,
-					inTask.description  ,
+				fail( "Unexpected taskInput type \"{0}\":  for task {1}. Expected type: {2}",
+					getQualifiedClassName( _subPipelineData ),
+					inTask.description,
 					ListUtil.convert( TaskInput( constraints[ 0 ] ).types )
-					.map( function( inClass : Class  , inIndex : int  , inArray : Array ) : String
+					.map( function( inClass : Class, inIndex : int, inArray : Array ) : String
 					{
 						return getQualifiedClassName( inClass );
 					} )
@@ -557,8 +557,8 @@ package org.astoolkit.workflow.core
 			{
 				//_iterator != null otherwise begin() would have failed
 				LOGGER.debug(
-					"Workflow '{0}' task iteration completed with index {1}"  ,
-					description  ,
+					"Workflow '{0}' task iteration completed with index {1}",
+					description,
 					_iterator.currentIndex() );
 
 				if( !_iterator.isAborted && _iterator.hasNext() )
@@ -595,10 +595,10 @@ package org.astoolkit.workflow.core
 			return new DefaultWorkflowDelegate( this );
 		}
 
-		override protected function fail( inMessage : String  , ... inRest ) : void
+		override protected function fail( inMessage : String, ... inRest ) : void
 		{
 			var c : IWorkflowContext = _context;
-			super.fail( inMessage  , inRest );
+			super.fail( inMessage, inRest );
 
 			if( _iterator )
 				c.config.iteratorFactory.release( _iterator );
@@ -668,7 +668,7 @@ package org.astoolkit.workflow.core
 			}
 
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onWorkflowCheckingNextTask( this  , _subPipelineData );
+				w.onWorkflowCheckingNextTask( this, _subPipelineData );
 			var task : IWorkflowTask;
 
 			while( _status != TaskStatus.ABORTED &&
@@ -680,11 +680,11 @@ package org.astoolkit.workflow.core
 					w.beforeTaskBegin( task );
 				setSubtaskPipelineData( task );
 				triggerContextBindings();
-				switchBindingOnWrappingGroups( task  , true );
-				BindingUtility.firePropertyBinding( task.document  , task  , "enabled" );
+				switchBindingOnWrappingGroups( task, true );
+				BindingUtility.firePropertyBinding( task.document, task, "enabled" );
 				var taskEnabled : Boolean =
 					GroupUtil.getOverrideSafeValue(
-					task  ,
+					task,
 					"enabled"
 					);
 
@@ -700,11 +700,11 @@ package org.astoolkit.workflow.core
 					}
 					else
 					{
-						LOGGER.debug( "Pipeline checks passed or ignored for task {0}"  , task.description );
+						LOGGER.debug( "Pipeline checks passed or ignored for task {0}", task.description );
 					}
-					dispatchTaskEvent( WorkflowEvent.DATA_SET  , task  , task.output );
+					dispatchTaskEvent( WorkflowEvent.DATA_SET, task, task.output );
 					runSubTask( task );
-					switchBindingOnWrappingGroups( task  , false );
+					switchBindingOnWrappingGroups( task, false );
 
 					if( task.exitStatus && task.exitStatus.interrupted )
 						return;
@@ -719,14 +719,14 @@ package org.astoolkit.workflow.core
 			complete();
 		}
 
-		protected function runSubTask( inTask : IWorkflowTask  , inNow : Boolean = false ) : void
+		protected function runSubTask( inTask : IWorkflowTask, inNow : Boolean = false ) : void
 		{
 			if( _status == TaskStatus.SUSPENDED )
 			{
 				_context.suspendableFunctions.addResumeCallBack(
 					function() : void
 					{
-						runSubTask( inTask  , inNow );
+						runSubTask( inTask, inNow );
 					} );
 				return;
 			}
@@ -748,7 +748,7 @@ package org.astoolkit.workflow.core
 				catch( taskError : Error )
 				{
 					_childrenDelegate.onFault(
-						inTask  ,
+						inTask,
 						taskError.getStackTrace()
 						);
 					return;
@@ -760,7 +760,7 @@ package org.astoolkit.workflow.core
 			}
 			else
 			{
-				setTimeout( runSubTask  , inTask.delay  , inTask  , true );
+				setTimeout( runSubTask, inTask.delay, inTask, true );
 			}
 		}
 
@@ -795,9 +795,9 @@ package org.astoolkit.workflow.core
 			{
 				var transformEvent : WorkflowEvent =
 					new WorkflowEvent(
-					WorkflowEvent.TRANSFORM_INPUT  ,
-					context  ,
-					inTask  ,
+					WorkflowEvent.TRANSFORM_INPUT,
+					context,
+					inTask,
 					taskData );
 				inTask.dispatchEvent( transformEvent );
 				taskData = transformEvent.data;
@@ -814,7 +814,7 @@ package org.astoolkit.workflow.core
 							if( inTask[ inTask.inlet ] is Function )
 							{
 								var f : Function = inTask[ inTask.inlet ] as Function;
-								f.apply( inTask  , [ taskData ] );
+								f.apply( inTask, [ taskData ] );
 							}
 							else
 								inTask[ inTask.inlet ] = taskData;
@@ -833,7 +833,7 @@ package org.astoolkit.workflow.core
 
 					try
 					{
-						mapper.map( taskData  , inTask );
+						mapper.map( taskData, inTask );
 					}
 					catch( e : Error )
 					{
@@ -849,9 +849,9 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		astoolkit_private function onSubtaskAbort( inTask : IWorkflowTask  , inMessage : String ) : void
+		astoolkit_private function onSubtaskAbort( inTask : IWorkflowTask, inMessage : String ) : void
 		{
-			dispatchTaskEvent( WorkflowEvent.ABORTED  , inTask  , inMessage );
+			dispatchTaskEvent( WorkflowEvent.ABORTED, inTask, inMessage );
 			onSubtaskCompleted( inTask );
 		}
 
@@ -860,13 +860,13 @@ package org.astoolkit.workflow.core
 		 */
 		astoolkit_private function onSubtaskBegin( inTask : IWorkflowTask ) : void
 		{
-			dispatchTaskEvent( WorkflowEvent.STARTED  , inTask );
+			dispatchTaskEvent( WorkflowEvent.STARTED, inTask );
 		}
 
 		astoolkit_private function onSubtaskCompleted( inTask : IWorkflowTask ) : void
 		{
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onTaskExitStatus( inTask  , inTask.exitStatus );
+				w.onTaskExitStatus( inTask, inTask.exitStatus );
 
 			if( inTask == this )
 			{
@@ -879,7 +879,7 @@ package org.astoolkit.workflow.core
 					if( mappedA != undefined )
 						_pipelineData = mappedA;
 				}
-				dispatchTaskEvent( WorkflowEvent.COMPLETED  , inTask  , _pipelineData );
+				dispatchTaskEvent( WorkflowEvent.COMPLETED, inTask, _pipelineData );
 				return;
 			}
 
@@ -891,7 +891,7 @@ package org.astoolkit.workflow.core
 
 			if( inTask.status != TaskStatus.ABORTED )
 			{
-				dispatchTaskEvent( WorkflowEvent.COMPLETED  , inTask  , _pipelineData );
+				dispatchTaskEvent( WorkflowEvent.COMPLETED, inTask, _pipelineData );
 
 				if( !_ignoreOutput )
 				{
@@ -922,10 +922,10 @@ package org.astoolkit.workflow.core
 								catch( e : Error )
 								{
 									fail( "Injecting task {0} output failed. {1} class doesn't have " +
-										"the \"{2}\" property."  ,
-										inTask.description  ,
-										( sOutlet.charAt( 0 ) == "|" ? _subPipelineData : inTask.filteredInput )  ,
-										sOutlet.replace( /^|/  , "" ) );
+										"the \"{2}\" property.",
+										inTask.description,
+										( sOutlet.charAt( 0 ) == "|" ? _subPipelineData : inTask.filteredInput ),
+										sOutlet.replace( /^|/, "" ) );
 									return;
 								}
 							}
@@ -942,7 +942,7 @@ package org.astoolkit.workflow.core
 							{
 								var cause : String =
 									e is MappingError ? e.message : e.getStackTrace();
-								fail( "Output mapping for {0} failed.\nCause:\n{1}"  , inTask.description  , cause );
+								fail( "Output mapping for {0} failed.\nCause:\n{1}", inTask.description, cause );
 								return;
 							}
 
@@ -977,19 +977,19 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		astoolkit_private function onSubtaskFault( inTask : IWorkflowTask  , inMessage : String ) : void
+		astoolkit_private function onSubtaskFault( inTask : IWorkflowTask, inMessage : String ) : void
 		{
 			if( inTask.status != TaskStatus.ABORTED )
 			{
 				if( inTask.failurePolicy == FailurePolicy.ABORT )
 				{
 					LOGGER.error(
-						"Task {0}:\"{1}\" failed. Reason: {2} \nData:\n{3}"  ,
-						inTask.description  , getQualifiedClassName( inTask )  ,
-						inMessage  ,
+						"Task {0}:\"{1}\" failed. Reason: {2} \nData:\n{3}",
+						inTask.description, getQualifiedClassName( inTask ),
+						inMessage,
 						_subPipelineData
 						);
-					dispatchTaskEvent( WorkflowEvent.FAULT  , inTask  , inMessage );
+					dispatchTaskEvent( WorkflowEvent.FAULT, inTask, inMessage );
 
 					if( _parent != null )
 						abort();
@@ -1003,7 +1003,7 @@ package org.astoolkit.workflow.core
 				}
 				else if( inTask.failurePolicy == FailurePolicy.CASCADE )
 				{
-					fail( "Subtask {0} failed with message:\n{1}"  , inTask.description  , inMessage );
+					fail( "Subtask {0} failed with message:\n{1}", inTask.description, inMessage );
 					return;
 				}
 				else if( inTask.failurePolicy == FailurePolicy.CONTINUE )
@@ -1019,7 +1019,7 @@ package org.astoolkit.workflow.core
 				}
 				else if( inTask.failurePolicy.match( /^log\-/ ) )
 				{
-					LOGGER[ inTask.failurePolicy.replace( /^log\-/  , "" ) ](
+					LOGGER[ inTask.failurePolicy.replace( /^log\-/, "" ) ](
 						"Task " + inTask.description + " failed with message:\n" + inMessage );
 					onSubtaskCompleted( inTask );
 				}
@@ -1033,7 +1033,7 @@ package org.astoolkit.workflow.core
 		 */
 		astoolkit_private function onSubtaskInitialized( inTask : IWorkflowTask ) : void
 		{
-			dispatchTaskEvent( WorkflowEvent.INITIALIZED  , inTask );
+			dispatchTaskEvent( WorkflowEvent.INITIALIZED, inTask );
 		}
 
 		/**
@@ -1041,7 +1041,7 @@ package org.astoolkit.workflow.core
 		 */
 		astoolkit_private function onSubtaskPrepared( inTask : IWorkflowTask ) : void
 		{
-			dispatchTaskEvent( WorkflowEvent.PREPARED  , inTask );
+			dispatchTaskEvent( WorkflowEvent.PREPARED, inTask );
 		}
 
 		/**
@@ -1051,7 +1051,7 @@ package org.astoolkit.workflow.core
 		{
 			if( inTask.status == TaskStatus.SUSPENDED )
 				return;
-			dispatchTaskEvent( WorkflowEvent.PROGRESS  , inTask );
+			dispatchTaskEvent( WorkflowEvent.PROGRESS, inTask );
 		}
 
 		/**
@@ -1062,9 +1062,9 @@ package org.astoolkit.workflow.core
 			if( context.status == TaskStatus.SUSPENDED )
 			{
 				context.status = TaskStatus.RUNNING;
-				context.dispatchEvent( new WorkflowEvent( WorkflowEvent.RESUMED  , _context ) );
+				context.dispatchEvent( new WorkflowEvent( WorkflowEvent.RESUMED, _context ) );
 			}
-			dispatchTaskEvent( WorkflowEvent.RESUMED  , inTask );
+			dispatchTaskEvent( WorkflowEvent.RESUMED, inTask );
 		}
 
 		/**
@@ -1075,12 +1075,12 @@ package org.astoolkit.workflow.core
 			if( root.context.status != TaskStatus.SUSPENDED )
 			{
 				context.status = TaskStatus.SUSPENDED;
-				context.dispatchEvent( new WorkflowEvent( WorkflowEvent.SUSPENDED  , _context ) );
+				context.dispatchEvent( new WorkflowEvent( WorkflowEvent.SUSPENDED, _context ) );
 			}
-			dispatchTaskEvent( WorkflowEvent.SUSPENDED  , inTask );
+			dispatchTaskEvent( WorkflowEvent.SUSPENDED, inTask );
 		}
 
-		private function createInjectPipelineAnnotation( inType : Class  , inProperties : Object ) : InjectPipeline
+		private function createInjectPipelineAnnotation( inType : Class, inProperties : Object ) : InjectPipeline
 		{
 			return new InjectPipeline(
 				function() : IIODataTransformerRegistry
@@ -1096,22 +1096,22 @@ package org.astoolkit.workflow.core
 			AnnotationUtil.registerAnnotation( new ClassFactory( IteratorSource ) );
 			AnnotationUtil.registerAnnotation(
 				PooledFactory.create(
-				InjectPipeline  ,
+				InjectPipeline,
 				new DynamicPoolFactoryDelegate( createInjectPipelineAnnotation ) ) );
 			AnnotationUtil.registerAnnotation( new ClassFactory( OverrideChildrenProperty ) );
 			ClassInfo.clearCache();
 		}
 
-		private function switchBindingOnWrappingGroups( inTask : IWorkflowTask  , inEnable : Boolean ) : void
+		private function switchBindingOnWrappingGroups( inTask : IWorkflowTask, inEnable : Boolean ) : void
 		{
 			var p : IElementsGroup = inTask.parent;
 
 			while( !( p is IWorkflow ) )
 			{
 				if( inEnable )
-					BindingUtility.enableAllBindings( p.document  , p );
+					BindingUtility.enableAllBindings( p.document, p );
 				else
-					BindingUtility.disableAllBindings( p.document  , p );
+					BindingUtility.disableAllBindings( p.document, p );
 				p = p.parent;
 			}
 		}
@@ -1120,12 +1120,12 @@ package org.astoolkit.workflow.core
 		{
 			IEventDispatcher( _document ).dispatchEvent(
 				new PropertyChangeEvent(
-				PropertyChangeEvent.PROPERTY_CHANGE  ,
-				false  ,
-				false  ,
-				PropertyChangeEventKind.UPDATE  ,
-				"$"  ,
-				Math.random()  ,
+				PropertyChangeEvent.PROPERTY_CHANGE,
+				false,
+				false,
+				PropertyChangeEventKind.UPDATE,
+				"$",
+				Math.random(),
 				context.variables
 				) );
 		}

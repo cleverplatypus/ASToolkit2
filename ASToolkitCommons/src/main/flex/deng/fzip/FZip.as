@@ -19,13 +19,13 @@
  */
 package deng.fzip
 {
-	
+
 	import flash.events.*;
 	import flash.net.URLRequest;
 	import flash.net.URLStream;
 	import flash.text.*;
 	import flash.utils.*;
-	
+
 	/**
 	 * Dispatched when a file contained in a ZIP archive has
 	 * loaded successfully.
@@ -117,27 +117,27 @@ package deng.fzip
 			charEncoding = filenameEncoding;
 			parseFunc = parseIdle;
 		}
-		
+
 		private var charEncoding : String;
-		
+
 		private var currentFile : FZipFile;
-		
+
 		private var filesDict : Dictionary;
-		
+
 		private var filesList : Array;
-		
+
 		private var parseFunc : Function;
-		
+
 		private var urlStream : URLStream;
-		
+
 		/**
 		 * Indicates whether a file is currently being processed or not.
 		 */
 		public function get active() : Boolean
 		{
-			return (parseFunc !== parseIdle);
+			return ( parseFunc !== parseIdle );
 		}
-		
+
 		/**
 		 * Adds a file to the ZIP archive.
 		 *
@@ -149,7 +149,7 @@ package deng.fzip
 		{
 			return addFileAt( filesList ? filesList.length : 0, name, content );
 		}
-		
+
 		/**
 		 * Adds a file to the ZIP archive, at a specified index.
 		 *
@@ -160,24 +160,24 @@ package deng.fzip
 		 */
 		public function addFileAt( index : uint, name : String, content : ByteArray = null ) : FZipFile
 		{
-			if(filesList == null)
+			if( filesList == null )
 			{
 				filesList = [];
 			}
-			
-			if(filesDict == null)
+
+			if( filesDict == null )
 			{
 				filesDict = new Dictionary();
 			}
-			else if(filesDict[name])
+			else if( filesDict[ name ] )
 			{
-				throw(new Error( "File already exists: " + name + ". Please remove first." ));
+				throw( new Error( "File already exists: " + name + ". Please remove first." ) );
 			}
 			var file : FZipFile = new FZipFile();
 			file.filename = name;
 			file.content = content;
-			
-			if(index >= filesList.length)
+
+			if( index >= filesList.length )
 			{
 				filesList.push( file );
 			}
@@ -185,10 +185,10 @@ package deng.fzip
 			{
 				filesList.splice( index, 0, file );
 			}
-			filesDict[name] = file;
+			filesDict[ name ] = file;
 			return file;
 		}
-		
+
 		/**
 		 * Adds a file from a String to the ZIP archive.
 		 *
@@ -201,7 +201,7 @@ package deng.fzip
 		{
 			return addFileFromStringAt( filesList ? filesList.length : 0, name, content, charset );
 		}
-		
+
 		/**
 		 * Adds a file from a String to the ZIP archive, at a specified index.
 		 *
@@ -213,24 +213,24 @@ package deng.fzip
 		 */
 		public function addFileFromStringAt( index : uint, name : String, content : String, charset : String = "utf-8" ) : FZipFile
 		{
-			if(filesList == null)
+			if( filesList == null )
 			{
 				filesList = [];
 			}
-			
-			if(filesDict == null)
+
+			if( filesDict == null )
 			{
 				filesDict = new Dictionary();
 			}
-			else if(filesDict[name])
+			else if( filesDict[ name ] )
 			{
-				throw(new Error( "File already exists: " + name + ". Please remove first." ));
+				throw( new Error( "File already exists: " + name + ". Please remove first." ) );
 			}
 			var file : FZipFile = new FZipFile();
 			file.filename = name;
 			file.setContentAsString( content, charset );
-			
-			if(index >= filesList.length)
+
+			if( index >= filesList.length )
 			{
 				filesList.push( file );
 			}
@@ -238,10 +238,10 @@ package deng.fzip
 			{
 				filesList.splice( index, 0, file );
 			}
-			filesDict[name] = file;
+			filesDict[ name ] = file;
 			return file;
 		}
-		
+
 		/**
 		 * Immediately closes the stream and cancels the download operation.
 		 * Files contained in the ZIP archive being loaded stay accessible
@@ -249,7 +249,7 @@ package deng.fzip
 		 */
 		public function close() : void
 		{
-			if(urlStream)
+			if( urlStream )
 			{
 				parseFunc = parseIdle;
 				removeEventHandlers();
@@ -257,7 +257,7 @@ package deng.fzip
 				urlStream = null;
 			}
 		}
-		
+
 		/**
 		 * Retrieves a file contained in the ZIP archive, by index.
 		 *
@@ -266,9 +266,9 @@ package deng.fzip
 		 */
 		public function getFileAt( index : uint ) : FZipFile
 		{
-			return filesList ? filesList[index] as FZipFile : null;
+			return filesList ? filesList[ index ] as FZipFile : null;
 		}
-		
+
 		/**
 		 * Retrieves a file contained in the ZIP archive, by filename.
 		 *
@@ -277,9 +277,9 @@ package deng.fzip
 		 */
 		public function getFileByName( name : String ) : FZipFile
 		{
-			return filesDict[name] ? filesDict[name] as FZipFile : null;
+			return filesDict[ name ] ? filesDict[ name ] as FZipFile : null;
 		}
-		
+
 		/**
 		 * Gets the number of accessible files in the ZIP archive.
 		 *
@@ -289,7 +289,7 @@ package deng.fzip
 		{
 			return filesList ? filesList.length : 0;
 		}
-		
+
 		/**
 		 * Begins downloading the ZIP archive specified by the request
 		 * parameter.
@@ -302,7 +302,7 @@ package deng.fzip
 		 */
 		public function load( request : URLRequest ) : void
 		{
-			if(!urlStream && parseFunc == parseIdle)
+			if( !urlStream && parseFunc == parseIdle )
 			{
 				urlStream = new URLStream();
 				urlStream.endian = Endian.LITTLE_ENDIAN;
@@ -313,7 +313,7 @@ package deng.fzip
 				urlStream.load( request );
 			}
 		}
-		
+
 		/**
 		 * Loads a ZIP archive from a ByteArray.
 		 *
@@ -321,26 +321,26 @@ package deng.fzip
 		 */
 		public function loadBytes( bytes : ByteArray ) : void
 		{
-			if(!urlStream && parseFunc == parseIdle)
+			if( !urlStream && parseFunc == parseIdle )
 			{
 				filesList = [];
 				filesDict = new Dictionary();
 				bytes.position = 0;
 				bytes.endian = Endian.LITTLE_ENDIAN;
 				parseFunc = parseSignature;
-				
-				if(parse( bytes ))
+
+				if( parse( bytes ) )
 				{
 					parseFunc = parseIdle;
-					dispatchEvent( new Event( Event.COMPLETE ));
+					dispatchEvent( new Event( Event.COMPLETE ) );
 				}
 				else
 				{
-					dispatchEvent( new FZipErrorEvent( FZipErrorEvent.PARSE_ERROR, "EOF" ));
+					dispatchEvent( new FZipErrorEvent( FZipErrorEvent.PARSE_ERROR, "EOF" ) );
 				}
 			}
 		}
-		
+
 		/**
 		 * Removes a file at a specified index from the ZIP archive.
 		 *
@@ -349,20 +349,20 @@ package deng.fzip
 		 */
 		public function removeFileAt( index : uint ) : FZipFile
 		{
-			if(filesList != null && filesDict != null && index < filesList.length)
+			if( filesList != null && filesDict != null && index < filesList.length )
 			{
-				var file : FZipFile = filesList[index] as FZipFile;
-				
-				if(file != null)
+				var file : FZipFile = filesList[ index ] as FZipFile;
+
+				if( file != null )
 				{
 					filesList.splice( index, 1 );
-					delete filesDict[file.filename];
+					delete filesDict[ file.filename ];
 					return file;
 				}
 			}
 			return null;
 		}
-		
+
 		/**
 		 * Serializes this zip archive into an IDataOutput stream (such as
 		 * ByteArray or FileStream) according to PKZIP APPNOTE.TXT
@@ -376,19 +376,19 @@ package deng.fzip
 		 */
 		public function serialize( stream : IDataOutput, includeAdler32 : Boolean = false ) : void
 		{
-			if(stream != null && filesList.length > 0)
+			if( stream != null && filesList.length > 0 )
 			{
 				var endian : String = stream.endian;
 				var ba : ByteArray = new ByteArray();
 				stream.endian = ba.endian = Endian.LITTLE_ENDIAN;
 				var offset : uint = 0;
 				var files : uint = 0;
-				
-				for(var i : int = 0; i < filesList.length; i++)
+
+				for( var i : int = 0; i < filesList.length; i++ )
 				{
-					var file : FZipFile = filesList[i] as FZipFile;
-					
-					if(file != null)
+					var file : FZipFile = filesList[ i ] as FZipFile;
+
+					if( file != null )
 					{
 						// first serialize the central directory item
 						// into our temporary ByteArray
@@ -400,8 +400,8 @@ package deng.fzip
 						files++;
 					}
 				}
-				
-				if(ba.length > 0)
+
+				if( ba.length > 0 )
 				{
 					// Write the central diectory items
 					stream.writeBytes( ba );
@@ -427,7 +427,7 @@ package deng.fzip
 				stream.endian = endian;
 			}
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -440,65 +440,65 @@ package deng.fzip
 			urlStream.addEventListener( SecurityErrorEvent.SECURITY_ERROR, defaultErrorHandler );
 			urlStream.addEventListener( ProgressEvent.PROGRESS, progressHandler );
 		}
-		
+
 		/**
 		 * @private
 		 */
 		protected function defaultErrorHandler( evt : Event ) : void
 		{
 			close();
-			dispatchEvent( evt.clone());
+			dispatchEvent( evt.clone() );
 		}
-		
+
 		/**
 		 * @private
 		 */
 		protected function defaultHandler( evt : Event ) : void
 		{
-			dispatchEvent( evt.clone());
+			dispatchEvent( evt.clone() );
 		}
-		
+
 		/**
 		 * @private
 		 */
 		protected function parse( stream : IDataInput ) : Boolean
 		{
-			while(parseFunc( stream ))
+			while( parseFunc( stream ) )
 			{
 			}
-			return (parseFunc === parseIdle);
+			return ( parseFunc === parseIdle );
 		}
-		
+
 		/**
 		 * @private
 		 */
 		protected function progressHandler( evt : Event ) : void
 		{
-			dispatchEvent( evt.clone());
-			
+			dispatchEvent( evt.clone() );
+
 			try
 			{
-				if(parse( urlStream ))
+				if( parse( urlStream ) )
 				{
 					close();
-					dispatchEvent( new Event( Event.COMPLETE ));
+					dispatchEvent( new Event( Event.COMPLETE ) );
 				}
 			}
 			catch( e : Error )
 			{
 				close();
-				
-				if(hasEventListener( FZipErrorEvent.PARSE_ERROR ))
+
+				if( hasEventListener( FZipErrorEvent.PARSE_ERROR ) )
 				{
-					dispatchEvent( new FZipErrorEvent( FZipErrorEvent.PARSE_ERROR, e.message ));
+					dispatchEvent( new FZipErrorEvent( FZipErrorEvent.PARSE_ERROR, e.message ) );
 				}
 				else
 				{
-					throw(e);
+					throw( e );
 				}
 			}
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -511,7 +511,7 @@ package deng.fzip
 			urlStream.removeEventListener( SecurityErrorEvent.SECURITY_ERROR, defaultErrorHandler );
 			urlStream.removeEventListener( ProgressEvent.PROGRESS, progressHandler );
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -519,24 +519,24 @@ package deng.fzip
 		{
 			return false;
 		}
-		
+
 		/**
 		 * @private
 		 */
 		private function parseLocalfile( stream : IDataInput ) : Boolean
 		{
-			if(currentFile.parse( stream ))
+			if( currentFile.parse( stream ) )
 			{
 				filesList.push( currentFile );
-				
-				if(currentFile.filename)
+
+				if( currentFile.filename )
 				{
-					filesDict[currentFile.filename] = currentFile;
+					filesDict[ currentFile.filename ] = currentFile;
 				}
-				dispatchEvent( new FZipEvent( FZipEvent.FILE_LOADED, currentFile ));
+				dispatchEvent( new FZipEvent( FZipEvent.FILE_LOADED, currentFile ) );
 				currentFile = null;
-				
-				if(parseFunc != parseIdle)
+
+				if( parseFunc != parseIdle )
 				{
 					parseFunc = parseSignature;
 					return true;
@@ -544,17 +544,17 @@ package deng.fzip
 			}
 			return false;
 		}
-		
+
 		/**
 		 * @private
 		 */
 		private function parseSignature( stream : IDataInput ) : Boolean
 		{
-			if(stream.bytesAvailable >= 4)
+			if( stream.bytesAvailable >= 4 )
 			{
 				var sig : uint = stream.readUnsignedInt();
-				
-				switch(sig)
+
+				switch( sig )
 				{
 					case 0x04034b50:
 						parseFunc = parseLocalfile;
@@ -565,7 +565,7 @@ package deng.fzip
 						parseFunc = parseIdle;
 						break;
 					default:
-						throw(new Error( "Unknown record signature." ));
+						throw( new Error( "Unknown record signature." ) );
 						break;
 				}
 				return true;

@@ -19,10 +19,10 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
-	
+
 	import flash.utils.getQualifiedClassName;
 	import mx.events.PropertyChangeEvent;
-	
+
 	/**
 	 * Checks the existence of the named/typed variable
 	 * in the current scope.
@@ -70,46 +70,46 @@ package org.astoolkit.workflow.core
 	 */
 	public class RequiresVariable extends BaseTask
 	{
-		
+
 		[Inspectable( enumeration="auto,wait,fail", defaultValue="auto" )]
 		public var behaviour : String = "auto";
-		
+
 		public var notNull : Boolean;
-		
+
 		public var returnValue : Boolean;
-		
+
 		public var type : Class;
-		
+
 		/**
 		* @private
 		*/
 		private var _name : String;
-		
+
 		/**
 		 * @private
 		 */
 		override public function begin() : void
 		{
 			super.begin();
-			
-			if(_name)
+
+			if( _name )
 			{
-				if($[_name] === undefined)
+				if( $[ _name ] === undefined )
 				{
 					onVariableNotAvailable();
 					return;
 				}
 				else
 				{
-					if(isRightType())
-						complete( returnValue ? $[_name] : undefined );
+					if( isRightType() )
+						complete( returnValue ? $[ _name ] : undefined );
 				}
 			}
-			else if(type is Class)
+			else if( type is Class )
 			{
 				var val : * = $.byType( type );
-				
-				if(val !== undefined)
+
+				if( val !== undefined )
 					complete( returnValue ? val : undefined );
 				else
 				{
@@ -118,60 +118,60 @@ package org.astoolkit.workflow.core
 				}
 			}
 		}
-		
+
 		public function set name( inValue : String ) : void
 		{
-			if(inValue)
+			if( inValue )
 				_name = inValue.replace( /^[\$\.]+/ );
 			else
 				_name = null;
 		}
-		
+
 		/**
 		 * @private
 		 */
 		private function isRightType() : Boolean
 		{
-			if(!notNull && $[_name] == null)
+			if( !notNull && $[ _name ] == null )
 				return true;
-			
-			if(type != null && !($[_name] is type))
+
+			if( type != null && !( $[ _name ] is type ) )
 			{
 				fail( "Unexpected variable value. Expected '{0}', found '{1}'",
 					getQualifiedClassName( type ),
-					$[_name] == null ? "null" : getQualifiedClassName( $[_name]));
+					$[ _name ] == null ? "null" : getQualifiedClassName( $[ _name ] ) );
 				return false;
 			}
 			return true;
 		}
-		
+
 		/**
 		 * @private
 		 */
 		private function onVariableNotAvailable() : void
 		{
-			if(behaviour == "wait" || (behaviour == "auto" && parent == root))
+			if( behaviour == "wait" || ( behaviour == "auto" && parent == root ) )
 			{
 				$.addEventListener(
 					PropertyChangeEvent.PROPERTY_CHANGE,
-					threadSafe( onVariableProviderChange ));
+					threadSafe( onVariableProviderChange ) );
 				return;
 			}
 			else
 			{
-				if(_name)
+				if( _name )
 					fail( "Variable {0} not set", _name );
 				else
-					fail( "Variable for type {0} not set", getQualifiedClassName( type ));
+					fail( "Variable for type {0} not set", getQualifiedClassName( type ) );
 			}
 		}
-		
+
 		/**
 		 * @private
 		 */
 		private function onVariableProviderChange( inEvent : PropertyChangeEvent ) : void
 		{
-			if(inEvent.property == _name && isRightType())
+			if( inEvent.property == _name && isRightType() )
 				complete();
 		}
 	}

@@ -19,10 +19,10 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.api
 {
-	
+
 	import mx.core.IFactory;
 	import org.astoolkit.workflow.api.IWorkflowTask;
-	
+
 	[Bindable]
 	[Template]
 	/**

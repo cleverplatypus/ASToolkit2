@@ -19,9 +19,9 @@ Version 2.x
 */
 package org.astoolkit.commons.reflection
 {
-	
+
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
-	
+
 	public interface IAnnotation
 	{
 		function getArray( inArgName : String = "", inOrDefault : Boolean = false ) : Array;

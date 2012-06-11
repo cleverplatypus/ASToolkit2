@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.io
 {
-	
+
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
@@ -27,95 +27,95 @@ package org.astoolkit.workflow.task.io
 	import flash.utils.setTimeout;
 	import deng.fzip.FZip;
 	import org.astoolkit.workflow.core.BaseTask;
-	
+
 	public class CreateZipArchive extends BaseTask
 	{
 		public var destinationFile : File;
-		
+
 		public var readSize : uint = 51200;
-		
+
 		[Bindable]
 		[InjectPipeline]
 		public var sourceFile : File;
-		
+
 		[Bindable]
 		[InjectPipeline]
 		public var sourceFiles : Vector.<File>;
-		
+
 		public var wrappingDirName : String;
-		
+
 		private var _baseDir : File;
-		
+
 		private var _currentByteArray : ByteArray;
-		
+
 		private var _currentFileQueue : Array;
-		
+
 		private var _currentInStream : FileStream;
-		
+
 		private var _zip : FZip;
-		
+
 		override public function begin() : void
 		{
 			super.begin();
-			
-			if(!sourceFile && !sourceFiles)
+
+			if( !sourceFile && !sourceFiles )
 			{
 				fail( "No source file(s) provided.\nIf providing multiple files " +
 					"make sure the list passed is of type Vector.<flash.filesystem.File>" );
 				return;
 			}
-			
-			if(!destinationFile)
+
+			if( !destinationFile )
 			{
 				fail( "No destination archive file provided" );
 				return;
 			}
 			_currentFileQueue = [];
 			_zip = new FZip();
-			
-			if(sourceFile)
+
+			if( sourceFile )
 			{
 				_baseDir = sourceFile.parent;
-				_currentFileQueue.push([ sourceFile ])
+				_currentFileQueue.push( [ sourceFile ] )
 			}
-			else if(sourceFiles && sourceFiles.length > 0)
+			else if( sourceFiles && sourceFiles.length > 0 )
 			{
-				_baseDir = sourceFiles[0].parent;
+				_baseDir = sourceFiles[ 0 ].parent;
 				_currentFileQueue.push( sourceFiles );
 			}
-			
-			if(_currentFileQueue.length > 0)
+
+			if( _currentFileQueue.length > 0 )
 				processQueue();
 			else
 				complete();
 		}
-		
+
 		private function processQueue() : void
 		{
-			if(_currentFileQueue.length == 0)
+			if( _currentFileQueue.length == 0 )
 			{
 				queueComplete();
 				return;
 			}
-			var files : Array = _currentFileQueue[_currentFileQueue.length - 1];
-			
-			if(files.length == 0)
+			var files : Array = _currentFileQueue[ _currentFileQueue.length - 1 ];
+
+			if( files.length == 0 )
 			{
 				_currentFileQueue.pop();
 				processQueue();
 				return;
 			}
-			var file : File = files[files.length - 1];
-			
-			if(file.isDirectory)
+			var file : File = files[ files.length - 1 ];
+
+			if( file.isDirectory )
 			{
-				_currentFileQueue.push( file.getDirectoryListing());
+				_currentFileQueue.push( file.getDirectoryListing() );
 				files.pop();
 				processQueue();
 				return;
 			}
-			
-			if(!_currentInStream)
+
+			if( !_currentInStream )
 			{
 				_currentInStream = new FileStream();
 				_currentInStream.open( file, FileMode.READ );
@@ -123,8 +123,8 @@ package org.astoolkit.workflow.task.io
 				processQueue();
 				return;
 			}
-			
-			if(_currentInStream.bytesAvailable == 0)
+
+			if( _currentInStream.bytesAvailable == 0 )
 			{
 				var localName : String =
 					file.nativePath.replace(
@@ -140,11 +140,11 @@ package org.astoolkit.workflow.task.io
 			}
 			else
 			{
-				_currentInStream.readBytes( _currentByteArray, _currentInStream.position, Math.min( _currentInStream.bytesAvailable, readSize ));
+				_currentInStream.readBytes( _currentByteArray, _currentInStream.position, Math.min( _currentInStream.bytesAvailable, readSize ) );
 				setTimeout( processQueue, 1 );
 			}
 		}
-		
+
 		private function queueComplete() : void
 		{
 			var outStream : FileStream = new FileStream();

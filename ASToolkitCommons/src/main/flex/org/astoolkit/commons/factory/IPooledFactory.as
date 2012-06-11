@@ -19,9 +19,9 @@ Version 2.x
 */
 package org.astoolkit.commons.factory
 {
-	
+
 	import mx.core.IFactory;
-	
+
 	public interface IPooledFactory extends IFactory
 	{
 		function set backupProperties( inProperties : Array ) : void;

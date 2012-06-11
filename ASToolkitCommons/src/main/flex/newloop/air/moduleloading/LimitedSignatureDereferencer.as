@@ -1,10 +1,10 @@
 package newloop.air.moduleloading
 {
-	
+
 	import flash.security.IURIDereferencer;
 	import flash.utils.ByteArray;
 	import flash.utils.IDataInput;
-	
+
 	/**
 	 * Validates an AIR application signature, taking advantage of the fact that the SignedInfo
 	 * element always refers to an element with id="PackageContents".
@@ -15,45 +15,45 @@ package newloop.air.moduleloading
 		{
 			this.signedDocument = signedDocument;
 		}
-		
+
 		private const signatureNS : Namespace = new Namespace( "http://www.w3.org/2000/09/xmldsig#" );
-		
+
 		private var signedDocument : XML;
-		
+
 		public function dereference( uri : String ) : IDataInput
 		{
 			var data : ByteArray = null;
-			
+
 			try
 			{
 				data = new ByteArray();
-				
-				if(uri.length == 0)
+
+				if( uri.length == 0 )
 				{
-					data.writeUTFBytes( signedDocument.toXMLString());
+					data.writeUTFBytes( signedDocument.toXMLString() );
 					data.position = 0;
 				}
-				else if(uri.match( /^#/ ))
+				else if( uri.match( /^#/ ) )
 				{
-					var manifest : XMLList = signedDocument..signatureNS::Manifest.(@Id == uri.slice( 1, uri.length ));
-					
-					if(manifest.length() == 0)
+					var manifest : XMLList = signedDocument..signatureNS::Manifest.( @Id == uri.slice( 1, uri.length ) );
+
+					if( manifest.length() == 0 )
 					{
 						//try lower case id attribute
-						manifest = signedDocument..signatureNS::Manifest.(@id == uri.slice( 1, uri.length ));
-						
-						if(manifest.length() == 0)
+						manifest = signedDocument..signatureNS::Manifest.( @id == uri.slice( 1, uri.length ) );
+
+						if( manifest.length() == 0 )
 						{
 							//give up
 							throw new Error( "Manifest with matching id attribute not found." );
 						}
 					}
-					data.writeUTFBytes( manifest.toXMLString());
+					data.writeUTFBytes( manifest.toXMLString() );
 					data.position = 0;
 				}
 				else
 				{
-					throw(new Error( "Unsupported signature type." ));
+					throw( new Error( "Unsupported signature type." ) );
 				}
 			}
 			catch( e : Error )

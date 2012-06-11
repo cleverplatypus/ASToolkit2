@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.internals
 {
-	
+
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
 	import flash.utils.getQualifiedClassName;
@@ -32,37 +32,37 @@ package org.astoolkit.workflow.internals
 	import mx.utils.UIDUtil;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.TaskStatus;
-	
+
 	public class SuspendableFunctionRegistry
 	{
 		private static const LOGGER : ILogger =
-			Log.getLogger( getQualifiedClassName( SuspendableFunctionRegistry ).replace( /:+/g, "." ));
-		
+			Log.getLogger( getQualifiedClassName( SuspendableFunctionRegistry ).replace( /:+/g, "." ) );
+
 		/**
 		 * @private
 		 */
 		private var _resumeCallBacks : Array;
-		
+
 		/**
 		 * @private
 		 */
 		private var _suspendableFunctions : Object = {};
-		
+
 		/**
 		 * @private
 		 */
 		public function addResumeCallBack( inFunction : Function ) : void
 		{
-			if(!_resumeCallBacks)
+			if( !_resumeCallBacks )
 				initResumeCallBacks();
 			_resumeCallBacks.push( inFunction );
 		}
-		
+
 		public function cleanUp() : void
 		{
 			clearResumeCallBack();
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -70,7 +70,7 @@ package org.astoolkit.workflow.internals
 		{
 			_resumeCallBacks = null;
 		}
-		
+
 		/**
 		 * returns a "thread safe" function wrapper for the provided function.
 		 *
@@ -79,17 +79,17 @@ package org.astoolkit.workflow.internals
 		public function getThreadSafeFunction( inTask : IWorkflowTask, inHandler : Function ) : Function
 		{
 			var key : String = UIDUtil.getUID( inTask );
-			
-			if(!_suspendableFunctions.hasOwnProperty( key ) || !_suspendableFunctions[key].hasOwnProperty( "" + inTask.currentThread ))
+
+			if( !_suspendableFunctions.hasOwnProperty( key ) || !_suspendableFunctions[ key ].hasOwnProperty( "" + inTask.currentThread ) )
 			{
-				_suspendableFunctions[key] = {};
-				_suspendableFunctions[key]["" + inTask.currentThread] = [];
+				_suspendableFunctions[ key ] = {};
+				_suspendableFunctions[ key ][ "" + inTask.currentThread ] = [];
 			}
 			var sf : SuspendableFunction = new SuspendableFunction( inTask, inHandler, this );
-			_suspendableFunctions[key]["" + inTask.currentThread].push( sf );
+			_suspendableFunctions[ key ][ "" + inTask.currentThread ].push( sf );
 			return sf.wrapper;
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -97,15 +97,15 @@ package org.astoolkit.workflow.internals
 		{
 			_resumeCallBacks = [];
 		}
-		
+
 		/**
 		 * @private
 		 */
 		public function invokeResumeCallBacks() : void
 		{
-			if(_resumeCallBacks != null)
+			if( _resumeCallBacks != null )
 			{
-				for each(var fn : Function in _resumeCallBacks)
+				for each( var fn : Function in _resumeCallBacks )
 				{
 					fn();
 				}
@@ -114,6 +114,7 @@ package org.astoolkit.workflow.internals
 		}
 	}
 }
+
 import org.astoolkit.workflow.api.IWorkflowTask;
 import org.astoolkit.workflow.constant.TaskStatus;
 import org.astoolkit.workflow.internals.SuspendableFunctionRegistry;
@@ -127,21 +128,21 @@ class SuspendableFunction
 		_handler = inHandler;
 		_registry = inRegistry;
 	}
-	
+
 	private var _handler : Function;
-	
+
 	private var _registry : SuspendableFunctionRegistry;
-	
+
 	private var _task : IWorkflowTask;
-	
+
 	private var _thread : uint;
-	
+
 	public function wrapper( ... args ) : void
 	{
-		if(_task.currentThread != _thread)
+		if( _task.currentThread != _thread )
 			return;
-		
-		if(_task.status == TaskStatus.SUSPENDED)
+
+		if( _task.status == TaskStatus.SUSPENDED )
 		{
 			_registry.addResumeCallBack( wrapper );
 			return;

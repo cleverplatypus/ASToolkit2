@@ -30,7 +30,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 */
 package newloop.air.moduleloading
 {
-	
+
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -46,7 +46,7 @@ package newloop.air.moduleloading
 	import mx.utils.Base64Decoder;
 	import mx.utils.Base64Encoder;
 	import mx.utils.SHA256;
-	
+
 	/**
 	 *  PackageSignatureCheck verifies whether the signature of a package (folder created by adt, or air package created in flash and renamed .zip) passed to 'validate' is or isn't a good match with the current air app's signing certificate
 	 *
@@ -71,22 +71,22 @@ package newloop.air.moduleloading
 	public class PackageSignatureCheck extends EventDispatcher
 	{
 		public static const PACKAGE_SIGNATURE_ERROR : String  = "packageSignatureError";
-		
+
 		public static const PACKAGE_SIGNATURE_FAILED : String = "packageSignatureFailed";
-		
+
 		//--------------------------------------
 		// CLASS CONSTANTS
 		//--------------------------------------
 		public static const PACKAGE_SIGNATURE_PASSED : String = "packageSignaturePassed";
-		
+
 		public static const READY : String                    = "ready";
-		
+
 		public static const STATUS_NOT_READY : String         = "statusNotReady";
-		
+
 		public static const STATUS_READY : String             = "statusReady";
-		
+
 		private static const __file_name__ : String = "PackageSignatureCheck.as";
-		
+
 		//--------------------------------------
 		//  CONSTRUCTOR
 		//--------------------------------------
@@ -94,26 +94,26 @@ package newloop.air.moduleloading
 		{
 			status = PackageSignatureCheck.STATUS_NOT_READY;
 		}
-		
+
 		//--------------------------------------
 		//  PRIVATE VARIABLES
 		//--------------------------------------
 		// the actual air application's own signature certificate
 		private var ownCertificate : ByteArray;
-		
+
 		private var signatureFile : File;
-		
+
 		private const signatureNS : Namespace = new Namespace( "http://www.w3.org/2000/09/xmldsig#" );
-		
+
 		// have we finished getting our own certificate? Are we midway through another file operation
 		// VERY IMPORTANT: Opening 2 fileStreams simultaneously caused Kernel Crash in OS X 10.6
 		private var status : String;
-		
+
 		private var xmlDocument : XML;
-		
+
 		// the signature, document and file being processed
 		private var xmlSignature : XML;
-		
+
 		//--------------------------------------
 		//  GETTER/SETTERS
 		//--------------------------------------
@@ -121,7 +121,7 @@ package newloop.air.moduleloading
 		{
 			return this.status;
 		}
-		
+
 		//--------------------------------------
 		//  PUBLIC METHODS
 		//--------------------------------------
@@ -129,36 +129,36 @@ package newloop.air.moduleloading
 		{
 			this.findOwnCertificate();
 		}
-		
+
 		public function validate( packageFolderName : String ) : void
 		{
-			if(this.status == PackageSignatureCheck.STATUS_READY)
+			if( this.status == PackageSignatureCheck.STATUS_READY )
 			{
 				this.validatePackage( packageFolderName );
 			}
 		}
-		
+
 		private function checkVerificationStatusAndManifest( validator : XMLSignatureValidator ) : void
 		{
 			//check certificate was ok
-			if(validator.identityStatus != SignatureStatus.VALID)
+			if( validator.identityStatus != SignatureStatus.VALID )
 			{
 				this.dispatchSignatureFailedEvent();
 				return;
 			}
-			
+
 			//check the references
-			if(validator.referencesStatus != SignatureStatus.VALID)
+			if( validator.referencesStatus != SignatureStatus.VALID )
 			{
 				this.dispatchSignatureFailedEvent();
 				return;
 			}
 			// certificate and references are both ok, 	check the manifest
 			var manifest : XMLList = this.xmlSignature.signatureNS::Object.signatureNS::Manifest;
-			
-			if(manifest.length() > 0)
+
+			if( manifest.length() > 0 )
 			{
-				if(this.verifyManifest( manifest, this.signatureFile ))
+				if( this.verifyManifest( manifest, this.signatureFile ) )
 				{
 					this.dispatchSignaturePassedEvent();
 					return;
@@ -167,39 +167,39 @@ package newloop.air.moduleloading
 			// we're paranoid, so default to failure
 			this.dispatchSignatureFailedEvent();
 		}
-		
+
 		//--------------------------------------
 		//  EVENT DISPATCHING
 		//--------------------------------------
 		private function dispatchDebugEvent( debugMessage : String ) : void
 		{
 		}
-		
+
 		private function dispatchSignatureErrorEvent( errorMsg : String = "" ) : void
 		{
-			this.dispatchEvent( new ErrorEvent( PackageSignatureCheck.PACKAGE_SIGNATURE_ERROR, false, false, errorMsg ));
+			this.dispatchEvent( new ErrorEvent( PackageSignatureCheck.PACKAGE_SIGNATURE_ERROR, false, false, errorMsg ) );
 		}
-		
+
 		private function dispatchSignatureFailedEvent() : void
 		{
-			this.dispatchEvent( new ErrorEvent( PackageSignatureCheck.PACKAGE_SIGNATURE_FAILED ));
+			this.dispatchEvent( new ErrorEvent( PackageSignatureCheck.PACKAGE_SIGNATURE_FAILED ) );
 			this.status = PackageSignatureCheck.STATUS_READY;
 		}
-		
+
 		private function dispatchSignaturePassedEvent() : void
 		{
-			this.dispatchEvent( new Event( PackageSignatureCheck.PACKAGE_SIGNATURE_PASSED ));
+			this.dispatchEvent( new Event( PackageSignatureCheck.PACKAGE_SIGNATURE_PASSED ) );
 			this.status = PackageSignatureCheck.STATUS_READY;
 		}
-		
+
 		private function extractSignature( xmlDoc : XML ) : XML
 		{
 			var xmlSig : XML = null;
 			var signatureList : XMLList = xmlDoc..signatureNS::Signature;
-			
-			if(signatureList.length() > 0)
+
+			if( signatureList.length() > 0 )
 			{
-				xmlSig = XML( signatureList[signatureList.length() - 1]);
+				xmlSig = XML( signatureList[ signatureList.length() - 1 ] );
 			}
 			else
 			{
@@ -208,7 +208,7 @@ package newloop.air.moduleloading
 			}
 			return xmlSig;
 		}
-		
+
 		private function findOwnCertificate() : void
 		{
 			try
@@ -217,20 +217,20 @@ package newloop.air.moduleloading
 				var ownSignature : File = File.applicationDirectory.resolvePath( "META-INF/signatures.xml" );
 				var xmlDoc : XML = this.loadFile( ownSignature );
 				var xmlSig : XML = this.extractSignature( xmlDoc );
-				
-				if(xmlSig == null)
+
+				if( xmlSig == null )
 					return; // error has been handled at the lower level
 				// store a copy of this certificate - we'll need this for verfication			
 				this.ownCertificate = this.getCertificateFromSignature( xmlSig );
 				this.status = PackageSignatureCheck.STATUS_READY;
-				this.dispatchEvent( new Event( PackageSignatureCheck.READY ));
+				this.dispatchEvent( new Event( PackageSignatureCheck.READY ) );
 			}
 			catch( e : Error )
 			{
-				this.dispatchSignatureErrorEvent( "Unable to obtain own signature. PackageSignatureCheck: findOwnCertificate.\n\n" + e.getStackTrace());
+				this.dispatchSignatureErrorEvent( "Unable to obtain own signature. PackageSignatureCheck: findOwnCertificate.\n\n" + e.getStackTrace() );
 			}
 		}
-		
+
 		private function getCertificateFromSignature( xmlSig : XML ) : ByteArray
 		{
 			try
@@ -248,7 +248,7 @@ package newloop.air.moduleloading
 			}
 			return null;
 		}
-		
+
 		private function loadFile( sigFile : File ) : XML
 		{
 			try
@@ -264,12 +264,12 @@ package newloop.air.moduleloading
 			catch( e : Error )
 			{
 				this.dispatchDebugEvent( "Unable to load signature file. PackageSignatureCheck: loadFile" + sigFile.url );
-				this.dispatchSignatureErrorEvent( "Cannot load signature file: " + sigFile.url + "\n\n" + e.getStackTrace());
+				this.dispatchSignatureErrorEvent( "Cannot load signature file: " + sigFile.url + "\n\n" + e.getStackTrace() );
 				return null;
 			}
 			return null;
 		}
-		
+
 		//--------------------------------------
 		//  EVENT HANDLERS
 		//--------------------------------------
@@ -278,13 +278,13 @@ package newloop.air.moduleloading
 			var validator : XMLSignatureValidator = event.target as XMLSignatureValidator;
 			this.checkVerificationStatusAndManifest( validator );
 		}
-		
+
 		private function signatureVerificationErrorHandler( event : ErrorEvent ) : void
 		{
 			// dispatch an error event - because we're looking for paranoia here, we don't much care what caused the error
 			this.dispatchSignatureErrorEvent( event.text );
 		}
-		
+
 		//--------------------------------------
 		//  PRIVATE & PROTECTED INSTANCE METHODS
 		//--------------------------------------
@@ -292,7 +292,7 @@ package newloop.air.moduleloading
 		{
 			this.status = PackageSignatureCheck.STATUS_NOT_READY;
 			var pathToSignature : String = packageFolderName + "/META-INF/signatures.xml";
-			
+
 			// we're restricting this to the application storage directory, 
 			// so only content downloaded by this application can be loaded this way
 			try
@@ -309,10 +309,10 @@ package newloop.air.moduleloading
 			verifier.addEventListener( ErrorEvent.ERROR, this.signatureVerificationErrorHandler );
 			xmlDocument = loadFile( this.signatureFile );
 			xmlSignature = extractSignature( this.xmlDocument );
-			
-			if(xmlSignature == null)
+
+			if( xmlSignature == null )
 				return; // error has been handled at the lower level
-			
+
 			try
 			{
 				//Set the validation options
@@ -332,18 +332,18 @@ package newloop.air.moduleloading
 				this.dispatchSignatureErrorEvent( "Verification encountered a problem. PackageSignatureCheck: Line 106" );
 			}
 		}
-		
+
 		private function verifyManifest( manifest : XMLList, sigFile : File ) : Boolean
 		{
 			var result : Boolean = true;
 			var nameSpace : Namespace = manifest.namespace();
-			
-			if(manifest.nameSpace::Reference.length() <= 0)
+
+			if( manifest.nameSpace::Reference.length() <= 0 )
 			{
 				result = false;
 			}
-			
-			for each(var reference : XML in manifest.nameSpace::Reference)
+
+			for each( var reference : XML in manifest.nameSpace::Reference )
 			{
 				var file : File = sigFile.parent.parent.resolvePath( reference.@URI );
 				var stream : FileStream = new FileStream();
@@ -352,19 +352,19 @@ package newloop.air.moduleloading
 				stream.readBytes( fileData, 0, stream.bytesAvailable );
 				var digestHexString : String = SHA256.computeDigest( fileData );
 				var digest : ByteArray = new ByteArray();
-				
-				for(var c : int = 0; c < digestHexString.length; c += 2)
+
+				for( var c : int = 0; c < digestHexString.length; c += 2 )
 				{
 					var byteChar : String = digestHexString.charAt( c ) + digestHexString.charAt( c + 1 );
-					digest.writeByte( parseInt( byteChar, 16 ));
+					digest.writeByte( parseInt( byteChar, 16 ) );
 				}
 				digest.position = 0;
 				var base64Encoder : Base64Encoder = new Base64Encoder();
 				base64Encoder.insertNewLines = false;
 				base64Encoder.encodeBytes( digest, 0, digest.bytesAvailable );
 				var digestBase64 : String = base64Encoder.toString();
-				
-				if(digestBase64 == reference.nameSpace::DigestValue)
+
+				if( digestBase64 == reference.nameSpace::DigestValue )
 				{
 					result = result && true;
 				}

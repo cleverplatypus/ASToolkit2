@@ -19,13 +19,13 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.flowcontrol
 {
-	
+
 	import org.astoolkit.workflow.api.IWorkflow;
 	import org.astoolkit.workflow.api.IWorkflowElement;
 	import org.astoolkit.workflow.constant.TaskStatus;
 	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.internals.GroupUtil;
-	
+
 	public class Break extends BaseTask
 	{
 		override public function begin() : void

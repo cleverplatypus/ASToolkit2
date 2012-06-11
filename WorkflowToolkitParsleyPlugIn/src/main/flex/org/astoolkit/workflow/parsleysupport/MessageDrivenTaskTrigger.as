@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.parsleysupport
 {
-	
+
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
@@ -44,7 +44,7 @@ package org.astoolkit.workflow.parsleysupport
 	import org.spicefactory.parsley.processor.messaging.receiver.DefaultCommandObserver;
 	import org.spicefactory.parsley.processor.messaging.receiver.DefaultCommandTarget;
 	import org.spicefactory.parsley.processor.messaging.receiver.MessageHandler;
-	
+
 	/**
 	 * A wrapper node for Parsley context to declare workflows
 	 * that are triggered by messages.<br><br>
@@ -60,41 +60,41 @@ package org.astoolkit.workflow.parsleysupport
 	public class MessageDrivenTaskTrigger implements IMXMLObject
 	{
 		public var enabled : Boolean = true;
-		
+
 		public var inputFilter : Object;
-		
+
 		public var messageType : Class;
-		
+
 		public var scope : String  = ScopeName.GLOBAL;
-		
+
 		public var selector : * = undefined;
-		
+
 		public var taskRefId : String;
-		
+
 		[Inspectable( enumeration="message,command,resultOverride" )]
 		public var type : String = "message";
-		
+
 		public var workflow : IWorkflow;
-		
+
 		private var _commandTokens : Object = {};
-		
+
 		private var _context : Context;
-		
+
 		private var _factory : IPooledFactory;
-		
+
 		private var _id : String;
-		
+
 		public function commandHandler( inMessage : Object ) : AsyncToken
 		{
-			if(!enabled)
+			if( !enabled )
 				return null;
 			var task : IWorkflow = resolveTask( inMessage );
 			var token : AsyncToken = new AsyncToken();
-			_commandTokens[UIDUtil.getUID( task )] = token;
+			_commandTokens[ UIDUtil.getUID( task ) ] = token;
 			setTimeout( task.begin, 1 );
 			return token;
 		}
-		
+
 		[Inject]
 		public function set context( inContext : Context ) : void
 		{
@@ -103,38 +103,38 @@ package org.astoolkit.workflow.parsleysupport
 			_factory.backupProperties = [ "inputFilter" ];
 			_factory.delegate = new DynamicPoolFactoryDelegate( newWorkflowInstance );
 		}
-		
+
 		public function handler( inMessage : Object ) : void
 		{
-			if(!enabled)
+			if( !enabled )
 				return;
 			resolveTask( inMessage ).begin();
 		}
-		
+
 		public function initialized( inDocument : Object, inId : String ) : void
 		{
 			_id = inId;
 			setTimeout( registerMessageListener, 1 );
 		}
-		
+
 		public function resultOverride( inResult : Object, inMessage : Object, inProcessor : CommandObserverProcessor ) : void
 		{
-			if(!enabled)
+			if( !enabled )
 				return;
 			var task : IWorkflow = resolveTask( inMessage );
 			var outResult : * = task.run( inResult );
-			
-			if(outResult == undefined)
+
+			if( outResult == undefined )
 			{
 				inProcessor.suspend();
 				task.addEventListener( WorkflowEvent.COMPLETED, onTaskComplete );
-				task.context.data["interceptorProcessor"] = inProcessor;
+				task.context.data[ "interceptorProcessor" ] = inProcessor;
 				task.addEventListener( WorkflowEvent.COMPLETED, onTaskComplete );
 			}
 			else
 				inProcessor.command.setResult( outResult );
 		}
-		
+
 		private function newWorkflowInstance( inClass : Class, inProperties : Object ) : Object
 		{
 			var outTask : IWorkflow = IWorkflow(
@@ -142,16 +142,16 @@ package org.astoolkit.workflow.parsleysupport
 				inClass ).instance );
 			return outTask;
 		}
-		
+
 		private function onTaskComplete( inEvent : WorkflowEvent ) : void
 		{
 			IWorkflow( inEvent.target ).removeEventListener(
 				WorkflowEvent.COMPLETED,
 				onTaskComplete );
-			
-			if(type == "command")
+
+			if( type == "command" )
 			{
-				var token : AsyncToken = _commandTokens[UIDUtil.getUID( inEvent.target )] as AsyncToken;
+				var token : AsyncToken = _commandTokens[ UIDUtil.getUID( inEvent.target ) ] as AsyncToken;
 				setTimeout( function() : void
 				{
 					token.mx_internal::applyResult(
@@ -159,31 +159,31 @@ package org.astoolkit.workflow.parsleysupport
 						ResultEvent.RESULT,
 						false,
 						true,
-						IWorkflow( inEvent.target ).output ));
+						IWorkflow( inEvent.target ).output ) );
 				}, 1 );
-				delete _commandTokens[inEvent.target];
+				delete _commandTokens[ inEvent.target ];
 			}
-			else if(type == "resultOverride")
+			else if( type == "resultOverride" )
 			{
 				var processor : CommandObserverProcessor =
-					IWorkflow( inEvent.target ).context.data["interceptorProcessor"];
+					IWorkflow( inEvent.target ).context.data[ "interceptorProcessor" ];
 				processor.command.setResult( IWorkflow( inEvent.target ).output );
 				processor.resume();
 			}
 		}
-		
+
 		private function registerMessageListener() : void
 		{
-			if(type == "command")
+			if( type == "command" )
 			{
 				_context.scopeManager.getScope( scope ).messageReceivers.addTarget(
 					new DefaultCommandTarget(
 					Provider.forInstance( this ),
 					"commandHandler",
 					selector,
-					ClassInfo.forClass( messageType )));
+					ClassInfo.forClass( messageType ) ) );
 			}
-			else if(type == "message")
+			else if( type == "message" )
 			{
 				_context.scopeManager.getScope( scope ).messageReceivers.addTarget(
 					new MessageHandler(
@@ -194,7 +194,7 @@ package org.astoolkit.workflow.parsleysupport
 					)
 					);
 			}
-			else if(type == "resultOverride")
+			else if( type == "resultOverride" )
 			{
 				_context.scopeManager.getScope( scope ).messageReceivers.addCommandObserver(
 					new DefaultCommandObserver(
@@ -207,7 +207,7 @@ package org.astoolkit.workflow.parsleysupport
 					);
 			}
 		}
-		
+
 		/**
 		 * @private
 		 *
@@ -219,29 +219,29 @@ package org.astoolkit.workflow.parsleysupport
 		{
 			var actualWorkflow : IWorkflow;
 			var objDef : ObjectDefinition;
-			
-			if(taskRefId)
+
+			if( taskRefId )
 			{
 				objDef = _context.findDefinition( taskRefId );
-				
-				if(objDef is DynamicObjectDefinition)
-					actualWorkflow = _factory.getInstance( objDef.type.getClass());
+
+				if( objDef is DynamicObjectDefinition )
+					actualWorkflow = _factory.getInstance( objDef.type.getClass() );
 				else
-					actualWorkflow = IWorkflow( _context.getObject( taskRefId ));
+					actualWorkflow = IWorkflow( _context.getObject( taskRefId ) );
 			}
-			else if(workflow is IWorkflow)
+			else if( workflow is IWorkflow )
 			{
 				objDef = _context.findDefinitionByType(
 					getDefinitionByName(
-					getQualifiedClassName( workflow )) as Class );
-				
-				if(objDef is DynamicObjectDefinition)
-					actualWorkflow = _factory.getInstance( objDef.type.getClass());
+					getQualifiedClassName( workflow ) ) as Class );
+
+				if( objDef is DynamicObjectDefinition )
+					actualWorkflow = _factory.getInstance( objDef.type.getClass() );
 				else
 					actualWorkflow = workflow;
 			}
-			
-			if(inputFilter)
+
+			if( inputFilter )
 				actualWorkflow.inputFilter = inputFilter;
 			actualWorkflow.input = inMessage;
 			return actualWorkflow;

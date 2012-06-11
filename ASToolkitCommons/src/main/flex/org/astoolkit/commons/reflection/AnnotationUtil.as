@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.commons.reflection
 {
-	
+
 	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
@@ -27,27 +27,27 @@ package org.astoolkit.commons.reflection
 	import org.astoolkit.commons.factory.IPooledFactory;
 	import org.astoolkit.commons.reflection.ClassInfo;
 	import org.astoolkit.commons.reflection.IAnnotation;
-	
+
 	public final class AnnotationUtil
 	{
 		private static var _annotations : Object = {};
-		
+
 		private static var _annotationsByAnnotationType : Object = {};
-		
+
 		private static var _cache : Object = {};
-		
+
 		private static var _classes : Object = {};
-		
+
 		public static function getAnnotationsFromMetadata( inMetadata : XMLList ) : Vector.<IAnnotation>
 		{
 			var out : Vector.<IAnnotation> = new Vector.<IAnnotation>();
 			var annotation : IAnnotation;
-			
-			for each(var metaNode : XML in inMetadata)
+
+			for each( var metaNode : XML in inMetadata )
 			{
-				if(_annotations.hasOwnProperty( metaNode.@name.toString()))
+				if( _annotations.hasOwnProperty( metaNode.@name.toString() ) )
 				{
-					var factory : IFactory = _annotations[metaNode.@name.toString()] as IFactory;
+					var factory : IFactory = _annotations[ metaNode.@name.toString() ] as IFactory;
 					annotation = factory.newInstance();
 				}
 				else
@@ -59,13 +59,13 @@ package org.astoolkit.commons.reflection
 			}
 			return out;
 		}
-		
+
 		public static function registerAnnotation( inFactory : IFactory ) : void
 		{
 			var instance : Metadata = inFactory.newInstance() as Metadata;
 			var classInfo : XML = describeType( instance );
-			_annotations[instance.tagName] = inFactory;
-			_annotationsByAnnotationType[getQualifiedClassName( instance )] = inFactory;
+			_annotations[ instance.tagName ] = inFactory;
+			_annotationsByAnnotationType[ getQualifiedClassName( instance ) ] = inFactory;
 		}
 	}
 }

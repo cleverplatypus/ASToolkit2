@@ -1,8 +1,8 @@
 package org.astoolkit.workflow.api
 {
-	
+
 	import org.astoolkit.workflow.core.ExitStatus;
-	
+
 	public interface ITaskLiveCycleWatcher
 	{
 		function afterTaskBegin( inTask : IWorkflowTask ) : void;

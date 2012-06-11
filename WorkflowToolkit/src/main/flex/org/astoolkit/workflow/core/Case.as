@@ -19,12 +19,12 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
-	
+
 	import org.astoolkit.workflow.api.IElementsGroup;
 	import org.astoolkit.workflow.api.ISwitchCase;
 	import org.astoolkit.workflow.api.IWorkflowElement;
 	import org.astoolkit.workflow.internals.GroupUtil;
-	
+
 	[DefaultProperty( "children" )]
 	/**
 	 * A group of elements to enable if <code>value</code> or one of <code>values</code>
@@ -35,28 +35,28 @@ package org.astoolkit.workflow.core
 	public class Case extends Group implements ISwitchCase
 	{
 		private var _values : Array;
-		
+
 		/**
 		 * @private
 		 */
 		override public function set parent( inParent : IElementsGroup ) : void
 		{
-			if(!(inParent is Switch))
+			if( !( inParent is Switch ) )
 				throw new Error( "Case can only be used as child of Switch" );
 			super.parent = inParent;
 		}
-		
+
 		public function switchChildren( inEnabled : Boolean ) : void
 		{
-			if(_children)
+			if( _children )
 			{
-				for each(var element : IWorkflowElement in _children)
+				for each( var element : IWorkflowElement in _children )
 				{
 					element.enabled = inEnabled;
 				}
 			}
 		}
-		
+
 		/**
 		 * the value to compare to the wrapping <code>Switch</code> group.
 		 */
@@ -64,12 +64,12 @@ package org.astoolkit.workflow.core
 		{
 			_values = [ inValue ];
 		}
-		
+
 		public function get values() : Array
 		{
 			return _values;
 		}
-		
+
 		public function set values( inValue : Array ) : void
 		{
 			_values = inValue;

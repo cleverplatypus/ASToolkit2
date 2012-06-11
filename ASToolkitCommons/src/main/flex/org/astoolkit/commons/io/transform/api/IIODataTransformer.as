@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.commons.io.transform.api
 {
-	
+
 	public interface IIODataTransformer
 	{
 		/**

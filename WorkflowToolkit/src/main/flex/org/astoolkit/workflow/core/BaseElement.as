@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
-	
+
 	import flash.events.EventDispatcher;
 	import flash.utils.getQualifiedClassName;
 	import mx.binding.utils.ChangeWatcher;
@@ -35,7 +35,7 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.workflow.api.IWorkflowDelegate;
 	import org.astoolkit.workflow.api.IWorkflowElement;
 	import org.astoolkit.workflow.constant.NO_DESCRIPTION;
-	
+
 	[Bindable]
 	/**
 	 * Base implementation of <code>IWorkflowElement</code>.
@@ -55,92 +55,92 @@ package org.astoolkit.workflow.core
 			super();
 			_unsetProperties = {};
 			_initialWatchers = {};
-			
-			for each(var f : FieldInfo in ClassInfo.forType( this ).getFields())
+
+			for each( var f : FieldInfo in ClassInfo.forType( this ).getFields() )
 			{
-				if(f.fullAccess)
+				if( f.fullAccess )
 				{
-					_unsetProperties[f.name] = true;
+					_unsetProperties[ f.name ] = true;
 					;
-					_initialWatchers[f.name] =
+					_initialWatchers[ f.name ] =
 						ChangeWatcher.watch(
-						this, f.name, onPropertyEarlySet, false, false );
+						this, f.name, onPropertyEarlySet, false );
 				}
 			}
 		}
-		
+
 		/**
 		 * @private
 		 */
 		protected var _ancestryString : String;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _context : IWorkflowContext;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _currentIterator : IIterator;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _delegate : IWorkflowDelegate;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _description : String = NO_DESCRIPTION;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _document : Object;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _enabled : Boolean = true;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _id : String;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _overriddenProperties : Array;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _parent : IElementsGroup;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _thread : uint;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _unsetProperties : Object;
-		
+
 		/**
 		 * @private
 		 */
 		private var _initialWatchers : Object;
-		
+
 		/**
 		 * @inheritDoc
 		 */
 		public function cleanUp() : void
 		{
 		}
-		
+
 		/**
 		 * @inheritDoc
 		 */
@@ -148,43 +148,43 @@ package org.astoolkit.workflow.core
 		{
 			return _context;
 		}
-		
+
 		public function set context( inContext : IWorkflowContext ) : void
 		{
 			_context = inContext;
 		}
-		
+
 		public function set currentIterator( inValue : IIterator ) : void
 		{
 			_currentIterator = inValue;
 		}
-		
+
 		public function set delegate( inDelegate : IWorkflowDelegate ) : void
 		{
 			_delegate = inDelegate;
 		}
-		
+
 		/**
 		 * @inheritDoc
 		 */
 		public function get description() : String
 		{
-			if(_description != NO_DESCRIPTION)
+			if( _description != NO_DESCRIPTION )
 				return _description;
 			else
 				return getAncestryString();
 		}
-		
+
 		public function set description( inName : String ) : void
 		{
 			_description = inName;
 		}
-		
+
 		public function get document() : Object
 		{
 			return _document;
 		}
-		
+
 		/**
 		 * whether this element is enabled for processing
 		 */
@@ -192,24 +192,24 @@ package org.astoolkit.workflow.core
 		{
 			return _enabled;
 		}
-		
+
 		public function set enabled( inEnabled : Boolean ) : void
 		{
 			_enabled = inEnabled;
 		}
-		
+
 		/**
 		 * utility method to get a string representing the
 		 * branch this element belongs to.
 		 */
 		public function getAncestryString() : String
 		{
-			if(!_ancestryString)
+			if( !_ancestryString )
 			{
 				var ancestry : Array = [];
 				var task : IWorkflowElement = this;
 				var index : String;
-				
+
 				do
 				{
 					index = task.parent ?
@@ -218,26 +218,26 @@ package org.astoolkit.workflow.core
 					ancestry.unshift(
 						getQualifiedClassName( task ).replace( /.*?::/, "" ) + index );
 					task = task.parent;
-				} while(task != null);
+				} while( task != null );
 				_ancestryString = "{ " + ancestry.join( " > " ) + " }";
 			}
 			return _ancestryString;
 		}
-		
+
 		public function get id() : String
 		{
 			return _id;
 		}
-		
+
 		/**
 		 * @inheritDoc
 		 */
 		public function initialize() : void
 		{
-			if(suspendBinding && _document != null)
+			if( suspendBinding && _document != null )
 				BindingUtility.disableAllBindings( _document, this );
 		}
-		
+
 		/**
 		 * @private
 		 *
@@ -247,21 +247,21 @@ package org.astoolkit.workflow.core
 		{
 			_document = inDocument;
 			_id = inId;
-			
-			for(var name : String in _unsetProperties)
+
+			for( var name : String in _unsetProperties )
 			{
-				if(BindingUtility.propertyHasBindings( _document, this, name ))
-					delete _unsetProperties[name];
-				
-				if(_initialWatchers.hasOwnProperty( name ))
-					_initialWatchers[name].unwatch();
+				if( BindingUtility.propertyHasBindings( _document, this, name ) )
+					delete _unsetProperties[ name ];
+
+				if( _initialWatchers.hasOwnProperty( name ) )
+					_initialWatchers[ name ].unwatch();
 			}
 			_initialWatchers = null;
-			
-			if(suspendBinding && _document != null)
+
+			if( suspendBinding && _document != null )
 				BindingUtility.disableAllBindings( _document, this );
 		}
-		
+
 		/**
 		 * @inheritDoc
 		 */
@@ -269,19 +269,19 @@ package org.astoolkit.workflow.core
 		{
 			return _parent;
 		}
-		
+
 		public function set parent( inParent : IElementsGroup ) : void
 		{
 			_parent = inParent;
 		}
-		
+
 		/**
 		 * @inheritDoc
 		 */
 		public function prepare() : void
 		{
 		}
-		
+
 		/**
 		 * override this getter to prevent data binding from being
 		 * disabled while in idle status
@@ -290,7 +290,7 @@ package org.astoolkit.workflow.core
 		{
 			return true;
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -298,17 +298,17 @@ package org.astoolkit.workflow.core
 		{
 			return !_unsetProperties.hasOwnProperty( inPropertyName );
 		}
-		
+
 		/**
 		 * @private
 		 */
 		private function onPropertyEarlySet( inEvent : PropertyChangeEvent ) : void
 		{
-			if(_initialWatchers.hasOwnProperty( inEvent.property ))
-				_initialWatchers[inEvent.property].unwatch();
-			
-			if(_unsetProperties.hasOwnProperty( inEvent.property ))
-				delete _unsetProperties[inEvent.property]
+			if( _initialWatchers.hasOwnProperty( inEvent.property ) )
+				_initialWatchers[ inEvent.property ].unwatch();
+
+			if( _unsetProperties.hasOwnProperty( inEvent.property ) )
+				delete _unsetProperties[ inEvent.property ]
 		}
 	}
 }

@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
-	
+
 	/**
 	 * Outputs whatever passed as input after transformations and input filtering
 	 * <p>

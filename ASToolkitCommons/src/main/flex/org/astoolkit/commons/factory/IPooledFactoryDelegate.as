@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.commons.factory
 {
-	
+
 	public interface IPooledFactoryDelegate
 	{
 		function get delegateInstantiation() : Boolean;

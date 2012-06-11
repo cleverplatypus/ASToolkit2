@@ -17,14 +17,14 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.task.spark
+package org.astoolkit.workflow.flex4.task.spark
 {
-	
+
 	import mx.effects.Effect;
 	import mx.events.EffectEvent;
 	import org.astoolkit.workflow.core.BaseTask;
 	import spark.effects.Animate;
-	
+
 	[DefaultProperty( "animation" )]
 	/**
 	 * Plays a Spark <code>Effect</code>
@@ -38,7 +38,7 @@ package org.astoolkit.workflow.task.spark
 	 * </ul>
 	 * </p>
    *
-		   * @example Animating a property.
+			  * @example Animating a property.
 	 * 			<p>In the following snippet we're playing an <code>Animate</code> effect
 	 * 			and waiting for it to finish to complete the task.</p>
 	 * <listing version="3.0">
@@ -65,38 +65,38 @@ package org.astoolkit.workflow.task.spark
 		 * the animation to play (default property)
 		 */
 		public var animation : Effect;
-		
+
 		/**
 		 * if <code>true</code> the task will complete after the effect completes,
 		 * otherwise it will start the effect and complete synchronously.
 		 */
 		public var blocking : Boolean = true;
-		
+
 		/**
 		 * @private
 		 */
 		override public function begin() : void
 		{
 			super.begin();
-			
-			if(!animation)
+
+			if( !animation )
 			{
 				fail( "No animation set." );
 				return;
 			}
-			
-			if(animation.target == null)
+
+			if( animation.target == null )
 				animation.target = filteredInput;
 			animation.play();
-			
-			if(blocking)
+
+			if( blocking )
 			{
-				animation.addEventListener( EffectEvent.EFFECT_END, threadSafe( onAnimationEnd ));
+				animation.addEventListener( EffectEvent.EFFECT_END, threadSafe( onAnimationEnd ) );
 			}
 			else
 				complete();
 		}
-		
+
 		/**
 		 * @private
 		 */

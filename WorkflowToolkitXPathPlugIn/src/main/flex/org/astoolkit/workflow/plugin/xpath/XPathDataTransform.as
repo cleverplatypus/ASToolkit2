@@ -19,12 +19,12 @@ Version 2.x
 */
 package org.astoolkit.workflow.plugin.xpath
 {
-	
+
 	import memorphic.xpath.XPathQuery;
 	import memorphic.xpath.parser.XPathParser;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 	import org.astoolkit.workflow.api.IContextPlugIn;
-	
+
 	/**
 	 * Input filter for XPath expressions support.
 	 * <p>It can be used as workflow context plugin.</p>
@@ -38,21 +38,21 @@ package org.astoolkit.workflow.plugin.xpath
 	public class XPathDataTransform implements IIODataTransformer, IContextPlugIn
 	{
 		private var _disabledExtensions : Array;
-		
+
 		private var _priority : int;
-		
+
 		private var _xpathParser : XPathParser = new XPathParser();
-		
+
 		public function get disabledExtensions() : Array
 		{
 			return _disabledExtensions;
 		}
-		
+
 		public function set disabledExtensions( inValue : Array ) : void
 		{
 			_disabledExtensions = inValue;
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -60,7 +60,7 @@ package org.astoolkit.workflow.plugin.xpath
 		{
 			return [ XPathDataTransform ];
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -68,24 +68,24 @@ package org.astoolkit.workflow.plugin.xpath
 		{
 			return null;
 		}
-		
+
 		/**
 		 * @private
 		 */
 		public function init() : void
 		{
 		}
-		
+
 		/**
 		 * returns true if <code>inExpression</code> is a valid XPath expression string
 		 */
 		public function isValidExpression( inExpression : Object ) : Boolean
 		{
-			if(inExpression is String)
+			if( inExpression is String )
 			{
 				try
 				{
-					new XPathParser().parseXPath((inExpression as String));
+					new XPathParser().parseXPath( ( inExpression as String ) );
 					return true;
 				}
 				catch( e : Error )
@@ -95,7 +95,7 @@ package org.astoolkit.workflow.plugin.xpath
 			}
 			return false;
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -103,7 +103,7 @@ package org.astoolkit.workflow.plugin.xpath
 		{
 			return _priority;
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -111,7 +111,7 @@ package org.astoolkit.workflow.plugin.xpath
 		{
 			_priority = inValue;
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -121,7 +121,7 @@ package org.astoolkit.workflow.plugin.xpath
 			out.push( XML );
 			return out;
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -131,7 +131,7 @@ package org.astoolkit.workflow.plugin.xpath
 			out.push( String );
 			return out;
 		}
-		
+
 		/**
 		 * evaluates the inExpression String expression (an XPath expression) on
 		 * inData (an XML object) and returns the resulting filtered object.
@@ -165,7 +165,7 @@ package org.astoolkit.workflow.plugin.xpath
 		 */
 		public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
 		{
-			if(!(inData is XML))
+			if( !( inData is XML ) )
 				throw new Error( "Data is not XML" );
 			return XPathQuery.execQuery( inData as XML, inExpression as String );
 		}

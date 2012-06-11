@@ -1,8 +1,8 @@
 package org.astoolkit.workflow.task.api
 {
-	
+
 	import mx.core.IFactory;
-	
+
 	[Bindable]
 	[Template]
 	public interface ISendMessage

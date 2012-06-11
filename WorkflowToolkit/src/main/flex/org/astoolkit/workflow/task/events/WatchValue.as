@@ -19,20 +19,20 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.events
 {
-	
+
 	import flash.utils.setTimeout;
 	import org.astoolkit.workflow.constant.TaskStatus;
 	import org.astoolkit.workflow.core.BaseTask;
-	
+
 	public class WatchValue extends BaseTask
 	{
 		public var condition : Object;
-		
+
 		[Inspectable( defaultValue="change", enumeration="value,change,condition" )]
 		public var trigger : String;
-		
+
 		public var value : Object;
-		
+
 		public function set source( inValue : * ) : void
 		{
 			/*
@@ -42,23 +42,23 @@ package org.astoolkit.workflow.task.events
 			*/
 			setTimeout( handleBinding, 1, inValue );
 		}
-		
+
 		private function handleBinding( inValue : * ) : void
 		{
-			if(status != TaskStatus.RUNNING)
+			if( status != TaskStatus.RUNNING )
 				return;
-			
-			if(trigger == "change")
+
+			if( trigger == "change" )
 				complete();
-			else if(trigger == "value" && inValue == value)
+			else if( trigger == "value" && inValue == value )
 				complete();
-			else if(trigger == "condition")
+			else if( trigger == "condition" )
 			{
-				if(condition is Boolean && condition)
+				if( condition is Boolean && condition )
 					complete();
-				else if(condition is Function && condition() == true)
+				else if( condition is Function && condition() == true )
 					complete();
-				else if(!(condition is Boolean || condition is Function))
+				else if( !( condition is Boolean || condition is Function ) )
 					fail( "Watch condition set to a value other than Boolean or Function returning a Boolean" );
 			}
 		}

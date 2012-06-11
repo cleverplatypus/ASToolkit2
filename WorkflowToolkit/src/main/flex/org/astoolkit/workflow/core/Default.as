@@ -19,10 +19,10 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
-	
+
 	import org.astoolkit.workflow.api.ISwitchCase;
 	import org.astoolkit.workflow.api.IWorkflowElement;
-	
+
 	[DefaultProperty( "children" )]
 	/**
 	 * The <code>default</code> case block for a <code>Switch</code> group.
@@ -35,9 +35,9 @@ package org.astoolkit.workflow.core
 		 */
 		public function switchChildren( inEnabled : Boolean ) : void
 		{
-			if(_children)
+			if( _children )
 			{
-				for each(var element : IWorkflowElement in _children)
+				for each( var element : IWorkflowElement in _children )
 				{
 					element.enabled = inEnabled;
 				}

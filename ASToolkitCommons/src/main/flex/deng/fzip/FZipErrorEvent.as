@@ -19,9 +19,9 @@
  */
 package deng.fzip
 {
-	
+
 	import flash.events.Event;
-	
+
 	/**
 	 * FZip dispatches FZipErrorEvent objects when it encounters
 	 * errors while parsing the ZIP archive. There is only one type
@@ -33,7 +33,7 @@ package deng.fzip
 		* Defines the value of the type property of a FZipErrorEvent object.
 		*/
 		public static const PARSE_ERROR : String = "parseError";
-		
+
 		/**
 		 * Constructor
 		 *
@@ -58,12 +58,12 @@ package deng.fzip
 			this.text = text;
 			super( type, bubbles, cancelable );
 		}
-		
+
 		/**
 		* A human readable description of the kind of parse error.
 		*/
 		public var text : String;
-		
+
 		/**
 		 * Creates a copy of the FZipErrorEvent object and sets the value
 		 * of each property to match that of the original.

@@ -19,23 +19,23 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
-	
+
 	public class ClearVariable extends BaseTask
 	{
 		public var name : String;
-		
+
 		override public function begin() : void
 		{
 			super.begin();
-			
-			if(!name)
+
+			if( !name )
 			{
 				fail( "No variable name provided" );
 				return;
 			}
-			
-			if(context.variables.hasOwnProperty( name ))
-				delete context.variables[name];
+
+			if( context.variables.hasOwnProperty( name ) )
+				delete context.variables[ name ];
 			complete();
 		}
 	}

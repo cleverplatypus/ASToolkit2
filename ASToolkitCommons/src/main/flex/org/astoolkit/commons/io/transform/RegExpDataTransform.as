@@ -19,9 +19,9 @@ Version 2.x
 */
 package org.astoolkit.commons.io.transform
 {
-	
+
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
-	
+
 	/**
 	 * input filter that expects <code>inExpression</code> to be a
 	 * <code>RegExp</code> object or an array of strings with
@@ -37,19 +37,19 @@ package org.astoolkit.commons.io.transform
 		{
 			return inExpression is RegExp || inExpression is REConfig;
 		}
-		
+
 		public function get priority() : int
 		{
 			return 0;
 		}
-		
+
 		public function get supportedDataTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
 			out.push( String );
 			return out;
 		}
-		
+
 		public function get supportedExpressionTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
@@ -57,25 +57,25 @@ package org.astoolkit.commons.io.transform
 			out.push( REConfig );
 			return out;
 		}
-		
+
 		public function transform(
 			inData : Object,
 			inExpression : Object,
 			inTarget : Object = null ) : Object
 		{
-			if(!isValidExpression( inExpression ))
+			if( !isValidExpression( inExpression ) )
 				throw new Error( "Invalid transform expression" );
 			var re : RegExp = inExpression is RegExp ?
 				inExpression as RegExp :
-				(inExpression as REConfig).regexp;
+				( inExpression as REConfig ).regexp;
 			var outIndex : int = inExpression is RegExp ?
-				-1 : (inExpression as REConfig).outputIndex;
+				-1 : ( inExpression as REConfig ).outputIndex;
 			var out : Array = String( inData ).match( re );
-			
-			if(outIndex == -1)
+
+			if( outIndex == -1 )
 				return out;
 			else
-				return out[outIndex];
+				return out[ outIndex ];
 		}
 	}
 }

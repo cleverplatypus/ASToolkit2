@@ -19,9 +19,9 @@ Version 2.x
 */
 package org.astoolkit.commons.io.transform
 {
-	
+
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
-	
+
 	/**
 	 * input filter that expects <code>inExpression</code> to be a
 	 * function with signature
@@ -36,7 +36,7 @@ package org.astoolkit.commons.io.transform
 		{
 			return inExpression is Function;
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -44,7 +44,7 @@ package org.astoolkit.commons.io.transform
 		{
 			return -100;
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -54,7 +54,7 @@ package org.astoolkit.commons.io.transform
 			out.push( Object );
 			return out;
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -64,13 +64,13 @@ package org.astoolkit.commons.io.transform
 			out.push( Function );
 			return out;
 		}
-		
+
 		/**
 		 * @private
 		 */
 		public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
 		{
-			return (inExpression as Function)( inData, inTarget );
+			return ( inExpression as Function )( inData, inTarget );
 		}
 	}
 }

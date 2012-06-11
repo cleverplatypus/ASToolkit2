@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.io
 {
-	
+
 	import flash.events.Event;
 	import flash.events.FileListEvent;
 	import flash.filesystem.File;
@@ -27,7 +27,7 @@ package org.astoolkit.workflow.task.io
 	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.core.ExitStatus;
 	import org.astoolkit.workflow.task.io.util.FileFilter;
-	
+
 	/**
 	 * Opens the OS's file open dialog.
 	 *
@@ -48,54 +48,54 @@ package org.astoolkit.workflow.task.io
 	public class PromptUserForFileSelection extends BaseTask
 	{
 		public var filters : Vector.<FileFilter>;
-		
+
 		public var message : String = "Select file";
-		
+
 		public var multiple : Boolean;
-		
+
 		public var selectDirectory : Boolean;
-		
+
 		private var _file : File;
-		
+
 		override public function begin() : void
 		{
 			super.begin();
 			_file = new File();
-			
-			if(multiple && !selectDirectory)
-				_file.addEventListener( FileListEvent.SELECT_MULTIPLE, threadSafe( onMultipleFilesSelect ));
+
+			if( multiple && !selectDirectory )
+				_file.addEventListener( FileListEvent.SELECT_MULTIPLE, threadSafe( onMultipleFilesSelect ) );
 			else
-				_file.addEventListener( Event.SELECT, threadSafe( onFileSelect ));
-			_file.addEventListener( Event.CANCEL, threadSafe( onBrowseCancel ));
+				_file.addEventListener( Event.SELECT, threadSafe( onFileSelect ) );
+			_file.addEventListener( Event.CANCEL, threadSafe( onBrowseCancel ) );
 			var fFilters : Array = [];
-			
-			if(selectDirectory)
+
+			if( selectDirectory )
 			{
 				_file.browseForDirectory( message );
 			}
 			else
 			{
-				for each(var filter : FileFilter in filters)
-					fFilters.push( new flash.net.FileFilter( filter.description, filter.extension ));
-				
-				if(multiple)
+				for each( var filter : FileFilter in filters )
+					fFilters.push( new flash.net.FileFilter( filter.description, filter.extension ) );
+
+				if( multiple )
 					_file.browseForOpenMultiple( message, fFilters );
 				else
 					_file.browseForOpen( message, fFilters );
 			}
 		}
-		
+
 		private function onBrowseCancel( inEvent : Event ) : void
 		{
 			exitStatus = new ExitStatus( ExitStatus.USER_CANCELED );
 			fail( "User canceled file selection" );
 		}
-		
+
 		private function onFileSelect( inEvent : Event ) : void
 		{
 			complete( inEvent.target );
 		}
-		
+
 		private function onMultipleFilesSelect( inEvent : FileListEvent ) : void
 		{
 			complete( inEvent.files );

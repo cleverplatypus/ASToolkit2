@@ -19,54 +19,54 @@ Version 2.x
 */
 package org.astoolkit.commons.reflection
 {
-	
+
 	import flash.utils.getQualifiedClassName;
-	
+
 	internal class BaseInfo
 	{
 		protected var _annotations : Vector.<IAnnotation>;
-		
+
 		protected var _annotationsForName : Object = {};
-		
+
 		protected var _annotationsForType : Object = {};
-		
+
 		protected var _isDynamic : Boolean;
-		
+
 		protected var _name : String;
-		
+
 		public function get annotations() : Vector.<IAnnotation>
 		{
 			return _annotations;
 		}
-		
+
 		public function getAnnotationsOfType( inClass : Class ) : Vector.<IAnnotation>
 		{
-			if(_annotationsForType.hasOwnProperty( getQualifiedClassName( inClass )))
-				return _annotationsForType[getQualifiedClassName( inClass )];
+			if( _annotationsForType.hasOwnProperty( getQualifiedClassName( inClass ) ) )
+				return _annotationsForType[ getQualifiedClassName( inClass ) ];
 			return null;
 		}
-		
+
 		public function getAnnotationsWithName( inName : String ) : Vector.<IAnnotation>
 		{
-			if(_annotationsForType.hasOwnProperty( inName ))
-				return _annotationsForType[inName];
+			if( _annotationsForType.hasOwnProperty( inName ) )
+				return _annotationsForType[ inName ];
 			return null;
 		}
-		
+
 		public function hasAnnotation( inValue : Object ) : Boolean
 		{
-			if(inValue is String)
+			if( inValue is String )
 				return _annotationsForName.hasOwnProperty( inValue );
-			else if(inValue is Class)
-				return _annotationsForType.hasOwnProperty( getQualifiedClassName( inValue ));
+			else if( inValue is Class )
+				return _annotationsForType.hasOwnProperty( getQualifiedClassName( inValue ) );
 			return false;
 		}
-		
+
 		public function get isDynamic() : Boolean
 		{
 			return _isDynamic;
 		}
-		
+
 		public function get name() : String
 		{
 			return _name;

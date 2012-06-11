@@ -1,9 +1,9 @@
 package org.astoolkit.workflow.task.io.filestream
 {
-	
+
 	import flash.filesystem.FileStream;
 	import org.astoolkit.workflow.core.BaseTask;
-	
+
 	/**
 	 * Closes a <code>flash.filesystem.FileStream</code>.<br><br>
 	 *
@@ -21,16 +21,16 @@ package org.astoolkit.workflow.task.io.filestream
 	 */
 	public class CloseStream extends BaseTask
 	{
-		
+
 		[Bindable]
 		[InjectPipeline]
 		public var stream : FileStream;
-		
+
 		override public function begin() : void
 		{
 			super.begin();
-			
-			if(stream)
+
+			if( stream )
 				stream.close();
 			complete();
 		}

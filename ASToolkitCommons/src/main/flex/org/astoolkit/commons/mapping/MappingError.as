@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.commons.mapping
 {
-	
+
 	public class MappingError extends Error
 	{
 		public function MappingError( inMessage : String )

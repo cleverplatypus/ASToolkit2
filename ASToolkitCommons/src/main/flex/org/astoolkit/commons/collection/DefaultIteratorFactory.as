@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.commons.collection
 {
-	
+
 	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
@@ -30,34 +30,34 @@ package org.astoolkit.commons.collection
 	import org.astoolkit.commons.reflection.ClassInfo;
 	import org.astoolkit.commons.reflection.IAnnotation;
 	import org.astoolkit.commons.reflection.Metadata;
-	
+
 	public class DefaultIteratorFactory extends PooledFactory implements IIteratorFactory
 	{
 		private static var _iteratorsMetaCache : Object = {};
-		
+
 		private static function getIteratorSourceTypes( inObject : Object ) : Vector.<Class>
 		{
 			var z : String = getQualifiedClassName( Array );
 			var cName : String = getQualifiedClassName( inObject )
-			
-			if(!_iteratorsMetaCache.hasOwnProperty( cName ))
-				_iteratorsMetaCache[cName] = {};
-			
-			if(!_iteratorsMetaCache[cName].hasOwnProperty( "IteratorSource" ))
+
+			if( !_iteratorsMetaCache.hasOwnProperty( cName ) )
+				_iteratorsMetaCache[ cName ] = {};
+
+			if( !_iteratorsMetaCache[ cName ].hasOwnProperty( "IteratorSource" ) )
 			{
 				var ci : ClassInfo = ClassInfo.forType( inObject );
 				var annotation : IteratorSource;
 				var annotations : Vector.<IAnnotation> = ci.getAnnotationsOfType( IteratorSource );
-				
-				if(annotations && annotations.length > 0)
+
+				if( annotations && annotations.length > 0 )
 				{
-					annotation = annotations[0] as IteratorSource;
-					_iteratorsMetaCache[cName]["IteratorSource"] = annotation.types;
+					annotation = annotations[ 0 ] as IteratorSource;
+					_iteratorsMetaCache[ cName ][ "IteratorSource" ] = annotation.types;
 				}
 			}
-			return _iteratorsMetaCache[cName]["IteratorSource"] as Vector.<Class>;
+			return _iteratorsMetaCache[ cName ][ "IteratorSource" ] as Vector.<Class>;
 		}
-		
+
 		public function DefaultIteratorFactory()
 		{
 			super();
@@ -68,16 +68,16 @@ package org.astoolkit.commons.collection
 			_registeredIteratorClasses.push( InfiniteIterator );
 			_registeredIteratorClasses.push( FileStreamIterator );
 		}
-		
+
 		private var _registeredIteratorClasses : Vector.<Class>;
-		
+
 		public function iteratorForSource( inSource : Object, inProperties : Object = null ) : IIterator
 		{
-			for each(var iteratorType : Class in _registeredIteratorClasses)
+			for each( var iteratorType : Class in _registeredIteratorClasses )
 			{
-				for each(var supportedType : Class in getIteratorSourceTypes( iteratorType ))
+				for each( var supportedType : Class in getIteratorSourceTypes( iteratorType ) )
 				{
-					if((inSource == null && supportedType == null) || (supportedType != null && inSource is supportedType))
+					if( ( inSource == null && supportedType == null ) || ( supportedType != null && inSource is supportedType ) )
 						return getInstance( iteratorType, inProperties );
 				}
 			}

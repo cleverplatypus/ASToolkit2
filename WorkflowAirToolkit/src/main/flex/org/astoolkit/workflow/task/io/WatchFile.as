@@ -19,12 +19,12 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.io
 {
-	
+
 	import flash.events.TimerEvent;
 	import flash.filesystem.File;
 	import flash.utils.Timer;
 	import org.astoolkit.workflow.core.BaseTask;
-	
+
 	/**
 	 * Checks <code>file</code>'s modification time every <code>frequency</code>
 	 * milliseconds and completes if it's different from the one
@@ -47,118 +47,118 @@ package org.astoolkit.workflow.task.io
 	 */
 	public class WatchFile extends BaseTask
 	{
-		
+
 		[Bindable]
 		[InjectPipeline]
 		public var file : File;
-		
+
 		public var frequency : int = 5000;
-		
+
 		public var ignorePatterns : Array;
-		
+
 		public var includePatterns : Vector.<RegExp>;
-		
+
 		public var recursive : Boolean;
-		
+
 		private var _originalTimestamp : Date;
-		
+
 		private var _timer : Timer;
-		
+
 		override public function begin() : void
 		{
 			super.begin();
-			
-			if(!file)
+
+			if( !file )
 			{
 				fail( "No directory set" );
 				return;
 			}
 			getNewerModificationDate( file );
-			_timer.addEventListener( TimerEvent.TIMER, threadSafe( onTimer ));
+			_timer.addEventListener( TimerEvent.TIMER, threadSafe( onTimer ) );
 			_timer.start();
 		}
-		
+
 		override public function cleanUp() : void
 		{
 			super.cleanUp();
-			
-			if(_timer)
+
+			if( _timer )
 			{
 				_timer.stop();
 				_timer = null;
 			}
 		}
-		
+
 		override public function initialize() : void
 		{
 			super.initialize();
 			_timer = new Timer( frequency );
 		}
-		
+
 		private function getNewerModificationDate( inFile : File ) : void
 		{
-			if(!inFile.isDirectory)
+			if( !inFile.isDirectory )
 			{
-				if(_originalTimestamp == null || _originalTimestamp.getTime() < inFile.modificationDate.getTime())
+				if( _originalTimestamp == null || _originalTimestamp.getTime() < inFile.modificationDate.getTime() )
 					_originalTimestamp = inFile.modificationDate;
 			}
 			else
 			{
-				for each(var child : File in inFile.getDirectoryListing())
+				for each( var child : File in inFile.getDirectoryListing() )
 				{
-					if(shouldIncludeFile( child ) && !shouldIgnoreFile( child ))
+					if( shouldIncludeFile( child ) && !shouldIgnoreFile( child ) )
 						getNewerModificationDate( child );
 				}
 			}
 		}
-		
+
 		private function isDescendantChanged( inDir : File ) : Boolean
 		{
-			for each(var file : File in inDir.getDirectoryListing())
+			for each( var file : File in inDir.getDirectoryListing() )
 			{
-				if(!shouldIncludeFile( file ) || shouldIgnoreFile( file ))
+				if( !shouldIncludeFile( file ) || shouldIgnoreFile( file ) )
 					continue;
-				
-				if(!file.isDirectory && file.modificationDate.getTime() > _originalTimestamp.getTime())
+
+				if( !file.isDirectory && file.modificationDate.getTime() > _originalTimestamp.getTime() )
 					return true;
-				
-				if(file.isDirectory && isDescendantChanged( file ))
+
+				if( file.isDirectory && isDescendantChanged( file ) )
 					return true;
 			}
 			return false;
 		}
-		
+
 		private function onTimer( inEvent : TimerEvent ) : void
 		{
-			if((!file.isDirectory && file.modificationDate.getTime() > _originalTimestamp.getTime()) ||
-				(recursive && file.isDirectory && isDescendantChanged( file )))
+			if( ( !file.isDirectory && file.modificationDate.getTime() > _originalTimestamp.getTime() ) ||
+				( recursive && file.isDirectory && isDescendantChanged( file ) ) )
 			{
 				_timer.stop();
 				complete();
 			}
 		}
-		
+
 		private function shouldIgnoreFile( inFile : File ) : Boolean
 		{
-			if(!ignorePatterns || ignorePatterns.length == 0)
+			if( !ignorePatterns || ignorePatterns.length == 0 )
 				return false;
-			
-			for each(var re : RegExp in ignorePatterns)
+
+			for each( var re : RegExp in ignorePatterns )
 			{
-				if(inFile.name.match( re ))
+				if( inFile.name.match( re ) )
 					return true;
 			}
 			return false;
 		}
-		
+
 		private function shouldIncludeFile( inFile : File ) : Boolean
 		{
-			if(!includePatterns || includePatterns.length == 0)
+			if( !includePatterns || includePatterns.length == 0 )
 				return true;
-			
-			for each(var re : RegExp in includePatterns)
+
+			for each( var re : RegExp in includePatterns )
 			{
-				if(inFile.name.match( re ))
+				if( inFile.name.match( re ) )
 					return true;
 			}
 			return false;

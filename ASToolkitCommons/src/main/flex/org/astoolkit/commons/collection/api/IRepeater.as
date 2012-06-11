@@ -19,11 +19,11 @@ Version 2.x
 */
 package org.astoolkit.commons.collection.api
 {
-	
+
 	import mx.collections.ArrayCollection;
 	import mx.collections.IList;
 	import mx.core.IFactory;
-	
+
 	[Bindable]
 	/**
 	 * A contract for a data based loop provider.

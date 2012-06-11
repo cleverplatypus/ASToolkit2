@@ -19,10 +19,10 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
-	
+
 	import flash.utils.getQualifiedClassName;
 	import mx.collections.IList;
-	
+
 	/**
 	 * Adds the provided value (or pipelineData) to a list type variable.
 	 * If the variable doesn't exist, a new one of type <code>listType</code>
@@ -64,16 +64,16 @@ package org.astoolkit.workflow.core
 	public class UnshiftVariable extends BaseTask
 	{
 		public var listType : Class;
-		
+
 		public var value : *;
-		
+
 		private var _name : String;
-		
+
 		override public function begin() : void
 		{
 			super.begin();
-			
-			if(!_name || _name == "")
+
+			if( !_name || _name == "" )
 			{
 				fail( "Variable name not provided" );
 				return;
@@ -81,48 +81,48 @@ package org.astoolkit.workflow.core
 			var varInstance : *;
 			var localValue : Object =
 				value === undefined ? filteredInput : value;
-			
-			if(listType)
+
+			if( listType )
 			{
-				if(!(listType !== Array ||
+				if( !( listType !== Array ||
 					getQualifiedClassName( listType ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) ||
-					listType is IList))
+					listType is IList ) )
 				{
 					fail( "Attempt to push data to an unknown list type" );
 					return;
 				}
 			}
-			
-			if(context.variables.hasOwnProperty( _name ))
+
+			if( context.variables.hasOwnProperty( _name ) )
 			{
-				if(listType)
+				if( listType )
 				{
-					if(getQualifiedClassName( listType ) != getQualifiedClassName( context.variables[_name]))
+					if( getQualifiedClassName( listType ) != getQualifiedClassName( context.variables[ _name ] ) )
 					{
 						fail( "Destination list type and listType classes don't match" );
 						return;
 					}
 				}
 				else
-					varInstance = context.variables[_name];
+					varInstance = context.variables[ _name ];
 			}
-			
-			if(!varInstance)
+
+			if( !varInstance )
 				varInstance = listType ? new listType() : [];
-			
-			if(!context.variables.hasOwnProperty( _name ))
-				context.variables[_name] = varInstance;
-			
-			if(varInstance is Array || getQualifiedClassName( varInstance ).match( /^__AS3__\.vec::Vector\.<.+>$/ ))
+
+			if( !context.variables.hasOwnProperty( _name ) )
+				context.variables[ _name ] = varInstance;
+
+			if( varInstance is Array || getQualifiedClassName( varInstance ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) )
 				varInstance.unshift( localValue );
-			else if(varInstance is IList)
+			else if( varInstance is IList )
 				IList( varInstance ).addItemAt( localValue, 0 );
 			complete();
 		}
-		
+
 		public function set name( inValue : String ) : void
 		{
-			if(inValue)
+			if( inValue )
 				_name = inValue.replace( /^[\$\.]+/ );
 			else
 				_name = null;
