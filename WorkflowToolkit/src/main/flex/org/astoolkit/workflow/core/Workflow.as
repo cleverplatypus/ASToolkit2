@@ -35,9 +35,9 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.factory.DynamicPoolFactoryDelegate;
 	import org.astoolkit.commons.factory.PooledFactory;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
-	import org.astoolkit.commons.mapping.DataMap;
 	import org.astoolkit.commons.mapping.IPropertiesMapper;
 	import org.astoolkit.commons.mapping.MappingError;
+	import org.astoolkit.commons.ns.astoolkit_private;
 	import org.astoolkit.commons.reflection.AnnotationUtil;
 	import org.astoolkit.commons.reflection.ClassInfo;
 	import org.astoolkit.commons.reflection.IAnnotation;
@@ -46,7 +46,6 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.*;
 	import org.astoolkit.workflow.internals.*;
-	import org.astoolkit.workflow.ns.workflow_internal;
 
 	[Event(
 		name="subtaskInitialized"  ,
@@ -84,7 +83,7 @@ package org.astoolkit.workflow.core
 	 */
 	public class Workflow extends BaseTask implements IWorkflow  , IRepeater
 	{
-		use namespace workflow_internal;
+		use namespace astoolkit_private;
 
 		protected static const LOGGER : ILogger =
 			Log.getLogger( getQualifiedClassName( Workflow ).replace( /:+/g  , "." ) );
@@ -850,7 +849,7 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		workflow_internal function onSubtaskAbort( inTask : IWorkflowTask  , inMessage : String ) : void
+		astoolkit_private function onSubtaskAbort( inTask : IWorkflowTask  , inMessage : String ) : void
 		{
 			dispatchTaskEvent( WorkflowEvent.ABORTED  , inTask  , inMessage );
 			onSubtaskCompleted( inTask );
@@ -859,12 +858,12 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		workflow_internal function onSubtaskBegin( inTask : IWorkflowTask ) : void
+		astoolkit_private function onSubtaskBegin( inTask : IWorkflowTask ) : void
 		{
 			dispatchTaskEvent( WorkflowEvent.STARTED  , inTask );
 		}
 
-		workflow_internal function onSubtaskCompleted( inTask : IWorkflowTask ) : void
+		astoolkit_private function onSubtaskCompleted( inTask : IWorkflowTask ) : void
 		{
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
 				w.onTaskExitStatus( inTask  , inTask.exitStatus );
@@ -978,7 +977,7 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		workflow_internal function onSubtaskFault( inTask : IWorkflowTask  , inMessage : String ) : void
+		astoolkit_private function onSubtaskFault( inTask : IWorkflowTask  , inMessage : String ) : void
 		{
 			if( inTask.status != TaskStatus.ABORTED )
 			{
@@ -1032,7 +1031,7 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		workflow_internal function onSubtaskInitialized( inTask : IWorkflowTask ) : void
+		astoolkit_private function onSubtaskInitialized( inTask : IWorkflowTask ) : void
 		{
 			dispatchTaskEvent( WorkflowEvent.INITIALIZED  , inTask );
 		}
@@ -1040,7 +1039,7 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		workflow_internal function onSubtaskPrepared( inTask : IWorkflowTask ) : void
+		astoolkit_private function onSubtaskPrepared( inTask : IWorkflowTask ) : void
 		{
 			dispatchTaskEvent( WorkflowEvent.PREPARED  , inTask );
 		}
@@ -1048,7 +1047,7 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		workflow_internal function onSubtaskProgress( inTask : IWorkflowTask ) : void
+		astoolkit_private function onSubtaskProgress( inTask : IWorkflowTask ) : void
 		{
 			if( inTask.status == TaskStatus.SUSPENDED )
 				return;
@@ -1058,7 +1057,7 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		workflow_internal function onSubtaskResumed( inTask : IWorkflowTask ) : void
+		astoolkit_private function onSubtaskResumed( inTask : IWorkflowTask ) : void
 		{
 			if( context.status == TaskStatus.SUSPENDED )
 			{
@@ -1071,7 +1070,7 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		workflow_internal function onSubtaskSuspended( inTask : IWorkflowTask ) : void
+		astoolkit_private function onSubtaskSuspended( inTask : IWorkflowTask ) : void
 		{
 			if( root.context.status != TaskStatus.SUSPENDED )
 			{
