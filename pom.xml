@@ -20,6 +20,7 @@
 	<modules>
 		<module>ASToolkitCommons</module>
 		<module>WorkflowToolkit</module>
+		<module>WorkflowToolkitFlex4</module>
 		<module>WorkflowAirToolkit</module>
 		<module>WorkflowToolkitParsleyPlugIn</module>
 		<module>WorkflowToolkitXPathPlugIn</module>
