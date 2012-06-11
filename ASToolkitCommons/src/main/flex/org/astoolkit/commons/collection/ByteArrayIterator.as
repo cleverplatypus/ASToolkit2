@@ -1,25 +1,64 @@
+/*
+
+Copyright 2009 Nicola Dal Pont
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Version 2.x
+
+*/
 package org.astoolkit.commons.collection
 {
-	import flash.utils.ByteArray;
 	
+	import flash.utils.ByteArray;
 	import org.astoolkit.commons.collection.api.IIterator;
 	
-	[IteratorSource("flash.utils.ByteArray")]
+	[IteratorSource( "flash.utils.ByteArray" )]
 	public class ByteArrayIterator implements IIterator
 	{
 		public var readChunk : uint = 1024;
-		private var _source : ByteArray;
-		private var _isAborted : Boolean;
+		
 		private var _current : ByteArray;
 		
-		public function set source(inValue:*):void
+		private var _isAborted : Boolean;
+		
+		private var _source : ByteArray;
+		
+		public function abort() : void
 		{
-			_source = inValue as ByteArray;
+			_isAborted = true;
 		}
 		
-		public function hasNext():Boolean
+		public function current() : Object
+		{
+			return _current;
+		}
+		
+		public function currentIndex() : Number
+		{
+			if( _source )
+				return Math.ceil( ( _source.position - readChunk ) / readChunk );
+			return -1;
+		}
+		
+		public function hasNext() : Boolean
 		{
 			return _source && _source.bytesAvailable > 0;
+		}
+		
+		public function get isAborted() : Boolean
+		{
+			return _isAborted;
 		}
 		
 		public function next() : Object
@@ -35,32 +74,7 @@ package org.astoolkit.commons.collection
 			return null;
 		}
 		
-		public function current():Object
-		{
-			return _current;
-		}
-		
-		public function reset():void
-		{
-			if( _source )
-				_source.position = 0;
-			_current = null;
-			_isAborted = false;
-		}
-		
-		public function currentIndex():Number
-		{
-			if( _source )
-				return Math.ceil( ( _source.position - readChunk ) / readChunk ); 
-			return -1;
-		}
-		
-		public function supportsSource(inObject:*):Boolean
-		{
-			return inObject is ByteArray;
-		}
-		
-		public function get progress():Number
+		public function get progress() : Number
 		{
 			if( _source )
 				return ( _source.position / readChunk ) /
@@ -68,14 +82,22 @@ package org.astoolkit.commons.collection
 			return -1;
 		}
 		
-		public function abort() : void
+		public function reset() : void
 		{
-			_isAborted = true;
+			if( _source )
+				_source.position = 0;
+			_current = null;
+			_isAborted = false;
 		}
 		
-		public function get isAborted() : Boolean
+		public function set source( inValue : * ) : void
 		{
-			return _isAborted;
+			_source = inValue as ByteArray;
+		}
+		
+		public function supportsSource( inObject : * ) : Boolean
+		{
+			return inObject is ByteArray;
 		}
 	}
 }

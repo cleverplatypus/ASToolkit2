@@ -9,12 +9,12 @@ package org.astoolkit.workflow.annotation
 	[MetaArg( name="filter", type="String", mandatory="false" )]
 	public class InjectPipeline extends Metadata
 	{
-		private var _filterFactoryFunction : Function;
-		
 		public function InjectPipeline( inFilterFactoryFunction : Function )
 		{
 			_filterFactoryFunction = inFilterFactoryFunction;
 		}
+		
+		private var _filterFactoryFunction : Function;
 		
 		public function get filterText() : String
 		{
@@ -23,7 +23,7 @@ package org.astoolkit.workflow.annotation
 		
 		public function getFilterInstance( inData : Object ) : IIODataTransformer
 		{
-			return IIODataTransformerRegistry( _filterFactoryFunction() ).getTransformer( inData, getString( "filter", true ) );
+			return IIODataTransformerRegistry( _filterFactoryFunction()).getTransformer( inData, getString( "filter", true ));
 		}
 	}
 }

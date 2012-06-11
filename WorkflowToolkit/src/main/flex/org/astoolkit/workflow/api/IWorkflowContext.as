@@ -17,13 +17,11 @@ limitations under the License.
 Version 2.x
 
 */
-
 package org.astoolkit.workflow.api
 {
+	
 	import flash.events.IEventDispatcher;
-	
 	import mx.utils.ObjectProxy;
-	
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
 	import org.astoolkit.workflow.internals.ContextVariablesProvider;
 	import org.astoolkit.workflow.internals.SuspendableFunctionRegistry;
@@ -31,37 +29,23 @@ package org.astoolkit.workflow.api
 	[Bindable]
 	public interface IWorkflowContext extends IEventDispatcher
 	{
-		function set status( inStatus : String ) : void;
-		function get status() : String;
-		
-		function set runningTask( inTask : IWorkflowTask ) : void;
+		function addTaskLiveCycleWatcher( inValue : ITaskLiveCycleWatcher ) : void;
+		function cleanup() : void;
+		function get config() : IContextConfig;
+		function set config( inValue : IContextConfig ) : void;
+		function get data() : Object;
+		function set dropIns( inValue : Object ) : void;
+		function init() : void;
+		function get initialized() : Boolean;
+		function get plugIns() : Vector.<IContextPlugIn>;
+		function removeTaskLiveCycleWatcher( inValue : ITaskLiveCycleWatcher ) : void;
 		function get runningTask() : IWorkflowTask;
-				
+		function set runningTask( inTask : IWorkflowTask ) : void;
+		function get status() : String;
+		function set status( inStatus : String ) : void;
+		function get suspendableFunctions() : SuspendableFunctionRegistry;
+		function get taskLiveCycleWatchers() : Vector.<ITaskLiveCycleWatcher>;
 		function get variables() : ContextVariablesProvider;
 		function set variables( inValue : ContextVariablesProvider ) : void;
-		
-		
-		function get suspendableFunctions() : SuspendableFunctionRegistry;
-		
-		function get data() : Object;
-		
-		function get initialized() : Boolean;
-
-		function set config( inValue : IContextConfig ) : void;
-		function get config() : IContextConfig;
-
-		function get plugIns() : Vector.<IContextPlugIn>;
-		
-		function get taskLiveCycleWatchers() : Vector.<ITaskLiveCycleWatcher>;
-		
-		function addTaskLiveCycleWatcher( inValue : ITaskLiveCycleWatcher ) : void;
-		function removeTaskLiveCycleWatcher( inValue : ITaskLiveCycleWatcher ) : void;
-			
-		
-		function set dropIns( inValue : Object ) : void;
-		
-		function init() : void;
-		function cleanup() : void;
-					
 	}
 }

@@ -32,35 +32,25 @@ package org.astoolkit.workflow.internals
 	{
 		private var _inputFilterFactory : IIODataTransformerRegistry;
 		
-		private var _propertyOverrideRule : IPropertyOverrideRule;
-		
 		private var _iteratorFactory : IIteratorFactory;
+		
+		private var _propertyOverrideRule : IPropertyOverrideRule;
 		
 		private var _templateRegistry : ITaskTemplateRegistry;
 		
 		public function init() : void
 		{
-			if ( !_inputFilterFactory )
+			if(!_inputFilterFactory)
 				_inputFilterFactory = new DefaultDataTransformRegistry();
 			
-			if ( !_iteratorFactory )
+			if(!_iteratorFactory)
 				_iteratorFactory = new DefaultIteratorFactory();
 			
-			if ( !_propertyOverrideRule )
+			if(!_propertyOverrideRule)
 				_propertyOverrideRule = new DefaultPropertyOverrideRule();
 			
-			if ( !_templateRegistry )
+			if(!_templateRegistry)
 				_templateRegistry = new DefaultTaskTemplateRegistry();
-		}
-		
-		public function get propertyOverrideRule() : IPropertyOverrideRule
-		{
-			return _propertyOverrideRule;
-		}
-		
-		public function set propertyOverrideRule( inValue : IPropertyOverrideRule ) : void
-		{
-			_propertyOverrideRule = inValue;
 		}
 		
 		public function get inputFilterRegistry() : IIODataTransformerRegistry
@@ -81,6 +71,16 @@ package org.astoolkit.workflow.internals
 		public function set iteratorFactory( inValue : IIteratorFactory ) : void
 		{
 			_iteratorFactory = inValue;
+		}
+		
+		public function get propertyOverrideRule() : IPropertyOverrideRule
+		{
+			return _propertyOverrideRule;
+		}
+		
+		public function set propertyOverrideRule( inValue : IPropertyOverrideRule ) : void
+		{
+			_propertyOverrideRule = inValue;
 		}
 		
 		public function get templateRegistry() : ITaskTemplateRegistry

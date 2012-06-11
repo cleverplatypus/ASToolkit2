@@ -19,17 +19,16 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.spark
 {
-	import org.astoolkit.workflow.core.BaseTask;
 	
 	import mx.effects.Effect;
 	import mx.events.EffectEvent;
-	
+	import org.astoolkit.workflow.core.BaseTask;
 	import spark.effects.Animate;
-
-	[DefaultProperty("animation")]
+	
+	[DefaultProperty( "animation" )]
 	/**
 	 * Plays a Spark <code>Effect</code>
-	 * <p>If <code>blocking</code> is set to true the task waits 
+	 * <p>If <code>blocking</code> is set to true the task waits
 	 * for the effect to finish before calling <code>complete()</code>.
 	 * </p>
 	 * <p>
@@ -38,8 +37,8 @@ package org.astoolkit.workflow.task.spark
 	 * <li><code>blocking</code>: whether to complete asynchronously</li>
 	 * </ul>
 	 * </p>
- 	 *
-	 * @example Animating a property.
+   *
+		   * @example Animating a property.
 	 * 			<p>In the following snippet we're playing an <code>Animate</code> effect
 	 * 			and waiting for it to finish to complete the task.</p>
 	 * <listing version="3.0">
@@ -79,19 +78,20 @@ package org.astoolkit.workflow.task.spark
 		override public function begin() : void
 		{
 			super.begin();
-			if( !animation )
+			
+			if(!animation)
 			{
 				fail( "No animation set." );
 				return;
 			}
 			
-			if( animation.target == null )
+			if(animation.target == null)
 				animation.target = filteredInput;
 			animation.play();
-			if( blocking )
+			
+			if(blocking)
 			{
-				animation.addEventListener( EffectEvent.EFFECT_END, threadSafe( onAnimationEnd ) );
-				
+				animation.addEventListener( EffectEvent.EFFECT_END, threadSafe( onAnimationEnd ));
 			}
 			else
 				complete();

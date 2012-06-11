@@ -20,7 +20,6 @@ Version 2.x
 package org.astoolkit.workflow.task.data
 {
 	
-	import org.astoolkit.workflow.core.BaseTask;
 	import flash.events.Event;
 	import flash.events.ProgressEvent;
 	import flash.events.ServerSocketConnectEvent;
@@ -28,37 +27,95 @@ package org.astoolkit.workflow.task.data
 	import flash.net.ServerSocket;
 	import flash.net.Socket;
 	import flash.net.URLRequest;
+	import org.astoolkit.workflow.core.BaseTask;
 	
 	public class XSLTTransform extends BaseTask
 	{
+		
+		[Inspectable( enumeration="xml,text" )]
+		public var outputFormat : String = xml;
+		
+		public var server : ServerSocket;
+		
 		[Bindable]
 		[InjectPipeline]
 		public var xml : XML;
+		
 		[Bindable]
 		[InjectPipeline]
 		public var xslt : XML;
+		
 		private var _htmlBridge : HTMLLoader;
-		[Inspectable( enumeration = "xml,text" )]
-		public var outputFormat : String = xml;
-		public var server : ServerSocket;
+		
 		private var _port : int = 1024;
+		
+		override public function begin() : void
+		{
+			super.begin()
+			
+			if(!xml && !xslt)
+			{
+				fail( "Either or both xml/xslt not set" );
+				return;
+			}
+			
+			if(!xml)
+			{
+				if(filteredInput is XML)
+					xml = filteredInput as XML;
+				else
+				{
+					fail( "xml not set" );
+					return;
+				}
+			}
+			
+			if(!xslt)
+			{
+				if(filteredInput is XML)
+					xslt = filteredInput as XML;
+				else
+				{
+					fail( "xslt not set" );
+					return;
+				}
+			}
+			
+			if(_htmlBridge.loaded)
+				xsltTransform();
+			else
+			{
+				_htmlBridge.addEventListener( Event.COMPLETE, onHtmlBridgeComplete );
+			}
+		}
+		
+		override public function cleanUp() : void
+		{
+			super.cleanUp();
+			
+			if(_htmlBridge.loaded && server)
+			{
+				server.close();
+				server = null;
+			}
+		}
 		
 		override public function initialize() : void
 		{
 			super.initialize();
 			
-			if ( _htmlBridge )
+			if(_htmlBridge)
 				return;
 			server = new ServerSocket();
 			
-			while ( true )
+			while(true)
 			{
 				try
 				{
 					server.bind( _port, "127.0.0.1" );
 					break;
 				}
-				catch ( e : Error )
+				catch( e : Error )
 				{
 					_port++;
 				}
@@ -66,18 +123,7 @@ package org.astoolkit.workflow.task.data
 			server.listen();
 			server.addEventListener( ServerSocketConnectEvent.CONNECT, onClientConnect );
 			_htmlBridge = new HTMLLoader();
-			_htmlBridge.load( new URLRequest( "http://127.0.0.1:" + _port ) );
-		}
-		
-		override public function cleanUp() : void
-		{
-			super.cleanUp();
-			
-			if ( _htmlBridge.loaded && server )
-			{
-				server.close();
-				server = null;
-			}
+			_htmlBridge.load( new URLRequest( "http://127.0.0.1:" + _port ));
 		}
 		
 		private function onClientConnect( inEvent : ServerSocketConnectEvent ) : void
@@ -85,12 +131,17 @@ package org.astoolkit.workflow.task.data
 			inEvent.socket.addEventListener( ProgressEvent.SOCKET_DATA, onSockedData );
 		}
 		
+		private function onHtmlBridgeComplete( inEvent : Event ) : void
+		{
+			xsltTransform();
+		}
+		
 		private function onSockedData( inEvent : ProgressEvent ) : void
 		{
 			var socket : Socket = Socket( inEvent.target );
-			socket.writeUTFBytes("HTTP/1.1 200 OK\n");
-			socket.writeUTFBytes("Content-Type: text/html\n\n");
-			socket.writeUTFBytes( "<html>\n" + 
+			socket.writeUTFBytes( "HTTP/1.1 200 OK\n" );
+			socket.writeUTFBytes( "Content-Type: text/html\n\n" );
+			socket.writeUTFBytes( "<html>\n" +
 				"<head>\n" +
 				"<script type=\"text/javascript\">\n" +
 				
@@ -108,72 +159,27 @@ package org.astoolkit.workflow.task.data
 				"}\n" +
 				"</script>\n" +
 				"</head>\n" +
-				"</html>\n");
+				"</html>\n" );
 			socket.flush();
 			socket.close();
-		}
-		
-		override public function begin() : void
-		{
-			super.begin()
-			
-			if ( !xml && !xslt )
-			{
-				fail( "Either or both xml/xslt not set" );
-				return;
-			}
-			
-			if ( !xml )
-			{
-				if ( filteredInput is XML )
-					xml = filteredInput as XML;
-				else
-				{
-					fail( "xml not set" );
-					return;
-				}
-			}
-			
-			if ( !xslt )
-			{
-				if ( filteredInput is XML )
-					xslt = filteredInput as XML;
-				else
-				{
-					fail( "xslt not set" );
-					return;
-				}
-			}
-			
-			if ( _htmlBridge.loaded )
-				xsltTransform();
-			else
-			{
-				_htmlBridge.addEventListener( Event.COMPLETE, onHtmlBridgeComplete );
-			}
-		}
-		
-		private function onHtmlBridgeComplete( inEvent : Event ) : void
-		{
-			xsltTransform();
 		}
 		
 		private function xsltTransform() : void
 		{
 			try
 			{
-				var result : String = _htmlBridge.window.transformXML(xml,xslt);
+				var result : String = _htmlBridge.window.transformXML( xml, xslt );
 				var out : *;
 				
-				if ( outputFormat == "xml" )
+				if(outputFormat == "xml")
 					out = new XML( result );
 				else
 					out = result;
 				complete( out );
 			}
-			catch ( e : Error )
+			catch( e : Error )
 			{
-				fail( "XSLT transformation failed. \nCause:\n" + e.getStackTrace() );
+				fail( "XSLT transformation failed. \nCause:\n" + e.getStackTrace());
 				return;
 			}
 		}

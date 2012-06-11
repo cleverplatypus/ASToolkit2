@@ -19,40 +19,42 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
+	
 	import org.astoolkit.workflow.api.*;
-
-	[DefaultProperty("elements")]
+	
+	[DefaultProperty( "elements" )]
 	/**
 	 * An entry for the <code>IElementsGroup</code>'s insert list.
-	 * 
+	 *
 	 * @see org.astoolkit.workflow.core.IElementsGroup#insert
 	 */
 	public final class Insert
 	{
 		public static const AFTER : String = "after";
+		
 		public static const BEFORE : String = "before";
+		
 		public static const REPLACE : String = "replace";
-
+		
 		/**
 		 * the elements to insert
 		 */
 		public var elements : Vector.<IWorkflowElement>;
-
+		
+		[Inspectable( enumeration="before,after,replace" )]
+		/**
+		 * insertion mode: either <code>after</code>, <code>before</code> or <code>replace</code>
+		 */
+		public var mode : String = BEFORE;
+		
 		/**
 		 * the group into which <code>elements</code> will be inserted
-		 */ 
+		 */
 		public var parent : IElementsGroup;
 		
 		/**
 		 * (optional) the element the <code>mode</code> property refers to
 		 */
 		public var relativeTo : IWorkflowElement;
-		
-		[Inspectable(enumeration="before,after,replace")]
-		/**
-		 * insertion mode: either <code>after</code>, <code>before</code> or <code>replace</code>
-		 */
-		public var mode : String = BEFORE;
-		
 	}
 }

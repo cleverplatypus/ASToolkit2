@@ -17,19 +17,27 @@ limitations under the License.
 Version 2.x
 
 */
-
 package org.astoolkit.workflow.constant
 {
+	
 	public final class FailurePolicy
 	{
-		public static const CASCADE : String = "cascade";
 		public static const ABORT : String = "abort";
-		public static const IGNORE : String = "ignore";
-		public static const SUSPEND : String = "suspend";
+		
+		public static const CASCADE : String = "cascade";
+		
 		public static const CONTINUE : String = "continue";
-		public static const LOG_WARN : String = "log-warn";
-		public static const LOG_INFO : String = "log-info";
+		
+		public static const IGNORE : String = "ignore";
+		
 		public static const LOG_DEBUG : String = "log-debug";
+		
 		public static const LOG_ERROR : String = "log-error";
+		
+		public static const LOG_INFO : String = "log-info";
+		
+		public static const LOG_WARN : String = "log-warn";
+		
+		public static const SUSPEND : String = "suspend";
 	}
 }

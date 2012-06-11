@@ -17,13 +17,14 @@ limitations under the License.
 Version 2.x
 
 */
-
 package org.astoolkit.workflow.task.flowcontrol
 {
-	import org.astoolkit.workflow.core.BaseTask;
+	
 	import org.astoolkit.workflow.api.IWorkflow;
 	import org.astoolkit.workflow.api.IWorkflowElement;
 	import org.astoolkit.workflow.constant.TaskStatus;
+	import org.astoolkit.workflow.core.BaseTask;
+	import org.astoolkit.workflow.internals.GroupUtil;
 	
 	public class Break extends BaseTask
 	{
@@ -31,10 +32,7 @@ package org.astoolkit.workflow.task.flowcontrol
 		{
 			super.begin();
 			_status = TaskStatus.IDLE;
-			var p : IWorkflowElement = parent;
-			while( !( p is IWorkflow ) )
-				p = p.parent;
-			IWorkflow( p ).abort();
+			GroupUtil.getParentWorkflow( this ).abort();
 		}
 	}
 }

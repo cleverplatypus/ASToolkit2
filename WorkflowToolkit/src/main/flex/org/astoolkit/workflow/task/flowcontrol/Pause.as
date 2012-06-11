@@ -17,27 +17,25 @@ limitations under the License.
 Version 2.x
 
 */
-
 package org.astoolkit.workflow.task.flowcontrol
 {
-	import org.astoolkit.workflow.core.BaseTask;
 	
 	import flash.utils.setTimeout;
+	import org.astoolkit.workflow.core.BaseTask;
+	
 	/**
 	 * Waits for <code>duration</code> milliseconds and then completes
 	 */
 	public class Pause extends BaseTask
 	{
+		
 		[Bindable]
 		public var duration : int;
-
+		
 		override public function begin() : void
 		{
 			super.begin();
-			
-			setTimeout( complete, duration);
+			setTimeout( complete, duration );
 		}
 	}
-	
-
 }

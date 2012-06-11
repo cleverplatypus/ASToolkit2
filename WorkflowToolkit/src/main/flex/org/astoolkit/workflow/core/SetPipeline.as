@@ -17,12 +17,33 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.task.pipeline
+package org.astoolkit.workflow.core
 {
 	
-	import org.astoolkit.workflow.core.BaseTask;
-	
-	public class TransformPipeline extends BaseTask
+	/**
+	 * Outputs whatever passed as input after transformations and input filtering
+	 * <p>
+	 * <b>Any Input</b>
+	 * <ul>
+	 * <li>INPUT_DESCRIPTION</li>
+	 * </ul>
+	 * </p>
+	 * <p>
+	 * <b>Output</b>
+	 * <ul>
+	 * <li>Any input data after transformations and filtering</li>
+	 * </ul>
+	 * </p>
+	 * @example Using SetPipeline to transform pipeline data
+	 * <listing version="3.0">
+	 * &lt;!-- we assume input will be a File object --&gt;
+	 * &lt;SetPipeline
+	 *     inputFilter=&quot;url&quot;
+	 *     /&gt;
+	 * &lt;!-- the pipeline now contains the File's url string --&gt;
+	 * </listing>
+	 */
+	public class SetPipeline extends BaseTask
 	{
 		override public function begin() : void
 		{

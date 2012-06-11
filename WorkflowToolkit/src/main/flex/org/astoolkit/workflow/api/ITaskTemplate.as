@@ -19,6 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.api
 {
+	
 	public interface ITaskTemplate extends IWorkflowElement
 	{
 		function get templateImplementation() : IWorkflowTask;

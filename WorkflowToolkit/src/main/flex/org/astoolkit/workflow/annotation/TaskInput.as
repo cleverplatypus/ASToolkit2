@@ -20,19 +20,24 @@ Version 2.x
 package org.astoolkit.workflow.annotation
 {
 	
-	import org.astoolkit.commons.reflection.Metadata;
 	import flash.utils.getDefinitionByName;
+	import org.astoolkit.commons.reflection.Metadata;
 	
 	[Metadata( name="TaskInput", target="field" )]
+	[MetaArg( name="types", target="class" )]
 	public class TaskInput extends Metadata
 	{
+		private var _types : Vector.<Class>;
+		
 		public function get types() : Vector.<Class>
 		{
-			return Vector.<Class>( getArray( "types" ).map(
-				function( inClassName : String, inIndex : int, inArray : Array ) : Class
-				{
-					return getDefinitionByName( inClassName ) as Class;
-				} ) );
+			if(!_types)
+				_types = Vector.<Class>( getArray( "types", true ).map(
+					function( inClassName : String, inIndex : int, inArray : Array ) : Class
+					{
+						return getDefinitionByName( inClassName ) as Class;
+					}));
+			return _types;
 		}
 	}
 }

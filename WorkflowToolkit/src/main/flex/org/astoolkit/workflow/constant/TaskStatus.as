@@ -17,15 +17,19 @@ limitations under the License.
 Version 2.x
 
 */
-
 package org.astoolkit.workflow.constant
 {
+	
 	public final class TaskStatus
 	{
-		public static const STOPPED : String = "stopped";
-		public static const IDLE : String = "idle";
 		public static const ABORTED : String = "aborted";
+		
+		public static const IDLE : String = "idle";
+		
 		public static const RUNNING : String = "running";
+		
+		public static const STOPPED : String = "stopped";
+		
 		public static const SUSPENDED : String = "suspended";
 	}
 }

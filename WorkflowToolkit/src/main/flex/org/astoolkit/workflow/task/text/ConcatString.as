@@ -19,6 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.text
 {
+	
 	import org.astoolkit.commons.collection.api.IRepeater;
 	import org.astoolkit.workflow.core.BaseTask;
 	
@@ -50,21 +51,22 @@ package org.astoolkit.workflow.task.text
 	public class ConcatString extends BaseTask
 	{
 		/**
-		 * whether to concat the text at the beginning 
+		 * whether to concat the text at the beginning
 		 * of the <code>source</code> string
 		 */
 		public var leading : Boolean;
-		
-		[Bindable][InjectPipeline]
-		/**
-		 * (injectable) the text to concat
-		 */
-		public var text : String;
 		
 		/**
 		 * the original string
 		 */
 		public var source : String;
+		
+		[Bindable]
+		[InjectPipeline]
+		/**
+		 * (injectable) the text to concat
+		 */
+		public var text : String;
 		
 		override public function begin() : void
 		{
@@ -73,6 +75,5 @@ package org.astoolkit.workflow.task.text
 			var theSource : String = !source ? "" : source;
 			complete( leading ? theText + theSource : theSource + theText );
 		}
-		
 	}
 }

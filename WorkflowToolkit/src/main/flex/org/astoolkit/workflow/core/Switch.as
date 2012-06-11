@@ -19,19 +19,19 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
+	
+	import mx.skins.spark.DefaultButtonSkin;
 	import org.astoolkit.workflow.api.ISwitchCase;
 	import org.astoolkit.workflow.api.IWorkflowElement;
 	
-	import mx.skins.spark.DefaultButtonSkin;
-
-	[DefaultProperty("cases")]
+	[DefaultProperty( "cases" )]
 	/**
 	 * Group for <code>switch</code> style conditional tasks execution.
 	 * <p>Children nodes are a vector of ISwitchCase instances, usually a set of
 	 * <code>org.astoolkit.workflow.core.Case</code> nodes and one and only one optional
 	 * <code>org.astoolkit.workflow.core.Default</code> node.</p>
-	 * 
-	 * Cases are evaluated in the declared order and the first matching case's child elements 
+	 *
+	 * Cases are evaluated in the declared order and the first matching case's child elements
 	 * will be enabled the Default node's children, if defined, will enabled otherwise.
 	 * <p>
 	 * <b>Params</b>
@@ -40,9 +40,9 @@ package org.astoolkit.workflow.core
 	 * </ul>
 	 * </p>
 	 * @example In the following example, a User object is expected as input.<br>
-	 * 			Its <code>role</code> property is evaluated and a different message 
-	 * 			is sent depending on its value.<p>In the second <code>Case</code> 
-	 * 			the <code>values</code> property with an array of values is used. If any of the 
+	 * 			Its <code>role</code> property is evaluated and a different message
+	 * 			is sent depending on its value.<p>In the second <code>Case</code>
+	 * 			the <code>values</code> property with an array of values is used. If any of the
 	 * 			listed values matches the enclosed tasks are executed.</p>
 	 * <listing version="3.0">
 	 * <pre>
@@ -65,7 +65,7 @@ package org.astoolkit.workflow.core
 	 * &lt;/Switch&gt;
 	 * </pre>
 	 * </listing>
-	 * 
+	 *
 	 * @see org.astoolkit.workflow.core.Case
 	 * @see org.astoolkit.workflow.core.Default
 	 * @see org.astoolkit.workflow.api.ISwitchCase
@@ -80,17 +80,17 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		private var _source : *;
-		
-		/**
-		 * @private
-		 */
 		private var _default : Default;
 		
 		/**
 		 * @private
 		 */
 		private var _joinedChildren : Vector.<IWorkflowElement>;
+		
+		/**
+		 * @private
+		 */
+		private var _source : *;
 		
 		/**
 		 * @private
@@ -105,16 +105,17 @@ package org.astoolkit.workflow.core
 		 */
 		public function set cases( inValue : Vector.<ISwitchCase> ) : void
 		{
-			if( inValue )
+			if(inValue)
 			{
 				_cases = new Vector.<ISwitchCase>;
-				for each( var aCase : ISwitchCase in inValue )
+				
+				for each(var aCase : ISwitchCase in inValue)
 				{
-					if( aCase is Default )
-					{ 
-						if( _default )
+					if(aCase is Default)
+					{
+						if(_default)
 							throw new Error( "There can only be one Default in a Switch" );
-						else 
+						else
 							_default = aCase as Default;
 					}
 					else
@@ -126,43 +127,78 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		override public function get children():Vector.<IWorkflowElement>
+		override public function get children() : Vector.<IWorkflowElement>
 		{
-			if( _joinedChildren == null )
+			if(_joinedChildren == null)
 			{
 				_joinedChildren = new Vector.<IWorkflowElement>();
-				for each( var group : Group in _cases )
+				
+				for each(var group : Group in _cases)
 					_joinedChildren = _joinedChildren.concat( group.children );
-				if( _default )
+				
+				if(_default)
 					_joinedChildren = _joinedChildren.concat( _default.children );
 			}
 			return _joinedChildren;
 		}
+		
+		/**
+		 * @private
+		 */
+		override public function initialize() : void
+		{
+			super.initialize();
+			
+			if(_cases != null)
+			{
+				for each(var group : Group in _cases)
+					group.delegate = _delegate;
+				group.context = _context;
+				group.parent = this;
+				group.initialize();
+			}
+		}
+		
+		/**
+		 * @private
+		 */
+		override public function prepare() : void
+		{
+			if(_cases != null)
+			{
+				for each(var group : Group in _cases)
+					group.prepare();
+			}
+		}
+		
 		/**
 		 * The value to compare to the children cases
 		 */
 		public function set source( inValue : * ) : void
 		{
+			trace( "called SWITCH source" );
 			_source = inValue;
-			if( _cases != null )
+			
+			if(_cases != null)
 			{
 				var useDefault : Boolean = true;
 				var enableCase : Boolean;
 				
-				if( _cases != null )
+				if(_cases != null)
 				{
-					for each( var aCase : ISwitchCase in _cases )
+					for each(var aCase : ISwitchCase in _cases)
 					{
 						enableCase = checkCaseValues( Case( aCase ), inValue ) && useDefault;
 						aCase.switchChildren( enableCase );
-						if( enableCase )
+						
+						if(enableCase)
 							useDefault = false;
 					}
-					if( _default != null )
+					
+					if(_default != null)
 						_default.switchChildren( useDefault );
 				}
 			}
-
 		}
 		
 		/**
@@ -170,40 +206,12 @@ package org.astoolkit.workflow.core
 		 */
 		private function checkCaseValues( inCase : Case, inValue : * ) : Boolean
 		{
-			for each( var val : * in inCase.values )
+			for each(var val : * in inCase.values)
 			{
-				if( val == inValue )
+				if(val == inValue)
 					return true;
 			}
 			return false;
-		}
-		
-		/**
-		 * @private
-		 */
-		override public function prepare():void
-		{
-			if( _cases != null )
-			{
-				for each( var group : Group in _cases )
-					group.prepare();
-			}
-		}
-		
-		/**
-		 * @private
-		 */
-		override public function initialize():void
-		{
-			super.initialize();
-			if( _cases != null )
-			{
-				for each( var group : Group in _cases )
-					group.delegate = _delegate;
-					group.context = _context;
-					group.parent = this;
-					group.initialize();
-			}
 		}
 	}
 }

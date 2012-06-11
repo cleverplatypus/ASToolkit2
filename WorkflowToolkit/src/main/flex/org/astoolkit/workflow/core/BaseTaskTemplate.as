@@ -22,39 +22,21 @@ package org.astoolkit.workflow.core
 	
 	import flash.utils.flash_proxy;
 	import flash.utils.getQualifiedClassName;
-	
 	import mx.utils.ObjectUtil;
-	
 	import org.astoolkit.workflow.api.ITaskTemplate;
 	import org.astoolkit.workflow.api.IWorkflowElement;
 	import org.astoolkit.workflow.api.IWorkflowTask;
-	
 	use namespace flash_proxy;
 	
 	public class BaseTaskTemplate extends Group implements ITaskTemplate
 	{
-		private var _templateImplementation : IWorkflowTask;
 		private var _tempImplementationProperties : Object = {};
 		
-		override public function initialize():void
+		private var _templateImplementation : IWorkflowTask;
+		
+		override public function set children( inChildren : Vector.<IWorkflowElement> ) : void
 		{
-			super.initialize();
-			_templateImplementation = context.config.templateRegistry.getImplementation( this );
-			if( _templateImplementation )
-			{
-				for( var key : String in _tempImplementationProperties )
-					_templateImplementation[ key ] = _tempImplementationProperties[ key ];
-				_templateImplementation.delegate = _delegate;
-				_templateImplementation.context = context;
-				_templateImplementation.initialized( _document, id + "_impl" );
-				_templateImplementation.parent = parent;
-				_children = new <IWorkflowElement>[ _templateImplementation ];
-			}
-			else
-			{
-				throw new Error( "Template " + getQualifiedClassName( this ) + 
-					" has no available implementation." ); 
-			}
+			throw new Error( "BaseTaskTemplate cannot have children assigned" );
 		}
 		
 		override public function cleanUp() : void
@@ -64,6 +46,33 @@ package org.astoolkit.workflow.core
 			_templateImplementation = null;
 		}
 		
+		override public function initialize() : void
+		{
+			super.initialize();
+			_templateImplementation = context.config.templateRegistry.getImplementation( this );
+			
+			if(_templateImplementation)
+			{
+				for(var key : String in _tempImplementationProperties)
+					_templateImplementation[key] = _tempImplementationProperties[key];
+				_templateImplementation.delegate = _delegate;
+				_templateImplementation.context = context;
+				_templateImplementation.initialized( _document, id + "_impl" );
+				_templateImplementation.parent = parent;
+				_children = new <IWorkflowElement>[ _templateImplementation ];
+			}
+			else
+			{
+				throw new Error( "Template " + getQualifiedClassName( this ) +
+					" has no available implementation." );
+			}
+		}
+		
+		public function get templateContract() : Class
+		{
+			return null;
+		}
+		
 		public function get templateImplementation() : IWorkflowTask
 		{
 			return _templateImplementation;
@@ -71,33 +80,22 @@ package org.astoolkit.workflow.core
 		
 		protected function setImplementationProperty( inName : String, inValue : * ) : void
 		{
-			if( _templateImplementation )
-				_templateImplementation[ inName ] = inValue;
+			if(_templateImplementation)
+				_templateImplementation[inName] = inValue;
 			else
-				_tempImplementationProperties[ inName ] = inValue;
+				_tempImplementationProperties[inName] = inValue;
 		}
 		
-		public function get templateContract():Class
-		{
-			return null;
-		}
-		
-		override public function set children( inChildren : Vector.<IWorkflowElement> ) : void
-		{
-			throw new Error( "BaseTaskTemplate cannot have children assigned" ); 
-		}
-		
-		override flash_proxy function setProperty( inName : *, inValue : * ) : void
+		flash_proxy override function setProperty( inName : *, inValue : * ) : void
 		{
 			super.flash_proxy::setProperty( inName, inValue );
-			if( _templateImplementation && 
-				( ObjectUtil.isDynamicObject( _templateImplementation ) ||
-					Object( _templateImplementation ).hasOwnProperty( QName( inName ).localName ) ) )
+			
+			if(_templateImplementation &&
+				(ObjectUtil.isDynamicObject( _templateImplementation ) ||
+				Object( _templateImplementation ).hasOwnProperty( QName( inName ).localName )))
 			{
-				_templateImplementation[ QName( inName ).localName ] = inValue;
+				_templateImplementation[QName( inName ).localName] = inValue;
 			}
 		}
- 
-		
 	}
 }

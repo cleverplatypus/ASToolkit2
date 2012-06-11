@@ -17,61 +17,63 @@
  *    misrepresented as being the original software.
  * 3. This notice may not be removed or altered from any source distribution.
  */
-
 package deng.fzip
 {
-	import deng.fzip.FZipFile;
+	
 	import flash.events.Event;
-
+	import deng.fzip.FZipFile;
+	
 	/**
 	 * FZip dispatches FZipEvent objects when a file contained in the
-	 * ZIP archive has finished loading and can be accessed. There is 
+	 * ZIP archive has finished loading and can be accessed. There is
 	 * only one type of FZipEvent: FZipErrorEvent.FILE_LOADED.
-	 */		
+	 */
 	public class FZipEvent extends Event
 	{
 		/**
-		* The file that has finished loading.
-		*/		
-		public var file:FZipFile;
+		* Defines the value of the type property of a FZipEvent object.
+		*/
+		public static const FILE_LOADED : String = "fileLoaded";
 		
 		/**
-		* Defines the value of the type property of a FZipEvent object.
-		*/		
-		public static const FILE_LOADED:String = "fileLoaded";
-
-		/**
 		 * Constructor
-		 * 
-		 * @param type The type of the event. Event listeners can 
-		 * access this information through the inherited type property. 
-		 * There is only one type of FZipEvent: 
+		 *
+		 * @param type The type of the event. Event listeners can
+		 * access this information through the inherited type property.
+		 * There is only one type of FZipEvent:
 		 * FZipEvent.PARSE_ERROR.
-		 * 
+		 *
 		 * @param file The file that has finished loading.
-		 * 
-		 * @param bubbles Determines whether the Event object participates 
-		 * in the bubbling stage of the event flow. Event listeners can 
+		 *
+		 * @param bubbles Determines whether the Event object participates
+		 * in the bubbling stage of the event flow. Event listeners can
 		 * access this information through the inherited bubbles property.
-		 * 
-		 * @param cancelable Determines whether the Event object can be 
-		 * canceled. Event listeners can access this information through 
+		 *
+		 * @param cancelable Determines whether the Event object can be
+		 * canceled. Event listeners can access this information through
 		 * the inherited cancelable property.
-		 */		
-		public function FZipEvent(type:String, file:FZipFile = null, bubbles:Boolean = false, cancelable:Boolean = false) {
+		 */
+		public function FZipEvent( type : String, file : FZipFile = null, bubbles : Boolean = false, cancelable : Boolean = false )
+		{
 			this.file = file;
-			super(type, bubbles, cancelable);
+			super( type, bubbles, cancelable );
 		}
 		
 		/**
-		 * Creates a copy of the FZipEvent object and sets the value 
+		* The file that has finished loading.
+		*/
+		public var file : FZipFile;
+		
+		/**
+		 * Creates a copy of the FZipEvent object and sets the value
 		 * of each property to match that of the original.
-		 * 
-		 * @return A new FZipEvent object with property values that 
+		 *
+		 * @return A new FZipEvent object with property values that
 		 * match those of the original.
-		 */		
-		override public function clone():Event {
-			return new FZipEvent(type, file, bubbles, cancelable);
+		 */
+		override public function clone() : Event
+		{
+			return new FZipEvent( type, file, bubbles, cancelable );
 		}
 	}
 }

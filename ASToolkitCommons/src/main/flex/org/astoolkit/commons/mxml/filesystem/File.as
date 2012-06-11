@@ -7,7 +7,7 @@ package org.astoolkit.commons.mxml.filesystem
 	{
 		public function File()
 		{
-			super(null);
+			super( null );
 		}
 	}
 }

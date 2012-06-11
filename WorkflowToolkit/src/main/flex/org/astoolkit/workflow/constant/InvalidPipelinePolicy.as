@@ -17,13 +17,15 @@ limitations under the License.
 Version 2.x
 
 */
-
 package org.astoolkit.workflow.constant
 {
+	
 	public class InvalidPipelinePolicy
 	{
-		public static const SKIP : String = "skip";
 		public static const FAIL : String = "fail";
+		
 		public static const IGNORE : String = "ignore";
+		
+		public static const SKIP : String = "skip";
 	}
 }

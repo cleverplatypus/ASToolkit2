@@ -17,10 +17,8 @@ limitations under the License.
 Version 2.x
 
 */
-
-package org.astoolkit.workflow.task.variables
+package org.astoolkit.workflow.core
 {
-	import org.astoolkit.workflow.core.BaseTask;
 	
 	public class ClearVariable extends BaseTask
 	{
@@ -29,13 +27,15 @@ package org.astoolkit.workflow.task.variables
 		override public function begin() : void
 		{
 			super.begin();
-			if( !name )
+			
+			if(!name)
 			{
 				fail( "No variable name provided" );
 				return;
 			}
-			if( context.variables.hasOwnProperty( name ) )
-				 delete context.variables[ name ];
+			
+			if(context.variables.hasOwnProperty( name ))
+				delete context.variables[name];
 			complete();
 		}
 	}

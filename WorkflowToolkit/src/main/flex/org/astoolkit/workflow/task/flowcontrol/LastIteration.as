@@ -1,5 +1,6 @@
 package org.astoolkit.workflow.task.flowcontrol
 {
+	
 	import org.astoolkit.workflow.api.IWorkflow;
 	import org.astoolkit.workflow.api.IWorkflowElement;
 	import org.astoolkit.workflow.core.BaseTask;
@@ -10,34 +11,36 @@ package org.astoolkit.workflow.task.flowcontrol
 		public var atCount : uint = 0;
 		
 		private var _currentCount : uint = 0;
+		
 		private var _lastParentThread : uint;
-		
-		override public function prepare():void
-		{
-			super.prepare();
-			var p : IWorkflow = GroupUtil.getParentWorkflow( this );
-			if( _lastParentThread != p.currentThread )
-			{
-				_lastParentThread = p.currentThread;
-				_currentCount = 0;
-			}
-		}
-		
 		
 		override public function begin() : void
 		{
 			super.begin();
-			if( !_currentIterator )
+			
+			if(!_currentIterator)
 			{
 				fail( "Task {0} isn't inside a valid iteration", description );
 			}
 			_currentCount++;
-			if( atCount == _currentCount )
+			
+			if(atCount == _currentCount)
 			{
 				_currentIterator.abort();
 			}
 			complete();
 		}
 		
+		override public function prepare() : void
+		{
+			super.prepare();
+			var p : IWorkflow = GroupUtil.getParentWorkflow( this );
+			
+			if(_lastParentThread != p.currentThread)
+			{
+				_lastParentThread = p.currentThread;
+				_currentCount = 0;
+			}
+		}
 	}
 }

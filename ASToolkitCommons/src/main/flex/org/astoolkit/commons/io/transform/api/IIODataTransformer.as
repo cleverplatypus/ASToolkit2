@@ -17,21 +17,16 @@ limitations under the License.
 Version 2.x
 
 */
-
 package org.astoolkit.commons.io.transform.api
 {
+	
 	public interface IIODataTransformer
 	{
 		/**
-		 * evaluates the inExpression content and transforms the inDataObject.
-		 * 
-		 * @param inExpression the transformation expression
-		 * @param inData the object to be transformed
-		 * @param inTarget (optional) the object calling the transform method
-		 *  
-		 * @return the transforming result
+		 * returns true if the passed transform data is successfully
+		 * validated (e.g. expression syntax checks)
 		 */
-		function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
+		function isValidExpression( inExpression : Object ) : Boolean;
 		/**
 		 * an int for ordering transformers priorities.
 		 */
@@ -39,20 +34,22 @@ package org.astoolkit.commons.io.transform.api
 		/**
 		 * the list of types that can be used as sources (inData) for
 		 * the <code>transform()</code> method
-		 */ 
+		 */
 		function get supportedDataTypes() : Vector.<Class>;
-		
 		/**
 		 * the list of types that can be used as transform descriptor (inExpression) for
 		 * the <code>transform()</code> method
-		 */ 
-		function get supportedExpressionTypes() : Vector.<Class>;
-		
-		/**
-		 * returns true if the passed transform data is successfully
-		 * validated (e.g. expression syntax checks)
 		 */
-		function isValidExpression( inExpression : Object ) : Boolean;
-		
+		function get supportedExpressionTypes() : Vector.<Class>;
+		/**
+		 * evaluates the inExpression content and transforms the inDataObject.
+		 *
+		 * @param inExpression the transformation expression
+		 * @param inData the object to be transformed
+		 * @param inTarget (optional) the object calling the transform method
+		 *
+		 * @return the transforming result
+		 */
+		function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
 	}
 }

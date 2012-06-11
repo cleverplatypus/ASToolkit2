@@ -16,21 +16,23 @@ limitations under the License.
 
 Version 2.x
 
-*/package org.astoolkit.workflow.task.io
+*/
+package org.astoolkit.workflow.task.io
 {
+	
 	import flash.events.Event;
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
-	
 	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.core.ExitStatus;
+	
 	/**
 	 * Opens the OS's file save dialog.
-	 * 
+	 *
 	 * <p>
-	 * <b>Output</b><br><br> 
-	 * either a <code>flash.filesystem.File</code> or <code>flash.filesystem.FileStream</code> 
+	 * <b>Output</b><br><br>
+	 * either a <code>flash.filesystem.File</code> or <code>flash.filesystem.FileStream</code>
 	 * depending on the value of <code>outputType</code>
 	 * </p>
 	 * <p>
@@ -41,22 +43,24 @@ Version 2.x
 	 * <li><code>outputType</code>: either "file" or "stream"</li>
 	 * </ul>
 	 * </p>
-	 */ 
+	 */
 	public class PromptUserForFileCreation extends BaseTask
 	{
 		public static const OUTPUT_FILE : String = "file";
+		
 		public static const OUTPUT_STREAM : String = "stream";
 		
-		private var _fileSelector : File;
+		[Inspectable( enumeration="write,append,read,update", defaultValue="write" )]
+		public var fileMode : String = "write";
+		
 		public var message : String;
 		
-		[Inspectable(enumeration="write,append,read,update", defaultValue="write")]
-		public var fileMode : String = "write";
-
-		[Inspectable(enumeration="file,stream", defaultValue="file")]
+		[Inspectable( enumeration="file,stream", defaultValue="file" )]
 		public var outputType : String;
 		
-		override public function begin():void
+		private var _fileSelector : File;
+		
+		override public function begin() : void
 		{
 			super.begin();
 			_fileSelector = new File();
@@ -67,12 +71,13 @@ Version 2.x
 		
 		private function onFileSelect( inEvent : Event ) : void
 		{
-			if( outputType == OUTPUT_STREAM )
+			if(outputType == OUTPUT_STREAM)
 			{
 				var stream : FileStream = new FileStream();
 				var out : *;
 				var m : String;
-				switch( fileMode )
+				
+				switch(fileMode)
 				{
 					case "write":
 						m = FileMode.WRITE;

@@ -17,13 +17,12 @@ limitations under the License.
 Version 2.x
 
 */
-
 package org.astoolkit.workflow.task.misc
 {
-	import avmplus.getQualifiedClassName;
 	
 	import mx.collections.IList;
-	
+	import avmplus.getQualifiedClassName;
+	import org.astoolkit.commons.utils.ListUtil;
 	import org.astoolkit.workflow.core.BaseTask;
 	
 	/**
@@ -35,7 +34,7 @@ package org.astoolkit.workflow.task.misc
 	 * </ul>
 	 * </p>
 	 * <b>Output</b>
-	 * <p>A new list of type <code>outputType</code> 
+	 * <p>A new list of type <code>outputType</code>
 	 * containing the input list's elements</p>
 	 * <p>
 	 * <b>Params</b>
@@ -45,8 +44,8 @@ package org.astoolkit.workflow.task.misc
 	 * </ul>
 	 * </p>
 	 * @example Converting an <code>ArrayCollection</code> into a typed <code>Vector</code>
-	 * 			<p>In the below example, a GetWishList message is sent 
-	 * 			task retrieves a list of Product. The output is likely to be 
+	 * 			<p>In the below example, a GetWishList message is sent
+	 * 			task retrieves a list of Product. The output is likely to be
 	 * 			a generic <code>ArrayCollection</code>.</p>
 	 * 			<p>If our (hypothetical) <code>DisplayProducts</code> expects a Vector.&lt;Product&gt;
 	 * 			as input, we can use <code>ConvertList</code> to convert the list
@@ -54,7 +53,7 @@ package org.astoolkit.workflow.task.misc
 	 * 			<p><em>Notice: angle brackets are escaped
 	 * 			(<code>Vector.&amp;amp;lt;Product&amp;amp;gt;</code>) as they cannot be used inside an
 	 * 			XML attribute.</em></p>
-	 * 			
+	 *
 	 * <listing version="3.0">
 	 * &lt;msg:SendMessage
 	 *     message=&quot;{ GetWishList }&quot;
@@ -64,19 +63,20 @@ package org.astoolkit.workflow.task.misc
 	 *     /&gt;
 	 * &lt;view:DisplayProducts /&gt;
 	 * </listing>
-	 */ 	
+	 */
 	public class ConvertList extends BaseTask
 	{
-		[Bindable][InjectPipeline]
-		/**
-		 * a <code>Array, Vector.&lt;&#42;&gt;, IList</code> object
-		 */
-		public var source : Object;
-		
 		/**
 		 * the list output class, either <code>Array, Vector.&lt;&#42;&gt;, IList</code>
 		 */
 		public var outputType : * = Array;
+		
+		[Bindable]
+		[InjectPipeline]
+		/**
+		 * a <code>Array, Vector.&lt;&#42;&gt;, IList</code> object
+		 */
+		public var source : Object;
 		
 		/**
 		 * @private
@@ -84,32 +84,15 @@ package org.astoolkit.workflow.task.misc
 		override public function begin() : void
 		{
 			super.begin();
-			if( !source ||
-				( !( source is Array ) && 
-					!getQualifiedClassName( source ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) &&
-					!(source is IList ) ) )
+			
+			try
 			{
-				fail( "No suitable source list provided" );
-				return;
+				complete( ListUtil.convert( source, outputType ));
 			}
-			if( !outputType ||
-				( !( outputType is Array ) && 
-					!getQualifiedClassName( outputType ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) &&
-					!(outputType is IList ) ) )
+			catch( e : Error )
 			{
-				fail( "No supported outputType provided" );
-				return;
+				fail( e.message );
 			}
-				
-			var out : * = new outputType();
-			for each( var item : * in source )
-			{
-				if( out is Array || getQualifiedClassName( out ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) )
-					out.push( item );
-				else if( out is IList )
-					out.addItem( item );
-			}
-			complete( out );
 		}
 	}
 }

@@ -19,9 +19,11 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.io.util
 {
+	
 	public class FileFilter
 	{
 		public var description : String;
+		
 		public var extension : String;
 	}
 }

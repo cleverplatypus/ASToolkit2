@@ -25,7 +25,7 @@ package org.astoolkit.commons.factory
 		function get delegateInstantiation() : Boolean;
 		function newInstance( inClass : Class, inProperties : Object ) : Object;
 		function onDestroy( inInstance : Object ) : void;
-		function onRelease( inInstance : Object ) : void;
 		function onPostCreate( inInstance : Object ) : void;
+		function onRelease( inInstance : Object ) : void;
 	}
 }

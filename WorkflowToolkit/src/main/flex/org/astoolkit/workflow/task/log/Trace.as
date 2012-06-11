@@ -36,32 +36,19 @@ package org.astoolkit.workflow.task.log
 	 */
 	public class Trace extends BaseTask
 	{
-		private var _text : String;
-		
 		public var expression : *;
 		
 		[Inspectable( enumeration="pipeline,parent,context,config,previousTask", defaultValue="pipeline" )]
 		public var source : String = "pipeline";
 		
-		/**
-		 * the text to output to console. If omitted, the pipeline data is used.
-		 */
-		public function set text( inText : String ) : void
-		{
-			_text = inText;
-		}
-		
-		public function get text() : String
-		{
-			return _text;
-		}
+		private var _text : String;
 		
 		override public function begin() : void
 		{
 			super.begin();
 			var aSource : Object = filteredInput;
 			
-			switch ( source )
+			switch(source)
 			{
 				case "pipeline":
 				{
@@ -91,7 +78,7 @@ package org.astoolkit.workflow.task.log
 			}
 			var outText : String;
 			
-			if ( expression != undefined )
+			if(expression != undefined)
 			{
 				var transformer : IIODataTransformer =
 					context
@@ -99,7 +86,7 @@ package org.astoolkit.workflow.task.log
 					.inputFilterRegistry
 					.getTransformer( aSource, expression );
 				
-				if ( !transformer )
+				if(!transformer)
 				{
 					fail( "Cannot use expression to transform {0}", source );
 					return;
@@ -109,10 +96,24 @@ package org.astoolkit.workflow.task.log
 			else
 				outText = text;
 			
-			if ( outText == null )
+			if(outText == null)
 				outText = ObjectUtil.toString( filteredInput );
 			trace( outText );
 			complete();
+		}
+		
+		public function get text() : String
+		{
+			return _text;
+		}
+		
+		/**
+		 * the text to output to console. If omitted, the pipeline data is used.
+		 */
+		public function set text( inText : String ) : void
+		{
+			trace( "trace text set ", inText );
+			_text = inText;
 		}
 	}
 }

@@ -29,20 +29,33 @@ package org.astoolkit.commons.mapping
 	public final class DataMap
 	{
 		private static var _factory : PooledFactory;
-		private static var _transformerRegistry : IIODataTransformerRegistry;
 		
 		private static var _staticInstance : DataMap;
 		
-		public static function get to() : DataMap
-		{
-			if( !_staticInstance )
-				_staticInstance = new DataMap();
-			return _staticInstance;
-		}
+		private static var _transformerRegistry : IIODataTransformerRegistry;
 		
 		public static function clearSingleton() : void
 		{
 			_staticInstance = null;
+		}
+		
+		public static function get to() : DataMap
+		{
+			if(!_staticInstance)
+				_staticInstance = new DataMap();
+			return _staticInstance;
+		}
+		
+		public function object( inTarget : Object, inMapping : Object, inStrict : Boolean = true ) : IPropertiesMapper
+		{
+			return new MapperWrapper( factory, inMapping, inTarget, inStrict );
+		}
+		
+		public function property( inTarget : Object, inPropertyName : String ) : IPropertiesMapper
+		{
+			var map : Object = {};
+			map[inPropertyName] = ".";
+			return object( inTarget, map, true );
 		}
 		
 		public function set transformerRegistry( inValue : IIODataTransformerRegistry ) : void
@@ -52,7 +65,7 @@ package org.astoolkit.commons.mapping
 		
 		private function get factory() : IPooledFactory
 		{
-			if ( !_factory )
+			if(!_factory)
 			{
 				_factory = new PooledFactory();
 				_factory.defaultType = SimplePropertiesMapper;
@@ -64,21 +77,9 @@ package org.astoolkit.commons.mapping
 		
 		private function postCreateFactoryHandler( inInstance : SimplePropertiesMapper ) : void
 		{
-			if ( !_transformerRegistry )
+			if(!_transformerRegistry)
 				_transformerRegistry = new DefaultDataTransformRegistry();
 			inInstance.transformerRegistry = _transformerRegistry;
-		}
-		
-		public function object( inTarget : Object, inMapping : Object, inStrict : Boolean = true ) : IPropertiesMapper
-		{
-			return new MapperWrapper( factory, inMapping, inTarget, inStrict );
-		}
-		
-		public function property( inTarget : Object, inPropertyName : String ) : IPropertiesMapper
-		{
-			var map : Object = {};
-			map[ inPropertyName ] = ".";
-			return object( inTarget, map, true );
 		}
 	}
 }
@@ -91,32 +92,11 @@ import org.astoolkit.commons.mapping.SimplePropertiesMapper;
 
 class MapperWrapper implements IPropertiesMapper
 {
-	private var _mapping : Object;
-	private var _target : Object;
-	private var _factory : IPooledFactory;
-	private var _strict : Boolean;
-	private var _transformerRegistry : IIODataTransformerRegistry;
-	
-	public function hasTarget() : Boolean
-	{
-		return true;
-	}
-	
-	public function set target( inValue : Object ) : void
-	{
-		_target = inValue;
-	}
-	
-	public function set transformerRegistry( inValue : IIODataTransformerRegistry ) : void
-	{
-		_transformerRegistry = inValue;
-	}
-	
-	public function MapperWrapper( 
-		inFactory : IPooledFactory, 
-		inMapping : Object, 
-		inTarget : Object, 
-		inStrict : Boolean 
+	public function MapperWrapper(
+		inFactory : IPooledFactory,
+		inMapping : Object,
+		inTarget : Object,
+		inStrict : Boolean
 		)
 	{
 		_strict = inStrict;
@@ -125,13 +105,19 @@ class MapperWrapper implements IPropertiesMapper
 		_factory = inFactory;
 	}
 	
-	private function create() : IPropertiesMapper
+	private var _factory : IPooledFactory;
+	
+	private var _mapping : Object;
+	
+	private var _strict : Boolean;
+	
+	private var _target : Object;
+	
+	private var _transformerRegistry : IIODataTransformerRegistry;
+	
+	public function hasTarget() : Boolean
 	{
-		var mapper : SimplePropertiesMapper = _factory.newInstance();
-		mapper.mapping = _mapping;
-		mapper.target = _target;
-		mapper.strict = _strict;
-		return mapper;
+		return true;
 	}
 	
 	public function map( inSource : Object, inTarget : Object = null ) : *
@@ -158,7 +144,26 @@ class MapperWrapper implements IPropertiesMapper
 	{
 	}
 	
+	public function set target( inValue : Object ) : void
+	{
+		_target = inValue;
+	}
+	
 	public function set targetClass( inClass : IFactory ) : void
 	{
+	}
+	
+	public function set transformerRegistry( inValue : IIODataTransformerRegistry ) : void
+	{
+		_transformerRegistry = inValue;
+	}
+	
+	private function create() : IPropertiesMapper
+	{
+		var mapper : SimplePropertiesMapper = _factory.newInstance();
+		mapper.mapping = _mapping;
+		mapper.target = _target;
+		mapper.strict = _strict;
+		return mapper;
 	}
 }

@@ -37,11 +37,11 @@ package org.astoolkit.workflow.task.api
 	 */
 	public interface IShowSimpleDecisionDialog
 	{
-		function set noButton( inValue : Boolean ) : void;
 		function set cancelButton( inValue : Boolean ) : void;
-		function set title( inValue : String ) : void;
-		function set text( inValue : String ) : void;
-		function set styleName( inValue : String ) : void;
+		function set noButton( inValue : Boolean ) : void;
 		function set skinClass( inValue : IFactory ) : void;
+		function set styleName( inValue : String ) : void;
+		function set text( inValue : String ) : void;
+		function set title( inValue : String ) : void;
 	}
 }

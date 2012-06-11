@@ -32,14 +32,6 @@ package org.astoolkit.commons.io.transform
 		/**
 		 * @private
 		 */
-		public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
-		{
-			return ( inExpression as Function )( inData, inTarget );
-		}
-		
-		/**
-		 * @private
-		 */
 		public function isValidExpression( inExpression : Object ) : Boolean
 		{
 			return inExpression is Function;
@@ -56,6 +48,16 @@ package org.astoolkit.commons.io.transform
 		/**
 		 * @private
 		 */
+		public function get supportedDataTypes() : Vector.<Class>
+		{
+			var out : Vector.<Class> = new Vector.<Class>();
+			out.push( Object );
+			return out;
+		}
+		
+		/**
+		 * @private
+		 */
 		public function get supportedExpressionTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
@@ -66,11 +68,9 @@ package org.astoolkit.commons.io.transform
 		/**
 		 * @private
 		 */
-		public function get supportedDataTypes() : Vector.<Class>
+		public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
 		{
-			var out : Vector.<Class> = new Vector.<Class>();
-			out.push( Object );
-			return out;
+			return (inExpression as Function)( inData, inTarget );
 		}
 	}
 }

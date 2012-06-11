@@ -19,9 +19,10 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
+	
 	import org.astoolkit.workflow.api.IWorkflowElement;
-
-	[DefaultProperty("Execute")]
+	
+	[DefaultProperty( "Execute" )]
 	/**
 	 * Group for conditional execution of tasks.
 	 * <p>The default property <code>Execute</code> is a Vector of elements
@@ -35,7 +36,7 @@ package org.astoolkit.workflow.core
 	 * <li><code>condition</code>: a <code>Boolean</code> or boolean expression</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @example In the following example, an Employee object is expected as input.<br>
 	 * 			If its isPermanent property is set to true, then a (hypotetical) SendMail task is executed.
 	 * <listing version="3.0">
@@ -48,7 +49,7 @@ package org.astoolkit.workflow.core
 	 * &lt;/If&gt;
 	 * </pre>
 	 * </listing>
-	 * 
+	 *
 	 * @example Same example but with an Else block.
 	 * <listing version="3.0">
 	 * <pre>
@@ -68,8 +69,8 @@ package org.astoolkit.workflow.core
 	 * &lt;/If&gt;
 	 * </pre>
 	 * </listing>
-	 * 
-	 * @example The <code>&lt;Execute&gt;...&lt;/Execute&gt;</code> can be always omitted although, 
+	 *
+	 * @example The <code>&lt;Execute&gt;...&lt;/Execute&gt;</code> can be always omitted although,
 	 * 			when declaring complex If groups, its use makes the syntax a little bit clearer.
 	 * <listing version="3.0">
 	 * <pre>
@@ -111,70 +112,14 @@ package org.astoolkit.workflow.core
 		private var _joinedChildren : Vector.<IWorkflowElement>;
 		
 		/**
-		 * @private
+		 * (optional) the tasks to enable with <code>condition == false</code>
 		 */
-		override public function get children():Vector.<IWorkflowElement>
+		public function set Else( inValue : Vector.<IWorkflowElement> ) : void
 		{
-			if( _joinedChildren == null )
-			{
-				_joinedChildren = new Vector.<IWorkflowElement>();
-				if( _isTrueGroup )
-					_joinedChildren.push( _isTrueGroup );
-				if( _isFalseGroup )
-					_joinedChildren.push( _isFalseGroup );
-			}
-			return _joinedChildren;
+			_isFalseGroup = new Group();
+			_isFalseGroup.children = inValue;
 		}
 		
-		/**
-		 * the Boolean evaluated for conditional execution.
-		 * 
-		 * @see #Execute
-		 * @see #Else
-		 */
-		public function set condition( inValue : Boolean ) : void
-		{
-			_condition = inValue;
-			if( _isTrueGroup )
-				_isTrueGroup.enabled = _condition;
-			if( _isFalseGroup )
-				_isFalseGroup.enabled = !_condition;
-		}
-		
-		/**
-		 * @private
-		 */
-		override public function prepare():void
-		{
-			if( _isTrueGroup != null )
-				_isTrueGroup.prepare();
-
-			if( _isFalseGroup != null )
-				_isFalseGroup.prepare();
-		}
-		
-		/**
-		 * @private
-		 */
-		override public function initialize():void
-		{
-			super.initialize();
-			if( _isTrueGroup != null )
-			{
-				_isTrueGroup.delegate = _delegate;
-				_isTrueGroup.context = _context;
-				_isTrueGroup.parent = this;
-				_isTrueGroup.initialize();
-			}
-			if( _isFalseGroup != null )
-			{
-				_isFalseGroup.delegate = _delegate;
-				_isFalseGroup.context = _context;
-				_isFalseGroup.parent = this;
-				_isFalseGroup.initialize();
-			}
-		}
-
 		/**
 		 * the tasks to enable with <code>condition == true</code>
 		 */
@@ -183,27 +128,90 @@ package org.astoolkit.workflow.core
 			_isTrueGroup = new Group();
 			_isTrueGroup.children = inValue;
 		}
-
+		
 		/**
-		 * (optional) the tasks to enable with <code>condition == false</code>
+		 * @private
 		 */
-		public function set Else( inValue : Vector.<IWorkflowElement> ) : void
+		override public function get children() : Vector.<IWorkflowElement>
 		{
-			_isFalseGroup = new Group();
-			_isFalseGroup.children = inValue;
+			if(_joinedChildren == null)
+			{
+				_joinedChildren = new Vector.<IWorkflowElement>();
+				
+				if(_isTrueGroup)
+					_joinedChildren.push( _isTrueGroup );
+				
+				if(_isFalseGroup)
+					_joinedChildren.push( _isFalseGroup );
+			}
+			return _joinedChildren;
 		}
-
+		
+		/**
+		 * the Boolean evaluated for conditional execution.
+		 *
+		 * @see #Execute
+		 * @see #Else
+		 */
+		public function set condition( inValue : Boolean ) : void
+		{
+			_condition = inValue;
+			
+			if(_isTrueGroup)
+				_isTrueGroup.enabled = _condition;
+			
+			if(_isFalseGroup)
+				_isFalseGroup.enabled = !_condition;
+		}
+		
+		/**
+		 * @private
+		 */
+		override public function initialize() : void
+		{
+			super.initialize();
+			
+			if(_isTrueGroup != null)
+			{
+				_isTrueGroup.delegate = _delegate;
+				_isTrueGroup.context = _context;
+				_isTrueGroup.parent = this;
+				_isTrueGroup.initialize();
+			}
+			
+			if(_isFalseGroup != null)
+			{
+				_isFalseGroup.delegate = _delegate;
+				_isFalseGroup.context = _context;
+				_isFalseGroup.parent = this;
+				_isFalseGroup.initialize();
+			}
+		}
+		
 		/**
 		 * @private
 		 */
 		override public function initialized( inDocument : Object, inId : String ) : void
 		{
 			super.initialized( inDocument, inId );
-			if( _isFalseGroup )
+			
+			if(_isFalseGroup)
 				_isFalseGroup.document = inDocument;
-			if( _isTrueGroup )
+			
+			if(_isTrueGroup)
 				_isTrueGroup.document = inDocument;
 		}
-
+		
+		/**
+		 * @private
+		 */
+		override public function prepare() : void
+		{
+			if(_isTrueGroup != null)
+				_isTrueGroup.prepare();
+			
+			if(_isFalseGroup != null)
+				_isFalseGroup.prepare();
+		}
 	}
 }

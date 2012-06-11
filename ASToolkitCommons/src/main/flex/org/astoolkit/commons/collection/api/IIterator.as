@@ -5,15 +5,15 @@ package org.astoolkit.commons.collection.api
 	
 	public interface IIterator
 	{
-		function set source( inValue : * ) : void;
-		function hasNext() : Boolean;
-		function next() : Object;
-		function current() : Object;
-		function reset() : void;
-		function currentIndex() : Number;
-		function supportsSource( inObject : * ) : Boolean;
-		function get progress() : Number;
 		function abort() : void;
+		function current() : Object;
+		function currentIndex() : Number;
+		function hasNext() : Boolean;
 		function get isAborted() : Boolean;
+		function next() : Object;
+		function get progress() : Number;
+		function reset() : void;
+		function set source( inValue : * ) : void;
+		function supportsSource( inObject : * ) : Boolean;
 	}
 }

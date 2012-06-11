@@ -17,49 +17,50 @@ limitations under the License.
 Version 2.x
 
 */
-
 package org.astoolkit.workflow.task.events
 {
-    import org.astoolkit.workflow.core.BaseTask;
-    import org.astoolkit.workflow.constant.TaskStatus;
-    
-    import flash.utils.setTimeout;
-
-    public class WatchValue extends BaseTask
-    {
-        [Inspectable(defaultValue="change", enumeration="value,change,condition")]
-        public var trigger : String;
-        public var value : Object;
-        public var condition : Object;
-        
-        public function set source( inValue : * ) : void 
-        {
-            /*
-                this is necessary to make sure that a condition
-                set as a Boolean fed by data binding
-                is executed before handling the source binding
-            */
-            setTimeout( handleBinding, 1, inValue );
-        }
-        
-        private function handleBinding( inValue : * ) : void
-        {
-            if( status != TaskStatus.RUNNING )
-                return;
-            if( trigger == "change" )
-                complete();
-            else if( trigger == "value" && inValue == value )
-                complete();
-            else if( trigger == "condition" )
-            {
-                if( condition is Boolean && condition )
-                    complete();
-                else if( condition is Function && condition() == true )
-                    complete();
-                else if( !( condition is Boolean || condition is Function ) )
-                    fail( "Watch condition set to a value other than Boolean or Function returning a Boolean" ); 
-            }
-        }
-
-    }
+	
+	import flash.utils.setTimeout;
+	import org.astoolkit.workflow.constant.TaskStatus;
+	import org.astoolkit.workflow.core.BaseTask;
+	
+	public class WatchValue extends BaseTask
+	{
+		public var condition : Object;
+		
+		[Inspectable( defaultValue="change", enumeration="value,change,condition" )]
+		public var trigger : String;
+		
+		public var value : Object;
+		
+		public function set source( inValue : * ) : void
+		{
+			/*
+				this is necessary to make sure that a condition
+				set as a Boolean fed by data binding
+				is executed before handling the source binding
+			*/
+			setTimeout( handleBinding, 1, inValue );
+		}
+		
+		private function handleBinding( inValue : * ) : void
+		{
+			if(status != TaskStatus.RUNNING)
+				return;
+			
+			if(trigger == "change")
+				complete();
+			else if(trigger == "value" && inValue == value)
+				complete();
+			else if(trigger == "condition")
+			{
+				if(condition is Boolean && condition)
+					complete();
+				else if(condition is Function && condition() == true)
+					complete();
+				else if(!(condition is Boolean || condition is Function))
+					fail( "Watch condition set to a value other than Boolean or Function returning a Boolean" );
+			}
+		}
+	}
 }

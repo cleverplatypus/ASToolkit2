@@ -29,24 +29,24 @@ package org.astoolkit.commons.factory
 	 */
 	public class MonoInstanceFactory implements IFactory
 	{
-		private var _instance : Object;
+		public static function of( inInstance : Object ) : MonoInstanceFactory
+		{
+			return new MonoInstanceFactory( inInstance, new SingletonEnforcer());
+		}
 		
 		public function MonoInstanceFactory( inInstance : Object, inEnforcer : SingletonEnforcer )
 		{
-			if ( inEnforcer == null )
+			if(inEnforcer == null)
 				throw new Error( "MonoInstanceFactory cannot be instanciated " +
 					"directly. Use MonoInstanceFactory.of( inObject ) instead." );
 			_instance = inInstance;
 		}
 		
+		private var _instance : Object;
+		
 		public function newInstance() : *
 		{
 			return _instance;
-		}
-		
-		public static function of( inInstance : Object ) : MonoInstanceFactory
-		{
-			return new MonoInstanceFactory( inInstance, new SingletonEnforcer() );
 		}
 	}
 }

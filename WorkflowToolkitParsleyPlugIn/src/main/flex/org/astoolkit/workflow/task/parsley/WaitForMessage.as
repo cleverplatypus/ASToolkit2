@@ -19,17 +19,17 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.parsley
 {
-	import mx.core.IFactory;
 	
+	import mx.core.IFactory;
 	import org.spicefactory.lib.reflect.ClassInfo;
 	import org.spicefactory.parsley.core.context.provider.Provider;
 	import org.spicefactory.parsley.core.messaging.receiver.MessageTarget;
 	import org.spicefactory.parsley.processor.messaging.receiver.MessageHandler;
 	
-
 	public class WaitForMessage extends AbstractParsleyTask
 	{
 		public var messageType : IFactory;
+		
 		public var selector : String;
 		
 		private var _messageTarget : MessageTarget;
@@ -38,22 +38,20 @@ package org.astoolkit.workflow.task.parsley
 		{
 			super.begin();
 			var listener : Listener = new Listener( onMessage );
-			_messageTarget = 
+			_messageTarget =
 				new MessageHandler(
-					Provider.forInstance( listener ), 
-					"handler", 
-					selector,
-					ClassInfo.forClass( Listener )
-				)					
+				Provider.forInstance( listener ),
+				"handler",
+				selector,
+				ClassInfo.forClass( Listener )
+				)
 			parsleyContext
 				.scopeManager
 				.getScope( scope as String )
 				.messageReceivers
 				.addTarget( _messageTarget );
-			
-
 		}
-
+		
 		private function onMessage() : void
 		{
 			parsleyContext
@@ -64,19 +62,17 @@ package org.astoolkit.workflow.task.parsley
 			_messageTarget = null;
 			complete();
 		}
-		
-
 	}
 }
 
 class Listener
 {
-	private var _callback : Function;
-	
-	public function Listener( inCallback : Function ) 
+	public function Listener( inCallback : Function )
 	{
 		_callback = inCallback;
 	}
+	
+	private var _callback : Function;
 	
 	public function handler( inMessage : Object ) : void
 	{

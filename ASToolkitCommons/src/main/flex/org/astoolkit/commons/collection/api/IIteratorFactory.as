@@ -1,8 +1,8 @@
 package org.astoolkit.commons.collection.api
 {
-	import org.astoolkit.commons.factory.IPooledFactory;
 	
 	import mx.core.IFactory;
+	import org.astoolkit.commons.factory.IPooledFactory;
 	
 	public interface IIteratorFactory extends IPooledFactory
 	{

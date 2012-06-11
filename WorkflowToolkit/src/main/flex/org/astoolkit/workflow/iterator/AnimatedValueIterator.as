@@ -19,9 +19,9 @@ Version 2.x
 */
 package org.astoolkit.workflow.iterator
 {
+	
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.workflow.core.BaseTask;
-	
 	import spark.effects.Animate;
 	import spark.effects.animation.SimpleMotionPath;
 	import spark.effects.easing.IEaser;
@@ -34,32 +34,28 @@ package org.astoolkit.workflow.iterator
 	 */
 	public class AnimatedValueIterator implements IIterator
 	{
-		public var startValue : Number = 0;
+		public var easer : IEaser = _linearEaser;
+		
 		public var endValue : Number = 1;
+		
+		public var startValue : Number = 0;
 		
 		public var steps : int = -1;
 		
-		private var _linearEaser : Linear = new Linear();
-		private var _isAborted : Boolean;
-		
-		public var easer : IEaser = _linearEaser;
-		
 		private var _currentFraction : Number;
 		
-		private function getActualSteps() : int
-		{
-			return steps > -1 ? steps : endValue - startValue + 1;
-		}
+		private var _isAborted : Boolean;
 		
+		private var _linearEaser : Linear = new Linear();
 		
-		public function abort():void
+		public function abort() : void
 		{
 			_isAborted = true;
 		}
 		
 		public function current() : Object
 		{
-			return ( endValue - startValue ) * easer.ease( _currentFraction );
+			return (endValue - startValue) * easer.ease( _currentFraction );
 		}
 		
 		public function currentIndex() : Number
@@ -67,29 +63,29 @@ package org.astoolkit.workflow.iterator
 			return getActualSteps() * _currentFraction;
 		}
 		
-		public function hasNext():Boolean
+		public function hasNext() : Boolean
 		{
 			return _currentFraction < 1;
 		}
 		
-		public function get isAborted():Boolean
+		public function get isAborted() : Boolean
 		{
 			return _isAborted;
 		}
 		
 		public function next() : Object
 		{
-			_currentFraction += ( 1 / getActualSteps() );
+			_currentFraction += (1 / getActualSteps());
 			return current();
 		}
 		
-		public function get progress():Number
+		public function get progress() : Number
 		{
 			// TODO Auto Generated method stub
 			return _currentFraction;
 		}
 		
-		public function reset():void
+		public function reset() : void
 		{
 			_currentFraction = 0;
 		}
@@ -105,5 +101,9 @@ package org.astoolkit.workflow.iterator
 			return false;
 		}
 		
+		private function getActualSteps() : int
+		{
+			return steps > -1 ? steps : endValue - startValue + 1;
+		}
 	}
 }

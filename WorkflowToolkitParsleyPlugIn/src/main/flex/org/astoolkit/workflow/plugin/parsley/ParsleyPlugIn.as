@@ -19,17 +19,18 @@ Version 2.x
 */
 package org.astoolkit.workflow.plugin.parsley
 {
+	
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.task.parsley.SendMessage;
 	import org.spicefactory.parsley.core.context.Context;
-
+	
 	/**
 	 * Plugin for Spicefactory Parsley aware tasks.
 	 * <p>A Parsly Context object is automatically injected and
 	 * made available to the workflow context</p>
 	 * <p>To use it, just declare it in your app's Parsley context
-	 * and inject it into the workflow's context dropins property</p> 
-	 * 
+	 * and inject it into the workflow's context dropins property</p>
+	 *
 	 * @example Adding Parsley support to a workflow
 	 * <listing version="3.0">
 	 * &lt;!-- declare the plugin --&gt;
@@ -37,7 +38,7 @@ package org.astoolkit.workflow.plugin.parsley
 	 *     id=&quot;parsleyPlugIn&quot;
 	 *     type=&quot;{ ParsleyPlugIn }&quot;
 	 *     /&gt;
-	 * 
+	 *
 	 * &lt;!-- create the drop-ins dictionary --&gt;
 	 * &lt;DynamicObject
 	 *     id=&quot;dropIns&quot;
@@ -48,9 +49,9 @@ package org.astoolkit.workflow.plugin.parsley
 	 *         /&gt;
 	 *     &lt;!-- other plugins and extensions here --&gt;
 	 * &lt;/DynamicObject&gt;
-	 * 
+	 *
 	 * &lt;!-- assign it to a workflow context factory --&gt;
-	 * &lt;DynamicObject 
+	 * &lt;DynamicObject
 	 *     id=&quot;parsleyWorkflowContextFactory&quot;
 	 *     type=&quot;{DefaultContextFactory}&quot;
 	 *     &gt;
@@ -59,7 +60,7 @@ package org.astoolkit.workflow.plugin.parsley
 	 *         idRef=&quot;dropIns&quot;
 	 *         /&gt;
 	 * &lt;/DynamicObject&gt;
-	 * 
+	 *
 	 * &lt;!-- finally use the context factory in workflows --&gt;
 	 * &lt;DynamicObject
 	 *     id=&quot;parsleyAwareWorkflow&quot;
@@ -68,13 +69,12 @@ package org.astoolkit.workflow.plugin.parsley
 	 *     &lt;Property name=&quot;contextFactory&quot; idRef=&quot;parsleyWorkflowContextFactory&quot;/&gt;
 	 * &lt;/DynamicObject&gt;
 	 * </listing>
-	 * 
+	 *
 	 * @see org.astoolkit.workflow.api.IWorkflowContext
 	 * @see org.astoolkit.workflow.api.IContextPlugIn
 	 */
 	public class ParsleyPlugIn implements IContextPlugIn
 	{
-		private var _disabledExtensions : Array;
 		
 		[Inject]
 		/**
@@ -82,11 +82,16 @@ package org.astoolkit.workflow.plugin.parsley
 		 */
 		public var context : Context;
 		
-		/**
-		 * @private
-		 */
-		public function init():void
+		private var _disabledExtensions : Array;
+		
+		public function get disabledExtensions() : Array
 		{
+			return _disabledExtensions;
+		}
+		
+		public function set disabledExtensions( inValue : Array ) : void
+		{
+			_disabledExtensions = inValue;
 		}
 		
 		/**
@@ -97,14 +102,11 @@ package org.astoolkit.workflow.plugin.parsley
 			return [ SendMessage ];
 		}
 		
-		public function get disabledExtensions() : Array
+		/**
+		 * @private
+		 */
+		public function init() : void
 		{
-			return _disabledExtensions;
-		}
-		
-		public function set disabledExtensions( inValue : Array ) : void
-		{
-			_disabledExtensions = inValue;
 		}
 	}
 }

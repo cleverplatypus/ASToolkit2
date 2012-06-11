@@ -26,58 +26,50 @@ package org.astoolkit.workflow.core
 	
 	public class WorkflowEvent extends Event
 	{
-		public static const INITIALIZED : String = "initialized";
-		
-		public static const STARTED : String = "started";
-		
-		public static const DATA_SET : String = "dataSet";
-		
-		public static const PREPARED : String = "prepared";
-		
-		public static const SUSPENDED : String = "suspended";
-		
-		public static const RESUMED : String = "resumed";
-		
-		public static const FAULT : String = "fault";
+		public static const ABORTED : String = "abort";
 		
 		public static const COMPLETED : String = "completed";
 		
-		public static const ABORTED : String = "abort";
+		public static const DATA_SET : String = "dataSet";
+		
+		public static const FAULT : String = "fault";
+		
+		public static const INITIALIZED : String = "initialized";
+		
+		public static const PREPARED : String = "prepared";
 		
 		public static const PROGRESS : String = "progress";
 		
-		public static const SUBTASK_INITIALIZED : String = "subtaskInitialize";
+		public static const RESUMED : String = "resumed";
 		
-		public static const SUBTASK_STARTED : String = "subtaskStarted";
-		
-		public static const SUBTASK_PREPARED : String = "subtaskPrepared";
-		
-		public static const SUBTASK_SUSPENDED : String = "subtaskSuspended";
-		
-		public static const SUBTASK_RESUMED : String = "subtaskResumed";
-		
-		public static const SUBTASK_FAULT : String = "subtaskFault";
-		
-		public static const SUBTASK_COMPLETED : String = "subtaskCompleted";
+		public static const STARTED : String = "started";
 		
 		public static const SUBTASK_ABORTED : String = "subtaskAbort";
 		
+		public static const SUBTASK_COMPLETED : String = "subtaskCompleted";
+		
+		public static const SUBTASK_FAULT : String = "subtaskFault";
+		
+		public static const SUBTASK_INITIALIZED : String = "subtaskInitialize";
+		
+		public static const SUBTASK_PREPARED : String = "subtaskPrepared";
+		
 		public static const SUBTASK_PROGRESS : String = "subtaskProgress";
+		
+		public static const SUBTASK_RESUMED : String = "subtaskResumed";
+		
+		public static const SUBTASK_STARTED : String = "subtaskStarted";
+		
+		public static const SUBTASK_SUSPENDED : String = "subtaskSuspended";
+		
+		public static const SUSPENDED : String = "suspended";
 		
 		public static const TRANSFORM_INPUT : String = "transformInput";
 		
-		private var _data : Object = "";
-		
-		private var _dataChanged : Boolean;
-		
-		private var _relatedTask : IWorkflowTask;
-		
-		private var _context : IWorkflowContext;
-		
-		public function WorkflowEvent( 
-			inType : String, 
+		public function WorkflowEvent(
+			inType : String,
 			inContext : IWorkflowContext,
-			inRelatedTask : IWorkflowTask = null, 
+			inRelatedTask : IWorkflowTask = null,
 			inData : Object = "" )
 		{
 			super( inType );
@@ -86,9 +78,26 @@ package org.astoolkit.workflow.core
 			_context = inContext;
 		}
 		
-		public function get relatedTask() : IWorkflowTask
+		private var _context : IWorkflowContext;
+		
+		private var _data : Object = "";
+		
+		private var _dataChanged : Boolean;
+		
+		private var _relatedTask : IWorkflowTask;
+		
+		public function changeData( inData : Object ) : void
 		{
-			return _relatedTask;
+			if(type != TRANSFORM_INPUT)
+				throw new Error( "Data can only be changed on 'transformInput' events" );
+			_data = inData;
+			_dataChanged = true;
+		}
+		
+		override public function clone() : Event
+		{
+			var e : WorkflowEvent = new WorkflowEvent( type, _context, _relatedTask, _data );
+			return e;
 		}
 		
 		public function get data() : Object
@@ -96,23 +105,14 @@ package org.astoolkit.workflow.core
 			return _data;
 		}
 		
-		public function changeData( inData : Object ) : void
-		{
-			if ( type != TRANSFORM_INPUT )
-				throw new Error( "Data can only be changed on 'transformInput' events" );
-			_data = inData;
-			_dataChanged = true;
-		}
-		
 		public function get dataChanged() : Boolean
 		{
 			return _dataChanged;
 		}
 		
-		override public function clone() : Event
+		public function get relatedTask() : IWorkflowTask
 		{
-			var e : WorkflowEvent = new WorkflowEvent( type, _context, _relatedTask, _data );
-			return e;
+			return _relatedTask;
 		}
 	}
 }

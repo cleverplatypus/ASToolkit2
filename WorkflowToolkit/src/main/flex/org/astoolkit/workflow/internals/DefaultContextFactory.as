@@ -19,31 +19,33 @@ Version 2.x
 */
 package org.astoolkit.workflow.internals
 {
-	import org.astoolkit.workflow.api.IContextConfig;
 	
 	import mx.core.ClassFactory;
 	import mx.core.IFactory;
 	import mx.core.IMXMLObject;
+	import org.astoolkit.workflow.api.IContextConfig;
 	
 	public class DefaultContextFactory implements IFactory, IMXMLObject
 	{
-		private var _factory : ClassFactory;
 		public var config : IContextConfig;
+		
 		public var dropIns : Object;
-				
-		public function newInstance():*
+		
+		private var _factory : ClassFactory;
+		
+		public function initialized( document : Object, id : String ) : void
 		{
-			if( !_factory )
-				_factory = new ClassFactory( DefaultWorkflowContext );
-			_factory.properties = {
-				config : config,
-				dropIns : dropIns
-			};
-			return _factory.newInstance() ;
 		}
 		
-		public function initialized(document:Object, id:String):void
+		public function newInstance() : *
 		{
+			if(!_factory)
+				_factory = new ClassFactory( DefaultWorkflowContext );
+			_factory.properties = {
+					config: config,
+					dropIns: dropIns
+				};
+			return _factory.newInstance();
 		}
 	}
 }

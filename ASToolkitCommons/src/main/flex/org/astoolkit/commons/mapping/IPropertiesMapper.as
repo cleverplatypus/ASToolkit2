@@ -26,13 +26,13 @@ package org.astoolkit.commons.mapping
 	
 	public interface IPropertiesMapper
 	{
-		function set mapFailDelegate( inFunction : Function ) : void;
-		function set strict( inValue : Boolean ) : void;
-		function set targetClass( inClass : IFactory ) : void;
-		function set target( inValue : Object ) : void;
-		function set transformerRegistry( inValue : IIODataTransformerRegistry ) : void;
-		function map( inSource : Object, inTarget : Object = null ) : *;
-		function mapWith( inSource : Object, inMapping : Object, inTarget : Object = null ) : *;
 		function hasTarget() : Boolean;
+		function map( inSource : Object, inTarget : Object = null ) : *;
+		function set mapFailDelegate( inFunction : Function ) : void;
+		function mapWith( inSource : Object, inMapping : Object, inTarget : Object = null ) : *;
+		function set strict( inValue : Boolean ) : void;
+		function set target( inValue : Object ) : void;
+		function set targetClass( inClass : IFactory ) : void;
+		function set transformerRegistry( inValue : IIODataTransformerRegistry ) : void;
 	}
 }

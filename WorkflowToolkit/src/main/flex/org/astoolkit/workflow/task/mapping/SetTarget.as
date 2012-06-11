@@ -1,8 +1,8 @@
 package org.astoolkit.workflow.task.mapping
 {
 	
-	import avmplus.getQualifiedClassName;
 	import mx.core.IFactory;
+	import avmplus.getQualifiedClassName;
 	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.internals.GroupUtil;
 	
@@ -14,14 +14,14 @@ package org.astoolkit.workflow.task.mapping
 		{
 			super.begin();
 			
-			if ( target )
+			if(target)
 			{
 				var mapObject : MapObject = GroupUtil.getParentWorkflow( this ) as MapObject;
 				
-				if ( mapObject )
+				if(mapObject)
 					mapObject.targetClass = target;
 				else
-					$[ getQualifiedClassName( MapObject ) ] = target;
+					$[getQualifiedClassName( MapObject )] = target;
 			}
 		}
 	}

@@ -30,30 +30,25 @@ package org.astoolkit.workflow.iterator
 	
 	public class AnimatedPointIterator implements IIterator
 	{
-		public var startX : Number = 0;
-		
-		public var endX : Number = 1;
-		
-		public var startY : Number = 0;
-		
-		public var endY : Number = 1;
-		
-		public var steps : int = -1;
-		
-		private var _linearEaser : Linear = new Linear();
-		
-		private var _isAborted : Boolean;
-		
 		public var easerX : IEaser = _linearEaser;
 		
 		public var easerY : IEaser = _linearEaser;
 		
+		public var endX : Number = 1;
+		
+		public var endY : Number = 1;
+		
+		public var startX : Number = 0;
+		
+		public var startY : Number = 0;
+		
+		public var steps : int = -1;
+		
 		private var _currentFraction : Number;
 		
-		private function getActualSteps() : int
-		{
-			return steps > -1 ? steps : endX - startX + 1;
-		}
+		private var _isAborted : Boolean;
+		
+		private var _linearEaser : Linear = new Linear();
 		
 		public function abort() : void
 		{
@@ -62,7 +57,7 @@ package org.astoolkit.workflow.iterator
 		
 		public function current() : Object
 		{
-			return new Point( ( endX - startX ) * easerX.ease( _currentFraction ), ( endY - startY ) * easerY.ease( _currentFraction ) );
+			return new Point((endX - startX) * easerX.ease( _currentFraction ), (endY - startY) * easerY.ease( _currentFraction ));
 		}
 		
 		public function currentIndex() : Number
@@ -82,7 +77,7 @@ package org.astoolkit.workflow.iterator
 		
 		public function next() : Object
 		{
-			_currentFraction += ( 1 / getActualSteps() );
+			_currentFraction += (1 / getActualSteps());
 			return current();
 		}
 		
@@ -105,6 +100,11 @@ package org.astoolkit.workflow.iterator
 		public function supportsSource( inObject : * ) : Boolean
 		{
 			return false;
+		}
+		
+		private function getActualSteps() : int
+		{
+			return steps > -1 ? steps : endX - startX + 1;
 		}
 	}
 }

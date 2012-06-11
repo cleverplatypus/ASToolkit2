@@ -5,13 +5,13 @@ package org.astoolkit.workflow.api
 	
 	public interface IMapTask extends IWorkflowTask
 	{
-		function set source( inValue : Object ) : void;
+		function get property() : String;
+		function set property( inValue : String ) : void;
 		function get source() : Object;
-		function set targetClass( inValue : IFactory ) : void;
-		function get targetClass() : IFactory;
+		function set source( inValue : Object ) : void;
 		function get target() : Object;
 		function set target( inValue : Object ) : void;
-		function set property( inValue : String ) : void;
-		function get property() : String;
+		function get targetClass() : IFactory;
+		function set targetClass( inValue : IFactory ) : void;
 	}
 }

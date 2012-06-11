@@ -17,19 +17,17 @@ limitations under the License.
 Version 2.x
 
 */
-
 package org.astoolkit.workflow.task.misc
 {
+	
+	import flash.utils.setTimeout;
 	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.core.WorkflowEvent;
 	
-	import flash.utils.setTimeout;
-
 	[Event(
 		name="execute",
-		type="org.astoolkit.workflow.core.WorkflowEvent")]
-	
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	public class ExecuteCode extends BaseTask
 	{
 		public static const EXECUTE : String = "execute";
@@ -37,8 +35,8 @@ package org.astoolkit.workflow.task.misc
 		override public function begin() : void
 		{
 			super.begin();
-			dispatchEvent( new WorkflowEvent( EXECUTE, _context ) );
+			dispatchEvent( new WorkflowEvent( EXECUTE, _context ));
 			complete();
-		}		
+		}
 	}
 }

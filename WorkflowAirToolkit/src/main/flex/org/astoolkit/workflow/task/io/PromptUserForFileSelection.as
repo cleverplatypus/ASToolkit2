@@ -16,23 +16,24 @@ limitations under the License.
 
 Version 2.x
 
-*/package org.astoolkit.workflow.task.io
+*/
+package org.astoolkit.workflow.task.io
 {
+	
 	import flash.events.Event;
 	import flash.events.FileListEvent;
 	import flash.filesystem.File;
 	import flash.net.FileReference;
-	
 	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.core.ExitStatus;
 	import org.astoolkit.workflow.task.io.util.FileFilter;
 	
 	/**
 	 * Opens the OS's file open dialog.
-	 * 
+	 *
 	 * <p>
-	 * <b>Output</b><br><br> 
-	 * a <code>flash.filesystem.File</code> or an Array of <code>flash.filesystem.File</code> 
+	 * <b>Output</b><br><br>
+	 * a <code>flash.filesystem.File</code> or an Array of <code>flash.filesystem.File</code>
 	 * objects if <code>multiple</code> is set to true
 	 * </p>
 	 * <p>
@@ -43,40 +44,45 @@ Version 2.x
 	 * <li><code>multiple</code>: if true, the output will be an array of one or more <code>flash.filesystem.File</code> objects</li>
 	 * </ul>
 	 * </p>
-	 */ 
+	 */
 	public class PromptUserForFileSelection extends BaseTask
 	{
-		private var _file : File;
 		public var filters : Vector.<FileFilter>;
+		
 		public var message : String = "Select file";
+		
 		public var multiple : Boolean;
+		
 		public var selectDirectory : Boolean;
+		
+		private var _file : File;
 		
 		override public function begin() : void
 		{
 			super.begin();
 			_file = new File();
 			
-			if( multiple && !selectDirectory )
-				_file.addEventListener( FileListEvent.SELECT_MULTIPLE, threadSafe( onMultipleFilesSelect ) );
+			if(multiple && !selectDirectory)
+				_file.addEventListener( FileListEvent.SELECT_MULTIPLE, threadSafe( onMultipleFilesSelect ));
 			else
-				_file.addEventListener( Event.SELECT, threadSafe( onFileSelect ) );
-			_file.addEventListener( Event.CANCEL, threadSafe( onBrowseCancel ) );
+				_file.addEventListener( Event.SELECT, threadSafe( onFileSelect ));
+			_file.addEventListener( Event.CANCEL, threadSafe( onBrowseCancel ));
 			var fFilters : Array = [];
-			if( selectDirectory )
+			
+			if(selectDirectory)
 			{
 				_file.browseForDirectory( message );
 			}
 			else
 			{
-				for each( var filter : FileFilter in filters )
-					fFilters.push( new flash.net.FileFilter( filter.description, filter.extension ) );
-				if( multiple )
+				for each(var filter : FileFilter in filters)
+					fFilters.push( new flash.net.FileFilter( filter.description, filter.extension ));
+				
+				if(multiple)
 					_file.browseForOpenMultiple( message, fFilters );
 				else
 					_file.browseForOpen( message, fFilters );
 			}
-			
 		}
 		
 		private function onBrowseCancel( inEvent : Event ) : void
@@ -85,15 +91,14 @@ Version 2.x
 			fail( "User canceled file selection" );
 		}
 		
-		private function onMultipleFilesSelect( inEvent : FileListEvent ) : void
-		{
-			complete( inEvent.files );
-		}
-
 		private function onFileSelect( inEvent : Event ) : void
 		{
 			complete( inEvent.target );
 		}
 		
+		private function onMultipleFilesSelect( inEvent : FileListEvent ) : void
+		{
+			complete( inEvent.files );
+		}
 	}
 }

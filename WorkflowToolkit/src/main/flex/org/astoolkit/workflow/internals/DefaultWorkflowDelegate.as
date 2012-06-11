@@ -19,69 +19,65 @@ Version 2.x
 */
 package org.astoolkit.workflow.internals
 {
+	
 	import org.astoolkit.workflow.api.IWorkflowDelegate;
 	import org.astoolkit.workflow.api.IWorkflowTask;
 	import org.astoolkit.workflow.core.Workflow;
 	import org.astoolkit.workflow.ns.workflow_internal;
-	
 	use namespace workflow_internal;
 	
-	public class DefaultWorkflowDelegate 
-		implements IWorkflowDelegate
+	public class DefaultWorkflowDelegate implements IWorkflowDelegate
 	{
-		
-		private var _workflow : Workflow;
-		
 		public function DefaultWorkflowDelegate( inWorkflow : Workflow )
 		{
 			_workflow = inWorkflow;
 		}
 		
-		public function onInitialize(inTask:IWorkflowTask):void
-		{
-			_workflow.workflow_internal::onSubtaskInitialized( inTask );
-		}
+		private var _workflow : Workflow;
 		
-		public function onComplete(inTask:IWorkflowTask):void
-		{
-			_workflow.workflow_internal::onSubtaskCompleted( inTask );
-		}
-		
-		public function onPrepare(inTask:IWorkflowTask):void
-		{
-			_workflow.workflow_internal::onSubtaskPrepared( inTask );
-		}
-		
-		public function onBegin(inTask:IWorkflowTask):void
-		{
-			_workflow.workflow_internal::onSubtaskBegin( inTask );
-		}
-		
-		public function onSuspend(inTask:IWorkflowTask):void
-		{
-			_workflow.workflow_internal::onSubtaskSuspended( inTask );
-		}
-		
-		public function onResume(inTask:IWorkflowTask):void
-		{
-			_workflow.workflow_internal::onSubtaskResumed( inTask );
-		}
-		
-		public function onProgress(inTask:IWorkflowTask):void
-		{
-			_workflow.workflow_internal::onSubtaskProgress( inTask );
-		}
-		
-		public function onFault(inTask:IWorkflowTask, inMessage:String):void
-		{
-			_workflow.workflow_internal::onSubtaskFault( inTask, inMessage );
-		}
-		
-		public function onAbort(inTask:IWorkflowTask, inMessage:String):void
+		public function onAbort( inTask : IWorkflowTask, inMessage : String ) : void
 		{
 			_workflow.workflow_internal::onSubtaskAbort( inTask, inMessage );
 		}
 		
+		public function onBegin( inTask : IWorkflowTask ) : void
+		{
+			_workflow.workflow_internal::onSubtaskBegin( inTask );
+		}
 		
+		public function onComplete( inTask : IWorkflowTask ) : void
+		{
+			_workflow.workflow_internal::onSubtaskCompleted( inTask );
+		}
+		
+		public function onFault( inTask : IWorkflowTask, inMessage : String ) : void
+		{
+			_workflow.workflow_internal::onSubtaskFault( inTask, inMessage );
+		}
+		
+		public function onInitialize( inTask : IWorkflowTask ) : void
+		{
+			_workflow.workflow_internal::onSubtaskInitialized( inTask );
+		}
+		
+		public function onPrepare( inTask : IWorkflowTask ) : void
+		{
+			_workflow.workflow_internal::onSubtaskPrepared( inTask );
+		}
+		
+		public function onProgress( inTask : IWorkflowTask ) : void
+		{
+			_workflow.workflow_internal::onSubtaskProgress( inTask );
+		}
+		
+		public function onResume( inTask : IWorkflowTask ) : void
+		{
+			_workflow.workflow_internal::onSubtaskResumed( inTask );
+		}
+		
+		public function onSuspend( inTask : IWorkflowTask ) : void
+		{
+			_workflow.workflow_internal::onSubtaskSuspended( inTask );
+		}
 	}
 }

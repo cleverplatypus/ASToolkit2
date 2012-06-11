@@ -19,45 +19,21 @@ Version 2.x
 */
 package org.astoolkit.commons.reflection
 {
+	
 	import flash.sampler.Sample;
 	import flash.utils.getQualifiedClassName;
-
+	
 	public class FieldInfo extends BaseInfo
 	{
-		public static const SCOPE_PUBLIC : String = "public";
 		public static const SCOPE_INTERNAL : String = "internal";
 		
-		private var _readOnly : Boolean;
-		private var _writeOnly : Boolean;
-		private var _type : Class;
-		private var _scope : String;
+		public static const SCOPE_PUBLIC : String = "public";
 		
-		
-		public function get type():Class
-		{
-			return _type;
-		}
-
-		public function get writeOnly():Boolean
-		{
-			return _writeOnly;
-		}
-
-		public function get readOnly():Boolean
-		{
-			return _readOnly;
-		}
-
-		public function get fullAccess() : Boolean
-		{
-			return !_readOnly && !_writeOnly;
-		}
-		
-		public static function create( 
+		public static function create(
 			inName : String,
 			inType : Class,
 			inReadOnly : Boolean,
-			inWriteOnly : Boolean, 
+			inWriteOnly : Boolean,
 			inScope : String,
 			inAnnotations : Vector.<IAnnotation> ) : FieldInfo
 		{
@@ -69,25 +45,53 @@ package org.astoolkit.commons.reflection
 			i._type = inType;
 			i._annotationsForName = {};
 			i._annotations = inAnnotations.concat();
-				
-			for each( var annotation : IAnnotation in inAnnotations )
+			
+			for each(var annotation : IAnnotation in inAnnotations)
 			{
-				if( !i._annotationsForName.hasOwnProperty( annotation.tagName ) )
-					i._annotationsForName[ annotation.tagName ] = 
+				if(!i._annotationsForName.hasOwnProperty( annotation.tagName ))
+					i._annotationsForName[annotation.tagName] =
 						new Vector.<IAnnotation>();
-				i._annotationsForName[ annotation.tagName ].push( annotation );
-				if( !i._annotationsForType.hasOwnProperty( getQualifiedClassName( annotation ) ) )
-					i._annotationsForType[ getQualifiedClassName( annotation ) ] = 
+				i._annotationsForName[annotation.tagName].push( annotation );
+				
+				if(!i._annotationsForType.hasOwnProperty( getQualifiedClassName( annotation )))
+					i._annotationsForType[getQualifiedClassName( annotation )] =
 						new Vector.<IAnnotation>();
-				i._annotationsForType[ getQualifiedClassName( annotation ) ].push( annotation );
+				i._annotationsForType[getQualifiedClassName( annotation )].push( annotation );
 			}
 			return i;
 		}
-
-		public function get scope():String
+		
+		private var _readOnly : Boolean;
+		
+		private var _scope : String;
+		
+		private var _type : Class;
+		
+		private var _writeOnly : Boolean;
+		
+		public function get fullAccess() : Boolean
+		{
+			return !_readOnly && !_writeOnly;
+		}
+		
+		public function get readOnly() : Boolean
+		{
+			return _readOnly;
+		}
+		
+		public function get scope() : String
 		{
 			return _scope;
 		}
-
+		
+		public function get type() : Class
+		{
+			return _type;
+		}
+		
+		public function get writeOnly() : Boolean
+		{
+			return _writeOnly;
+		}
 	}
 }

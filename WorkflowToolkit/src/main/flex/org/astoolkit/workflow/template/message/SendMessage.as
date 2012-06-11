@@ -19,14 +19,12 @@ Version 2.x
 */
 package org.astoolkit.workflow.template.message
 {
-	import mx.core.IFactory;
 	
+	import mx.core.IFactory;
 	import org.astoolkit.workflow.core.BaseTaskTemplate;
 	import org.astoolkit.workflow.task.api.ISendMessage;
 	
-	public dynamic class SendMessage 
-		extends BaseTaskTemplate 
-		implements ISendMessage
+	public dynamic class SendMessage extends BaseTaskTemplate implements ISendMessage
 	{
 		public function set isCommand( inValue : Boolean ) : void
 		{
@@ -57,6 +55,5 @@ package org.astoolkit.workflow.template.message
 		{
 			setImplementationProperty( "scope", inValue );
 		}
-		
 	}
 }

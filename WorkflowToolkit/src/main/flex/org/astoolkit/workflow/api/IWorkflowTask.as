@@ -28,46 +28,64 @@ package org.astoolkit.workflow.api
 	import org.astoolkit.workflow.core.ExitStatus;
 	
 	[Event(
-		name = "started",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
+		name="started",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name = "initialize",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
+		name="initialize",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name = "warning",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
+		name="warning",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name = "fault",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
+		name="fault",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name = "completed",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
+		name="completed",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name = "progress",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
+		name="progress",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name = "prepare",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
+		name="prepare",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	public interface IWorkflowTask extends IWorkflowElement, IEventDispatcher
 	{
-		//=================== DATA PIPELINE =============================
-		function get ignoreOutput() : Boolean;
-		function set ignoreOutput( inIgnoreOutput: Boolean ) : void;
-		function get output() : *;
-		function set timeout( inMillisecs : int ) : void;
-		function set input( inData : * ) : void;
 		/**
-		 * a filter for this task's pipeline data.<br><br>
+		 * called by user defined code or by aborted wrapping workflow.
 		 */
-		function set inputFilter( inValue : Object ) : void;
-		function get inputFilter() : Object;
-		function get filteredInput() : Object;
-		function set inlet( inInlet : Object ) : void;
-		function get inlet() : Object;
-		function set outlet( inInlet : Object ) : void;
-		function get outlet() : Object;
-		function get invalidPipelinePolicy() : String;
-		function set invalidPipelinePolicy( inValue : String ) : void;
+		function abort() : void;
+		/**
+		 * this is the method a new task will always implement.
+		 * It's where the task's async operations are fired.
+		 * Once the task is complete it should call its delegate's
+		 * onComplete() or onFault(...) asyncronously, that is, not
+		 * in the begin() call stack.
+		 */
+		function begin() : void;
+		/**
+		 * read only. returns the 0 to 1 progress of this task.
+		 * A value of -1 means that this task won't provide progress information.
+		 */
+		function get currentProgress() : Number;
+		function set currentProgress( inValue : Number ) : void;
+		/**
+		 * The current thread number.
+		 */
+		function get currentThread() : uint;
+		/**
+		 * the number of milliseconds the wrapping workflow will wait
+		 * before calling begin().
+		 * Notice that prepare() will be called before this delay.
+		 */
+		function get delay() : int;
+		function set delay( inDelay : int ) : void;
+		function get exitStatus() : ExitStatus;
+		/**
+		 * set this before calling <code>complete()</code> or <code>fail()</code>
+		 * if you want to set a custom exit status.
+		 */
+		function set exitStatus( inStatus : ExitStatus ) : void;
+		function get failureMessage() : String;
 		/**
 		 * the message to use in case of failure.
 		 *
@@ -107,14 +125,6 @@ package org.astoolkit.workflow.api
 		 * </listing>
 		 */
 		function set failureMessage( inValue : String ) : void;
-		function get failureMessage() : String;
-		//================================================================
-		function get status() : String;
-		/**
-		 * Whether to run this task is executing
-		 * either asyncronously or synchronously.
-		 */
-		function get running() : Boolean
 		/**
 		 * instructs the wrapping worfklow on what to do
 		 * if this task fails.
@@ -125,35 +135,23 @@ package org.astoolkit.workflow.api
 		 */
 		function get failurePolicy() : String;
 		function set failurePolicy( inPolicy : String ) : void;
+		function get filteredInput() : Object;
+		//=================== DATA PIPELINE =============================
+		function get ignoreOutput() : Boolean;
+		function set ignoreOutput( inIgnoreOutput : Boolean ) : void;
+		function get inlet() : Object;
+		function set inlet( inInlet : Object ) : void;
+		function set input( inData : * ) : void;
+		function get inputFilter() : Object;
 		/**
-		 * read only. returns the 0 to 1 progress of this task.
-		 * A value of -1 means that this task won't provide progress information.
+		 * a filter for this task's pipeline data.<br><br>
 		 */
-		function get currentProgress() : Number;
-		function set currentProgress( inValue : Number ) : void;
-		/**
-		 * the number of milliseconds the wrapping workflow will wait
-		 * before calling begin().
-		 * Notice that prepare() will be called before this delay.
-		 */
-		function get delay() : int;
-		function set delay( inDelay : int ) : void;
-		/**
-		 * this is the method a new task will always implement.
-		 * It's where the task's async operations are fired.
-		 * Once the task is complete it should call its delegate's
-		 * onComplete() or onFault(...) asyncronously, that is, not
-		 * in the begin() call stack.
-		 */
-		function begin() : void;
-		/**
-		 * called by user defined code or by aborted wrapping workflow.
-		 */
-		function abort() : void;
-		/**
-		 * stops the whole workflow at this task until resume is called.
-		 */
-		function suspend() : void;
+		function set inputFilter( inValue : Object ) : void;
+		function get invalidPipelinePolicy() : String;
+		function set invalidPipelinePolicy( inValue : String ) : void;
+		function get outlet() : Object;
+		function set outlet( inInlet : Object ) : void;
+		function get output() : *;
 		/**
 		 * resumes the whole workflow from the point where
 		 * suspend() was called. Not necessarily this task.
@@ -161,14 +159,16 @@ package org.astoolkit.workflow.api
 		 */
 		function resume() : void;
 		/**
-		 * set this before calling <code>complete()</code> or <code>fail()</code>
-		 * if you want to set a custom exit status.
+		 * Whether to run this task is executing
+		 * either asyncronously or synchronously.
 		 */
-		function set exitStatus( inStatus : ExitStatus ) : void;
-		function get exitStatus() : ExitStatus;
+		function get running() : Boolean
+		//================================================================
+		function get status() : String;
 		/**
-		 * The current thread number.
+		 * stops the whole workflow at this task until resume is called.
 		 */
-		function get currentThread() : uint;
+		function suspend() : void;
+		function set timeout( inMillisecs : int ) : void;
 	}
 }

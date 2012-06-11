@@ -17,14 +17,13 @@ limitations under the License.
 Version 2.x
 
 */
-
 package org.astoolkit.commons.collection.api
 {
 	
 	import mx.collections.ArrayCollection;
 	import mx.collections.IList;
 	import mx.core.IFactory;
-
+	
 	[Bindable]
 	/**
 	 * A contract for a data based loop provider.
@@ -36,19 +35,16 @@ package org.astoolkit.commons.collection.api
 		 */
 		function get dataProvider() : Object;
 		function set dataProvider( inValue : Object ) : void;
-		
+		function get iterator() : IIterator;
 		/**
-		 * an instance of <code>IIterator</code> appropriate 
+		 * an instance of <code>IIterator</code> appropriate
 		 * for the data source type
 		 */
 		function set iterator( inValue : IIterator ) : void;
-		function get iterator() : IIterator;
-
 		/**
 		 * a dictionary of properties to be assigned to the iterator
 		 * at instanciation time.
 		 */
 		function set iteratorConfig( inValue : Object ) : void;
-		
 	}
 }

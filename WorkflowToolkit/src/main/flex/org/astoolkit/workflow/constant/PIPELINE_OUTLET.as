@@ -17,12 +17,11 @@ limitations under the License.
 Version 2.x
 
 */
-
 package org.astoolkit.workflow.constant
 {
 	public const PIPELINE_OUTLET : PrivatePipelineOutlet = new PrivatePipelineOutlet();
 }
+
 class PrivatePipelineOutlet
 {
-	
 }

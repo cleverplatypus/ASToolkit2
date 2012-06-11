@@ -19,18 +19,18 @@ Version 2.x
 */
 package org.astoolkit.commons.factory
 {
+	
 	import mx.core.IFactory;
-
+	
 	public interface IPooledFactory extends IFactory
 	{
+		function set backupProperties( inProperties : Array ) : void;
+		function cleanup() : void;
+		function get defaultType() : Class;
+		function set delegate( inDelegate : IPooledFactoryDelegate ) : void;
 		function getInstance( inType : Class = null, inProperties : Object = null ) : *;
 		function hasPooledInstance( inType : Object ) : Boolean;
 		function release( inObject : Object ) : void;
 		function vacuum( inType : Object = null ) : void;
-		function set delegate( inDelegate : IPooledFactoryDelegate ) : void;
-		function set backupProperties( inProperties : Array ) : void;
-		function cleanup() : void;
-		function get defaultType() : Class;
-
 	}
 }

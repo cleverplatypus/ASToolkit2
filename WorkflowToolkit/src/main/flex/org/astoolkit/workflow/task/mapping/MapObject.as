@@ -13,75 +13,41 @@ package org.astoolkit.workflow.task.mapping
 	[Bindable]
 	public class MapObject extends Workflow implements IMapTask
 	{
-		private var _target : IFactory;
-		
-		private var _source : Object;
-		
-		public var property : String;
-		
-		public var value : Object;
-		
-		private var _targetObject : Object;
+		public var fun : Function;
 		
 		public var map : Object;
 		
+		public var property : String;
+		
 		public var target : Object;
 		
-		public var fun : Function;
+		public var value : Object;
 		
-		override public function initialize() : void
-		{
-			super.initialize();
-		}
+		private var _source : Object;
 		
-		override public function prepare() : void
-		{
-			super.prepare();
-			_targetObject = null;
-		}
+		private var _target : IFactory;
+		
+		private var _targetObject : Object;
 		
 		override public function begin() : void
 		{
 			super.begin();
 		}
 		
-		override protected function setSubtaskPipelineData( inTask : IWorkflowTask ) : void
+		override public function initialize() : void
 		{
-			super.setSubtaskPipelineData( inTask );
-			
-			if ( inTask is IMapTask && inTask is BaseElement )
-			{
-				if ( !BaseElement( inTask ).astoolkit_private::propertyIsUserDefined( "source" ) )
-				{
-					IMapTask( inTask ).source = getSource();
-				}
-				
-				if ( !BaseElement( inTask ).astoolkit_private::propertyIsUserDefined( "target" ) )
-				{
-					IMapTask( inTask ).targetClass = MonoInstanceFactory.of( getTarget() );
-				}
-			}
+			super.initialize();
 		}
 		
-		private function getTarget() : Object
+		override public function get output() : *
 		{
-			if ( !_targetObject )
-			{
-				if ( _target )
-					_targetObject = _target.newInstance();
-				else
-					_targetObject = {};
-			}
 			return _targetObject;
 		}
 		
-		private function getSource() : Object
+		override public function prepare() : void
 		{
-			if ( map && source && context )
-			{
-				context.config.inputFilterRegistry.getTransformer( source, map ).transform( source, map );
-			}
-			return source;
+			super.prepare();
+			_targetObject = null;
 		}
 		
 		public function get source() : Object
@@ -105,8 +71,42 @@ package org.astoolkit.workflow.task.mapping
 			_target = inValue;
 		}
 		
-		override public function get output() : *
+		override protected function setSubtaskPipelineData( inTask : IWorkflowTask ) : void
 		{
+			super.setSubtaskPipelineData( inTask );
+			
+			if(inTask is IMapTask && inTask is BaseElement)
+			{
+				if(!BaseElement( inTask ).astoolkit_private::propertyIsUserDefined( "source" ))
+				{
+					IMapTask( inTask ).source = getSource();
+				}
+				
+				if(!BaseElement( inTask ).astoolkit_private::propertyIsUserDefined( "target" ))
+				{
+					IMapTask( inTask ).targetClass = MonoInstanceFactory.of( getTarget());
+				}
+			}
+		}
+		
+		private function getSource() : Object
+		{
+			if(map && source && context)
+			{
+				context.config.inputFilterRegistry.getTransformer( source, map ).transform( source, map );
+			}
+			return source;
+		}
+		
+		private function getTarget() : Object
+		{
+			if(!_targetObject)
+			{
+				if(_target)
+					_targetObject = _target.newInstance();
+				else
+					_targetObject = {};
+			}
 			return _targetObject;
 		}
 	}

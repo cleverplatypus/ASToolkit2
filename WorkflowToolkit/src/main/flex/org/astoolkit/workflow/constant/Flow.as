@@ -17,12 +17,13 @@ limitations under the License.
 Version 2.x
 
 */
-
 package org.astoolkit.workflow.constant
 {
+	
 	public final class Flow
 	{
 		public static const PARALLEL : String = "parallel";
+		
 		public static const SERIAL : String = "serial";
 	}
 }

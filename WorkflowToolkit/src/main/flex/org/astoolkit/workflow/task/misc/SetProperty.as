@@ -19,6 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.misc
 {
+	
 	import org.astoolkit.workflow.core.BaseTask;
 	
 	/**
@@ -45,8 +46,8 @@ package org.astoolkit.workflow.task.misc
 	 * 			<p>In the following example, <code>SendMessage</code>
 	 * 			gets some data and passes it via pipeline to <code>SetProperty</code>.</p>
 	 * 			<p>Since only the <code>property</code> param is set, <code>SetProperty</code>
-	 * 			tries to assign the current pipeline data to <code>document.aString</code></p> 
-	 * 			
+	 * 			tries to assign the current pipeline data to <code>document.aString</code></p>
+	 *
 	 * <listing version="3.0">
 	 * &lt;msg:SendMessage
 	 *     message=&quot;{ GetSomeString }&quot;
@@ -59,16 +60,18 @@ package org.astoolkit.workflow.task.misc
 	public class SetProperty extends BaseTask
 	{
 		/**
-		 * the object to which to set the <code>property</code>.
-	 	 * Defaults to the current document
-		 */
-		public var target : Object;
-		/**
 		 * the target's property name
 		 */
 		public var property : String;
 		
-		[Bindable][InjectPipeline]
+		/**
+		 * the object to which to set the <code>property</code>.
+	   * Defaults to the current document
+			   */
+		public var target : Object;
+		
+		[Bindable]
+		[InjectPipeline]
 		/**
 		 * any value to be set to <code>target[ property ]</code>
 		 */
@@ -80,17 +83,19 @@ package org.astoolkit.workflow.task.misc
 		override public function begin() : void
 		{
 			super.begin();
-			if( !target )
+			
+			if(!target)
 				target = document;
-			if( !property || !target.hasOwnProperty( property ) )
+			
+			if(!property || !target.hasOwnProperty( property ))
 			{
-				fail( "SetProperty started without a property name or property name not found on target"  );
+				fail( "SetProperty started without a property name or property name not found on target" );
 				return;
 			}
-			if( value != undefined )
-				target[ property ] = value;
+			
+			if(value != undefined)
+				target[property] = value;
 			complete();
 		}
 	}
-	
 }

@@ -86,9 +86,14 @@ package org.astoolkit.workflow.core
 	 */
 	public dynamic class Group extends BaseElement implements IRuntimePropertyOverrideGroup
 	{
-		private var _dynamicProperties : Object = {};
 		
-		private var _dontOverride : Array = [];
+		[OverrideChildrenProperty]
+		[Bindable]
+		[Inspectable( defaultValue="abort", enumeration="abort,suspend,ignore,continue,log-debug,log-info,log-warn,log-error" )]
+		/**
+		 * Overrides children's <code>failurePolicy</code> value.
+		 */
+		public var failurePolicy : String;
 		
 		/**
 		 * @private
@@ -103,36 +108,16 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		protected var _tasks : Vector.<IWorkflowTask>;
-		
-		/**
-		 * @private
-		 */
 		protected var _insert : Vector.<Insert>;
 		
-		[OverrideChildrenProperty]
-		[Bindable]
-		[Inspectable( defaultValue="abort", enumeration="abort,suspend,ignore,continue,log-debug,log-info,log-warn,log-error" )]
-		/**
-		 * Overrides children's <code>failurePolicy</code> value.
-		 */
-		public var failurePolicy : String;
-		
 		/**
 		 * @private
 		 */
-		public function set insert(inInsert:Vector.<Insert>) : void
-		{
-			_insert = inInsert;
-		}
+		protected var _tasks : Vector.<IWorkflowTask>;
 		
-		/**
-		 * @private
-		 */
-		public function get insert() : Vector.<Insert>
-		{
-			return _insert;
-		}
+		private var _dontOverride : Array = [];
+		
+		private var _dynamicProperties : Object = {};
 		
 		/**
 		 * @private
@@ -147,12 +132,57 @@ package org.astoolkit.workflow.core
 		 */
 		public function set children( inChildren : Vector.<IWorkflowElement> ) : void
 		{
-			if ( _children && _children.length > 0 )
+			if(_children && _children.length > 0)
 				throw new Error( "Tasks list cannot be overridden" );
 			_children = inChildren;
 			
-			for each ( var child : IWorkflowElement in _children )
+			for each(var child : IWorkflowElement in _children)
 				child.parent = this;
+		}
+		
+		/**
+		 * @private
+		 */
+		override public function cleanUp() : void
+		{
+		}
+		
+		/**
+		 * @private
+		 */
+		override public function set context( inContext : IWorkflowContext ) : void
+		{
+			super.context = inContext;
+			
+			for each(var child : IWorkflowElement in children)
+				child.context = inContext;
+		}
+		
+		/**
+		 * @private
+		 */
+		override public function set currentIterator( inValue : IIterator ) : void
+		{
+			super.currentIterator = inValue;
+			
+			for each(var child : IWorkflowElement in children)
+				child.currentIterator = inValue;
+		}
+		
+		/**
+		 * @private
+		 */
+		public function set document( inDocument : Object ) : void
+		{
+			_document = inDocument;
+		}
+		
+		public function set dontOverride( inValue : String ) : void
+		{
+			if(inValue)
+			{
+				_dontOverride = StringUtil.trimArrayElements( inValue, "," ).split( "," );
+			}
 		}
 		
 		[Bindable]
@@ -177,9 +207,9 @@ package org.astoolkit.workflow.core
 		{
 			super.initialize();
 			
-			if ( children )
+			if(children)
 			{
-				for each ( var element : IWorkflowElement in children )
+				for each(var element : IWorkflowElement in children)
 				{
 					element.delegate = _delegate;
 					element.context = _context;
@@ -192,17 +222,17 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		override public function prepare() : void
+		public function get insert() : Vector.<Insert>
 		{
-			for each ( var child : IWorkflowElement in children )
-				child.prepare();
+			return _insert;
 		}
 		
 		/**
 		 * @private
 		 */
-		override public function cleanUp() : void
+		public function set insert( inInsert : Vector.<Insert> ) : void
 		{
+			_insert = inInsert;
 		}
 		
 		/**
@@ -216,53 +246,24 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		override public function set context( inContext : IWorkflowContext ) : void
+		override public function prepare() : void
 		{
-			super.context = inContext;
-			
-			for each ( var child : IWorkflowElement in children )
-				child.context = inContext;
-		}
-		
-		/**
-		 * @private
-		 */
-		override public function set currentIterator(inValue:IIterator) : void
-		{
-			super.currentIterator = inValue;
-			
-			for each ( var child : IWorkflowElement in children )
-				child.currentIterator = inValue;
-		}
-		
-		/**
-		 * @private
-		 */
-		public function set document( inDocument : Object ) : void
-		{
-			_document = inDocument;
-		}
-		
-		override flash_proxy function setProperty( inName : *, inValue : * ) : void
-		{
-			super.flash_proxy::setProperty( inName, inValue );
-			_dynamicProperties[ inName.localName ] = inValue;
+			for each(var child : IWorkflowElement in children)
+				child.prepare();
 		}
 		
 		public function propertyShouldOverride( inProperty : String ) : Boolean
 		{
-			if ( _dontOverride && ArrayUtil.getItemIndex( inProperty, _dontOverride ) > -1 )
+			if(_dontOverride && ArrayUtil.getItemIndex( inProperty, _dontOverride ) > -1)
 				return false;
 			return _dynamicProperties.hasOwnProperty( inProperty ) ||
 				ClassInfo.forType( this ).getField( inProperty ).hasAnnotation( OverrideChildrenProperty );
 		}
 		
-		public function set dontOverride( inValue : String ) : void
+		flash_proxy override function setProperty( inName : *, inValue : * ) : void
 		{
-			if ( inValue )
-			{
-				_dontOverride = StringUtil.trimArrayElements( inValue, "," ).split( "," );
-			}
+			super.flash_proxy::setProperty( inName, inValue );
+			_dynamicProperties[inName.localName] = inValue;
 		}
 	}
 }

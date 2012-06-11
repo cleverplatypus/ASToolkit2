@@ -29,32 +29,13 @@ package org.astoolkit.commons.io.transform
 	public class ObjectPropertyChainDataTransform implements IIODataTransformer
 	{
 		/**
-		 * returns the value of <code>inData</code>'s property chain <code>inExpression</code>
-		 */
-		public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
-		{
-			if ( inData == null )
-				return null;
-			
-			if ( inExpression == "." )
-				return inData;
-			var val : Object = inData;
-			
-			for each ( var k : String in inExpression.split( "." ) )
-			{
-				val = val[ k ];
-			}
-			return val;
-		}
-		
-		/**
 		 * @private
 		 */
 		public function isValidExpression( inExpression : Object ) : Boolean
 		{
 			var exp : String = inExpression as String;
 			return exp != null &&
-				( exp == "." || exp.match( /^\w+(\.\w+)*$/ ) );
+				(exp == "." || exp.match( /^\w+(\.\w+)*$/ ));
 		}
 		
 		/**
@@ -68,6 +49,16 @@ package org.astoolkit.commons.io.transform
 		/**
 		 * @private
 		 */
+		public function get supportedDataTypes() : Vector.<Class>
+		{
+			var out : Vector.<Class> = new Vector.<Class>();
+			out.push( Object );
+			return out;
+		}
+		
+		/**
+		 * @private
+		 */
 		public function get supportedExpressionTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
@@ -76,13 +67,22 @@ package org.astoolkit.commons.io.transform
 		}
 		
 		/**
-		 * @private
+		 * returns the value of <code>inData</code>'s property chain <code>inExpression</code>
 		 */
-		public function get supportedDataTypes() : Vector.<Class>
+		public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
 		{
-			var out : Vector.<Class> = new Vector.<Class>();
-			out.push( Object );
-			return out;
+			if(inData == null)
+				return null;
+			
+			if(inExpression == ".")
+				return inData;
+			var val : Object = inData;
+			
+			for each(var k : String in inExpression.split( "." ))
+			{
+				val = val[k];
+			}
+			return val;
 		}
 	}
 }
