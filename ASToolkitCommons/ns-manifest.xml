@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<componentPackage>
+    <component id="Eq" class="org.astoolkit.commons.conditional.Eq"/>
+    <component id="Gt" class="org.astoolkit.commons.conditional.Gt"/>
+    <component id="None" class="org.astoolkit.commons.conditional.None"/>
+    <component id="All" class="org.astoolkit.commons.conditional.All"/>
+    <component id="Any" class="org.astoolkit.commons.conditional.Any"/>
+    <component id="MatchRegExp" class="org.astoolkit.commons.conditional.MatchRegExp"/>
+</componentPackage>

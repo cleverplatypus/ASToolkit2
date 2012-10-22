@@ -17,8 +17,9 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.core
+package org.astoolkit.workflow.task.variables
 {
+	import org.astoolkit.workflow.core.BaseTask;
 
 	/**
 	 * Gets a variable either by name or by type from the context
@@ -80,7 +81,7 @@ package org.astoolkit.workflow.core
 
 			if( !localName )
 			{
-				var d : * = $.byType( type, true );
+				var d : * = ENV.byType( type, true );
 
 				if( d !== undefined )
 				{
@@ -88,7 +89,7 @@ package org.astoolkit.workflow.core
 				}
 			}
 
-			if( localName && context.variables.hasOwnProperty( localName ) )
+			if( localName && context.variables.variableIsDefined( localName ) )
 			{
 				out = context.variables[ localName ];
 
@@ -103,7 +104,8 @@ package org.astoolkit.workflow.core
 		public function set name( inValue : String ) : void
 		{
 			if( inValue )
-				_name = inValue.replace( /^[\$\.]+/ );
+				_name = inValue.match( /^\$/ ) ? inValue : "$" + inValue;
+
 			else
 				_name = null;
 		}

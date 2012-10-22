@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.astoolkit</groupId>
+	<version>0.0.0-SNAPSHOT</version>
+	<artifactId>RuntimeExpressionEvalPlugin</artifactId>
+	<packaging>swc</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.sonatype.flexmojos</groupId>
+				<artifactId>flexmojos-maven-plugin</artifactId>
+				<version>3.8</version>
+				<extensions>true</extensions>
+				<configuration>
+					<optimize>false</optimize>
+					<includeAsClasses>
+						<sources>
+							<directory>${basedir}/src/main/flex</directory>
+							<includes>
+								<include>**/*.as</include>
+							</includes>
+						</sources>
+					</includeAsClasses>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<parent>
+		<artifactId>astoolkit</artifactId>
+		<groupId>org.astoolkit</groupId>
+		<version>0.0.0-SNAPSHOT</version>
+	</parent>
+	<dependencies>
+		<dependency>
+			<artifactId>As3Eval</artifactId>
+			<groupId>com.hurlant</groupId>
+			<version>0.3</version>
+			<type>swc</type>
+		</dependency>
+		<dependency>
+			<artifactId>ASToolkitCommons</artifactId>
+			<groupId>org.astoolkit</groupId>
+			<version>0.0.0-SNAPSHOT</version>
+			<type>swc</type>
+		</dependency>
+		<dependency>
+			<artifactId>WorkflowToolkit</artifactId>
+			<groupId>org.astoolkit</groupId>
+			<version>0.0.0-SNAPSHOT</version>
+			<type>swc</type>
+		</dependency>
+	</dependencies>
+
+	<name>Workflow Toolkit Expression Eval Plugin</name>
+</project>

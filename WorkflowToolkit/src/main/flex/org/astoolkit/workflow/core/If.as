@@ -20,7 +20,20 @@ Version 2.x
 package org.astoolkit.workflow.core
 {
 
+	import flash.events.Event;
+	import flash.events.IEventDispatcher;
+	import flash.utils.setTimeout;
+	import mx.utils.UIDUtil;
+	import org.astoolkit.commons.conditional.AsyncExpressionToken;
+	import org.astoolkit.commons.conditional.api.IConditionalExpression;
+	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluator;
+	import org.astoolkit.workflow.api.IContextAwareElement;
 	import org.astoolkit.workflow.api.IWorkflowElement;
+	import org.astoolkit.workflow.api.IWorkflowTask;
+	import org.astoolkit.workflow.internals.DynamicTaskLiveCycleWatcher;
+	import org.astoolkit.workflow.internals.GroupUtil;
+	import org.astoolkit.workflow.internals.HeldTaskInfo;
+	import org.astoolkit.workflow.internals.WorkflowExpressionResolver;
 
 	[DefaultProperty( "Execute" )]
 	/**
@@ -41,10 +54,10 @@ package org.astoolkit.workflow.core
 	 * 			If its isPermanent property is set to true, then a (hypotetical) SendMail task is executed.
 	 * <listing version="3.0">
 	 * <pre>
-	 * &lt;If condition=&quot;{ Employee( $.data ).isPermanent }&quot;&gt;
+	 * &lt;If condition=&quot;{ Employee( ENV.$data ).isPermanent }&quot;&gt;
 	 *     &lt;net:SendEmail
 	 *         content=&quot;Hi {0}.\nYou're invited to the permanent-employees-only party.&quot;
-	 *         parameters=&quot;{ [ Employee( $.data ).fullName ] }&quot;
+	 *         parameters=&quot;{ [ Employee( ENV.$data ).fullName ] }&quot;
 	 *         /&gt;
 	 * &lt;/If&gt;
 	 * </pre>
@@ -53,17 +66,17 @@ package org.astoolkit.workflow.core
 	 * @example Same example but with an Else block.
 	 * <listing version="3.0">
 	 * <pre>
-	 * &lt;If condition=&quot;{ Employee( $.data ).isPermanent }&quot;&gt;
+	 * &lt;If condition=&quot;{ Employee( ENV.$data ).isPermanent }&quot;&gt;
 	 *     &lt;Execute&gt;
 	 *         &lt;net:SendEmail
 	 *             content=&quot;Hi {0}.\nYou're invited to the permanent-employees-only party.&quot;
-	 *             parameters=&quot;{ [ Employee( $.data ).fullName ] }&quot;
+	 *             parameters=&quot;{ [ Employee( ENV.$data ).fullName ] }&quot;
 	 *             /&gt;
 	 *     &lt;/Execute&gt;
 	 *     &lt;Else&gt;
 	 *         &lt;net:SendEmail
 	 *             content=&quot;Hi {0}.\nYou can stay home that day&quot;
-	 *             parameters=&quot;{ [ Employee( $.data ).fullName ] }&quot;
+	 *             parameters=&quot;{ [ Employee( ENV.$data ).fullName ] }&quot;
 	 *             /&gt;
 	 *     &lt;/Else&gt;
 	 * &lt;/If&gt;
@@ -74,15 +87,15 @@ package org.astoolkit.workflow.core
 	 * 			when declaring complex If groups, its use makes the syntax a little bit clearer.
 	 * <listing version="3.0">
 	 * <pre>
-	 * &lt;If condition=&quot;{ Employee( $.data ).isPermanent }&quot;&gt;
+	 * &lt;If condition=&quot;{ Employee( ENV.$data ).isPermanent }&quot;&gt;
 	 *     &lt;net:SendEmail
 	 *         content=&quot;Hi {0}.\nYou're invited to the permanent-employees-only party.&quot;
-	 *         parameters=&quot;{ [ Employee( $.data ).fullName ] }&quot;
+	 *         parameters=&quot;{ [ Employee( ENV.$data ).fullName ] }&quot;
 	 *         /&gt;
 	 *     &lt;Else&gt;
 	 *         &lt;net:SendEmail
 	 *             content=&quot;Hi {0}.\nYou can stay home that day&quot;
-	 *             parameters=&quot;{ [ Employee( $.data ).fullName ] }&quot;
+	 *             parameters=&quot;{ [ Employee( ENV.$data ).fullName ] }&quot;
 	 *             /&gt;
 	 *     &lt;/Else&gt;
 	 * &lt;/If&gt;
@@ -94,7 +107,12 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		private var _condition : Boolean;
+		private var _condition : Object;
+
+		/**
+		 * @private
+		 */
+		private var _expression : IConditionalExpression;
 
 		/**
 		 * @private
@@ -110,6 +128,18 @@ package org.astoolkit.workflow.core
 		 * @private
 		 */
 		private var _joinedChildren : Vector.<IWorkflowElement>;
+
+		/**
+		 * @private
+		 */
+		private var _myTasksLUT : Object;
+
+		/**
+		 * @private
+		 */
+		private var _stringExpression : String;
+
+		private var _taskBlocker : HeldTaskInfo;
 
 		/**
 		 * (optional) the tasks to enable with <code>condition == false</code>
@@ -153,15 +183,23 @@ package org.astoolkit.workflow.core
 		 * @see #Execute
 		 * @see #Else
 		 */
-		public function set condition( inValue : Boolean ) : void
+		public function set condition( inValue : Object ) : void
 		{
-			_condition = inValue;
+			if( inValue is Boolean )
+			{
+				_condition = inValue as Boolean;
+				applyCondition();
+			}
+			else if( inValue is String )
+			{
+				_stringExpression = inValue as String;
+			}
 
-			if( _isTrueGroup )
-				_isTrueGroup.enabled = _condition;
+			if( inValue is IConditionalExpression )
+			{
+				_expression = inValue as IConditionalExpression;
+			}
 
-			if( _isFalseGroup )
-				_isFalseGroup.enabled = !_condition;
 		}
 
 		/**
@@ -170,6 +208,42 @@ package org.astoolkit.workflow.core
 		override public function initialize() : void
 		{
 			super.initialize();
+
+			_myTasksLUT = {};
+
+			if( _stringExpression )
+			{
+				_expression =
+					_context
+					.config
+					.runtimeExpressionEvalutators
+					.getEvaluator( _stringExpression, IConditionalExpression )
+					as IConditionalExpression;
+
+				if( _expression )
+				{
+					if( _expression is IContextAwareElement )
+						IContextAwareElement( _expression ).context = _context;
+					IRuntimeExpressionEvaluator( _expression ).runtimeExpression = _stringExpression;
+				}
+				else
+				{
+					throw new Error( "Runtime expression evaluator " +
+						"not found for string " + _stringExpression );
+				}
+
+			}
+
+			if( _expression )
+				_expression.invalidate();
+
+			for each( var task : IWorkflowTask in GroupUtil.getRuntimeOverridableTasks( children ) )
+			{
+				_myTasksLUT[ UIDUtil.getUID( task ) ] = UIDUtil.getUID( task );
+			}
+			var watcher : DynamicTaskLiveCycleWatcher = new DynamicTaskLiveCycleWatcher();
+			watcher.beforeTaskBeginWatcher = onBeforeTaskBegin;
+			_context.addTaskLiveCycleWatcher( watcher );
 
 			if( _isTrueGroup != null )
 			{
@@ -186,6 +260,9 @@ package org.astoolkit.workflow.core
 				_isFalseGroup.parent = this;
 				_isFalseGroup.initialize();
 			}
+
+			if( _expression )
+				_expression.resolver = new WorkflowExpressionResolver( _context );
 		}
 
 		/**
@@ -212,6 +289,94 @@ package org.astoolkit.workflow.core
 
 			if( _isFalseGroup != null )
 				_isFalseGroup.prepare();
+
+			if( _expression )
+				_expression.clearResult();
+		}
+
+		private function applyCondition() : Object
+		{
+			var result : Object;
+
+			if( _expression )
+				result = _expression.async && _expression.lastResult !== undefined ?
+					_expression.lastResult :
+					_expression.evaluate();
+			else
+				result = _condition;
+
+			if( result is Boolean )
+			{
+				if( _isTrueGroup )
+					_isTrueGroup.enabled = result;
+
+				if( _isFalseGroup )
+					_isFalseGroup.enabled = !result;
+			}
+			return result;
+		}
+
+		/**
+		 * @private
+		 */
+		private function onBeforeTaskBegin( inTask : IWorkflowTask ) : void
+		{
+			if( _myTasksLUT.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
+			{
+				var result : Object = applyCondition();
+
+				if( result is AsyncExpressionToken )
+				{
+					_taskBlocker = inTask.hold();
+					setUpAsyncResultHandler( result as AsyncExpressionToken );
+				}
+
+				if( result is Error )
+				{
+					_taskBlocker = inTask.hold();
+					setTimeout( function() : void {
+						_taskBlocker.release( Error( result ) );
+					}, 1 );
+				}
+			}
+
+		}
+
+		private function onEvaluationAsyncResult( inEvent : Event ) : void
+		{
+			IEventDispatcher( inEvent.target ).removeEventListener(
+				Event.COMPLETE,
+				onEvaluationAsyncResult );
+			var result : Object = applyCondition();
+
+			if( result is Boolean )
+			{
+				if( _isTrueGroup )
+					_isTrueGroup.enabled = result == true;
+
+				if( _isFalseGroup )
+					_isFalseGroup.enabled = result == false;
+
+				_taskBlocker.release();
+				_taskBlocker = null;
+			}
+			else if( result is AsyncExpressionToken )
+			{
+				AsyncExpressionToken( result ).addEventListener(
+					Event.COMPLETE,
+					onEvaluationAsyncResult );
+			}
+			else if( result is Error )
+			{
+				_taskBlocker.release( result as Error );
+			}
+		}
+
+		private function setUpAsyncResultHandler( inToken : AsyncExpressionToken ) : void
+		{
+			inToken.addEventListener(
+				Event.COMPLETE,
+				onEvaluationAsyncResult );
 		}
 	}
 }

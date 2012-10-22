@@ -23,7 +23,7 @@ package org.astoolkit.workflow.core
 	/**
 	 * Tasks' completion information wrapper.
 	 * <p>Upon execution, each task has access to the previously executed task's exit status
-	 * via the <code>$.exitStatus</code> context variable</p>
+	 * via the <code>ENV.$exitStatus</code> context variable</p>
 	 *
 	 * @example In the following example, the <code>g_optionalTasks</code> group is executed
 	 * 			only if the previous task is not canceled by the user.
@@ -34,11 +34,11 @@ package org.astoolkit.workflow.core
 	 *     /&gt;
 	 * &lt;Group
 	 *     id=&quot;g_optionalTasks&quot;
-	 *     enabled=&quot;{ $.exitStatus != ExitStatus.USER_CANCELED }&quot;
+	 *     enabled=&quot;{ ENV.$exitStatus != ExitStatus.USER_CANCELED }&quot;
 	 *     &gt;
 	 *         &lt;email:AttachFile /&gt;
 	 *         &lt;msg:SendMessage
-	 *             message=&quot;{new ShowAttachment( $.data ) }&quot;
+	 *             message=&quot;{new ShowAttachment( ENV.$data ) }&quot;
 	 *             /&gt;
 	 * &lt;/Group&gt;
 	 * </pre>

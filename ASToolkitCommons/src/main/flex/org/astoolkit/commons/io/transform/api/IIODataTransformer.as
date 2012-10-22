@@ -22,15 +22,43 @@ package org.astoolkit.commons.io.transform.api
 
 	public interface IIODataTransformer
 	{
+
+		/**
+		 * sets and returns <code>next</code>. Use this to chain this transformer
+		 * to another transformer.
+		 * <p>Long chains can be created like this:
+		 * <code>transA.chain( transB ).chain( transC )</code>.
+		 * Notice that this expression returns the last transformer in the chain,
+		 * therefore if <code>chain()</code> is used to assign a transformer
+		 * (e.g. in a MXML attribute), <code>.root()</code> should be appended
+		 * to the expression: <code>transA.chain( transB ).chain( transC ).root()</code></p>
+		 */
+		function chain( inNext : IIODataTransformer ) : IIODataTransformer;
 		/**
 		 * returns true if the passed transform data is successfully
 		 * validated (e.g. expression syntax checks)
 		 */
 		function isValidExpression( inExpression : Object ) : Boolean;
 		/**
+		 * next transformer to invoke
+		 */
+		function get next() : IIODataTransformer;
+		function set next( inValue : IIODataTransformer ) : void;
+		/**
+		 * the parent transformer, if any in the chain
+		 */
+		function get parent() : IIODataTransformer;
+
+		function set parent( inValue : IIODataTransformer ) : void;
+		/**
 		 * an int for ordering transformers priorities.
 		 */
 		function get priority() : int;
+
+		/**
+		 * the root transformer in the chain
+		 */
+		function root() : IIODataTransformer;
 		/**
 		 * the list of types that can be used as sources (inData) for
 		 * the <code>transform()</code> method
@@ -50,6 +78,6 @@ package org.astoolkit.commons.io.transform.api
 		 *
 		 * @return the transforming result
 		 */
-		function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
+		function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object;
 	}
 }

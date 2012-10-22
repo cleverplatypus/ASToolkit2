@@ -17,12 +17,14 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.core
+package org.astoolkit.workflow.task.variables
 {
 
 	import flash.utils.getQualifiedClassName;
 	import mx.collections.IList;
+	import org.astoolkit.workflow.constant.UNDEFINED;
 	import org.astoolkit.workflow.internals.GroupUtil;
+	import org.astoolkit.workflow.core.BaseTask;
 
 	/**
 	 * Removes and outputs the last element of the list variable <code>name</code>.
@@ -102,7 +104,7 @@ package org.astoolkit.workflow.core
 				return;
 			}
 
-			if( !context.variables.hasOwnProperty( _name ) )
+			if( !context.variables.variableIsDefined( _name ) )
 			{
 				fail( "Variable {0} doesn't exist", _name );
 				return;
@@ -119,7 +121,7 @@ package org.astoolkit.workflow.core
 			var out : *;
 
 			if( varInstance is Array || getQualifiedClassName( varInstance ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) )
-				out = varInstance.length > 0 ? varInstance.pop() : undefined;
+				out = varInstance.length > 0 ? varInstance.pop() : UNDEFINED;
 			else if( varInstance is IList )
 				out = IList( varInstance ).length > 0 ?
 					IList( varInstance ).removeItemAt( IList( varInstance ).length - 1 ) :
@@ -147,7 +149,7 @@ package org.astoolkit.workflow.core
 		public function set name( inValue : String ) : void
 		{
 			if( inValue )
-				_name = inValue.replace( /^[\$\.]+/ );
+				_name = inValue.match( /^\$/ ) ? inValue : "$" + inValue;
 			else
 				_name = null;
 		}

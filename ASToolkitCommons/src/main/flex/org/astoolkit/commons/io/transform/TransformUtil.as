@@ -1,16 +1,32 @@
 package org.astoolkit.commons.io.transform
 {
 
+	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
+
 	public final class TransformUtil
 	{
-		public static function call( inFunctionName : String, ... inParams ) : *
+		public static function call( inFunctionName : String, ... inParams ) : Function
 		{
-			var out : * =  function( inData : Object, inTarget : Object ) : Object
-			{
-				if( inData is XML || inData is XMLList )
-					inData = new XMLWrapper( inData );
-				return inData[ inFunctionName ].apply( inData, inParams );
-			}
+			var out : * =
+				function( inData : Object, inTarget : Object ) : Object
+				{
+					if( inData is XML || inData is XMLList )
+						inData = new XMLWrapper( inData );
+					return inData[ inFunctionName ].apply( inData, inParams );
+				};
+			return out as Function;
+		}
+
+		public static function functionTransformer( inFunctionName : String, ... inParams ) : IIODataTransformer
+		{
+			var out : FunctionReferenceDataTransform = new FunctionReferenceDataTransform();
+			out.transformFunction =
+				function( inData : Object, inTarget : Object ) : Object
+				{
+					if( inData is XML || inData is XMLList )
+						inData = new XMLWrapper( inData );
+					return inData[ inFunctionName ].apply( inData, inParams );
+				};
 			return out;
 		}
 	}

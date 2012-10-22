@@ -27,12 +27,17 @@ package org.astoolkit.commons.io.transform
 	 * function with signature
 	 * <code>function( inData : Object, inTarget : Object ) : Object</code>
 	 */
-	public class FunctionReferenceDataTransform implements IIODataTransformer
+	public class FunctionReferenceDataTransform extends BaseDataTransformer
 	{
+
+		public var functionName : String;
+
+		public var transformFunction : Function;
+
 		/**
 		 * @private
 		 */
-		public function isValidExpression( inExpression : Object ) : Boolean
+		override public function isValidExpression( inExpression : Object ) : Boolean
 		{
 			return inExpression is Function;
 		}
@@ -40,7 +45,7 @@ package org.astoolkit.commons.io.transform
 		/**
 		 * @private
 		 */
-		public function get priority() : int
+		override public function get priority() : int
 		{
 			return -100;
 		}
@@ -48,17 +53,17 @@ package org.astoolkit.commons.io.transform
 		/**
 		 * @private
 		 */
-		public function get supportedDataTypes() : Vector.<Class>
+		override public function get supportedDataTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
-			out.push( Object );
+			out.push( Object, null );
 			return out;
 		}
 
 		/**
 		 * @private
 		 */
-		public function get supportedExpressionTypes() : Vector.<Class>
+		override public function get supportedExpressionTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
 			out.push( Function );
@@ -68,9 +73,15 @@ package org.astoolkit.commons.io.transform
 		/**
 		 * @private
 		 */
-		public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
+		override public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
 		{
-			return ( inExpression as Function )( inData, inTarget );
+			if( functionName )
+				return TransformUtil.call( functionName )( inData, inTarget );
+
+			if( transformFunction != null )
+				return transformFunction( inData, inTarget );
+			else
+				return ( inExpression as Function )( inData, inTarget );
 		}
 	}
 }

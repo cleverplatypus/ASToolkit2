@@ -26,6 +26,7 @@ package org.astoolkit.workflow.api
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.mapping.DataMap;
 	import org.astoolkit.workflow.core.ExitStatus;
+	import org.astoolkit.workflow.internals.HeldTaskInfo;
 
 	[Event(
 		name="started",
@@ -62,6 +63,8 @@ package org.astoolkit.workflow.api
 		 * in the begin() call stack.
 		 */
 		function begin() : void;
+
+		function get blocker() : HeldTaskInfo;
 		/**
 		 * read only. returns the 0 to 1 progress of this task.
 		 * A value of -1 means that this task won't provide progress information.
@@ -136,6 +139,11 @@ package org.astoolkit.workflow.api
 		function get failurePolicy() : String;
 		function set failurePolicy( inPolicy : String ) : void;
 		function get filteredInput() : Object;
+		function get forceAsync() : Boolean;
+
+		function set forceAsync( inValue : Boolean ) : void;
+
+		function hold() : HeldTaskInfo;
 		//=================== DATA PIPELINE =============================
 		function get ignoreOutput() : Boolean;
 		function set ignoreOutput( inIgnoreOutput : Boolean ) : void;
@@ -152,6 +160,18 @@ package org.astoolkit.workflow.api
 		function get outlet() : Object;
 		function set outlet( inInlet : Object ) : void;
 		function get output() : *;
+		function get outputFilter() : Object;
+		function set outputFilter( inValue : Object ) : void;
+
+		[Inspectable( enumeration="auto", defaultValue="auto" )]
+		/**
+		 * an arbitrary string used by the task to decide what to output.
+		 * Typically, a task implementation would implement/override this
+		 * setter to provide a custom [Inspectable] annotation
+		 * with the enumeration of possible values.
+		 * <p>The default value is "auto"</p>
+		 */
+		function set outputKind( inValue : String ) : void;
 		/**
 		 * resumes the whole workflow from the point where
 		 * suspend() was called. Not necessarily this task.

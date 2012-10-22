@@ -31,45 +31,61 @@ package org.astoolkit.commons.io.transform
 	 * "all" = the match return array or an int <em>n</em>
 	 * representing the index of the desired output array element.
 	 */
-	public class RegExpDataTransform implements IIODataTransformer
+	public class RegExpDataTransform extends BaseDataTransformer
 	{
-		public function isValidExpression( inExpression : Object ) : Boolean
+
+		public var options : String;
+
+		public var outputIndex : int = -1;
+
+		public var regexp : *;
+
+		override public function isValidExpression( inExpression : Object ) : Boolean
 		{
 			return inExpression is RegExp || inExpression is REConfig;
 		}
 
-		public function get priority() : int
+		override public function get priority() : int
 		{
 			return 0;
 		}
 
-		public function get supportedDataTypes() : Vector.<Class>
+		override public function get supportedDataTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
 			out.push( String );
 			return out;
 		}
 
-		public function get supportedExpressionTypes() : Vector.<Class>
+		override public function get supportedExpressionTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
-			out.push( RegExp );
-			out.push( REConfig );
+			out.push( RegExp, REConfig );
 			return out;
 		}
 
-		public function transform(
+		override public function transform(
 			inData : Object,
 			inExpression : Object,
 			inTarget : Object = null ) : Object
 		{
-			if( !isValidExpression( inExpression ) )
+
+			var exp : *;
+
+			if( regexp is String )
+				exp = new RegExp( regexp, options );
+			else if( regexp is RegExp || regexp is REConfig )
+				exp = regexp;
+			else
+				exp = inExpression;
+
+			if( !isValidExpression( exp ) )
 				throw new Error( "Invalid transform expression" );
-			var re : RegExp = inExpression is RegExp ?
-				inExpression as RegExp :
-				( inExpression as REConfig ).regexp;
-			var outIndex : int = inExpression is RegExp ?
-				-1 : ( inExpression as REConfig ).outputIndex;
+			var re : RegExp = exp is RegExp ?
+				exp as RegExp :
+				( exp as REConfig ).regexp;
+			var outIndex : int = exp is RegExp ?
+				outputIndex : ( exp as REConfig ).outputIndex;
 			var out : Array = String( inData ).match( re );
 
 			if( outIndex == -1 )

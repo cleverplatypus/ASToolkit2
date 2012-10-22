@@ -40,13 +40,22 @@ package org.astoolkit.workflow.task.io
 	{
 		public var destinationUrl : String;
 
+		[Bindable]
+		[InjectPipeline]
 		public var sourceUrl : String;
 
+		[Bindable]
 		private var destinationFile : File;
 
 		override public function begin() : void
 		{
 			super.begin();
+
+			if( !destinationUrl )
+			{
+				fail( "No destinationUrl set" );
+				return;
+			}
 			destinationFile = new File();
 			destinationFile.url = destinationUrl;
 
@@ -67,12 +76,6 @@ package org.astoolkit.workflow.task.io
 		{
 			super.prepare();
 			destinationFile = null;
-
-			if( sourceUrl == null )
-				sourceUrl = filteredInput as String;
-
-			if( sourceUrl == null )
-				fail( "Invalid source URL" );
 		}
 
 		private function cleanCache() : void

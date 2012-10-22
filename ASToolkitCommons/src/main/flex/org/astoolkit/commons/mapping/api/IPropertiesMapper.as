@@ -17,7 +17,7 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.mapping
+package org.astoolkit.commons.mapping.api
 {
 
 	import mx.core.IFactory;

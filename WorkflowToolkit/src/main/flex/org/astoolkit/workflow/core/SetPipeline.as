@@ -45,10 +45,14 @@ package org.astoolkit.workflow.core
 	 */
 	public class SetPipeline extends BaseTask
 	{
+		public static const TASKDESCRIPTOR : XML = <taskdescriptor version="1.0" xmlns="http//www.astoolkit.org/ns/taskdescriptor"></taskdescriptor>;
+
+		public var value : *;
+
 		override public function begin() : void
 		{
 			super.begin();
-			complete( filteredInput );
+			complete( value !== undefined ? value : filteredInput );
 		}
 	}
 }

@@ -6,6 +6,32 @@
 	<version>0.0.0-SNAPSHOT</version>
 	<name>Workflow Toolkit</name>
 	<packaging>swc</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.sonatype.flexmojos</groupId>
+				<artifactId>flexmojos-maven-plugin</artifactId>
+				<version>3.8</version>
+				<extensions>true</extensions>
+				<configuration>
+					<includeAsClasses>
+						<sources>
+							<directory>${basedir}/src/main/flex</directory>
+						</sources>
+					</includeAsClasses>
+					<namespaces>
+						<namespace>
+							<uri>http://www.astoolkit.org/ns/2012/workflow</uri>
+							<manifest>${basedir}/ns-manifest.xml</manifest>
+						</namespace>
+					</namespaces>
+					<includeNamespaces>
+						<namespace>http://www.astoolkit.org/ns/2012/workflow</namespace>
+					</includeNamespaces>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<parent>
 		<artifactId>astoolkit</artifactId>
 		<groupId>org.astoolkit</groupId>

@@ -17,8 +17,9 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.core
+package org.astoolkit.workflow.task.variables
 {
+	import org.astoolkit.workflow.core.BaseTask;
 
 	/**
 	 * Sets the value of the current's context variable.
@@ -75,7 +76,7 @@ package org.astoolkit.workflow.core
 		public function set name( inValue : String ) : void
 		{
 			if( inValue )
-				_name = inValue.replace( /^[\$\.]+/ );
+				_name = inValue.match( /^\$/ ) ? inValue : "$" + inValue;
 			else
 				_name = null;
 		}

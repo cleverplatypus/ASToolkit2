@@ -26,6 +26,7 @@ package org.astoolkit.commons.mapping
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 	import org.astoolkit.commons.reflection.ClassInfo;
+	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 
 	public class SimplePropertiesMapper implements IPropertiesMapper
 	{

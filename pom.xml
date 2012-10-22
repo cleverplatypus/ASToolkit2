@@ -24,6 +24,7 @@
 		<module>WorkflowAirToolkit</module>
 		<module>WorkflowToolkitParsleyPlugIn</module>
 		<module>WorkflowToolkitXPathPlugIn</module>
+		<module>RuntimeExpressionEvalPlugin</module>
 	</modules>
 	<build>
 		<finalName>${project.artifactId}</finalName>

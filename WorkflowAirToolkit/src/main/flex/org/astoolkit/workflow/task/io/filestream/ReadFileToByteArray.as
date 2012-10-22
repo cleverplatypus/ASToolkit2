@@ -5,10 +5,14 @@ package org.astoolkit.workflow.task.io.filestream
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
 	import flash.utils.ByteArray;
+	import flash.utils.Endian;
 	import org.astoolkit.workflow.core.BaseTask;
 
 	public class ReadFileToByteArray extends BaseTask
 	{
+
+		[Inspectable( enumeration="big,little", defaultValue="big" )]
+		public var endian : String
 
 		[Bindable]
 		[InjectPipeline]
@@ -40,6 +44,7 @@ package org.astoolkit.workflow.task.io.filestream
 				return;
 			}
 			var fs : FileStream = new FileStream();
+			fs.endian = endian == "big" ? Endian.BIG_ENDIAN : Endian.LITTLE_ENDIAN;
 			fs.open( aFile, FileMode.READ );
 			var out : ByteArray = new ByteArray();
 			fs.readBytes( out );

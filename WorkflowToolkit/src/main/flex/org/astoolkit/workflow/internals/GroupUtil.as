@@ -95,6 +95,11 @@ package org.astoolkit.workflow.internals
 			return recursivelyFindMyElements( addInserts( inElements ) );
 		}
 
+		public static function getRuntimeOverridableTasks( inElements : Vector.<IWorkflowElement> ) : Vector.<IWorkflowTask>
+		{
+			return recursivelyFindMyTasks( addInserts( inElements ), true );
+		}
+
 		public static function getRuntimeTasks( inElements : Vector.<IWorkflowElement> ) : Vector.<IWorkflowTask>
 		{
 			return recursivelyFindMyTasks( addInserts( inElements ) );
@@ -179,7 +184,7 @@ package org.astoolkit.workflow.internals
 			return out;
 		}
 
-		private static function recursivelyFindMyTasks( inElements : Vector.<IWorkflowElement> ) : Vector.<IWorkflowTask>
+		private static function recursivelyFindMyTasks( inElements : Vector.<IWorkflowElement>, inSkipWorkflowChildren : Boolean = false ) : Vector.<IWorkflowTask>
 		{
 			var out : Vector.<IWorkflowTask> = new Vector.<IWorkflowTask>();
 
@@ -190,7 +195,10 @@ package org.astoolkit.workflow.internals
 				else if( element is ITaskTemplate )
 					out.push( ITaskTemplate( element ).templateImplementation );
 				else if( element is IElementsGroup )
-					out = out.concat( getRuntimeTasks( IElementsGroup( element ).children ) );
+				{
+					if( !( element is IWorkflow ) || !inSkipWorkflowChildren )
+						out = out.concat( getRuntimeTasks( IElementsGroup( element ).children ) );
+				}
 			}
 			return out;
 		}

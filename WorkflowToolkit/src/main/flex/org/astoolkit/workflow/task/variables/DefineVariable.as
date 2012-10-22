@@ -17,26 +17,46 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.core
+package org.astoolkit.workflow.task.variables
 {
 
-	public class ClearVariable extends BaseTask
-	{
-		public var name : String;
+	import org.astoolkit.workflow.constant.UNDEFINED;
+	import org.astoolkit.workflow.core.BaseTask;
 
+	public class DefineVariable extends BaseTask
+	{
+		/**
+		 * @private
+		 */
+		private var _name : String;
+
+		/**
+		 * @private
+		 */
 		override public function begin() : void
 		{
 			super.begin();
 
-			if( !name )
+			if( !_name || _name.length == 0 || _name == "$" )
 			{
-				fail( "No variable name provided" );
+				fail( "Invalid name provided" );
 				return;
 			}
 
-			if( context.variables.hasOwnProperty( name ) )
-				delete context.variables[ name ];
+			context.variables[ _name ] = undefined;
 			complete();
 		}
+
+		public function set name( inValue : String ) : void
+		{
+			if( inValue )
+				_name = inValue.match( /^\$/ ) ? inValue : "$" + inValue;
+			else
+				_name = null;
+		}
 	}
+}
+
+class UndefinedVariable
+{
 }

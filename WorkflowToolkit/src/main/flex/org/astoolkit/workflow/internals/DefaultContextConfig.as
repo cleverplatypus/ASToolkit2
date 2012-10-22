@@ -22,11 +22,13 @@ package org.astoolkit.workflow.internals
 
 	import org.astoolkit.commons.collection.DefaultIteratorFactory;
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
+	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluatorRegistry;
 	import org.astoolkit.commons.io.transform.DefaultDataTransformRegistry;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 	import org.astoolkit.workflow.api.IContextConfig;
 	import org.astoolkit.workflow.api.IPropertyOverrideRule;
 	import org.astoolkit.workflow.api.ITaskTemplateRegistry;
+	import org.astoolkit.workflow.core.Default;
 
 	public class DefaultContextConfig implements IContextConfig
 	{
@@ -36,7 +38,19 @@ package org.astoolkit.workflow.internals
 
 		private var _propertyOverrideRule : IPropertyOverrideRule;
 
+		private var _runtimeExpressionEvalutators : IRuntimeExpressionEvaluatorRegistry;
+
 		private var _templateRegistry : ITaskTemplateRegistry;
+
+		public function get dataTransformerRegistry() : IIODataTransformerRegistry
+		{
+			return _inputFilterFactory;
+		}
+
+		public function set dataTransformerRegistry( inValue : IIODataTransformerRegistry ) : void
+		{
+			_inputFilterFactory = inValue;
+		}
 
 		public function init() : void
 		{
@@ -51,16 +65,9 @@ package org.astoolkit.workflow.internals
 
 			if( !_templateRegistry )
 				_templateRegistry = new DefaultTaskTemplateRegistry();
-		}
 
-		public function get inputFilterRegistry() : IIODataTransformerRegistry
-		{
-			return _inputFilterFactory;
-		}
-
-		public function set inputFilterRegistry( inValue : IIODataTransformerRegistry ) : void
-		{
-			_inputFilterFactory = inValue;
+			if( !_runtimeExpressionEvalutators )
+				_runtimeExpressionEvalutators = new DefaultRuntimeExpressionEvaluatorRegistry();
 		}
 
 		public function get iteratorFactory() : IIteratorFactory
@@ -81,6 +88,16 @@ package org.astoolkit.workflow.internals
 		public function set propertyOverrideRule( inValue : IPropertyOverrideRule ) : void
 		{
 			_propertyOverrideRule = inValue;
+		}
+
+		public function get runtimeExpressionEvalutators() : IRuntimeExpressionEvaluatorRegistry
+		{
+			return _runtimeExpressionEvalutators;
+		}
+
+		public function set runtimeExpressionEvalutators( inValue : IRuntimeExpressionEvaluatorRegistry ) : void
+		{
+			_runtimeExpressionEvalutators = inValue;
 		}
 
 		public function get templateRegistry() : ITaskTemplateRegistry

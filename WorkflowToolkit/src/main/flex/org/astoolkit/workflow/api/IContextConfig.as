@@ -21,6 +21,7 @@ package org.astoolkit.workflow.api
 {
 
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
+	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluatorRegistry;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 
 	/**
@@ -29,17 +30,17 @@ package org.astoolkit.workflow.api
 	public interface IContextConfig
 	{
 		/**
+		 * an instance of <code>IIODataTransformerRegistry</code> providing
+		 * access to all the registered IIODataTransformer implementations
+		 * made available to the <code>IWorkflowContext</code>
+		 */
+		function get dataTransformerRegistry() : IIODataTransformerRegistry;
+		function set dataTransformerRegistry( inValue : IIODataTransformerRegistry ) : void;
+		/**
 		 * called by the owner <code>IWorkflowContext</code> after
 		 * setting the config's properties.
 		 */
 		function init() : void;
-		/**
-		 * an instance of <code>IIOFilterRegistry</code> providing
-		 * access to all the registered IIOFilter implementations
-		 * made available to the <code>IWorkflowContext</code>
-		 */
-		function get inputFilterRegistry() : IIODataTransformerRegistry;
-		function set inputFilterRegistry( inValue : IIODataTransformerRegistry ) : void;
 		/**
 		 * an instance of <code>IIteratorFactory</code> providing
 		 * access to all the registered <code>IIterator</code> implementations
@@ -55,6 +56,9 @@ package org.astoolkit.workflow.api
 		 */
 		function get propertyOverrideRule() : IPropertyOverrideRule;
 		function set propertyOverrideRule( inValue : IPropertyOverrideRule ) : void;
+
+		function get runtimeExpressionEvalutators() : IRuntimeExpressionEvaluatorRegistry;
+		function set runtimeExpressionEvalutators( inValue : IRuntimeExpressionEvaluatorRegistry ) : void;
 		/**
 		 * an instance of <code>IIteratorFactory</code> providing
 		 * access to all the registered <code>IIterator</code> implementations

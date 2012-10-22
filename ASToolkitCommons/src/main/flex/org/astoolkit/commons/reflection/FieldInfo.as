@@ -35,7 +35,9 @@ package org.astoolkit.commons.reflection
 			inReadOnly : Boolean,
 			inWriteOnly : Boolean,
 			inScope : String,
-			inAnnotations : Vector.<IAnnotation> ) : FieldInfo
+			inAnnotations : Vector.<IAnnotation>,
+			inOwner : ClassInfo,
+			inDeclarer : ClassInfo ) : FieldInfo
 		{
 			var i : FieldInfo = new FieldInfo();
 			i._name = inName;
@@ -45,6 +47,9 @@ package org.astoolkit.commons.reflection
 			i._type = inType;
 			i._annotationsForName = {};
 			i._annotations = inAnnotations.concat();
+			i._owner = inOwner;
+			i._local = inOwner == inDeclarer;
+			i._declarer = inDeclarer;
 
 			for each( var annotation : IAnnotation in inAnnotations )
 			{
@@ -60,6 +65,12 @@ package org.astoolkit.commons.reflection
 			}
 			return i;
 		}
+
+		private var _declarer : ClassInfo;
+
+		private var _local : Boolean;
+
+		private var _owner : ClassInfo;
 
 		private var _readOnly : Boolean;
 

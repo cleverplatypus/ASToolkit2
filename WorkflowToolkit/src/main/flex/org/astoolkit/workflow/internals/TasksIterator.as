@@ -84,7 +84,7 @@ package org.astoolkit.workflow.internals
 					false,
 					false,
 					PropertyChangeEventKind.UPDATE,
-					"$",
+					"ENV",
 					Math.random(),
 					_current.context.variables,
 					_current.document
@@ -99,6 +99,12 @@ package org.astoolkit.workflow.internals
 			if( _elements && _elements.length > 0 )
 				return _currentIndex / _elements.length;
 			return -1;
+		}
+
+		public function pushBack() : void
+		{
+			// TODO Auto Generated method stub
+
 		}
 
 		public function reset() : void

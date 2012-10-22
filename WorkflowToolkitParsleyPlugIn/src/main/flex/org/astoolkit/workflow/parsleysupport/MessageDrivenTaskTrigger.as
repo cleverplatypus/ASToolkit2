@@ -32,10 +32,13 @@ package org.astoolkit.workflow.parsleysupport
 	import org.astoolkit.commons.factory.IPooledFactory;
 	import org.astoolkit.commons.factory.PooledFactory;
 	import org.astoolkit.workflow.api.*;
+	import org.astoolkit.workflow.constant.TaskStatus;
+	import org.astoolkit.workflow.core.ExitStatus;
 	import org.astoolkit.workflow.core.WorkflowEvent;
 	import org.spicefactory.lib.reflect.ClassInfo;
 	import org.spicefactory.parsley.core.context.Context;
 	import org.spicefactory.parsley.core.context.provider.Provider;
+	import org.spicefactory.parsley.core.messaging.MessageProcessor;
 	import org.spicefactory.parsley.core.messaging.command.CommandObserverProcessor;
 	import org.spicefactory.parsley.core.messaging.command.CommandStatus;
 	import org.spicefactory.parsley.core.registry.DynamicObjectDefinition;
@@ -71,8 +74,8 @@ package org.astoolkit.workflow.parsleysupport
 
 		public var taskRefId : String;
 
-		[Inspectable( enumeration="message,command,resultOverride" )]
-		public var type : String = "message";
+		[Inspectable( enumeration="messageHandler,command,resultOverride,managed" )]
+		public var type : String = "messageHandler";
 
 		public var workflow : IWorkflow;
 
@@ -91,7 +94,7 @@ package org.astoolkit.workflow.parsleysupport
 			var task : IWorkflow = resolveTask( inMessage );
 			var token : AsyncToken = new AsyncToken();
 			_commandTokens[ UIDUtil.getUID( task ) ] = token;
-			setTimeout( task.begin, 1 );
+			setTimeout( task.run, 1 );
 			return token;
 		}
 
@@ -108,13 +111,42 @@ package org.astoolkit.workflow.parsleysupport
 		{
 			if( !enabled )
 				return;
-			resolveTask( inMessage ).begin();
+			resolveTask( inMessage ).run();
 		}
 
 		public function initialized( inDocument : Object, inId : String ) : void
 		{
 			_id = inId;
 			setTimeout( registerMessageListener, 1 );
+		}
+
+		public function managedHandler( inMessage : Object, inProcessor : MessageProcessor ) : void
+		{
+			if( !enabled )
+				return;
+			var task : IWorkflow = resolveTask( inMessage );
+			var outResult : * = task.run( inMessage );
+
+			if( task.status != TaskStatus.RUNNING )
+			{
+				if( task.exitStatus.code == ExitStatus.ABORTED )
+				{
+					inProcessor.resume();
+					return;
+				}
+				else
+				{
+					inProcessor.suspend();
+					task.addEventListener( WorkflowEvent.COMPLETED, onTaskComplete );
+					task.context.data[ "interceptorProcessor" ] = inProcessor;
+					task.addEventListener( WorkflowEvent.COMPLETED, onTaskComplete );
+				}
+			}
+			else
+			{
+				inProcessor.cancel();
+					//inProcessor.command.setResult( outResult );
+			}
 		}
 
 		public function resultOverride( inResult : Object, inMessage : Object, inProcessor : CommandObserverProcessor ) : void
@@ -145,9 +177,11 @@ package org.astoolkit.workflow.parsleysupport
 
 		private function onTaskComplete( inEvent : WorkflowEvent ) : void
 		{
-			IWorkflow( inEvent.target ).removeEventListener(
+			var workflow : IWorkflow = IWorkflow( inEvent.target );
+			workflow.removeEventListener(
 				WorkflowEvent.COMPLETED,
 				onTaskComplete );
+			var processor : CommandObserverProcessor;
 
 			if( type == "command" )
 			{
@@ -165,15 +199,37 @@ package org.astoolkit.workflow.parsleysupport
 			}
 			else if( type == "resultOverride" )
 			{
-				var processor : CommandObserverProcessor =
-					IWorkflow( inEvent.target ).context.data[ "interceptorProcessor" ];
+				processor = IWorkflow( inEvent.target ).context.data[ "interceptorProcessor" ];
 				processor.command.setResult( IWorkflow( inEvent.target ).output );
 				processor.resume();
+			}
+			else if( type == "managed" )
+			{
+				processor = IWorkflow( inEvent.target ).context.data[ "interceptorProcessor" ];
+
+				if( workflow.exitStatus.code == ExitStatus.ABORTED )
+					processor.resume();
+				else
+					processor.cancel();
 			}
 		}
 
 		private function registerMessageListener() : void
 		{
+			if( type == "managed" )
+			{
+				_context.scopeManager.getScope( scope ).messageReceivers.addTarget(
+					new MessageHandler(
+					Provider.forInstance( this ),
+					"managedHandler",
+					selector,
+					ClassInfo.forClass( messageType ),
+					null,
+					int.MAX_VALUE
+					)
+					);
+			}
+
 			if( type == "command" )
 			{
 				_context.scopeManager.getScope( scope ).messageReceivers.addTarget(
@@ -183,7 +239,7 @@ package org.astoolkit.workflow.parsleysupport
 					selector,
 					ClassInfo.forClass( messageType ) ) );
 			}
-			else if( type == "message" )
+			else if( type == "messageHandler" )
 			{
 				_context.scopeManager.getScope( scope ).messageReceivers.addTarget(
 					new MessageHandler(

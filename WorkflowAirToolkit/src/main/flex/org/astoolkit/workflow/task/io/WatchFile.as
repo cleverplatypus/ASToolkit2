@@ -97,6 +97,9 @@ package org.astoolkit.workflow.task.io
 
 		private function getNewerModificationDate( inFile : File ) : void
 		{
+			_originalTimestamp = inFile.modificationDate;
+			return;
+
 			if( !inFile.isDirectory )
 			{
 				if( _originalTimestamp == null || _originalTimestamp.getTime() < inFile.modificationDate.getTime() )
@@ -119,7 +122,7 @@ package org.astoolkit.workflow.task.io
 				if( !shouldIncludeFile( file ) || shouldIgnoreFile( file ) )
 					continue;
 
-				if( !file.isDirectory && file.modificationDate.getTime() > _originalTimestamp.getTime() )
+				if( file.modificationDate.getTime() > _originalTimestamp.getTime() )
 					return true;
 
 				if( file.isDirectory && isDescendantChanged( file ) )
@@ -130,7 +133,7 @@ package org.astoolkit.workflow.task.io
 
 		private function onTimer( inEvent : TimerEvent ) : void
 		{
-			if( ( !file.isDirectory && file.modificationDate.getTime() > _originalTimestamp.getTime() ) ||
+			if( ( file.modificationDate.getTime() > _originalTimestamp.getTime() ) ||
 				( recursive && file.isDirectory && isDescendantChanged( file ) ) )
 			{
 				_timer.stop();

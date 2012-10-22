@@ -25,8 +25,9 @@ package org.astoolkit.commons.mapping
 	import org.astoolkit.commons.factory.PooledFactory;
 	import org.astoolkit.commons.io.transform.DefaultDataTransformRegistry;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
+	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 
-	public final class DataMap
+	public class DataMap
 	{
 		private static var _factory : PooledFactory;
 
@@ -86,9 +87,8 @@ package org.astoolkit.commons.mapping
 
 import mx.core.IFactory;
 import org.astoolkit.commons.factory.IPooledFactory;
-import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
-import org.astoolkit.commons.mapping.IPropertiesMapper;
+import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 import org.astoolkit.commons.mapping.SimplePropertiesMapper;
 
 class MapperWrapper implements IPropertiesMapper

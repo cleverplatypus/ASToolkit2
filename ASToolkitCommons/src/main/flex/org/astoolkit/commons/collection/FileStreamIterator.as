@@ -85,6 +85,12 @@ package org.astoolkit.commons.collection
 			return -1;
 		}
 
+		public function pushBack() : void
+		{
+			// TODO Auto Generated method stub
+
+		}
+
 		public function reset() : void
 		{
 			if( _source )

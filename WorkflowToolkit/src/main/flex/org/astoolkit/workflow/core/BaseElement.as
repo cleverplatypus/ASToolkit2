@@ -21,7 +21,9 @@ package org.astoolkit.workflow.core
 {
 
 	import flash.events.EventDispatcher;
+	import flash.utils.flash_proxy;
 	import flash.utils.getQualifiedClassName;
+	import flash.utils.setTimeout;
 	import mx.binding.utils.ChangeWatcher;
 	import mx.events.PropertyChangeEvent;
 	import mx.utils.ObjectProxy;
@@ -245,6 +247,12 @@ package org.astoolkit.workflow.core
 		 */
 		public function initialized( inDocument : Object, inId : String ) : void
 		{
+			if( inDocument.hasOwnProperty( "initialized" ) &&
+				inDocument[ "initialized" ] == false )
+			{
+				setTimeout( initialized, 1, inDocument, inId );
+				return;
+			}
 			_document = inDocument;
 			_id = inId;
 
@@ -280,6 +288,11 @@ package org.astoolkit.workflow.core
 		 */
 		public function prepare() : void
 		{
+		}
+
+		public function propertyIsEnumerable( V : * = null ) : Boolean
+		{
+			return true;
 		}
 
 		/**

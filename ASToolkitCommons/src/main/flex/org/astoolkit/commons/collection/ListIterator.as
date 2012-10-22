@@ -106,5 +106,12 @@ package org.astoolkit.commons.collection
 				return 0;
 			return _list is XMLList ? XMLList( _list ).length() : _list.length;
 		}
+		
+		public function pushBack():void
+		{
+			// TODO Auto Generated method stub
+			
+		}
+
 	}
 }

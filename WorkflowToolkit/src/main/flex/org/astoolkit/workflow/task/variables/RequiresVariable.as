@@ -17,11 +17,13 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.core
+package org.astoolkit.workflow.task.variables
 {
 
 	import flash.utils.getQualifiedClassName;
 	import mx.events.PropertyChangeEvent;
+	import org.astoolkit.workflow.constant.UNDEFINED;
+	import org.astoolkit.workflow.core.BaseTask;
 
 	/**
 	 * Checks the existence of the named/typed variable
@@ -54,7 +56,7 @@ package org.astoolkit.workflow.core
 	 * {
 	 *     var w : EncriptFileWorkflow = new EncriptFileWorkflow();
 	 *     w.run();
-	 *     w.$.inputFile = _file;
+	 *     w.ENV.$inputFile = _file;
 	 * }
 	 * </listing>
 	 * <listing version="3.0">
@@ -64,7 +66,7 @@ package org.astoolkit.workflow.core
 	 *     &lt;RequiresVariable
 	 *         type=&quot;flash.filesystem.File&quot;
 	 *         /&gt;
-	 *     &lt;crypt:EncriptFile file=&quot;{ $.byType( File ) }&quot;/&gt;
+	 *     &lt;crypt:EncriptFile file=&quot;{ ENV.byType( File ) }&quot;/&gt;
 	 * &lt;/Workflow&gt;
 	 * </listing>
 	 */
@@ -94,7 +96,7 @@ package org.astoolkit.workflow.core
 
 			if( _name )
 			{
-				if( $[ _name ] === undefined )
+				if( ENV[ _name ] === undefined )
 				{
 					onVariableNotAvailable();
 					return;
@@ -102,15 +104,15 @@ package org.astoolkit.workflow.core
 				else
 				{
 					if( isRightType() )
-						complete( returnValue ? $[ _name ] : undefined );
+						complete( returnValue ? ENV[ _name ] : UNDEFINED );
 				}
 			}
 			else if( type is Class )
 			{
-				var val : * = $.byType( type );
+				var val : * = ENV.byType( type );
 
 				if( val !== undefined )
-					complete( returnValue ? val : undefined );
+					complete( returnValue ? val : UNDEFINED );
 				else
 				{
 					onVariableNotAvailable();
@@ -122,7 +124,7 @@ package org.astoolkit.workflow.core
 		public function set name( inValue : String ) : void
 		{
 			if( inValue )
-				_name = inValue.replace( /^[\$\.]+/ );
+				_name = inValue.match( /^\$/ ) ? inValue : "$" + inValue;
 			else
 				_name = null;
 		}
@@ -132,14 +134,14 @@ package org.astoolkit.workflow.core
 		 */
 		private function isRightType() : Boolean
 		{
-			if( !notNull && $[ _name ] == null )
+			if( !notNull && ENV[ _name ] == null )
 				return true;
 
-			if( type != null && !( $[ _name ] is type ) )
+			if( type != null && !( ENV[ _name ] is type ) )
 			{
 				fail( "Unexpected variable value. Expected '{0}', found '{1}'",
 					getQualifiedClassName( type ),
-					$[ _name ] == null ? "null" : getQualifiedClassName( $[ _name ] ) );
+					ENV[ _name ] == null ? "null" : getQualifiedClassName( ENV[ _name ] ) );
 				return false;
 			}
 			return true;
@@ -152,7 +154,7 @@ package org.astoolkit.workflow.core
 		{
 			if( behaviour == "wait" || ( behaviour == "auto" && parent == root ) )
 			{
-				$.addEventListener(
+				ENV.$addEventListener(
 					PropertyChangeEvent.PROPERTY_CHANGE,
 					threadSafe( onVariableProviderChange ) );
 				return;

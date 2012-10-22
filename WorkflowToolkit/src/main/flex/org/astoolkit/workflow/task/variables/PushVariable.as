@@ -17,11 +17,12 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.core
+package org.astoolkit.workflow.task.variables
 {
 
 	import flash.utils.getQualifiedClassName;
 	import mx.collections.IList;
+	import org.astoolkit.workflow.core.BaseTask;
 
 	/**
 	 * Adds the provided value (or pipelineData) to a list type variable.
@@ -51,8 +52,8 @@ package org.astoolkit.workflow.core
 	 *         &lt;dialog:ShowSimpleDecisionDialog
 	 *             cancelButton="false"
 	 *             yesButton="true"
-	 *             title="Question { $.i }"
-	 *             text="{ $.currentData.question }"
+	 *             title="Question { ENV.$i }"
+	 *             text="{ ENV.$currentData.question }"
 	 *             /&gt;
 	 *         &lt;PushVariable
 	 *             name="answers"
@@ -93,7 +94,7 @@ package org.astoolkit.workflow.core
 				}
 			}
 
-			if( context.variables.hasOwnProperty( _name ) )
+			if( context.variables.variableIsDefined( _name ) )
 			{
 				if( listType )
 				{
@@ -102,15 +103,15 @@ package org.astoolkit.workflow.core
 						fail( "Destination list type and listType classes don't match" );
 						return;
 					}
+					else
+						varInstance = context.variables[ _name ];
 				}
-				else
-					varInstance = context.variables[ _name ];
 			}
 
 			if( !varInstance )
 				varInstance = listType ? new listType() : [];
 
-			if( !context.variables.hasOwnProperty( _name ) )
+			if( !context.variables.variableIsDefined( _name ) )
 				context.variables[ _name ] = varInstance;
 
 			if( varInstance is Array || getQualifiedClassName( varInstance ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) )
@@ -123,7 +124,7 @@ package org.astoolkit.workflow.core
 		public function set name( inValue : String ) : void
 		{
 			if( inValue )
-				_name = inValue.replace( /^[\$\.]+/ );
+				_name = inValue.match( /^\$/ ) ? inValue : "$" + inValue;
 			else
 				_name = null;
 		}

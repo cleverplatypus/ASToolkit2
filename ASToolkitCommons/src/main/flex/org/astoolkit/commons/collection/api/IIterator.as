@@ -66,6 +66,8 @@ package org.astoolkit.commons.collection.api
 		 */
 		function get progress() : Number;
 
+		function pushBack() : void;
+
 		/**
 		 * makes the iterator ready for a new iteration.
 		 * Any index should be reset here. <code>isAborted</code> should

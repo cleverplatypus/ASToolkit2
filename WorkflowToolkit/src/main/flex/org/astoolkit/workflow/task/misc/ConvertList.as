@@ -67,7 +67,7 @@ package org.astoolkit.workflow.task.misc
 		/**
 		 * the list output class, either <code>Array, Vector.&lt;&#42;&gt;, IList</code>
 		 */
-		public var outputType : * = Array;
+		public var outputClass : * = Array;
 
 		[Bindable]
 		[InjectPipeline]
@@ -85,7 +85,7 @@ package org.astoolkit.workflow.task.misc
 
 			try
 			{
-				complete( ListUtil.convert( source, outputType ) );
+				complete( ListUtil.convert( source, outputClass ) );
 			}
 			catch( e : Error )
 			{

@@ -23,5 +23,6 @@ package org.astoolkit.workflow.api
 	public interface ITaskTemplate extends IWorkflowElement
 	{
 		function get templateImplementation() : IWorkflowTask;
+		function set timeout( inValue : int ) : void;
 	}
 }

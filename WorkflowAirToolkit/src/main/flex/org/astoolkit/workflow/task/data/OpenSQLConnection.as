@@ -10,6 +10,25 @@ package org.astoolkit.workflow.task.data
 	import org.astoolkit.workflow.constant.PIPELINE_OUTLET;
 	import org.astoolkit.workflow.core.BaseTask;
 
+	/**
+	 * Opens a connection to a SQLite file.
+	 * <p>An anonymous variable of type SQLConnection is set upon completion</p>
+	 * <p>
+	 * <b>Any Input</b>
+	 * </p>
+	 * <p>
+	 * <b>Output</b>
+	 * <ul>
+	 * <li>The created connection</li>
+	 * </ul>
+	 * </p>
+	 * <p>
+	 * <b>Params</b>
+	 * <ul>
+	 * <li><code>source</code> (Injectable): a File object that represents the .db file</li>
+	 * </ul>
+	 * </p>
+	 */
 	public class OpenSQLConnection extends BaseTask
 	{
 
@@ -35,7 +54,7 @@ package org.astoolkit.workflow.task.data
 
 				if( outlet == PIPELINE_OUTLET )
 				{
-					$[ "sqlconnection" + ( new Date() ).getTime() ] = conn;
+					ENV[ "$sqlconnection" + ( new Date() ).getTime() ] = conn;
 					complete();
 				}
 				else
@@ -53,7 +72,7 @@ package org.astoolkit.workflow.task.data
 			var conn : SQLConnection = inEvent.target as SQLConnection;
 
 			if( outlet == PIPELINE_OUTLET )
-				$[ "sqlconnection" + ( new Date() ).getTime() ] = conn;
+				ENV[ "sqlconnection" + ( new Date() ).getTime() ] = conn;
 			else
 				complete( conn );
 		}

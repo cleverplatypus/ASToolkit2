@@ -565,7 +565,7 @@ package deng.fzip
 						parseFunc = parseIdle;
 						break;
 					default:
-						throw( new Error( "Unknown record signature." ) );
+						//throw( new Error( "Unknown record signature." ) );
 						break;
 				}
 				return true;

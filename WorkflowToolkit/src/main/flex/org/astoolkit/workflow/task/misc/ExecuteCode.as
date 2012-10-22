@@ -20,8 +20,6 @@ Version 2.x
 package org.astoolkit.workflow.task.misc
 {
 
-	import flash.utils.setTimeout;
-	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.core.WorkflowEvent;
 

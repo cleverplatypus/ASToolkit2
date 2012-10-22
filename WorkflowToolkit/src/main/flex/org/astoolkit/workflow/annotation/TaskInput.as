@@ -35,6 +35,8 @@ package org.astoolkit.workflow.annotation
 				_types = Vector.<Class>( getArray( "types", true ).map(
 					function( inClassName : String, inIndex : int, inArray : Array ) : Class
 					{
+						if( inClassName == "Vector" || inClassName.match( /^Vector\.<.+>$/ ) )
+							inClassName = "__AS3__.vec::" + inClassName;
 						return getDefinitionByName( inClassName ) as Class;
 					} ) );
 			return _types;

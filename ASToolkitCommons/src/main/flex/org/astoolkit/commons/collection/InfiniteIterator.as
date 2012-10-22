@@ -25,6 +25,9 @@ package org.astoolkit.commons.collection
 	[IteratorSource( "null" )]
 	public class InfiniteIterator implements IIterator
 	{
+
+		private var _index : int;
+
 		private var _isAborted : Boolean;
 
 		public function abort() : void
@@ -54,6 +57,7 @@ package org.astoolkit.commons.collection
 
 		public function next() : Object
 		{
+			_index++;
 			return null;
 		}
 
@@ -62,9 +66,16 @@ package org.astoolkit.commons.collection
 			return -1;
 		}
 
+		public function pushBack() : void
+		{
+			// TODO Auto Generated method stub
+
+		}
+
 		public function reset() : void
 		{
 			_isAborted = false;
+			_index = -1;
 		}
 
 		public function set source( inValue : * ) : void

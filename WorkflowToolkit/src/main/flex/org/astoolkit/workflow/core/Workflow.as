@@ -20,6 +20,9 @@ Version 2.x
 package org.astoolkit.workflow.core
 {
 
+	import flash.events.ErrorEvent;
+	import flash.events.Event;
+	import flash.utils.flash_proxy;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
 	import mx.core.ClassFactory;
@@ -28,6 +31,7 @@ package org.astoolkit.workflow.core
 	import mx.events.PropertyChangeEventKind;
 	import mx.logging.ILogger;
 	import mx.logging.Log;
+	import mx.utils.object_proxy;
 	import org.astoolkit.commons.collection.annotation.IteratorSource;
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.collection.api.IRepeater;
@@ -35,11 +39,14 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.factory.DynamicPoolFactoryDelegate;
 	import org.astoolkit.commons.factory.PooledFactory;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
-	import org.astoolkit.commons.mapping.IPropertiesMapper;
 	import org.astoolkit.commons.mapping.MappingError;
+	import org.astoolkit.commons.mapping.SimplePropertiesMapper;
+	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
+	import org.astoolkit.commons.mapping.api.IPropertyMappingDescriptor;
 	import org.astoolkit.commons.ns.astoolkit_private;
 	import org.astoolkit.commons.reflection.AnnotationUtil;
 	import org.astoolkit.commons.reflection.ClassInfo;
+	import org.astoolkit.commons.reflection.FieldInfo;
 	import org.astoolkit.commons.reflection.IAnnotation;
 	import org.astoolkit.commons.utils.ListUtil;
 	import org.astoolkit.workflow.annotation.*;
@@ -117,6 +124,11 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
+		protected var _contextAwareElements : Vector.<IContextAwareElement>;
+
+		/**
+		 * @private
+		 */
 		protected var _contextFactory : IFactory;
 
 		/**
@@ -190,7 +202,7 @@ package org.astoolkit.workflow.core
 					"You might want to call run() instead of begin()" );
 			}
 			super.begin();
-			_subPipelineData = UNDEFINED;
+			_subPipelineData = _inputData === undefined ? UNDEFINED : _inputData;
 			var w : ITaskLiveCycleWatcher;
 
 			if( runtimeTasks == null || runtimeTasks.length == 0 )
@@ -352,7 +364,7 @@ package org.astoolkit.workflow.core
 			return _flow;
 		}
 
-		[Inspectable( defaultValue="serial", enumeration="parallel,serial,none" )]
+		[Inspectable( defaultValue="serial", enumeration="parallel,serial" )]
 		public function set flow( inFlow : String ) : void
 		{
 			_flow = inFlow;
@@ -376,6 +388,25 @@ package org.astoolkit.workflow.core
 					element.initialize();
 				}
 			}
+
+			for each( var field : FieldInfo in ClassInfo.forType( this ).getFields() )
+			{
+				if( !field.writeOnly )
+				{
+					if( this[ field.name ] is IContextAwareElement )
+						IContextAwareElement( this[ field.name ] ).context = context;
+				}
+			}
+
+			for each( var cae : IContextAwareElement in _contextAwareElements )
+			{
+				cae.context = _context;
+			}
+		}
+
+		override public function initialized( inDocument : Object, inId : String ) : void
+		{
+			super.initialized( inDocument, inId );
 		}
 
 		public function get insert() : Vector.<Insert>
@@ -462,8 +493,8 @@ package org.astoolkit.workflow.core
 			if( !_metadataInitialized )
 				initializeMetadata();
 
-			if( inTaskInput != undefined )
-				_pipelineData = inTaskInput;
+			if( inTaskInput !== undefined )
+				_pipelineData = _inputData = inTaskInput;
 			_delegate = createDelegate();
 			var w : ITaskLiveCycleWatcher;
 
@@ -472,7 +503,7 @@ package org.astoolkit.workflow.core
 
 			if( !_context )
 			{
-				_context = _contextFactory.newInstance() as IWorkflowContext;
+				context = _contextFactory.newInstance() as IWorkflowContext;
 			}
 			_context.init();
 
@@ -607,7 +638,6 @@ package org.astoolkit.workflow.core
 			{
 				for each( var w : ITaskLiveCycleWatcher in c.taskLiveCycleWatchers )
 					w.onTaskFail( this );
-				cleanUp();
 			}
 		}
 
@@ -658,12 +688,23 @@ package org.astoolkit.workflow.core
 			}
 		}
 
-		protected function runNextTask() : void
+		protected function runNextTask( inForceSync : Boolean = false, inUseCurrent : Boolean = false ) : void
 		{
-			if( !_tasksIterator.hasNext() )
+			if( _tasksIterator.current() != null && IWorkflowTask( _tasksIterator.current() ).blocker )
+				return;
+
+			if( !( _tasksIterator.hasNext() ||
+				( inUseCurrent && _tasksIterator.current() != null ) ) )
 			{
 				if( flow == Flow.SERIAL )
 					complete();
+				return;
+			}
+
+			if( !inForceSync && _iterator && _iterator.currentIndex() != 0 && _iterator.currentIndex() % 500 == 0 )
+			{
+				setTimeout( runNextTask, 1, true );
+				LOGGER.debug( "Going async to avoid stack overflow" );
 				return;
 			}
 
@@ -672,14 +713,40 @@ package org.astoolkit.workflow.core
 			var task : IWorkflowTask;
 
 			while( _status != TaskStatus.ABORTED &&
-				_tasksIterator.hasNext() )
+				( _tasksIterator.hasNext() ||
+				( inUseCurrent && _tasksIterator.current() != null ) ) )
 			{
-				task = _tasksIterator.next() as IWorkflowTask;
+				if( inUseCurrent )
+				{
+					inUseCurrent = false;
+					task = _tasksIterator.current() as IWorkflowTask;
+				}
+				else
+					task = _tasksIterator.next() as IWorkflowTask;
+
+				var previousTaskProps : Object =
+					_context.variables.astoolkit_private::nextTaskProperties; //this must be called here as beforeTaskBegin wipes nextTaskProperties
 
 				for each( w in _context.taskLiveCycleWatchers )
 					w.beforeTaskBegin( task );
+
+				if( task.blocker )
+				{
+					task.blocker.addEventListener(
+						Event.COMPLETE,
+						onTaskBlockerComplete );
+					task.blocker.addEventListener(
+						ErrorEvent.ERROR,
+						onTaskBlockerError );
+					return;
+				}
 				setSubtaskPipelineData( task );
 				triggerContextBindings();
+
+				for( var prop : String in previousTaskProps )
+				{
+					task[ prop ] = previousTaskProps[ prop ];
+				}
 				switchBindingOnWrappingGroups( task, true );
 				BindingUtility.firePropertyBinding( task.document, task, "enabled" );
 				var taskEnabled : Boolean =
@@ -876,7 +943,7 @@ package org.astoolkit.workflow.core
 				{
 					var mappedA : * = IPropertiesMapper( inTask.outlet ).map( inTask.output );
 
-					if( mappedA != undefined )
+					if( mappedA !== undefined )
 						_pipelineData = mappedA;
 				}
 				dispatchTaskEvent( WorkflowEvent.COMPLETED, inTask, _pipelineData );
@@ -903,12 +970,14 @@ package org.astoolkit.workflow.core
 						{
 							var sOutlet : String = inTask.outlet as String;
 
-							if( sOutlet.match( /^\$\.?\w+$/ ) )
+							//TODO: reimplement using IExpressionResolver
+							if( sOutlet.match( /^\$?\w+$/ ) )
 							{
-								context.variables[ ( inTask.outlet as String ).substr( 1 ) ] = inTask.output;
+								context.variables[ inTask.outlet ] = inTask.output;
 							}
 							else if( sOutlet.match( /^\|?\w+$/ ) )
 							{
+								//TODO: change this to use an outputFilter ???
 								try
 								{
 									if( sOutlet.charAt( 0 ) == "|" )
@@ -946,8 +1015,24 @@ package org.astoolkit.workflow.core
 								return;
 							}
 
-							if( mapped != undefined && flow != Flow.PARALLEL )
+							if( mapped !== undefined && flow != Flow.PARALLEL )
 								_subPipelineData = mapped;
+						}
+						else if( inTask.outlet is IPropertyMappingDescriptor )
+						{
+							//TODO: cache property mapping
+							var descriptor : IPropertyMappingDescriptor =
+								IPropertyMappingDescriptor( inTask.outlet );
+							var mapper : SimplePropertiesMapper = new SimplePropertiesMapper();
+							mapper.strict = descriptor.strict;
+							mapper.transformerRegistry = _context.config.dataTransformerRegistry;
+							var target : Object =
+								descriptor.getTarget() !== undefined ?
+								descriptor.getTarget() : {};
+							_subPipelineData = mapper.mapWith(
+								inTask.output,
+								descriptor.getMapping(),
+								target );
 						}
 						else if( !inTask.ignoreOutput && flow != Flow.PARALLEL )
 						{
@@ -1080,12 +1165,19 @@ package org.astoolkit.workflow.core
 			dispatchTaskEvent( WorkflowEvent.SUSPENDED, inTask );
 		}
 
+		astoolkit_private function registerContextAwareElement( inElement : IContextAwareElement ) : void
+		{
+			if( !_contextAwareElements )
+				_contextAwareElements = new Vector.<IContextAwareElement>();
+			_contextAwareElements.push( inElement );
+		}
+
 		private function createInjectPipelineAnnotation( inType : Class, inProperties : Object ) : InjectPipeline
 		{
 			return new InjectPipeline(
 				function() : IIODataTransformerRegistry
 				{
-					return _context.config.inputFilterRegistry;
+					return _context.config.dataTransformerRegistry;
 				} );
 		}
 
@@ -1094,12 +1186,23 @@ package org.astoolkit.workflow.core
 			AnnotationUtil.registerAnnotation( new ClassFactory( Template ) );
 			AnnotationUtil.registerAnnotation( new ClassFactory( TaskInput ) );
 			AnnotationUtil.registerAnnotation( new ClassFactory( IteratorSource ) );
+			AnnotationUtil.registerAnnotation( new ClassFactory( TaskDescriptor ) );
 			AnnotationUtil.registerAnnotation(
 				PooledFactory.create(
 				InjectPipeline,
 				new DynamicPoolFactoryDelegate( createInjectPipelineAnnotation ) ) );
 			AnnotationUtil.registerAnnotation( new ClassFactory( OverrideChildrenProperty ) );
 			ClassInfo.clearCache();
+		}
+
+		private function onTaskBlockerComplete( inEvent : Event ) : void
+		{
+			runNextTask( false, true );
+		}
+
+		private function onTaskBlockerError( inEvent : ErrorEvent ) : void
+		{
+			fail( inEvent.text );
 		}
 
 		private function switchBindingOnWrappingGroups( inTask : IWorkflowTask, inEnable : Boolean ) : void
@@ -1124,7 +1227,7 @@ package org.astoolkit.workflow.core
 				false,
 				false,
 				PropertyChangeEventKind.UPDATE,
-				"$",
+				"ENV",
 				Math.random(),
 				context.variables
 				) );

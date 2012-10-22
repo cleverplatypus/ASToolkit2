@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<componentPackage>
+	<component id="FileFilter" class="org.astoolkit.workflow.task.io.util.FileFilter"/>
+	<component id="PromptUserForFileSelection" class="org.astoolkit.workflow.task.io.PromptUserForFileSelection"/>
+	<component id="CreateZipArchive" class="org.astoolkit.workflow.task.io.CreateZipArchive"/>
+	<component id="GetFilesList" class="org.astoolkit.workflow.task.io.GetFilesList"/>
+	<component id="LoadTextFile" class="org.astoolkit.workflow.task.io.LoadTextFile"/>
+	<component id="PromptUserForFileCreation" class="org.astoolkit.workflow.task.io.PromptUserForFileCreation"/>
+	<component id="PromptUserForFolderSelection" class="org.astoolkit.workflow.task.io.PromptUserForFolderSelection"/>
+	<component id="ResolveFilePath" class="org.astoolkit.workflow.task.io.ResolveFilePath"/>
+	<component id="UnzipFileFromUrl" class="org.astoolkit.workflow.task.io.UnzipFileFromUrlTask"/>
+	<component id="WatchFile" class="org.astoolkit.workflow.task.io.WatchFile"/>
+	<component id="CloseFileStream" class="org.astoolkit.workflow.task.io.filestream.CloseStream"/>
+	<component id="OpenFileStream" class="org.astoolkit.workflow.task.io.filestream.OpenFileStream"/>
+	<component id="ReadFileToByteArray" class="org.astoolkit.workflow.task.io.filestream.ReadFileToByteArray"/>
+	<component id="WriteFileStream" class="org.astoolkit.workflow.task.io.filestream.WriteStream"/>	
+	<component id="ExecuteSQLSelect" class="org.astoolkit.workflow.task.data.ExecuteSQLSelect"/>	
+	<component id="OpenSQLConnection" class="org.astoolkit.workflow.task.data.OpenSQLConnection"/>	
+	<component id="XSLTTransform" class="org.astoolkit.workflow.task.data.XSLTTransform"/>	
+</componentPackage>

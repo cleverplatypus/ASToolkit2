@@ -74,10 +74,15 @@ package org.astoolkit.commons.collection
 			return countFrom / countTo;
 		}
 
+		public function pushBack() : void
+		{
+			// TODO Auto Generated method stub
+
+		}
+
 		public function reset() : void
 		{
 			_currentCount = countFrom - 1;
-			countTo = int.MIN_VALUE;
 			_isAborted = false;
 		}
 

@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding ="utf-8"?>
+<swc xmlns="http://www.adobe.com/flash/swccatalog/9">
+  <versions>
+    <swc version="1.2" />
+    <flex version="4.6.0" build="23201" minimumSupportedVersion="4.0.0" />
+  </versions>
+  <features>
+    <feature-script-deps />
+    <feature-files />
+  </features>
+  <libraries>
+    <library path="library.swf">
+      <script name="org/astoolkit/workflow/constant/FailurePolicy" mod="1339447087000" signatureChecksum="75006179" >
+        <def id="org.astoolkit.workflow.constant:FailurePolicy" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/api/IWorkflowContext" mod="1339447095000" signatureChecksum="2858584556" >
+        <def id="org.astoolkit.workflow.api:IWorkflowContext" /> 
+        <dep id="org.astoolkit.workflow.api:IContextPlugIn" type="s" /> 
+        <dep id="org.astoolkit.workflow.internals:ContextVariablesProvider" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowTask" type="s" /> 
+        <dep id="org.astoolkit.workflow.internals:SuspendableFunctionRegistry" type="s" /> 
+        <dep id="__AS3__.vec:Vector" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:ITaskLiveCycleWatcher" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IContextConfig" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="flash.events:IEventDispatcher" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/api/IWorkflowElement" mod="1339447091000" signatureChecksum="131271497" >
+        <def id="org.astoolkit.workflow.api:IWorkflowElement" /> 
+        <dep id="org.astoolkit.workflow.api:IElementsGroup" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowContext" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowDelegate" type="s" /> 
+        <dep id="org.astoolkit.commons.collection.api:IIterator" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="flash.events:IEventDispatcher" type="i" /> 
+        <dep id="mx.core:IMXMLObject" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/api/IElementsGroup" mod="1339447112000" signatureChecksum="3931008323" >
+        <def id="org.astoolkit.workflow.api:IElementsGroup" /> 
+        <dep id="org.astoolkit.workflow.core:Insert" type="s" /> 
+        <dep id="__AS3__.vec:Vector" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowElement" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/api/IWorkflowTask" mod="1339494027000" signatureChecksum="3491011483" >
+        <def id="org.astoolkit.workflow.api:IWorkflowTask" /> 
+        <dep id="org.astoolkit.workflow.core:WorkflowEvent" type="e" /> 
+        <dep id="org.astoolkit.workflow.core:ExitStatus" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="flash.events:IEventDispatcher" type="i" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowElement" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/collection/api/IRepeater" mod="1339446825000" signatureChecksum="1347909831" >
+        <def id="org.astoolkit.commons.collection.api:IRepeater" /> 
+        <dep id="org.astoolkit.commons.collection.api:IIterator" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/api/IWorkflow" mod="1339447097000" signatureChecksum="2415289888" >
+        <def id="org.astoolkit.workflow.api:IWorkflow" /> 
+        <dep id="org.astoolkit.workflow.core:WorkflowEvent" type="e" /> 
+        <dep id="mx.core:IFactory" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.workflow.api:IElementsGroup" type="i" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowTask" type="i" /> 
+        <dep id="org.astoolkit.commons.collection.api:IRepeater" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/factory/IPooledFactory" mod="1339446820000" signatureChecksum="2230291588" >
+        <def id="org.astoolkit.commons.factory:IPooledFactory" /> 
+        <dep id="org.astoolkit.commons.factory:IPooledFactoryDelegate" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="mx.core:IFactory" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/collection/api/IIterator" mod="1339446828000" signatureChecksum="3199302173" >
+        <def id="org.astoolkit.commons.collection.api:IIterator" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/api/ITaskLiveCycleWatcher" mod="1339447103000" signatureChecksum="2578839516" >
+        <def id="org.astoolkit.workflow.api:ITaskLiveCycleWatcher" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowTask" type="s" /> 
+        <dep id="org.astoolkit.workflow.core:ExitStatus" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflow" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/constant/InvalidPipelinePolicy" mod="1339447081000" signatureChecksum="1512128021" >
+        <def id="org.astoolkit.workflow.constant:InvalidPipelinePolicy" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/core/BaseElement" mod="1339498896000" signatureChecksum="718180820" >
+        <def id="org.astoolkit.workflow.core:BaseElement" /> 
+        <dep id="flash.utils:setTimeout" type="e" /> 
+        <dep id="org.astoolkit.commons.reflection:ClassInfo" type="e" /> 
+        <dep id="flash.utils:getQualifiedClassName" type="e" /> 
+        <dep id="mx.binding.utils:ChangeWatcher" type="e" /> 
+        <dep id="org.astoolkit.workflow.constant:NO_DESCRIPTION" type="e" /> 
+        <dep id="mx.events:PropertyChangeEvent" type="e" /> 
+        <dep id="org.astoolkit.commons.databinding:BindingUtility" type="e" /> 
+        <dep id="org.astoolkit.workflow.api:IElementsGroup" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowContext" type="s" /> 
+        <dep id="org.astoolkit.commons.reflection:FieldInfo" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowDelegate" type="s" /> 
+        <dep id="org.astoolkit.commons.collection.api:IIterator" type="s" /> 
+        <dep id="mx.events:PropertyChangeEvent" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.ns:astoolkit_private" type="n" /> 
+        <dep id="mx.utils:ObjectProxy" type="i" /> 
+        <dep id="flash.events:IEventDispatcher" type="i" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowElement" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/core/BaseTask" mod="1339492538000" signatureChecksum="1703105432" >
+        <def id="org.astoolkit.workflow.core:BaseTask" /> 
+        <dep id="org.astoolkit.workflow.annotation:InjectPipeline" type="e" /> 
+        <dep id="org.astoolkit.workflow.internals:GroupUtil" type="e" /> 
+        <dep id="mx.binding.utils:ChangeWatcher" type="e" /> 
+        <dep id="trace" type="e" /> 
+        <dep id="mx.utils:StringUtil" type="e" /> 
+        <dep id="org.astoolkit.workflow.core:ExitStatus" type="e" /> 
+        <dep id="org.astoolkit.workflow.constant:TaskStatus" type="e" /> 
+        <dep id="mx.logging:Log" type="e" /> 
+        <dep id="mx.events:PropertyChangeEventKind" type="e" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflow" type="e" /> 
+        <dep id="Error" type="e" /> 
+        <dep id="org.astoolkit.commons.databinding:BindingUtility" type="e" /> 
+        <dep id="flash.utils:setTimeout" type="e" /> 
+        <dep id="org.astoolkit.commons.reflection:ClassInfo" type="e" /> 
+        <dep id="flash.utils:getQualifiedClassName" type="e" /> 
+        <dep id="org.astoolkit.workflow.core:WorkflowEvent" type="e" /> 
+        <dep id="org.astoolkit.workflow.constant:FailurePolicy" type="e" /> 
+        <dep id="org.astoolkit.workflow.constant:UNDEFINED" type="e" /> 
+        <dep id="org.astoolkit.workflow.constant:PIPELINE_OUTLET" type="e" /> 
+        <dep id="mx.events:PropertyChangeEvent" type="e" /> 
+        <dep id="org.astoolkit.workflow.constant:InvalidPipelinePolicy" type="e" /> 
+        <dep id="org.astoolkit.workflow.annotation:InjectPipeline" type="s" /> 
+        <dep id="org.astoolkit.workflow.internals:ContextVariablesProvider" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowElement" type="s" /> 
+        <dep id="mx.binding.utils:ChangeWatcher" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowContext" type="s" /> 
+        <dep id="org.astoolkit.workflow.core:ExitStatus" type="s" /> 
+        <dep id="org.astoolkit.commons.io.transform.api:IIODataTransformer" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflow" type="s" /> 
+        <dep id="org.astoolkit.commons.reflection:ClassInfo" type="s" /> 
+        <dep id="mx.logging:ILogger" type="s" /> 
+        <dep id="__AS3__.vec:Vector" type="s" /> 
+        <dep id="org.astoolkit.workflow.core:WorkflowEvent" type="s" /> 
+        <dep id="org.astoolkit.commons.reflection:FieldInfo" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:ITaskLiveCycleWatcher" type="s" /> 
+        <dep id="mx.events:PropertyChangeEvent" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="flash.events:IEventDispatcher" type="i" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowTask" type="i" /> 
+        <dep id="org.astoolkit.workflow.core:BaseElement" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/flex4/task/spark/PlaySparkAnimation" mod="1339447135000" signatureChecksum="1356493389" >
+        <def id="org.astoolkit.workflow.flex4.task.spark:PlaySparkAnimation" /> 
+        <dep id="mx.events:EffectEvent" type="e" /> 
+        <dep id="mx.effects:Effect" type="s" /> 
+        <dep id="mx.events:EffectEvent" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.workflow.core:BaseTask" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/reflection/BaseInfo" mod="1339446786000" signatureChecksum="2490614427" >
+        <def id="org.astoolkit.commons.reflection:BaseInfo" /> 
+        <dep id="flash.utils:getQualifiedClassName" type="e" /> 
+        <dep id="org.astoolkit.commons.reflection:IAnnotation" type="s" /> 
+        <dep id="__AS3__.vec:Vector" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/api/IWorkflowDelegate" mod="1339447093000" signatureChecksum="660844677" >
+        <def id="org.astoolkit.workflow.api:IWorkflowDelegate" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowTask" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/databinding/BindingUtility" mod="1339446823000" signatureChecksum="1699475352" >
+        <def id="org.astoolkit.commons.databinding:BindingUtility" /> 
+        <dep id="org.astoolkit.commons.reflection:ClassInfo" type="e" /> 
+        <dep id="mx.binding:IBindingClient" type="e" /> 
+        <dep id="__AS3__.vec:Vector" type="e" /> 
+        <dep id="org.astoolkit.commons.reflection:FieldInfo" type="e" /> 
+        <dep id="flash.utils:getDefinitionByName" type="e" /> 
+        <dep id="flash.utils:Dictionary" type="e" /> 
+        <dep id="org.astoolkit.commons.reflection:ClassInfo" type="s" /> 
+        <dep id="__AS3__.vec:Vector" type="s" /> 
+        <dep id="org.astoolkit.commons.reflection:FieldInfo" type="s" /> 
+        <dep id="flash.utils:Dictionary" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="mx.core:mx_internal" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/mapping/IPropertiesMapper" mod="1339446797000" signatureChecksum="2043789888" >
+        <def id="org.astoolkit.commons.mapping:IPropertiesMapper" /> 
+        <dep id="mx.core:IFactory" type="s" /> 
+        <dep id="org.astoolkit.commons.io.transform.api:IIODataTransformerRegistry" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/mapping/SimplePropertiesMapper" mod="1339446792000" signatureChecksum="4013360262" >
+        <def id="org.astoolkit.commons.mapping:SimplePropertiesMapper" /> 
+        <dep id="org.astoolkit.commons.reflection:ClassInfo" type="e" /> 
+        <dep id="flash.utils:getQualifiedClassName" type="e" /> 
+        <dep id="org.astoolkit.commons.mapping:MappingError" type="e" /> 
+        <dep id="org.astoolkit.commons.io.transform:DefaultDataTransformRegistry" type="e" /> 
+        <dep id="Error" type="e" /> 
+        <dep id="org.astoolkit.commons.io.transform.api:IIODataTransformer" type="s" /> 
+        <dep id="mx.core:IFactory" type="s" /> 
+        <dep id="org.astoolkit.commons.io.transform.api:IIODataTransformerRegistry" type="s" /> 
+        <dep id="Error" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.mapping:IPropertiesMapper" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/reflection/IAnnotation" mod="1339446768000" signatureChecksum="2012649824" >
+        <def id="org.astoolkit.commons.reflection:IAnnotation" /> 
+        <dep id="XML" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/reflection/Metadata" mod="1339446766000" signatureChecksum="4077449405" >
+        <def id="org.astoolkit.commons.reflection:Metadata" /> 
+        <dep id="flash.utils:describeType" type="e" /> 
+        <dep id="flash.utils:getQualifiedClassName" type="e" /> 
+        <dep id="mx.utils:StringUtil" type="e" /> 
+        <dep id="flash.utils:getDefinitionByName" type="e" /> 
+        <dep id="mx.logging:Log" type="e" /> 
+        <dep id="Error" type="e" /> 
+        <dep id="mx.logging:ILogger" type="s" /> 
+        <dep id="XML" type="s" /> 
+        <dep id="XMLList" type="s" /> 
+        <dep id="Error" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.reflection:IAnnotation" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/annotation/OverrideChildrenProperty" mod="1339447133000" signatureChecksum="3101184771" >
+        <def id="org.astoolkit.workflow.annotation:OverrideChildrenProperty" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.reflection:Metadata" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/reflection/AnnotationUtil" mod="1339446788000" signatureChecksum="895522" >
+        <def id="org.astoolkit.commons.reflection:AnnotationUtil" /> 
+        <dep id="org.astoolkit.commons.reflection:IAnnotation" type="e" /> 
+        <dep id="flash.utils:describeType" type="e" /> 
+        <dep id="flash.utils:getQualifiedClassName" type="e" /> 
+        <dep id="__AS3__.vec:Vector" type="e" /> 
+        <dep id="mx.core:IFactory" type="e" /> 
+        <dep id="org.astoolkit.commons.reflection:Metadata" type="e" /> 
+        <dep id="org.astoolkit.commons.reflection:IAnnotation" type="s" /> 
+        <dep id="__AS3__.vec:Vector" type="s" /> 
+        <dep id="mx.core:IFactory" type="s" /> 
+        <dep id="XML" type="s" /> 
+        <dep id="XMLList" type="s" /> 
+        <dep id="org.astoolkit.commons.reflection:Metadata" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/constant/PIPELINE_OUTLET" mod="1339427153000" signatureChecksum="3220907360" >
+        <def id="org.astoolkit.workflow.constant:PIPELINE_OUTLET" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/factory/PooledFactory" mod="1339446815000" signatureChecksum="807536381" >
+        <def id="org.astoolkit.commons.factory:PooledFactory" /> 
+        <dep id="flash.utils:setTimeout" type="e" /> 
+        <dep id="flash.utils:getQualifiedClassName" type="e" /> 
+        <dep id="mx.utils:UIDUtil" type="e" /> 
+        <dep id="mx.logging:Log" type="e" /> 
+        <dep id="mx.core:ClassFactory" type="e" /> 
+        <dep id="mx.utils:ArrayUtil" type="e" /> 
+        <dep id="Error" type="e" /> 
+        <dep id="org.astoolkit.commons.factory:IPooledFactoryDelegate" type="s" /> 
+        <dep id="mx.logging:ILogger" type="s" /> 
+        <dep id="mx.core:ClassFactory" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.factory:IPooledFactory" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/core/Insert" mod="1339447046000" signatureChecksum="3364327473" >
+        <def id="org.astoolkit.workflow.core:Insert" /> 
+        <dep id="org.astoolkit.workflow.api:IElementsGroup" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowElement" type="s" /> 
+        <dep id="__AS3__.vec:Vector" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/api/IPropertyOverrideRule" mod="1339447108000" signatureChecksum="3017488695" >
+        <def id="org.astoolkit.workflow.api:IPropertyOverrideRule" /> 
+        <dep id="org.astoolkit.workflow.api:IElementsGroup" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowElement" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/reflection/ClassInfo" mod="1339446784000" signatureChecksum="3792046373" >
+        <def id="org.astoolkit.commons.reflection:ClassInfo" /> 
+        <dep id="flash.utils:setTimeout" type="e" /> 
+        <dep id="flash.utils:describeType" type="e" /> 
+        <dep id="org.astoolkit.commons.reflection:IAnnotation" type="e" /> 
+        <dep id="flash.utils:getQualifiedClassName" type="e" /> 
+        <dep id="__AS3__.vec:Vector" type="e" /> 
+        <dep id="org.astoolkit.commons.reflection:FieldInfo" type="e" /> 
+        <dep id="flash.utils:getDefinitionByName" type="e" /> 
+        <dep id="org.astoolkit.commons.reflection:AnnotationUtil" type="e" /> 
+        <dep id="org.astoolkit.commons.reflection:IAnnotation" type="s" /> 
+        <dep id="__AS3__.vec:Vector" type="s" /> 
+        <dep id="org.astoolkit.commons.reflection:FieldInfo" type="s" /> 
+        <dep id="XML" type="s" /> 
+        <dep id="XMLList" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.reflection:BaseInfo" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/ns/astoolkit_private" mod="1339426897000" signatureChecksum="1812672175" >
+        <def id="org.astoolkit.commons.ns:astoolkit_private" /> 
+        <dep id="AS3" type="n" /> 
+      </script>
+      <script name="org/astoolkit/commons/factory/IPooledFactoryDelegate" mod="1339446818000" signatureChecksum="2333499657" >
+        <def id="org.astoolkit.commons.factory:IPooledFactoryDelegate" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/factory/DynamicPoolFactoryDelegate" mod="1339446822000" signatureChecksum="1245349271" >
+        <def id="org.astoolkit.commons.factory:DynamicPoolFactoryDelegate" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.factory:IPooledFactoryDelegate" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/io/transform/api/IIODataTransformerRegistry" mod="1339446801000" signatureChecksum="3478669641" >
+        <def id="org.astoolkit.commons.io.transform.api:IIODataTransformerRegistry" /> 
+        <dep id="org.astoolkit.commons.io.transform.api:IIODataTransformer" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/io/transform/api/IIODataTransformer" mod="1339446803000" signatureChecksum="3357175691" >
+        <def id="org.astoolkit.commons.io.transform.api:IIODataTransformer" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/io/transform/ObjectPropertyChainDataTransform" mod="1339446810000" signatureChecksum="2454818172" >
+        <def id="org.astoolkit.commons.io.transform:ObjectPropertyChainDataTransform" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.io.transform.api:IIODataTransformer" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/io/transform/DefaultDataTransformRegistry" mod="1339446813000" signatureChecksum="4155145463" >
+        <def id="org.astoolkit.commons.io.transform:DefaultDataTransformRegistry" /> 
+        <dep id="org.astoolkit.commons.io.transform:FunctionReferenceDataTransform" type="e" /> 
+        <dep id="flash.utils:getQualifiedClassName" type="e" /> 
+        <dep id="__AS3__.vec:Vector" type="e" /> 
+        <dep id="org.astoolkit.commons.io.transform.api:IIODataTransformer" type="e" /> 
+        <dep id="org.astoolkit.commons.io.transform:ObjectPropertyChainDataTransform" type="e" /> 
+        <dep id="Error" type="e" /> 
+        <dep id="org.astoolkit.commons.io.transform:RegExpDataTransform" type="e" /> 
+        <dep id="__AS3__.vec:Vector" type="s" /> 
+        <dep id="org.astoolkit.commons.io.transform.api:IIODataTransformer" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.io.transform.api:IIODataTransformerRegistry" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/io/transform/RegExpDataTransform" mod="1339446807000" signatureChecksum="918390824" >
+        <def id="org.astoolkit.commons.io.transform:RegExpDataTransform" /> 
+        <dep id="RegExp" type="e" /> 
+        <dep id="org.astoolkit.commons.io.transform:REConfig" type="e" /> 
+        <dep id="Error" type="e" /> 
+        <dep id="RegExp" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.io.transform.api:IIODataTransformer" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/internals/GroupUtil" mod="1339447000000" signatureChecksum="617428510" >
+        <def id="org.astoolkit.workflow.internals:GroupUtil" /> 
+        <dep id="org.astoolkit.commons.reflection:ClassInfo" type="e" /> 
+        <dep id="org.astoolkit.workflow.api:IRuntimePropertyOverrideGroup" type="e" /> 
+        <dep id="org.astoolkit.workflow.annotation:OverrideChildrenProperty" type="e" /> 
+        <dep id="org.astoolkit.workflow.api:IElementsGroup" type="e" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowElement" type="e" /> 
+        <dep id="org.astoolkit.workflow.core:Insert" type="e" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowTask" type="e" /> 
+        <dep id="__AS3__.vec:Vector" type="e" /> 
+        <dep id="org.astoolkit.workflow.api:ITaskTemplate" type="e" /> 
+        <dep id="org.astoolkit.commons.collection.api:IRepeater" type="e" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflow" type="e" /> 
+        <dep id="org.astoolkit.workflow.api:IElementsGroup" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowElement" type="s" /> 
+        <dep id="org.astoolkit.workflow.core:Insert" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowTask" type="s" /> 
+        <dep id="__AS3__.vec:Vector" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IPropertyOverrideRule" type="s" /> 
+        <dep id="org.astoolkit.commons.collection.api:IRepeater" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflow" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/core/WorkflowEvent" mod="1339447015000" signatureChecksum="2223405016" >
+        <def id="org.astoolkit.workflow.core:WorkflowEvent" /> 
+        <dep id="Error" type="e" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowTask" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowContext" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="flash.events:Event" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/constant/UNDEFINED" mod="1339427149000" signatureChecksum="952967487" >
+        <def id="org.astoolkit.workflow.constant:UNDEFINED" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/collection/api/IIteratorFactory" mod="1339446826000" signatureChecksum="3570291142" >
+        <def id="org.astoolkit.commons.collection.api:IIteratorFactory" /> 
+        <dep id="org.astoolkit.commons.collection.api:IIterator" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.factory:IPooledFactory" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/api/IContextPlugIn" mod="1339447113000" signatureChecksum="2744203711" >
+        <def id="org.astoolkit.workflow.api:IContextPlugIn" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/api/ITaskTemplate" mod="1339447101000" signatureChecksum="2398761917" >
+        <def id="org.astoolkit.workflow.api:ITaskTemplate" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowTask" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowElement" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/flex4/iterator/AnimatedValueIterator" mod="1339447137000" signatureChecksum="859499507" >
+        <def id="org.astoolkit.workflow.flex4.iterator:AnimatedValueIterator" /> 
+        <dep id="spark.effects.easing:Linear" type="e" /> 
+        <dep id="spark.effects.easing:IEaser" type="s" /> 
+        <dep id="spark.effects.easing:Linear" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.collection.api:IIterator" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/internals/ContextVariablesProvider" mod="1339502074000" signatureChecksum="1649957113" >
+        <def id="org.astoolkit.workflow.internals:ContextVariablesProvider" /> 
+        <dep id="org.astoolkit.commons.mapping:DataMap" type="e" /> 
+        <dep id="mx.utils:UIDUtil" type="e" /> 
+        <dep id="org.astoolkit.workflow.internals:GroupUtil" type="e" /> 
+        <dep id="QName" type="e" /> 
+        <dep id="mx.events:PropertyChangeEvent" type="e" /> 
+        <dep id="Error" type="e" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflow" type="e" /> 
+        <dep id="org.astoolkit.commons.mapping:DataMap" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IElementsGroup" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowElement" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowTask" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowContext" type="s" /> 
+        <dep id="org.astoolkit.workflow.core:ExitStatus" type="s" /> 
+        <dep id="org.astoolkit.commons.collection.api:IRepeater" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IContextConfig" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflow" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="flash.utils:flash_proxy" type="n" /> 
+        <dep id="mx.utils:ObjectProxy" type="i" /> 
+        <dep id="flash.events:IEventDispatcher" type="i" /> 
+        <dep id="org.astoolkit.workflow.api:ITaskLiveCycleWatcher" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/api/ITaskTemplateRegistry" mod="1339447099000" signatureChecksum="2886489826" >
+        <def id="org.astoolkit.workflow.api:ITaskTemplateRegistry" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowTask" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:ITaskTemplate" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/constant/TaskStatus" mod="1339447077000" signatureChecksum="441602860" >
+        <def id="org.astoolkit.workflow.constant:TaskStatus" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/io/transform/FunctionReferenceDataTransform" mod="1339446812000" signatureChecksum="1942391986" >
+        <def id="org.astoolkit.commons.io.transform:FunctionReferenceDataTransform" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.io.transform.api:IIODataTransformer" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/flex4/iterator/AnimatedPointIterator" mod="1339447138000" signatureChecksum="1661208577" >
+        <def id="org.astoolkit.workflow.flex4.iterator:AnimatedPointIterator" /> 
+        <dep id="spark.effects.easing:Linear" type="e" /> 
+        <dep id="flash.geom:Point" type="e" /> 
+        <dep id="spark.effects.easing:IEaser" type="s" /> 
+        <dep id="spark.effects.easing:Linear" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.collection.api:IIterator" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/io/transform/REConfig" mod="1339446809000" signatureChecksum="2668191200" >
+        <def id="org.astoolkit.commons.io.transform:REConfig" /> 
+        <dep id="RegExp" type="e" /> 
+        <dep id="Error" type="e" /> 
+        <dep id="RegExp" type="s" /> 
+        <dep id="Error" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/api/IRuntimePropertyOverrideGroup" mod="1339447106000" signatureChecksum="1287862612" >
+        <def id="org.astoolkit.workflow.api:IRuntimePropertyOverrideGroup" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.workflow.api:IElementsGroup" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/api/IContextConfig" mod="1339447115000" signatureChecksum="3826513450" >
+        <def id="org.astoolkit.workflow.api:IContextConfig" /> 
+        <dep id="org.astoolkit.commons.collection.api:IIteratorFactory" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:IPropertyOverrideRule" type="s" /> 
+        <dep id="org.astoolkit.workflow.api:ITaskTemplateRegistry" type="s" /> 
+        <dep id="org.astoolkit.commons.io.transform.api:IIODataTransformerRegistry" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/constant/NO_DESCRIPTION" mod="1339427154000" signatureChecksum="2406358775" >
+        <def id="org.astoolkit.workflow.constant:NO_DESCRIPTION" /> 
+        <dep id="String" type="s" /> 
+        <dep id="AS3" type="n" /> 
+      </script>
+      <script name="org/astoolkit/workflow/annotation/InjectPipeline" mod="1339447133000" signatureChecksum="1327214092" >
+        <def id="org.astoolkit.workflow.annotation:InjectPipeline" /> 
+        <dep id="org.astoolkit.commons.io.transform.api:IIODataTransformerRegistry" type="e" /> 
+        <dep id="org.astoolkit.commons.io.transform.api:IIODataTransformer" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.reflection:Metadata" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/reflection/FieldInfo" mod="1339446783000" signatureChecksum="2568001906" >
+        <def id="org.astoolkit.commons.reflection:FieldInfo" /> 
+        <dep id="org.astoolkit.commons.reflection:IAnnotation" type="e" /> 
+        <dep id="flash.utils:getQualifiedClassName" type="e" /> 
+        <dep id="__AS3__.vec:Vector" type="e" /> 
+        <dep id="org.astoolkit.commons.reflection:IAnnotation" type="s" /> 
+        <dep id="__AS3__.vec:Vector" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.reflection:BaseInfo" type="i" /> 
+      </script>
+      <script name="_dc9bacffa71cffff38565e2edea01de5de3083fd0bb71087a708c21f55da6cf4_flash_display_Sprite" mod="1339517544565" signatureChecksum="521633259" >
+        <def id="_dc9bacffa71cffff38565e2edea01de5de3083fd0bb71087a708c21f55da6cf4_flash_display_Sprite" /> 
+        <dep id="flash.system:Security" type="e" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="flash.display:Sprite" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/internals/SuspendableFunctionRegistry" mod="1339446998000" signatureChecksum="2396644939" >
+        <def id="org.astoolkit.workflow.internals:SuspendableFunctionRegistry" /> 
+        <dep id="flash.utils:getQualifiedClassName" type="e" /> 
+        <dep id="mx.utils:UIDUtil" type="e" /> 
+        <dep id="org.astoolkit.workflow.constant:TaskStatus" type="e" /> 
+        <dep id="mx.logging:Log" type="e" /> 
+        <dep id="org.astoolkit.workflow.api:IWorkflowTask" type="s" /> 
+        <dep id="mx.logging:ILogger" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/workflow/core/ExitStatus" mod="1339447053000" signatureChecksum="3125057527" >
+        <def id="org.astoolkit.workflow.core:ExitStatus" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/mapping/MappingError" mod="1339446793000" signatureChecksum="1029646323" >
+        <def id="org.astoolkit.commons.mapping:MappingError" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="Error" type="i" /> 
+      </script>
+      <script name="org/astoolkit/commons/mapping/DataMap" mod="1339446799000" signatureChecksum="3630750945" >
+        <def id="org.astoolkit.commons.mapping:DataMap" /> 
+        <dep id="org.astoolkit.commons.io.transform:DefaultDataTransformRegistry" type="e" /> 
+        <dep id="org.astoolkit.commons.mapping:SimplePropertiesMapper" type="e" /> 
+        <dep id="org.astoolkit.commons.factory:PooledFactory" type="e" /> 
+        <dep id="org.astoolkit.commons.factory:DynamicPoolFactoryDelegate" type="e" /> 
+        <dep id="mx.core:IFactory" type="s" /> 
+        <dep id="org.astoolkit.commons.factory:IPooledFactory" type="s" /> 
+        <dep id="org.astoolkit.commons.mapping:SimplePropertiesMapper" type="s" /> 
+        <dep id="org.astoolkit.commons.factory:PooledFactory" type="s" /> 
+        <dep id="org.astoolkit.commons.io.transform.api:IIODataTransformerRegistry" type="s" /> 
+        <dep id="AS3" type="n" /> 
+        <dep id="org.astoolkit.commons.mapping:IPropertiesMapper" type="i" /> 
+        <dep id="Object" type="i" /> 
+      </script>
+      <digests>
+        <digest type="SHA-256" signed="false" value="fe5ffeed7823d867c63163fb6ec820fdd244e659793282bc0e771c652c41953d"   />
+      </digests>
+    </library>
+  </libraries>
+  <files>
+  </files>
+</swc>

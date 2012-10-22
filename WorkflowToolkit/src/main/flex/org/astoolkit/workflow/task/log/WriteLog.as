@@ -58,18 +58,18 @@ package org.astoolkit.workflow.task.log
 		 */
 		public var level : String = "debug";
 
-		[Bindable]
-		[InjectPipeline]
-		/**
-		 * the text to log.
-		 * <p>{<em>n</em>} placeholders can be used for text substitution.</p>
-		 */
-		public var message : String = null;
-
 		/**
 		 * parameters for text substitution in the message
 		 */
 		public var parameters : Array = [];
+
+		[Bindable]
+		[InjectPipeline]
+		/**
+		 * the message to log.
+		 * <p>{<em>n</em>} placeholders can be used for text substitution.</p>
+		 */
+		public var text : String = null;
 
 		/**
 		 * @private
@@ -92,7 +92,7 @@ package org.astoolkit.workflow.task.log
 
 			try
 			{
-				var outMessage : String = message;
+				var outMessage : String = text;
 
 				if( !outMessage )
 				{
@@ -104,8 +104,8 @@ package org.astoolkit.workflow.task.log
 				while( outMessage.match( /\$\w+/ ) )
 				{
 					varName = outMessage.match( /\$\w+/ )[ 0 ];
-					re = new RegExp( "\\\u0024" + varName.substr( 1 ) + "", "g" );
-					outMessage = outMessage.replace( re, context.variables[ varName.substr( 1 ) ] );
+					re = new RegExp( "\\\u0024" + varName + "", "g" );
+					outMessage = outMessage.replace( re, context.variables[ varName ] );
 				}
 				var args : Array = [ _levels[ level ], outMessage ];
 				args = args.concat( parameters );

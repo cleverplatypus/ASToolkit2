@@ -110,6 +110,11 @@ package org.astoolkit.commons.reflection
 
 			for each( var accessor : XML in xml.descendants().( name().toString() == "accessor" || name().toString() == "variable" ) )
 			{
+				var declarer : ClassInfo =
+					accessor.@declaredBy == info.fullName ?
+					info : null;
+				//ClassInfo.forType( getDefinitionByName( accessor.@declaredBy ) );
+
 				var type : Class = accessor.@type.toString() == "*" ?
 					Object : getDefinitionByName( accessor.@type.toString() ) as Class;
 				var scope : String = accessor.@uri.toString() ==
@@ -122,7 +127,10 @@ package org.astoolkit.commons.reflection
 					accessor.@access.toString() == "readonly",
 					accessor.@access.toString() == "writeonly",
 					scope,
-					AnnotationUtil.getAnnotationsFromMetadata( accessor.metadata ) );
+					AnnotationUtil.getAnnotationsFromMetadata( accessor.metadata ),
+					info,
+					declarer
+					);
 			}
 			return info;
 		}
@@ -219,6 +227,11 @@ package org.astoolkit.commons.reflection
 		public function get methods() : Object
 		{
 			return _methods;
+		}
+
+		public function get superClass() : ClassInfo
+		{
+			return _superClass;
 		}
 
 		public function get type() : Class

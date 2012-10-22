@@ -52,7 +52,7 @@ package org.astoolkit.workflow.task.events
 		private function onEvent( inEvent : Event ) : void
 		{
 			target.removeEventListener( eventType, onEvent );
-			complete();
+			complete( inEvent );
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package org.astoolkit.workflow.task.flowcontrol
+package org.astoolkit.workflow.task.events
 {
 
 	import mx.core.FlexGlobals;

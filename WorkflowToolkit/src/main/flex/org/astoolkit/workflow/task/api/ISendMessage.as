@@ -7,7 +7,7 @@ package org.astoolkit.workflow.task.api
 	[Template]
 	public interface ISendMessage
 	{
-		function set isCommand( inValue : Boolean ) : void;
+		function set hasAsyncResult( inValue : Boolean ) : void;
 		function set message( inMessage : Object ) : void;
 		function set messageFactory( inValue : IFactory ) : void;
 		function set messageMappingFailurePolicy( inValue : String ) : void;

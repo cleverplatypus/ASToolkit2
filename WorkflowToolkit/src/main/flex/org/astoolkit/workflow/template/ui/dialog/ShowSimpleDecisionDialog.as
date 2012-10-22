@@ -8,9 +8,18 @@ package org.astoolkit.workflow.template.ui.dialog
 
 	public dynamic class ShowSimpleDecisionDialog extends BaseTaskTemplate implements IShowSimpleDecisionDialog
 	{
+		public static const NO : String  = "no";
+
+		public static const YES : String  = "yes";
+
 		public function set cancelButton( inValue : Boolean ) : void
 		{
 			setImplementationProperty( "cancelButton", inValue );
+		}
+
+		public function set modal( inValue : Boolean ) : void
+		{
+			setImplementationProperty( "modal", inValue );
 		}
 
 		public function set noButton( inValue : Boolean ) : void

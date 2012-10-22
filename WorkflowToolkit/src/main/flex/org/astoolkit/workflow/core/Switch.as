@@ -46,7 +46,7 @@ package org.astoolkit.workflow.core
 	 * 			listed values matches the enclosed tasks are executed.</p>
 	 * <listing version="3.0">
 	 * <pre>
-	 * &lt;Switch source=&quot;{ User( $.data ).role }&quot;&gt;
+	 * &lt;Switch source=&quot;{ User( ENV.$data ).role }&quot;&gt;
 	 *     &lt;Case value=&quot;{ UserRole.CUSTOMER }&quot;&gt;
 	 *         &lt;msg:SendMessage
 	 *             message=&quot;{ new ShowCustomerDashboardMessage() }&quot;
@@ -176,7 +176,6 @@ package org.astoolkit.workflow.core
 		 */
 		public function set source( inValue : * ) : void
 		{
-			trace( "called SWITCH source" );
 			_source = inValue;
 
 			if( _cases != null )

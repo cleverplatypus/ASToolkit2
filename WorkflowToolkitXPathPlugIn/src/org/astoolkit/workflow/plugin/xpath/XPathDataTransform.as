@@ -12,7 +12,7 @@ package org.astoolkit.workflow.plugin.xpath
 	 * <p>Requires xpath-as3 library (http://code.google.com/p/xpath-as3/)</p>
 	 *
 	 * @see org.astoolkit.workflow.api.IWorkflowContext#plugins
-	 * @see org.astoolkit.workflow.api.IContextConfig#inputFilterRegistry
+	 * @see org.astoolkit.workflow.api.IContextConfig#dataTransformerRegistry
 	 * @see org.astoolkit.workflow.api.IContextPlugIn
 	 * @see org.astoolkit.commons.io.filter.api.IIOFilter
 	 */

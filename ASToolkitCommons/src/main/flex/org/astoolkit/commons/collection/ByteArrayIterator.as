@@ -21,6 +21,7 @@ package org.astoolkit.commons.collection
 {
 
 	import flash.utils.ByteArray;
+	
 	import org.astoolkit.commons.collection.api.IIterator;
 
 	[IteratorSource( "flash.utils.ByteArray" )]
@@ -99,5 +100,12 @@ package org.astoolkit.commons.collection
 		{
 			return inObject is ByteArray;
 		}
+		
+		public function pushBack():void
+		{
+			// TODO Auto Generated method stub
+			
+		}
+		
 	}
 }

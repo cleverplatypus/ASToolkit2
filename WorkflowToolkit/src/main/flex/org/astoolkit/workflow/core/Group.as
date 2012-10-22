@@ -59,7 +59,7 @@ package org.astoolkit.workflow.core
 	 *         message=&quot;Recording login failure&quot;
 	 *         /&gt;
 	 *     &lt;audit:Audit
-	 *         entry=&quot;{ new LoginFailedAuditEvent( $.data as User ) }&quot;
+	 *         entry=&quot;{ new LoginFailedAuditEvent( ENV.$data as User ) }&quot;
 	 *         /&gt;
 	 * &lt;/Group&gt;
 	 * </pre>
@@ -90,7 +90,7 @@ package org.astoolkit.workflow.core
 
 		[OverrideChildrenProperty]
 		[Bindable]
-		[Inspectable( defaultValue="abort", enumeration="abort,suspend,ignore,continue,log-debug,log-info,log-warn,log-error" )]
+		[Inspectable( defaultValue="abort", enumeration="cascade,abort,suspend,ignore,continue,log-debug,log-info,log-warn,log-error" )]
 		/**
 		 * Overrides children's <code>failurePolicy</code> value.
 		 */
@@ -260,11 +260,10 @@ package org.astoolkit.workflow.core
 			return _dynamicProperties.hasOwnProperty( inProperty ) ||
 				ClassInfo.forType( this ).getField( inProperty ).hasAnnotation( OverrideChildrenProperty );
 		}
-
-		flash_proxy override function setProperty( inName : *, inValue : * ) : void
-		{
-			super.flash_proxy::setProperty( inName, inValue );
-			_dynamicProperties[ inName.localName ] = inValue;
-		}
+	/*flash_proxy override function setProperty( inName : *, inValue : * ) : void
+	{
+		super.flash_proxy::setProperty( inName, inValue );
+		_dynamicProperties[ inName.localName ] = inValue;
+	}*/
 	}
 }

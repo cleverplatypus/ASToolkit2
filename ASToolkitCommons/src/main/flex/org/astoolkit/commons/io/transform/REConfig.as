@@ -1,8 +1,11 @@
 package org.astoolkit.commons.io.transform
 {
 
+	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
+
 	public final class REConfig
 	{
+
 		public static function create( inRegExp : RegExp, inOutputIndex : int = -1 ) : REConfig
 		{
 			return inRegExp ?
@@ -10,10 +13,20 @@ package org.astoolkit.commons.io.transform
 				null;
 		}
 
+		public static function createTransformer( inRegExp : *, inOutputIndex : int = -1 ) : IIODataTransformer
+		{
+			var out : RegExpDataTransform = new RegExpDataTransform();
+			out.regexp =
+				inRegExp is String ?
+				eval( inRegExp as String, inOutputIndex ) :
+				create( inRegExp as RegExp, inOutputIndex );
+			return out;
+		}
+
 		public static function eval( inExpression : String, inOutputIndex : int = -1 ) : REConfig
 		{
 			var re : RegExp;
-			var parts : Array = String( inExpression ).match( /^\/(.+)\/(\w*)$/ );
+			var parts : Array = inExpression.toString().match( /^\/(.+)\/(\w*)$/ );
 
 			if( parts && parts.length > 1 )
 			{

@@ -26,7 +26,7 @@ package org.astoolkit.workflow.template.message
 
 	public dynamic class SendMessage extends BaseTaskTemplate implements ISendMessage
 	{
-		public function set isCommand( inValue : Boolean ) : void
+		public function set hasAsyncResult( inValue : Boolean ) : void
 		{
 			setImplementationProperty( "isCommand", inValue );
 		}

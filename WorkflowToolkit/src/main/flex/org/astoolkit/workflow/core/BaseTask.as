@@ -20,7 +20,8 @@ Version 2.x
 package org.astoolkit.workflow.core
 {
 
-	import flash.utils.flash_proxy;
+	import flash.events.ErrorEvent;
+	import flash.events.Event;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
 	import mx.binding.utils.ChangeWatcher;
@@ -39,8 +40,9 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.workflow.constant.*;
 	import org.astoolkit.workflow.internals.ContextVariablesProvider;
 	import org.astoolkit.workflow.internals.GroupUtil;
+	import org.astoolkit.workflow.internals.HeldTaskInfo;
 
-	[Exclude( name="$", kind="property" )]
+	[Exclude( name="ENV", kind="property" )]
 	[Exclude( name="delegate", kind="property" )]
 	[Exclude( name="currentProgress", kind="property" )]
 	[Exclude( name="context", kind="property" )]
@@ -116,7 +118,7 @@ package org.astoolkit.workflow.core
 	 * 			pipeline data is an object of type <code>Company</code>).</p>
 	 * <listing version="3.0">
 	 * &lt;pr:SendCatalogViaEmail
-	 * 		recipient="{ Company( $.data ).email }"
+	 * 		recipient="{ Company( ENV.$data ).email }"
 	 * 		/&gt;
 	 * </listing>
 	 */
@@ -175,6 +177,8 @@ package org.astoolkit.workflow.core
 		 */
 		protected var _failurePolicy : String = FailurePolicy.ABORT;
 
+		protected var _forceAsync : Boolean;
+
 		/**
 		 * @private
 		 */
@@ -218,6 +222,16 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
+		protected var _outputFilter : Object;
+
+		/**
+		 * @private
+		 */
+		protected var _outputKind : String = "auto";
+
+		/**
+		 * @private
+		 */
 		protected var _taskCompleted : Boolean;
 
 		/**
@@ -229,6 +243,8 @@ package org.astoolkit.workflow.core
 		 * @private
 		 */
 		internal var _pipelineData : * = UNDEFINED;
+
+		private var _blocker : HeldTaskInfo;
 
 		/**
 		 * @private
@@ -247,16 +263,16 @@ package org.astoolkit.workflow.core
 		 * 			pipeline data is an object of type <code>Company</code>).
 		 * <listing version="3.0">
 		 * &lt;pr:SendCatalogViaEmail
-		 * 		recipient="{ Company( $.data ).email }"
+		 * 		recipient="{ Company( ENV.$data ).email }"
 		 * 		/&gt;
 		 * </listing>
 		 */
-		public function get $() : ContextVariablesProvider
+		public function get ENV() : ContextVariablesProvider
 		{
 			return context ? context.variables : null;
 		}
 
-		public function set $( inValue : * ) : void
+		public function set ENV( inValue : * ) : void
 		{
 		/*
 			empty setter definition necessary to avoid the read-only
@@ -273,6 +289,7 @@ package org.astoolkit.workflow.core
 			_status = TaskStatus.ABORTED;
 			exitStatus = new ExitStatus( ExitStatus.ABORTED );
 			_thread++;
+			dispatchTaskEvent( WorkflowEvent.ABORTED, this );
 			_delegate.onAbort( this, "Aborted: " + description );
 		}
 
@@ -309,6 +326,11 @@ package org.astoolkit.workflow.core
 			_delegate.onBegin( this );
 		}
 
+		public function get blocker() : HeldTaskInfo
+		{
+			return _blocker;
+		}
+
 		override public function cleanUp() : void
 		{
 			_status = TaskStatus.STOPPED;
@@ -317,6 +339,7 @@ package org.astoolkit.workflow.core
 			_context.suspendableFunctions.cleanUp();
 			_context = null;
 		}
+
 
 		override public function set context( inContext : IWorkflowContext ) : void
 		{
@@ -382,7 +405,7 @@ package org.astoolkit.workflow.core
 		 *
 		 * @see org.astoolkit.workflow.core.ExitStatus
 	 * @inheritDoc
-							   */
+												 */
 		public function set exitStatus( inStatus : ExitStatus ) : void
 		{
 			_exitStatus = inStatus;
@@ -425,7 +448,10 @@ package org.astoolkit.workflow.core
 		{
 			if( _inputFilter )
 			{
-				var filter : IIODataTransformer = _context.config.inputFilterRegistry.getTransformer( _inputData, _inputFilter );
+				var filter : IIODataTransformer =
+					_inputFilter is IIODataTransformer ?
+					_inputFilter as IIODataTransformer :
+					_context.config.dataTransformerRegistry.getTransformer( _inputData, _inputFilter );
 
 				if( !filter )
 				{
@@ -438,10 +464,50 @@ package org.astoolkit.workflow.core
 						filterData );
 					throw new Error( "Error filtering input data for task \"" + description + "\"" );
 				}
-				return filter.transform( _inputData, _inputFilter, this );
+				var data : Object = _inputData;
+
+				while( filter )
+				{
+					data = filter.transform(
+						data,
+						_inputFilter is IIODataTransformer ? null : _inputFilter,
+						this );
+					filter = filter.next;
+				}
+				return data;
 			}
 			else
 				return _inputData;
+		}
+
+		/**
+		 * @private
+		 */
+		public function get forceAsync() : Boolean
+		{
+			return _forceAsync;
+		}
+
+		/**
+		 * @private
+		 */
+		public function set forceAsync( value : Boolean ) : void
+		{
+			_forceAsync = value;
+		}
+
+		public function hold() : HeldTaskInfo
+		{
+			if( _status != TaskStatus.IDLE )
+				throw new Error( "hold() can only be called with status == TaskStatus.IDLE" );
+
+			if( !_blocker )
+			{
+				_blocker = new HeldTaskInfo( this );
+				blocker.addEventListener( Event.COMPLETE, onRelease );
+				blocker.addEventListener( ErrorEvent.ERROR, onRelease );
+			}
+			return blocker;
 		}
 
 		public function get ignoreOutput() : Boolean
@@ -647,12 +713,31 @@ package org.astoolkit.workflow.core
 			_outlet = inOutlet;
 		}
 
+
+
 		/**
 		 * after <code>complete()</code> will return this task's pipelineData
 		 */
 		public function get output() : *
 		{
 			return _pipelineData;
+		}
+
+
+		public function get outputFilter() : Object
+		{
+			return _outputFilter;
+		}
+
+		public function set outputFilter( inValue : Object ) : void
+		{
+			_outputFilter = inValue;
+		}
+
+		[Inspectable( enumeration="auto", defaultValue="auto" )]
+		public function set outputKind( inValue : String ) : void
+		{
+			_outputKind = inValue;
 		}
 
 		/**
@@ -831,7 +916,7 @@ package org.astoolkit.workflow.core
 			if( _status != TaskStatus.RUNNING )
 				return;
 
-			if( inOutputData != undefined )
+			if( inOutputData != UNDEFINED && inOutputData !== undefined )
 				_pipelineData = inOutputData;
 			_taskCompleted = true;
 			_deferredComplete( _thread );
@@ -1017,7 +1102,6 @@ package org.astoolkit.workflow.core
 			if( inEvent.newValue == TaskStatus.ABORTED )
 			{
 				_status = TaskStatus.ABORTED;
-				trace( "parent status changed to aborted" );
 			}
 		}
 
@@ -1094,6 +1178,11 @@ package org.astoolkit.workflow.core
 		protected function threadSafe( inHandler : Function ) : Function
 		{
 			return _context.suspendableFunctions.getThreadSafeFunction( this, inHandler );
+		}
+
+		private function onRelease( inEvent : Event ) : void
+		{
+			_blocker = null;
 		}
 	}
 }

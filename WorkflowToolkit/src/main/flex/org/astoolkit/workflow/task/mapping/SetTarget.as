@@ -21,7 +21,7 @@ package org.astoolkit.workflow.task.mapping
 				if( mapObject )
 					mapObject.targetClass = target;
 				else
-					$[ getQualifiedClassName( MapObject ) ] = target;
+					ENV[ getQualifiedClassName( MapObject ) ] = target;
 			}
 		}
 	}

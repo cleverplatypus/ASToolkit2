@@ -24,6 +24,7 @@ package org.astoolkit.workflow.internals
 	import flash.utils.getQualifiedClassName;
 	import mx.logging.ILogger;
 	import mx.logging.Log;
+	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluator;
 	import org.astoolkit.commons.factory.IPooledFactory;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 	import org.astoolkit.commons.reflection.ClassInfo;
@@ -70,8 +71,8 @@ package org.astoolkit.workflow.internals
 		{
 			_data = null;
 
-			if( _config.inputFilterRegistry is IPooledFactory )
-				IPooledFactory( _config.inputFilterRegistry ).cleanup();
+			if( _config.dataTransformerRegistry is IPooledFactory )
+				IPooledFactory( _config.dataTransformerRegistry ).cleanup();
 
 			if( _config.iteratorFactory is IPooledFactory )
 				IPooledFactory( _config.iteratorFactory ).cleanup();
@@ -233,8 +234,15 @@ package org.astoolkit.workflow.internals
 
 			if( inObject is IIODataTransformer )
 			{
-				_config.inputFilterRegistry.registerTransformer( inObject as IIODataTransformer );
-				LOGGER.info( "Registering IIOFilter : " +
+				_config.dataTransformerRegistry.registerTransformer( inObject as IIODataTransformer );
+				LOGGER.info( "Registering IIODataTransformer : " +
+					getQualifiedClassName( inObject ) );
+			}
+
+			if( inObject is IRuntimeExpressionEvaluator )
+			{
+				_config.runtimeExpressionEvalutators.registerEvaluator( inObject );
+				LOGGER.info( "Registering IRuntimeExpressionEvaluator : " +
 					getQualifiedClassName( inObject ) );
 			}
 		}

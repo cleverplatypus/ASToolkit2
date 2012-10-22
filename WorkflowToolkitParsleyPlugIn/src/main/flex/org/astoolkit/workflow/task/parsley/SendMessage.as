@@ -26,9 +26,9 @@ package org.astoolkit.workflow.task.parsley
 	import mx.logging.ILogger;
 	import mx.logging.Log;
 	import mx.utils.StringUtil;
-	import org.astoolkit.commons.mapping.IPropertiesMapper;
 	import org.astoolkit.commons.mapping.MappingError;
 	import org.astoolkit.commons.mapping.SimplePropertiesMapper;
+	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 	import org.astoolkit.workflow.constant.FailurePolicy;
 	import org.astoolkit.workflow.task.api.ISendMessage;
 	import org.spicefactory.parsley.core.messaging.command.CommandObserverProcessor;
@@ -57,7 +57,7 @@ package org.astoolkit.workflow.task.parsley
 		 * Otherwise, for a <code>[MessageHandler]</code> tagged function we set
 		 *  <code>isCommand="false"</code>.
 		 */
-		public var isCommand : Boolean = false;
+		public var hasAsyncResult : Boolean = false;
 
 		/**
 		 * the message instance to be sent. Ignored if <code>messageFactory</code> is set.
@@ -135,7 +135,7 @@ package org.astoolkit.workflow.task.parsley
 				}
 			}
 
-			if( isCommand )
+			if( hasAsyncResult )
 			{
 				var clazz : Class = getDefinitionByName( getQualifiedClassName( aMessage ) ) as Class;
 				_completeObserver = createThreadSafeObserver(
@@ -155,7 +155,7 @@ package org.astoolkit.workflow.task.parsley
 			}
 			parsleyContext.scopeManager.getScope( scope as String ).dispatchMessage( aMessage, selector );
 
-			if( !isCommand )
+			if( !hasAsyncResult )
 				complete();
 		}
 
@@ -163,7 +163,7 @@ package org.astoolkit.workflow.task.parsley
 		{
 			super.cleanUp();
 
-			if( isCommand )
+			if( hasAsyncResult )
 			{
 				unregisterCommandObserver( _completeObserver );
 				registerCommandObserver( _errorObserver );

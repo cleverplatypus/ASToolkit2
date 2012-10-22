@@ -6,13 +6,12 @@ package org.astoolkit.workflow.task.data
 	import flash.data.SQLStatement;
 	import flash.errors.SQLError;
 	import flash.net.Responder;
-	import mx.rpc.events.FaultEvent;
-	import mx.rpc.events.ResultEvent;
 	import org.astoolkit.workflow.core.BaseTask;
 
 	public class ExecuteSQLSelect extends BaseTask
 	{
 
+		[Bindable]
 		[InjectVariable]
 		public var connection : SQLConnection;
 
@@ -28,18 +27,21 @@ package org.astoolkit.workflow.task.data
 
 			if( !connection )
 			{
-				var tmp : * = $.byType( SQLConnection );
+				var tmp : * = ENV.byType( SQLConnection );
 
 				if( tmp )
 					connection = tmp as SQLConnection;
 				else
+				{
 					fail( "No connection provided" );
+					return;
+				}
 			}
 			var statement : SQLStatement = new SQLStatement();
 			statement.sqlConnection = connection;
 			statement.text = sql;
 			statement.itemClass = itemClass;
-			statement.execute( -1, new Responder( onStatementResult, onStatementFault ) );
+			statement.execute( -1, new Responder( threadSafe( onStatementResult ), threadSafe( onStatementFault ) ) );
 		}
 
 		private function onStatementFault( inEvent : SQLError ) : void

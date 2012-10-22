@@ -22,6 +22,8 @@ package org.astoolkit.workflow.plugin.xpath
 
 	import memorphic.xpath.XPathQuery;
 	import memorphic.xpath.parser.XPathParser;
+	
+	import org.astoolkit.commons.io.transform.BaseDataTransformer;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 	import org.astoolkit.workflow.api.IContextPlugIn;
 
@@ -31,11 +33,11 @@ package org.astoolkit.workflow.plugin.xpath
 	 * <p>Requires xpath-as3 library (http://code.google.com/p/xpath-as3/)</p>
 	 *
 	 * @see org.astoolkit.workflow.api.IWorkflowContext#plugins
-	 * @see org.astoolkit.workflow.api.IContextConfig#inputFilterRegistry
+	 * @see org.astoolkit.workflow.api.IContextConfig#dataTransformerRegistry
 	 * @see org.astoolkit.workflow.api.IContextPlugIn
 	 * @see org.astoolkit.commons.io.filter.api.IIOFilter
 	 */
-	public class XPathDataTransform implements IIODataTransformer, IContextPlugIn
+	public class XPathDataTransform extends BaseDataTransformer implements IContextPlugIn
 	{
 		private var _disabledExtensions : Array;
 
@@ -79,7 +81,7 @@ package org.astoolkit.workflow.plugin.xpath
 		/**
 		 * returns true if <code>inExpression</code> is a valid XPath expression string
 		 */
-		public function isValidExpression( inExpression : Object ) : Boolean
+		override public function isValidExpression( inExpression : Object ) : Boolean
 		{
 			if( inExpression is String )
 			{
@@ -99,7 +101,7 @@ package org.astoolkit.workflow.plugin.xpath
 		/**
 		 * @private
 		 */
-		public function get priority() : int
+		override public function get priority() : int
 		{
 			return _priority;
 		}
@@ -115,7 +117,7 @@ package org.astoolkit.workflow.plugin.xpath
 		/**
 		 * @private
 		 */
-		public function get supportedDataTypes() : Vector.<Class>
+		override public function get supportedDataTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
 			out.push( XML );
@@ -125,7 +127,7 @@ package org.astoolkit.workflow.plugin.xpath
 		/**
 		 * @private
 		 */
-		public function get supportedExpressionTypes() : Vector.<Class>
+		override public function get supportedExpressionTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
 			out.push( String );
@@ -163,7 +165,7 @@ package org.astoolkit.workflow.plugin.xpath
 		 *
 		 * @inheritDoc
 		 */
-		public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
+		override public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
 		{
 			if( !( inData is XML ) )
 				throw new Error( "Data is not XML" );

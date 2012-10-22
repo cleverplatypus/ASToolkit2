@@ -30,6 +30,9 @@ package org.astoolkit.workflow.task.io
 
 	public class CreateZipArchive extends BaseTask
 	{
+
+		[Bindable]
+		[InjectPipeline]
 		public var destinationFile : File;
 
 		public var readSize : uint = 51200;

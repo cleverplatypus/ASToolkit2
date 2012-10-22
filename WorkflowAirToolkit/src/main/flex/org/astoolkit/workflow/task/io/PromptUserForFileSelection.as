@@ -28,6 +28,7 @@ package org.astoolkit.workflow.task.io
 	import org.astoolkit.workflow.core.ExitStatus;
 	import org.astoolkit.workflow.task.io.util.FileFilter;
 
+	[DefaultProperty( "filters" )]
 	/**
 	 * Opens the OS's file open dialog.
 	 *

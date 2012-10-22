@@ -36,75 +36,49 @@ package org.astoolkit.workflow.task.log
 	 */
 	public class Trace extends BaseTask
 	{
-		public var expression : *;
 
-		[Inspectable( enumeration="pipeline,parent,context,config,previousTask", defaultValue="pipeline" )]
+		[Inspectable( enumeration="pipeline,parent,parentWorkflow,context,config", defaultValue="pipeline" )]
 		public var source : String = "pipeline";
 
-		private var _text : String;
+		private var _text : *;
 
 		override public function begin() : void
 		{
 			super.begin();
-			var aSource : Object = filteredInput;
 
 			switch( source )
 			{
-				case "pipeline":
-				{
-					aSource = filteredInput;
-					break;
-				}
 				case "parent":
 				{
-					aSource = parent;
+					_inputData = parent;
 					break;
 				}
 				case "parentWorkflow":
 				{
-					aSource = GroupUtil.getParentWorkflow( this );
+					_inputData = GroupUtil.getParentWorkflow( this );
 					break;
 				}
 				case "context":
 				{
-					aSource = context;
+					_inputData = context;
 					break;
 				}
 				case "config":
 				{
-					aSource = context.config;
+					_inputData = context.config;
 					break;
 				}
 			}
 			var outText : String;
 
-			if( expression != undefined )
-			{
-				var transformer : IIODataTransformer =
-					context
-					.config
-					.inputFilterRegistry
-					.getTransformer( aSource, expression );
+			if( _text !== undefined )
+				outText = _text as String;
 
-				if( !transformer )
-				{
-					fail( "Cannot use expression to transform {0}", source );
-					return;
-				}
-				outText = transformer.transform( aSource, expression ).toString();
-			}
-			else
-				outText = text;
 
 			if( outText == null )
 				outText = ObjectUtil.toString( filteredInput );
-			trace( outText );
+			printOut( outText );
 			complete();
-		}
-
-		public function get text() : String
-		{
-			return _text;
 		}
 
 		/**
@@ -112,8 +86,12 @@ package org.astoolkit.workflow.task.log
 		 */
 		public function set text( inText : String ) : void
 		{
-			trace( "trace text set ", inText );
 			_text = inText;
+		}
+
+		protected function printOut( inText : String ) : void
+		{
+			trace( inText );
 		}
 	}
 }

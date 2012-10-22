@@ -26,12 +26,12 @@ package org.astoolkit.commons.io.transform
 	 * Input filter to drill into objects using the dot notation.
 	 * <p>"." will return the filtered object itself.</p>
 	 */
-	public class ObjectPropertyChainDataTransform implements IIODataTransformer
+	public class ObjectPropertyChainDataTransform extends BaseDataTransformer implements IIODataTransformer
 	{
 		/**
 		 * @private
 		 */
-		public function isValidExpression( inExpression : Object ) : Boolean
+		override public function isValidExpression( inExpression : Object ) : Boolean
 		{
 			var exp : String = inExpression as String;
 			return exp != null &&
@@ -41,7 +41,7 @@ package org.astoolkit.commons.io.transform
 		/**
 		 * @private
 		 */
-		public function get priority() : int
+		override public function get priority() : int
 		{
 			return -100;
 		}
@@ -49,7 +49,7 @@ package org.astoolkit.commons.io.transform
 		/**
 		 * @private
 		 */
-		public function get supportedDataTypes() : Vector.<Class>
+		override public function get supportedDataTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
 			out.push( Object );
@@ -59,7 +59,7 @@ package org.astoolkit.commons.io.transform
 		/**
 		 * @private
 		 */
-		public function get supportedExpressionTypes() : Vector.<Class>
+		override public function get supportedExpressionTypes() : Vector.<Class>
 		{
 			var out : Vector.<Class> = new Vector.<Class>();
 			out.push( String );
@@ -69,7 +69,7 @@ package org.astoolkit.commons.io.transform
 		/**
 		 * returns the value of <code>inData</code>'s property chain <code>inExpression</code>
 		 */
-		public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
+		override public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
 		{
 			if( inData == null )
 				return null;
