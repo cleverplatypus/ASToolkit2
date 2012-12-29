@@ -28,8 +28,6 @@ package org.astoolkit.commons.conditional
 	{
 		protected var _children : Vector.<IConditionalExpression>;
 
-		protected var _setValue : *;
-
 		override public function get async() : Boolean
 		{
 			return hasAsyncChild( children );
@@ -70,10 +68,6 @@ package org.astoolkit.commons.conditional
 			setupChildren();
 		}
 
-		public function set withValue( inValue : * ) : void
-		{
-			_setValue = inValue;
-		}
 
 		private function hasAsyncChild( inChildren : Vector.<IConditionalExpression> ) : Boolean
 		{

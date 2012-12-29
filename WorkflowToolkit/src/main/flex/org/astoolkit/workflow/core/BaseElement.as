@@ -20,22 +20,21 @@ Version 2.x
 package org.astoolkit.workflow.core
 {
 
-	import flash.events.EventDispatcher;
-	import flash.utils.flash_proxy;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
+	
 	import mx.binding.utils.ChangeWatcher;
 	import mx.events.PropertyChangeEvent;
+	import mx.logging.ILogger;
+	import mx.logging.Log;
 	import mx.utils.ObjectProxy;
+	
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.databinding.BindingUtility;
 	import org.astoolkit.commons.ns.astoolkit_private;
-	import org.astoolkit.commons.reflection.ClassInfo;
-	import org.astoolkit.commons.reflection.FieldInfo;
-	import org.astoolkit.workflow.api.IElementsGroup;
-	import org.astoolkit.workflow.api.IWorkflowContext;
-	import org.astoolkit.workflow.api.IWorkflowDelegate;
-	import org.astoolkit.workflow.api.IWorkflowElement;
+	import org.astoolkit.commons.reflection.*;
+	import org.astoolkit.commons.utils.IChildrenAwareDocument;
+	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.NO_DESCRIPTION;
 
 	[Bindable]
@@ -47,8 +46,14 @@ package org.astoolkit.workflow.core
 	 * @see org.astoolkit.workflow.core.BaseTask
 	 * @see org.astoolkit.workflow.core.Group
 	 */
+	[DefaultProperty( "autoConfigChildren" )]
 	public class BaseElement extends ObjectProxy implements IWorkflowElement
 	{
+		/**
+		 * @private
+		 */
+		private static const LOGGER : ILogger = getLogger( BaseElement );
+
 		/**
 		 * @private
 		 */
@@ -58,12 +63,12 @@ package org.astoolkit.workflow.core
 			_unsetProperties = {};
 			_initialWatchers = {};
 
-			for each( var f : FieldInfo in ClassInfo.forType( this ).getFields() )
+			for each ( var f : Field in Type.forType( this ).getFields() )
 			{
-				if( f.fullAccess )
+				if ( f.fullAccess )
 				{
 					_unsetProperties[ f.name ] = true;
-					;
+
 					_initialWatchers[ f.name ] =
 						ChangeWatcher.watch(
 						this, f.name, onPropertyEarlySet, false );
@@ -74,74 +79,17 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		protected var _ancestryString : String;
+		protected var _autoConfigChildren : Array;
+
+		public function set autoConfigChildren( inValue : Array ) : void
+		{
+			_autoConfigChildren = inValue;
+		}
 
 		/**
 		 * @private
 		 */
 		protected var _context : IWorkflowContext;
-
-		/**
-		 * @private
-		 */
-		protected var _currentIterator : IIterator;
-
-		/**
-		 * @private
-		 */
-		protected var _delegate : IWorkflowDelegate;
-
-		/**
-		 * @private
-		 */
-		protected var _description : String = NO_DESCRIPTION;
-
-		/**
-		 * @private
-		 */
-		protected var _document : Object;
-
-		/**
-		 * @private
-		 */
-		protected var _enabled : Boolean = true;
-
-		/**
-		 * @private
-		 */
-		protected var _id : String;
-
-		/**
-		 * @private
-		 */
-		protected var _overriddenProperties : Array;
-
-		/**
-		 * @private
-		 */
-		protected var _parent : IElementsGroup;
-
-		/**
-		 * @private
-		 */
-		protected var _thread : uint;
-
-		/**
-		 * @private
-		 */
-		protected var _unsetProperties : Object;
-
-		/**
-		 * @private
-		 */
-		private var _initialWatchers : Object;
-
-		/**
-		 * @inheritDoc
-		 */
-		public function cleanUp() : void
-		{
-		}
 
 		/**
 		 * @inheritDoc
@@ -156,10 +104,20 @@ package org.astoolkit.workflow.core
 			_context = inContext;
 		}
 
+		/**
+		 * @private
+		 */
+		protected var _currentIterator : IIterator;
+
 		public function set currentIterator( inValue : IIterator ) : void
 		{
 			_currentIterator = inValue;
 		}
+
+		/**
+		 * @private
+		 */
+		protected var _delegate : IWorkflowDelegate;
 
 		public function set delegate( inDelegate : IWorkflowDelegate ) : void
 		{
@@ -167,11 +125,16 @@ package org.astoolkit.workflow.core
 		}
 
 		/**
+		 * @private
+		 */
+		protected var _description : String = NO_DESCRIPTION;
+
+		/**
 		 * @inheritDoc
 		 */
 		public function get description() : String
 		{
-			if( _description != NO_DESCRIPTION )
+			if ( _description != NO_DESCRIPTION )
 				return _description;
 			else
 				return getAncestryString();
@@ -182,10 +145,20 @@ package org.astoolkit.workflow.core
 			_description = inName;
 		}
 
+		/**
+		 * @private
+		 */
+		protected var _document : Object;
+
 		public function get document() : Object
 		{
 			return _document;
 		}
+
+		/**
+		 * @private
+		 */
+		protected var _enabled : Boolean = true;
 
 		/**
 		 * whether this element is enabled for processing
@@ -201,30 +174,9 @@ package org.astoolkit.workflow.core
 		}
 
 		/**
-		 * utility method to get a string representing the
-		 * branch this element belongs to.
+		 * @private
 		 */
-		public function getAncestryString() : String
-		{
-			if( !_ancestryString )
-			{
-				var ancestry : Array = [];
-				var task : IWorkflowElement = this;
-				var index : String;
-
-				do
-				{
-					index = task.parent ?
-						"[" + task.parent.children.indexOf( task ) + "]" :
-						"";
-					ancestry.unshift(
-						getQualifiedClassName( task ).replace( /.*?::/, "" ) + index );
-					task = task.parent;
-				} while( task != null );
-				_ancestryString = "{ " + ancestry.join( " > " ) + " }";
-			}
-			return _ancestryString;
-		}
+		protected var _id : String;
 
 		public function get id() : String
 		{
@@ -232,43 +184,9 @@ package org.astoolkit.workflow.core
 		}
 
 		/**
-		 * @inheritDoc
-		 */
-		public function initialize() : void
-		{
-			if( suspendBinding && _document != null )
-				BindingUtility.disableAllBindings( _document, this );
-		}
-
-		/**
 		 * @private
-		 *
-		 * implementation of IMXMLObject
 		 */
-		public function initialized( inDocument : Object, inId : String ) : void
-		{
-			if( inDocument.hasOwnProperty( "initialized" ) &&
-				inDocument[ "initialized" ] == false )
-			{
-				setTimeout( initialized, 1, inDocument, inId );
-				return;
-			}
-			_document = inDocument;
-			_id = inId;
-
-			for( var name : String in _unsetProperties )
-			{
-				if( BindingUtility.propertyHasBindings( _document, this, name ) )
-					delete _unsetProperties[ name ];
-
-				if( _initialWatchers.hasOwnProperty( name ) )
-					_initialWatchers[ name ].unwatch();
-			}
-			_initialWatchers = null;
-
-			if( suspendBinding && _document != null )
-				BindingUtility.disableAllBindings( _document, this );
-		}
+		protected var _parent : IElementsGroup;
 
 		/**
 		 * @inheritDoc
@@ -284,16 +202,39 @@ package org.astoolkit.workflow.core
 		}
 
 		/**
-		 * @inheritDoc
+		 * @private
 		 */
-		public function prepare() : void
+		protected var _pid : String;
+
+		public function get pid() : String
 		{
+			return _pid;
 		}
 
-		public function propertyIsEnumerable( V : * = null ) : Boolean
+		public function set pid(value:String) : void
 		{
-			return true;
+			_pid = value;
 		}
+
+		/**
+		 * @private
+		 */
+		protected var _ancestryString : String;
+
+		/**
+		 * @private
+		 */
+		protected var _overriddenProperties : Array;
+
+		/**
+		 * @private
+		 */
+		protected var _thread : uint;
+
+		/**
+		 * @private
+		 */
+		protected var _unsetProperties : Object;
 
 		/**
 		 * override this getter to prevent data binding from being
@@ -302,6 +243,114 @@ package org.astoolkit.workflow.core
 		protected function get suspendBinding() : Boolean
 		{
 			return true;
+		}
+
+		/**
+		 * @private
+		 */
+		private var _initialWatchers : Object;
+
+		/**
+		 * @inheritDoc
+		 */
+		public function cleanUp() : void
+		{
+		}
+
+		//TODO: move this away. really necessary?
+		/**
+		 * utility method to get a string representing the
+		 * branch this element belongs to.
+		 */
+		public function getAncestryString() : String
+		{
+			if ( !_ancestryString )
+			{
+				var ancestry : Array = [];
+				var task : IWorkflowElement = this;
+				var index : String;
+
+				do
+				{
+					index = task.parent ?
+						"[" + task.parent.children.indexOf( task ) + "]" :
+						"";
+					ancestry.unshift(
+						getQualifiedClassName( task ).replace( /.*?::/, "" ) + index );
+
+					if ( !task.parent )
+						ancestry.unshift( getQualifiedClassName( task.document ) );
+					task = task.parent;
+				} while ( task != null );
+
+				_ancestryString = "{ " + ancestry.join( " > " ) + " }";
+			}
+			return _ancestryString;
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public function initialize() : void
+		{
+			if ( suspendBinding && _document != null )
+				BindingUtility.disableAllBindings( _document, this );
+
+			if ( _autoConfigChildren && _autoConfigChildren.length > 0 )
+			{
+				var configInfo : Array = AutoConfigUtil.autoConfig( this, _autoConfigChildren );
+
+				for each ( var prop : Object in configInfo )
+				{
+					if ( prop.assigned == true )
+						delete _unsetProperties[ prop.name ];
+					else
+						LOGGER.warn( 
+							"Auto config children {0} cannot be assigned",
+							getQualifiedClassName( prop.object ) );
+				}
+			}
+		}
+
+		/**
+		 * @private
+		 *
+		 * implementation of IMXMLObject
+		 */
+		public function initialized( inDocument : Object, inId : String ) : void
+		{
+
+			if ( inDocument.hasOwnProperty( "initialized" ) &&
+				inDocument[ "initialized" ] == false )
+			{
+				setTimeout( initialized, 1, inDocument, inId );
+				return;
+			}
+
+			if ( inDocument is IChildrenAwareDocument )
+				IChildrenAwareDocument( inDocument ).childNodeAdded( this );
+			_document = inDocument;
+			_id = inId;
+
+			for ( var name : String in _unsetProperties )
+			{
+				if ( BindingUtility.propertyHasBindings( _document, this, name ) )
+					delete _unsetProperties[ name ];
+
+				if ( _initialWatchers.hasOwnProperty( name ) )
+					_initialWatchers[ name ].unwatch();
+			}
+			_initialWatchers = null;
+
+			if ( suspendBinding && _document != null )
+				BindingUtility.disableAllBindings( _document, this );
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public function prepare() : void
+		{
 		}
 
 		/**
@@ -317,11 +366,17 @@ package org.astoolkit.workflow.core
 		 */
 		private function onPropertyEarlySet( inEvent : PropertyChangeEvent ) : void
 		{
-			if( _initialWatchers.hasOwnProperty( inEvent.property ) )
+			if ( _initialWatchers.hasOwnProperty( inEvent.property ) )
 				_initialWatchers[ inEvent.property ].unwatch();
 
-			if( _unsetProperties.hasOwnProperty( inEvent.property ) )
+			if ( _unsetProperties.hasOwnProperty( inEvent.property ) )
 				delete _unsetProperties[ inEvent.property ]
 		}
+		
+		public function wakeup():void
+		{
+		}
+		
+		
 	}
 }

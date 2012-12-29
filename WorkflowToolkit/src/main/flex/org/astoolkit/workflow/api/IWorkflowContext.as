@@ -19,26 +19,69 @@ Version 2.x
 */
 package org.astoolkit.workflow.api
 {
-
+	
 	import flash.events.IEventDispatcher;
-	import mx.utils.ObjectProxy;
-	import org.astoolkit.commons.collection.api.IIteratorFactory;
+	import mx.core.IFactory;
+	import org.astoolkit.commons.factory.api.IPooledFactory;
+	import org.astoolkit.commons.factory.api.IPooledFactoryDelegate;
+	import org.astoolkit.commons.io.transform.api.IIODataSourceResolverDelegate;
 	import org.astoolkit.workflow.internals.ContextVariablesProvider;
 	import org.astoolkit.workflow.internals.SuspendableFunctionRegistry;
-
+	
 	[Bindable]
-	public interface IWorkflowContext extends IEventDispatcher
+	/**
+	 * Contract for a Workflow context object.
+	 * A context object is obtained (usually created) through 
+	 * a <code>mx.core.IFactory</code> every time a workflow is run.
+	 * This object is then initialized and made available to the workflow
+	 * and its tasks. Contexts can be configured with plug-ins and provide access
+	 * to several WorkflowToolkit features:
+	 * <ul>
+	 * 	<li>Task live-cycle watchers</li>
+	 * 	<li>Pooled factories</li>
+	 * 	<li>A data transformers registry</li>
+	 * 	<li>Class factories mapped by qualified class names patterns</li>
+	 * 	<li>Context variables</li>
+	 * 	<li>Iterators</li>
+	 * </ul>
+	 * 
+	 * Extending IObjectConfigurer, context objects can 
+	 * inject available resouces to the passed objects based on
+	 * the latters' recognized implemented interfaces (e.g. IContextAwareElement ),
+	 * metadata, and other plug-in defined criteria. 
+	 */
+
+	public interface IWorkflowContext extends IEventDispatcher, IObjectConfigurer
 	{
+		/**
+		 * register the passed implementation of ITaskLiveCycleWatcher
+		 */
 		function addTaskLiveCycleWatcher( inValue : ITaskLiveCycleWatcher ) : void;
+		
+		/**
+		 * unregister the passed implementation of ITaskLiveCycleWatcher
+		 */
+		function removeTaskLiveCycleWatcher( inValue : ITaskLiveCycleWatcher ) : void;
+		
+		/**
+		 * called just before the owning workflow calls its cleanup() 
+		 */
 		function cleanup() : void;
 		function get config() : IContextConfig;
 		function set config( inValue : IContextConfig ) : void;
-		function get data() : Object;
+		
+		//function get data() : Object;
+		function get dataSourceResolverDelegate() : IIODataSourceResolverDelegate;
+		
+		
 		function set dropIns( inValue : Object ) : void;
-		function init() : void;
+		function getPooledFactory( 
+			inClass : Class, 
+			inDelegate : IPooledFactoryDelegate = null ) : IPooledFactory;
+		function init( inOwner : IWorkflow ) : void;
 		function get initialized() : Boolean;
+		function get owner() : IWorkflow;
 		function get plugIns() : Vector.<IContextPlugIn>;
-		function removeTaskLiveCycleWatcher( inValue : ITaskLiveCycleWatcher ) : void;
 		function get runningTask() : IWorkflowTask;
 		function set runningTask( inTask : IWorkflowTask ) : void;
 		function get status() : String;

@@ -19,10 +19,12 @@ Version 2.x
 */
 package org.astoolkit.workflow.api
 {
+	import org.astoolkit.commons.databinding.Watch;
 
 	public interface ITaskTemplate extends IWorkflowElement
 	{
 		function get templateImplementation() : IWorkflowTask;
 		function set timeout( inValue : int ) : void;
+		function set bindings( inValue : Vector.<Watch> ) : void;
 	}
 }

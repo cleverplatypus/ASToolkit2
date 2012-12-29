@@ -1,23 +1,32 @@
+/*
+
+Copyright 2009 Nicola Dal Pont
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Version 2.x
+
+*/
 package org.astoolkit.workflow.api
 {
 
 	import flash.events.IEventDispatcher;
 	import mx.core.IMXMLObject;
 	import org.astoolkit.commons.collection.api.IIterator;
+	import org.astoolkit.commons.mxml.IAutoConfigContainerObject;
 
-	public interface IWorkflowElement extends IEventDispatcher, IMXMLObject
+	public interface IWorkflowElement extends IEventDispatcher, IContextAwareElement, IAutoConfigContainerObject
 	{
-		/**
-		 * called when the root workflow completes.
-		 * <p>Implementations should override this method to release
-		 * any allocated resource.</p>
-		 */
-		function cleanUp() : void;
-		/**
-		 * the workflow context for this element. Set by the wrapping workflow.
-		 */
-		function get context() : IWorkflowContext;
-		function set context( inContext : IWorkflowContext ) : void;
 		/**
 		 * @private
 		 *
@@ -39,13 +48,33 @@ package org.astoolkit.workflow.api
 		/**
 		 * if false this element will be skipped
 		 */
-		[Inspectable( defaultValue="true", type="Boolean" )]
+		[Inspectable( defaultValue = "true" )]
 		function get enabled() : Boolean;
 		function set enabled( inEnabled : Boolean ) : void;
 		/**
 		 * the MXML id string
 		 */
 		function get id() : String;
+		/**
+		 * the wrapping group. Null for root element
+		 */
+		function get parent() : IElementsGroup;
+		function set parent( inParent : IElementsGroup ) : void;
+		function get pid() : String;
+
+		/**
+		 * the destination property id.
+		 * Used by the framework to determine the destination proprty of a child element
+		 * inside its parent.
+		 */
+		function set pid( inValue : String ) : void;
+
+		/**
+		 * called when the root workflow completes.
+		 * <p>Implementations should override this method to release
+		 * any allocated resource.</p>
+		 */
+		function cleanUp() : void;
 		/**
 		 * called by parent workflow when root workflow begins.
 		 * <p>Override this method in custom elements to allocate
@@ -54,15 +83,12 @@ package org.astoolkit.workflow.api
 		 */
 		function initialize() : void;
 		/**
-		 * the wrapping group. Null for root element
-		 */
-		function get parent() : IElementsGroup;
-		function set parent( inParent : IElementsGroup ) : void;
-		/**
 		 * called by parent workflow before begin.
 		 * <p>If this task has state, override this method and
 		 * reset any value for next invocation.</p>
 		 */
 		function prepare() : void;
+
+		function wakeup() : void;
 	}
 }

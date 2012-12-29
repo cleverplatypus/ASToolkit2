@@ -114,6 +114,7 @@ import mx.rpc.AsyncToken;
 import mx.rpc.events.FaultEvent;
 import mx.rpc.events.ResultEvent;
 import mx.utils.ObjectUtil;
+
 import org.spicefactory.parsley.core.messaging.command.CommandObserverProcessor;
 import org.spicefactory.parsley.core.messaging.command.CommandStatus;
 import org.spicefactory.parsley.core.messaging.receiver.CommandObserver;
@@ -163,9 +164,9 @@ class Observer implements CommandObserver
 		}
 		else if( status.key == CommandStatus.ERROR.key )
 		{
-			var text : String = returnValue is AsyncToken ?
-				FaultEvent( AsyncToken( returnValue ).result ).fault.getStackTrace() :
-				ObjectUtil.toString( returnValue );
+			var text : String = "Unknown Error";
+			if( returnValue is AsyncToken && AsyncToken( returnValue ).result is FaultEvent )
+				text = returnValue.result.fault.getStackTrace();
 			_handler( text, inProcessor.message );
 		}
 		else

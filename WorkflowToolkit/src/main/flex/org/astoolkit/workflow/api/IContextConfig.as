@@ -20,12 +20,15 @@ Version 2.x
 package org.astoolkit.workflow.api
 {
 
+	import mx.core.IFactory;
+	
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
 	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluatorRegistry;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 
 	/**
-	 * Contract for in IWorkflowContext configuration object.
+	 * Contract for an IWorkflowContext configuration object.
+	 * It provides the per-context-factory non-changing configuration. 
 	 */
 	public interface IContextConfig
 	{
@@ -66,5 +69,11 @@ package org.astoolkit.workflow.api
 		 */
 		function get templateRegistry() : ITaskTemplateRegistry;
 		function set templateRegistry( inValue : ITaskTemplateRegistry ) : void;
+		
+		function getFactoryForType( inType : Class ) : IFactory;
+		
+		[ArrayItemType("org.astoolkit.commons.factory.ClassFactoryMapping")]
+		function set classFactoryMappings( inValue : Array ) : void;
+
 	}
 }

@@ -24,46 +24,41 @@ package org.astoolkit.workflow.api
 	import mx.core.IFactory;
 	import mx.rpc.Fault;
 	import org.astoolkit.commons.collection.api.IIterator;
+	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
+	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 	import org.astoolkit.commons.mapping.DataMap;
 	import org.astoolkit.workflow.core.ExitStatus;
 	import org.astoolkit.workflow.internals.HeldTaskInfo;
 
 	[Event(
-		name="started",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+		name = "started",
+		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="initialize",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+		name = "initialize",
+		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="warning",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+		name = "warning",
+		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="fault",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+		name = "fault",
+		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="completed",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+		name = "completed",
+		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="progress",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+		name = "progress",
+		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="prepare",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
-	public interface IWorkflowTask extends IWorkflowElement, IEventDispatcher
+		name = "prepare",
+		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
+	public interface IWorkflowTask extends IWorkflowElement,
+		IEventDispatcher,
+		IIODataTransformerClient,
+		IPipelineConsumer,
+		IExecutionDeferrable
 	{
-		/**
-		 * called by user defined code or by aborted wrapping workflow.
-		 */
-		function abort() : void;
-		/**
-		 * this is the method a new task will always implement.
-		 * It's where the task's async operations are fired.
-		 * Once the task is complete it should call its delegate's
-		 * onComplete() or onFault(...) asyncronously, that is, not
-		 * in the begin() call stack.
-		 */
-		function begin() : void;
 
+		//TODO: replace with IExecutionDeferrable functionality
 		function get blocker() : HeldTaskInfo;
 		/**
 		 * read only. returns the 0 to 1 progress of this task.
@@ -142,19 +137,12 @@ package org.astoolkit.workflow.api
 		function get forceAsync() : Boolean;
 
 		function set forceAsync( inValue : Boolean ) : void;
-
-		function hold() : HeldTaskInfo;
 		//=================== DATA PIPELINE =============================
 		function get ignoreOutput() : Boolean;
 		function set ignoreOutput( inIgnoreOutput : Boolean ) : void;
 		function get inlet() : Object;
 		function set inlet( inInlet : Object ) : void;
-		function set input( inData : * ) : void;
 		function get inputFilter() : Object;
-		/**
-		 * a filter for this task's pipeline data.<br><br>
-		 */
-		function set inputFilter( inValue : Object ) : void;
 		function get invalidPipelinePolicy() : String;
 		function set invalidPipelinePolicy( inValue : String ) : void;
 		function get outlet() : Object;
@@ -163,7 +151,7 @@ package org.astoolkit.workflow.api
 		function get outputFilter() : Object;
 		function set outputFilter( inValue : Object ) : void;
 
-		[Inspectable( enumeration="auto", defaultValue="auto" )]
+		[Inspectable( enumeration = "auto", defaultValue = "auto" )]
 		/**
 		 * an arbitrary string used by the task to decide what to output.
 		 * Typically, a task implementation would implement/override this
@@ -173,22 +161,39 @@ package org.astoolkit.workflow.api
 		 */
 		function set outputKind( inValue : String ) : void;
 		/**
-		 * resumes the whole workflow from the point where
-		 * suspend() was called. Not necessarily this task.
-		 * It might be any root workflow's children task.
-		 */
-		function resume() : void;
-		/**
 		 * Whether to run this task is executing
 		 * either asyncronously or synchronously.
 		 */
 		function get running() : Boolean
 		//================================================================
 		function get status() : String;
+
+		function set taskParametersMapping( inValue : Object ) : void;
+		function set timeout( inMillisecs : int ) : void;
+
+		/**
+		 * called by user defined code or by aborted wrapping workflow.
+		 */
+		function abort() : void;
+		/**
+		 * this is the method a task will always implement.
+		 * It's where the task's async operations are fired.
+		 * Once the task is complete it should call its delegate's
+		 * onComplete() or onFault(...) asyncronously, that is, not
+		 * in the begin() call stack.
+		 */
+		function begin() : void;
+
+		function hold() : HeldTaskInfo;
+		/**
+		 * resumes the whole workflow from the point where
+		 * suspend() was called. Not necessarily this task.
+		 * It might be any root workflow's children task.
+		 */
+		function resume() : void;
 		/**
 		 * stops the whole workflow at this task until resume is called.
 		 */
 		function suspend() : void;
-		function set timeout( inMillisecs : int ) : void;
 	}
 }

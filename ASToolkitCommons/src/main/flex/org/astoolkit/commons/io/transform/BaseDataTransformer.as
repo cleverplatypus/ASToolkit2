@@ -2,20 +2,21 @@ package org.astoolkit.commons.io.transform
 {
 
 	import flash.utils.getQualifiedClassName;
+	
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 
 	public class BaseDataTransformer implements IIODataTransformer
 	{
+
+		protected var _next : IIODataTransformer;
+
+		protected var _parent : IIODataTransformer;
 
 		public function BaseDataTransformer()
 		{
 			if( getQualifiedClassName( this ) == getQualifiedClassName( BaseDataTransformer ) )
 				throw new Error( "BaseDataTransformer is abstract" );
 		}
-
-		protected var _next : IIODataTransformer;
-
-		protected var _parent : IIODataTransformer;
 
 		public function set next(value:IIODataTransformer):void
 		{
@@ -77,5 +78,6 @@ package org.astoolkit.commons.io.transform
 			throw new Error( "BaseDataTransformer is abstract" );
 			return null;
 		}
+		
 	}
 }

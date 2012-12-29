@@ -6,7 +6,9 @@ package org.astoolkit.workflow.task.data
 	import flash.data.SQLStatement;
 	import flash.errors.SQLError;
 	import flash.net.Responder;
+	
 	import org.astoolkit.workflow.core.BaseTask;
+	import org.astoolkit.workflow.core.Switch;
 
 	public class ExecuteSQLSelect extends BaseTask
 	{
@@ -21,6 +23,9 @@ package org.astoolkit.workflow.task.data
 		[InjectPipeline]
 		public var sql : String;
 
+		[Inspectable(enumeration="all,first,last", defaultValue="all")]
+		public var subsetOutput : String;
+		
 		override public function begin() : void
 		{
 			super.begin();
@@ -51,6 +56,18 @@ package org.astoolkit.workflow.task.data
 
 		private function onStatementResult( inResult : SQLResult ) : void
 		{
+			if( inResult.data && inResult.data.length > 0)
+			{
+				switch( subsetOutput )
+				{
+					case "first":
+						complete( inResult.data[0] );
+						return;
+					case "last":
+						complete( inResult.data[inResult.data.length -1] );
+						return;
+				}
+			}
 			complete( inResult.data );
 		}
 	}

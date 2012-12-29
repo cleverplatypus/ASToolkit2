@@ -10,7 +10,7 @@ package org.astoolkit.workflow.task.events
 	/**
 	 * Completes when the <code>target</code> IList dispatches
 	 * a <code>CollectionChange</code> event.
-	 * <p>The <code>watch<em>XXX</em></code> flags determine
+	 * <p>The <code>watch<em>BLA</em></code> flags determine
 	 * what event kind will be considered.</p>
 	 * <p>If no flag is set, any event kind will be considered</p>
 	 * <p>

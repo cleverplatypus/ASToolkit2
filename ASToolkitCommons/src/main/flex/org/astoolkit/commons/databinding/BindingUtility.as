@@ -20,12 +20,17 @@ Version 2.x
 package org.astoolkit.commons.databinding
 {
 
+	import flash.events.IEventDispatcher;
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
+	
 	import mx.binding.IBindingClient;
 	import mx.core.mx_internal;
-	import org.astoolkit.commons.reflection.ClassInfo;
-	import org.astoolkit.commons.reflection.FieldInfo;
+	import mx.events.PropertyChangeEvent;
+	import mx.events.PropertyChangeEventKind;
+	
+	import org.astoolkit.commons.reflection.Type;
+	import org.astoolkit.commons.reflection.Field;
 
 	use namespace mx_internal;
 
@@ -56,6 +61,21 @@ package org.astoolkit.commons.databinding
 			switchBindings( inOwner, inTarget, true, inProperty );
 		}
 
+		public static function touch( inTarget : Object, inProperty : String, inNewValue : * = null ) : void
+		{
+			if( !( inTarget is IEventDispatcher ) )
+				return;
+			IEventDispatcher( inTarget ).dispatchEvent(
+				new PropertyChangeEvent(
+					PropertyChangeEvent.PROPERTY_CHANGE,
+					false,
+					false,
+					PropertyChangeEventKind.UPDATE,
+					inProperty,
+					Math.random(),
+					inNewValue
+				) );
+		}
 		public static function firePropertyBinding( inOwner : Object, inTarget : Object, inProperty : String ) : void
 		{
 			var theId : String = getId( inOwner, inTarget );
@@ -91,12 +111,12 @@ package org.astoolkit.commons.databinding
 
 			if( !_cache.hasOwnProperty( inTarget ) )
 			{
-				var ownerInfo : ClassInfo = ClassInfo.forType( inOwner );
-				var targetInfo : ClassInfo = ClassInfo.forType( inTarget );
+				var ownerInfo : Type = Type.forType( inOwner );
+				var targetInfo : Type = Type.forType( inTarget );
 
-				for each( var f : FieldInfo in ownerInfo.getFields() )
+				for each( var f : Field in ownerInfo.getFields() )
 				{
-					if( f.fullAccess && f.scope == FieldInfo.SCOPE_PUBLIC && inOwner[ f.name ] == inTarget )
+					if( f.fullAccess && f.scope == Field.SCOPE_PUBLIC && inOwner[ f.name ] == inTarget )
 					{
 						_cache[ inTarget ] = f.name
 					}
@@ -112,15 +132,15 @@ package org.astoolkit.commons.databinding
 
 			if( theId )
 			{
-				var targetInfo : ClassInfo = ClassInfo.forType( inTarget );
-				var fields : Vector.<FieldInfo> =
+				var targetInfo : Type = Type.forType( inTarget );
+				var fields : Vector.<Field> =
 					inProperty != null ?
-					Vector.<FieldInfo>( [ targetInfo.getField( inProperty ) ] ) :
+					Vector.<Field>( [ targetInfo.getField( inProperty ) ] ) :
 					targetInfo.getFields();
 
-				for each( var field : FieldInfo in fields )
+				for each( var field : Field in fields )
 				{
-					if( ( field.writeOnly || field.fullAccess ) && field.scope == FieldInfo.SCOPE_PUBLIC )
+					if( ( field.writeOnly || field.fullAccess ) && field.scope == Field.SCOPE_PUBLIC )
 					{
 						bindingManager.enableBindings( inOwner, theId + "." + field.name, inEnable );
 

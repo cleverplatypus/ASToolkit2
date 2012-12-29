@@ -33,8 +33,11 @@ package org.astoolkit.commons.conditional
 
 		override public function evaluate( inComparisonValue : * = undefined ) : Object
 		{
-			var compared : * = base === undefined ? inComparisonValue : base;
-			return ObjectCompare.compare( compared, to ) == 0;
+			if( _lastResult !== undefined )
+				return _lastResult;
+			var compared : * = base === undefined ? resolveSource( inComparisonValue ) : base;
+			_lastResult = negateSafeResult( ObjectCompare.compare( compared, to ) == 0 );
+			return _lastResult;
 		}
 	}
 }

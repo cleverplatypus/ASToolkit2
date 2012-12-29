@@ -20,17 +20,30 @@ Version 2.x
 package org.astoolkit.workflow.internals
 {
 
+	import flash.events.Event;
+	
 	import mx.core.ClassFactory;
 	import mx.core.IFactory;
 	import mx.core.IMXMLObject;
+	
 	import org.astoolkit.workflow.api.IContextConfig;
+	import org.astoolkit.workflow.api.IWorkflowContext;
 
 	public class DefaultContextFactory implements IFactory, IMXMLObject
 	{
 		public var config : IContextConfig;
 
 		public var dropIns : Object;
+		
+		private var _classFactoryMappings : Array;
 
+		
+		[ArrayItemType("org.astoolkit.commons.factory.ClassFactoryMapping")]
+		public function set classFactoryMappings( inValue : Array ) : void
+		{
+			_classFactoryMappings = inValue;
+		}
+		
 		private var _factory : ClassFactory;
 
 		public function initialized( document : Object, id : String ) : void
@@ -41,11 +54,21 @@ package org.astoolkit.workflow.internals
 		{
 			if( !_factory )
 				_factory = new ClassFactory( DefaultWorkflowContext );
+			
 			_factory.properties = {
 					config: config,
 					dropIns: dropIns
 				};
-			return _factory.newInstance();
+			var context : IWorkflowContext = _factory.newInstance() as IWorkflowContext;
+			context.addEventListener( 
+				"initialized", 
+				function( inEvent : Event ) : void
+				{
+					context.removeEventListener( "initialized", arguments.callee );
+					context.config.classFactoryMappings = _classFactoryMappings;					
+				},false, int.MAX_VALUE );
+			
+			return context;
 		}
 	}
 }

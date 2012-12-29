@@ -19,160 +19,170 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
-
-	import flash.utils.Dictionary;
+	
 	import flash.utils.flash_proxy;
 	import flash.utils.getQualifiedClassName;
-	import mx.effects.Effect;
-	import org.astoolkit.commons.reflection.ClassInfo;
+	
+	import mx.rpc.IResponder;
+	
+	import org.astoolkit.commons.databinding.BindingUtility;
+	import org.astoolkit.commons.databinding.Watch;
+	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
+	import org.astoolkit.commons.reflection.Type;
+	import org.astoolkit.workflow.api.IContextAwareElement;
 	import org.astoolkit.workflow.api.ITaskTemplate;
 	import org.astoolkit.workflow.api.IWorkflowElement;
 	import org.astoolkit.workflow.api.IWorkflowTask;
+	import org.astoolkit.workflow.internals.DynamicTaskLiveCycleWatcher;
 	import org.astoolkit.workflow.internals.HeldTaskInfo;
+	import org.astoolkit.workflow.task.api.ISendMessage;
 
 	use namespace flash_proxy;
-
+	
+	[DefaultProperty("autoConfigChildren")]
 	public class BaseTaskTemplate extends Group implements ITaskTemplate, IWorkflowTask
 	{
 		private var _tempImplementationProperties : Object = {};
-
-
+		
 		private var _templateImplementation : IWorkflowTask;
-
+		
+		private var _bindings : Vector.<Watch>;
+		
 		public function abort() : void
 		{
-			// TODO Auto Generated method stub
-
 		}
-
+		
 		public function begin() : void
 		{
-			// TODO Auto Generated method stub
-
 		}
-
+		
 		public function get blocker() : HeldTaskInfo
 		{
-			// TODO Auto Generated method stub
 			return null;
 		}
-
+		
 		override public function set children( inChildren : Vector.<IWorkflowElement> ) : void
 		{
 			throw new Error( "BaseTaskTemplate cannot have children assigned" );
 		}
-
+		
 		override public function cleanUp() : void
 		{
 			_children.length = 0;
 			context.config.templateRegistry.releaseImplementation( _templateImplementation );
 			_templateImplementation = null;
 		}
-
+		
 		public function get currentProgress() : Number
 		{
-			// TODO Auto Generated method stub
 			return 0;
 		}
-
+		
 		public function set currentProgress( inValue : Number ) : void
 		{
-			// TODO Auto Generated method stub
-
 		}
-
+		
 		public function get currentThread() : uint
 		{
-			// TODO Auto Generated method stub
 			return 0;
 		}
-
+		
+		public function set dataTransformerRegistry( inValue : IIODataTransformerRegistry ) : void
+		{
+			setImplementationProperty( "dataTransformerRegistry", inValue );
+		}
+		
 		public function get delay() : int
 		{
-			// TODO Auto Generated method stub
 			return 0;
 		}
-
+		
 		public function set delay( inDelay : int ) : void
 		{
-			// TODO Auto Generated method stub
-
 		}
-
+		
 		public function get exitStatus() : ExitStatus
 		{
-			// TODO Auto Generated method stub
 			return null;
 		}
-
+		
 		public function set exitStatus( inStatus : ExitStatus ) : void
 		{
-			// TODO Auto Generated method stub
-
 		}
-
+		
 		public function get failureMessage() : String
 		{
-			// TODO Auto Generated method stub
 			return null;
 		}
-
+		
 		public function set failureMessage( inValue : String ) : void
 		{
-			// TODO Auto Generated method stub
-
 		}
-
+		
 		public function get filteredInput() : Object
 		{
-			// TODO Auto Generated method stub
 			return null;
 		}
-
+		
 		public function get forceAsync() : Boolean
 		{
-			// TODO Auto Generated method stub
 			return false;
 		}
-
+		
 		public function set forceAsync( inValue : Boolean ) : void
 		{
-			// TODO Auto Generated method stub
-
 		}
-
+		
 		public function hold() : HeldTaskInfo
 		{
-			// TODO Auto Generated method stub
 			return null;
 		}
-
+		
 		public function get ignoreOutput() : Boolean
 		{
-			// TODO Auto Generated method stub
 			return false;
 		}
-
+		
 		public function set ignoreOutput( inIgnoreOutput : Boolean ) : void
 		{
-			// TODO Auto Generated method stub
-
 		}
-
+		
+		private var _implementationLiveCycleWatcher : DynamicTaskLiveCycleWatcher;
+		
+		private function onImplementationDataSet( inTask : IWorkflowTask ) : void
+		{
+			BindingUtility.enableAllBindings( _document, this );
+			BindingUtility.disableAllBindings( _document, this );
+		}
+		
+		public function set bindings( inValue : Vector.<Watch> ) : void
+		{
+			_bindings = inValue;
+		}
+				
 		override public function initialize() : void
 		{
 			super.initialize();
 			_templateImplementation = context.config.templateRegistry.getImplementation( this );
-
-			if( _templateImplementation )
+			_implementationLiveCycleWatcher = new DynamicTaskLiveCycleWatcher();
+			_implementationLiveCycleWatcher.taskDataSetWatcher = onImplementationDataSet;
+			_context.addTaskLiveCycleWatcher( _implementationLiveCycleWatcher );
+			if ( _templateImplementation )
 			{
+				
 				for( var key : String in _tempImplementationProperties )
 					_templateImplementation[ key ] = _tempImplementationProperties[ key ];
+				if( _bindings )
+				{
+					for each( var binding : Watch in _bindings )
+						binding.target = _templateImplementation;
+				}
 				_templateImplementation.delegate = _delegate;
-				_templateImplementation.context = context;
+				IContextAwareElement( _templateImplementation ).context = context;
 				_templateImplementation.initialized( _document, id + "_impl" );
 				_templateImplementation.parent = parent;
-				_children = new Vector.<IWorkflowElement>[ _templateImplementation ];
+				_templateImplementation.description = description;
+				_children = Vector.<IWorkflowElement>([ _templateImplementation ]);
 			}
 			else
 			{
@@ -180,144 +190,143 @@ package org.astoolkit.workflow.core
 					" has no available implementation." );
 			}
 		}
-
+		
 		public function get inlet() : Object
 		{
-			// TODO Auto Generated method stub
 			return null;
 		}
-
+		
 		public function set inlet( inInlet : Object ) : void
 		{
-			// TODO Auto Generated method stub
-
 		}
-
+		
 		public function set input( inData : * ) : void
 		{
-			// TODO Auto Generated method stub
-
 		}
-
+		
 		public function get inputFilter() : Object
 		{
-			// TODO Auto Generated method stub
 			return null;
 		}
-
+		
 		public function set inputFilter( inValue : Object ) : void
 		{
-			// TODO Auto Generated method stub
-
 		}
-
+		
 		public function get invalidPipelinePolicy() : String
 		{
-			// TODO Auto Generated method stub
 			return null;
 		}
-
+		
 		public function set invalidPipelinePolicy( inValue : String ) : void
 		{
-			// TODO Auto Generated method stub
-
 		}
-
+		
 		public function get outlet() : Object
 		{
-			// TODO Auto Generated method stub
 			return null;
 		}
-
+		
 		public function set outlet( inInlet : Object ) : void
 		{
-			// TODO Auto Generated method stub
-
 		}
-
+		
 		public function get output() : *
 		{
-			// TODO Auto Generated method stub
 			return null;
 		}
-
+		
 		public function get outputFilter() : Object
 		{
-			// TODO Auto Generated method stub
 			return null;
 		}
-
+		
 		public function set outputFilter( inValue : Object ) : void
 		{
-			// TODO Auto Generated method stub
-
 		}
-
+		
 		public function set outputKind( inValue : String ) : void
 		{
-			// TODO Auto Generated method stub
-
 		}
-
+		
 		public function resume() : void
 		{
-			// TODO Auto Generated method stub
-
 		}
-
+		
 		public function get running() : Boolean
 		{
-			// TODO Auto Generated method stub
 			return false;
 		}
-
+		
 		public function get status() : String
 		{
-			// TODO Auto Generated method stub
 			return null;
 		}
-
+		
 		public function suspend() : void
 		{
-			// TODO Auto Generated method stub
-
-
 		}
-
+		
+		public function set taskParametersMapping( inValue : Object ) : void
+		{
+			setImplementationProperty( "parametersMapping", inValue );
+		}
+		
 		public function get templateContract() : Class
 		{
 			return null;
 		}
-
+		
 		public function get templateImplementation() : IWorkflowTask
 		{
 			return _templateImplementation;
 		}
-
+		
 		public function set timeout( inValue : int ) : void
 		{
 			setImplementationProperty( "timeout", inValue );
-
 		}
-
+		
+		override public function set failurePolicy( inValue : String ) : void
+		{
+			setImplementationProperty( "failurePolicy", inValue );
+		}
+		
+		override public function get failurePolicy() : String
+		{
+			return null;
+		}
 		protected function setImplementationProperty( inName : String, inValue : * ) : void
 		{
-			if( _templateImplementation )
+			if ( _templateImplementation )
 				_templateImplementation[ inName ] = inValue;
 			else
 				_tempImplementationProperties[ inName ] = inValue;
 		}
-
+		
 		flash_proxy override function setProperty( inName : *, inValue : * ) : void
 		{
 			super.flash_proxy::setProperty( inName, inValue );
-
-			if( _templateImplementation &&
-				( ClassInfo.forType( _templateImplementation ).isDynamic ||
+			
+			if ( _templateImplementation &&
+				( Type.forType( _templateImplementation ).isDynamic ||
 				Object( _templateImplementation ).hasOwnProperty( QName( inName ).localName ) ) )
 			{
 				_templateImplementation[ QName( inName ).localName ] = inValue;
 			}
 		}
+		
+		public function addDeferredExecutionResponder(inResponser:IResponder):void
+		{
+			// TODO Auto Generated method stub
+			
+		}
+		
+		public function isExecutionDeferred():Boolean
+		{
+			// TODO Auto Generated method stub
+			return false;
+		}
+		
 	}
 }

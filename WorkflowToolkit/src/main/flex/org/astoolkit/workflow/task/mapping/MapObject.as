@@ -7,12 +7,12 @@ package org.astoolkit.workflow.task.mapping
 	import org.astoolkit.workflow.api.IMapTask;
 	import org.astoolkit.workflow.api.IWorkflowTask;
 	import org.astoolkit.workflow.core.BaseElement;
-	import org.astoolkit.workflow.core.Workflow;
+	import org.astoolkit.workflow.core.Do;
 
 	use namespace astoolkit_private;
 
 	[Bindable]
-	public class MapObject extends Workflow implements IMapTask
+	public class MapObject extends Do implements IMapTask
 	{
 		public var fun : Function;
 

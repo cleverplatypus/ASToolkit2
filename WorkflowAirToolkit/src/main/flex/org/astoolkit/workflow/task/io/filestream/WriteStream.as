@@ -6,7 +6,7 @@ package org.astoolkit.workflow.task.io.filestream
 
 	/**
 	 * Writes data to a <code>flash.filesystem.FileStream</code>.<br><br>
-	 * The value is written using the stream's appropriate <code>writeXXX</code>
+	 * The value is written using the stream's appropriate <code>writeBLA</code>
 	 * depending on the type passed.
 	 *
 	 * <b>Input</b>

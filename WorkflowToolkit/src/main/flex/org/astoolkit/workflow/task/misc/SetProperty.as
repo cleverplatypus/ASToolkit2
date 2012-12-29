@@ -95,6 +95,8 @@ package org.astoolkit.workflow.task.misc
 
 			if( value != undefined )
 				target[ property ] = value;
+			else
+				target[ property ] = filteredInput;
 			complete();
 		}
 	}

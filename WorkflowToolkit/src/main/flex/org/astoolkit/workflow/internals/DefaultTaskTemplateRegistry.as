@@ -23,9 +23,9 @@ package org.astoolkit.workflow.internals
 	import flash.utils.getQualifiedClassName;
 	import mx.logging.ILogger;
 	import mx.logging.Log;
-	import org.astoolkit.commons.factory.IPooledFactory;
+	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.factory.PooledFactory;
-	import org.astoolkit.commons.reflection.ClassInfo;
+	import org.astoolkit.commons.reflection.Type;
 	import org.astoolkit.workflow.annotation.Template;
 	import org.astoolkit.workflow.api.ITaskTemplate;
 	import org.astoolkit.workflow.api.ITaskTemplateRegistry;
@@ -41,8 +41,8 @@ package org.astoolkit.workflow.internals
 		public function getImplementation( inTemplate : ITaskTemplate ) : IWorkflowTask
 		{
 			var implementation : IWorkflowTask;
-			var ci : ClassInfo = ClassInfo.forType( inTemplate );
-			var interfaces : Vector.<ClassInfo> =
+			var ci : Type = Type.forType( inTemplate );
+			var interfaces : Vector.<Type> =
 				ci.getInterfacesWithAnnotationsOfType( Template );
 
 			if( interfaces && interfaces.length > 0 )
@@ -59,16 +59,16 @@ package org.astoolkit.workflow.internals
 
 		public function registerImplementation( inImplementation : Object ) : void
 		{
-			var ci : ClassInfo = ClassInfo.forType( inImplementation );
-			var interfaces : Vector.<ClassInfo> =
+			var ci : Type = Type.forType( inImplementation );
+			var interfaces : Vector.<Type> =
 				ci.getInterfacesWithAnnotationsOfType( Template );
 
-			for each( var contract : ClassInfo in interfaces )
+			for each( var contract : Type in interfaces )
 			{
 				if( !_implementationsByContract.hasOwnProperty( contract.fullName ) )
 				{
 					var factory : PooledFactory = new PooledFactory();
-					factory.defaultType =
+					factory.type =
 						inImplementation is Class ?
 						inImplementation as Class :
 						inImplementation.constructor;
@@ -86,11 +86,11 @@ package org.astoolkit.workflow.internals
 
 		public function releaseImplementation( inImplementation : IWorkflowTask ) : void
 		{
-			var ci : ClassInfo = ClassInfo.forType( inImplementation );
-			var interfaces : Vector.<ClassInfo> =
+			var ci : Type = Type.forType( inImplementation );
+			var interfaces : Vector.<Type> =
 				ci.getInterfacesWithAnnotationsOfType( Template );
 
-			for each( var contract : ClassInfo in interfaces )
+			for each( var contract : Type in interfaces )
 			{
 				if( _implementationsByContract.hasOwnProperty( contract.fullName ) )
 				{

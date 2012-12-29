@@ -24,18 +24,30 @@ package org.astoolkit.workflow.template.message
 	import org.astoolkit.workflow.core.BaseTaskTemplate;
 	import org.astoolkit.workflow.task.api.ISendMessage;
 
+	/**
+	 * Template for sending a message through a message bus.
+	 * The actual implementation must be provided via a context plug-in.
+	 */
 	public dynamic class SendMessage extends BaseTaskTemplate implements ISendMessage
 	{
 		public function set hasAsyncResult( inValue : Boolean ) : void
 		{
-			setImplementationProperty( "isCommand", inValue );
+			setImplementationProperty( "hasAsyncResult", inValue );
 		}
 
+		[AutoConfig]
 		public function set message( inValue : Object ) : void
 		{
 			setImplementationProperty( "message", inValue );
 		}
-
+		
+		[AutoConfig]
+		public function set messageClass( inValue : Class ) : void
+		{
+			setImplementationProperty( "messageClass", inValue );
+		}
+		
+		[AutoConfig]
 		public function set messageFactory( inValue : IFactory ) : void
 		{
 			setImplementationProperty( "messageFactory", inValue );
@@ -54,6 +66,11 @@ package org.astoolkit.workflow.template.message
 		public function set scope( inValue : Object ) : void
 		{
 			setImplementationProperty( "scope", inValue );
+		}
+		
+		public function set selector( inValue : * ) : void
+		{
+			setImplementationProperty( "selector", inValue );
 		}
 	}
 }

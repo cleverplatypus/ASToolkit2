@@ -6,7 +6,7 @@ package org.astoolkit.workflow.api
 	public interface IElementsGroup extends IWorkflowElement
 	{
 		/**
-		 * the declared tasks
+		 * the declared elements
 		 */
 		function get children() : Vector.<IWorkflowElement>;
 		function set children( inChildren : Vector.<IWorkflowElement> ) : void;

@@ -23,9 +23,11 @@ package org.astoolkit.commons.reflection
 	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
+	
 	import mx.logging.ILogger;
 	import mx.logging.Log;
 	import mx.utils.StringUtil;
+	
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 
 	public class Metadata implements IAnnotation
@@ -43,6 +45,10 @@ package org.astoolkit.commons.reflection
 			if( !meta )
 				return;
 
+			if( meta.arg.( @key == "repeatable" ).length() > 0)
+			{
+				_tagRepeatable = StringUtil.trim( meta.arg.( @key == "repeatable" ).@value.toString() ).toLowerCase() == "true";
+			}
 			if( meta.arg.( @key == "name" ).length() > 0 )
 				_tagName = meta.arg.( @key == "name" ).@value.toString();
 			else
@@ -63,6 +69,8 @@ package org.astoolkit.commons.reflection
 							return inVal == "interface" ||
 								inVal == "class" ||
 								inVal == "property" ||
+								inVal == "getter" ||
+								inVal == "setter" ||
 								inVal == "function";
 						} ) )
 				{
@@ -79,7 +87,14 @@ package org.astoolkit.commons.reflection
 		protected var _tagName : String;
 
 		protected var _target : Array;
+		
+		protected var _tagRepeatable : Boolean;
 
+		protected var _targetType : Class = Object;
+		
+		protected var _ownerType : Class = Object;
+		
+		
 		public function getArray( inArgName : String = "", inOrDefault : Boolean = false ) : Array
 		{
 			var s : String = getString( inArgName, inOrDefault );
@@ -150,5 +165,22 @@ package org.astoolkit.commons.reflection
 		{
 			return _tagName;
 		}
+		
+		public function get tagRepeatable() : Boolean
+		{
+			return _tagRepeatable;
+		}
+
+		public function get targetType() : Class
+		{
+			return _targetType;
+		}
+
+		public function get ownerType():Class
+		{
+			return _ownerType;
+		}
+
+
 	}
 }

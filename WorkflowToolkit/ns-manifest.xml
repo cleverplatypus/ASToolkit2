@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <componentPackage>
 	<component 
+		id="Do"
+		class="org.astoolkit.workflow.core.Do"
+		/>
+	<component 
 		id="Workflow"
 		class="org.astoolkit.workflow.core.Workflow"
 		/>
@@ -54,7 +58,11 @@
 		/>
 	<component 
 		id="SetPipeline"
-		class="org.astoolkit.workflow.core.SetPipeline"
+		class="org.astoolkit.workflow.task.pipeline.SetPipeline"
+		/>
+	<component 
+		id="TransformOnInputType"
+		class="org.astoolkit.workflow.task.pipeline.TransformOnInputType"
 		/>
 	<component 
 		id="SetVariable"
@@ -87,6 +95,10 @@
 	<component 
 		id="Break"
 		class="org.astoolkit.workflow.task.flowcontrol.Break"
+		/>
+	<component 
+		id="Exit"
+		class="org.astoolkit.workflow.task.flowcontrol.Exit"
 		/>
 	<component 
 		id="BreakAfterCount"
@@ -141,19 +153,15 @@
 		class="org.astoolkit.workflow.task.text.ConcatString"
 		/>
 	<component 
-		id="WithCurrentData"
-		class="org.astoolkit.workflow.conditional.WithCurrentData"
+		id="SendMessage"
+		class="org.astoolkit.workflow.template.message.SendMessage"
 		/>
 	<component 
-		id="WithData"
-		class="org.astoolkit.workflow.conditional.WithData"
+		id="ExitStatusEq"
+		class="org.astoolkit.workflow.conditional.ExitStatusEq"
 		/>
 	<component 
-		id="WithExitStatus"
-		class="org.astoolkit.workflow.conditional.WithExitStatus"
-		/>
-	<component 
-		id="WithVariable"
-		class="org.astoolkit.workflow.conditional.WithVariable"
+		id="Invoke"
+		class="org.astoolkit.workflow.task.delegate.Invoke"
 		/>
 </componentPackage>

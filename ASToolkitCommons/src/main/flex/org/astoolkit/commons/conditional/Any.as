@@ -28,23 +28,22 @@ package org.astoolkit.commons.conditional
 
 		override public function evaluate( inComparisonValue : * = undefined ) : Object
 		{
-			inComparisonValue = _setValue !== undefined ? _setValue : inComparisonValue;
-			super.evaluate( inComparisonValue );
+			var compared : * = resolveSource( inComparisonValue );
 
 			if( !children )
-				return true;
+				return true && !_negate;
 
 			for each( var child : IConditionalExpression in children )
 			{
-				var result : Object = child.evaluate( inComparisonValue );
+				var result : Object = child.evaluate( compared );
 
 				if( result is Boolean && result == true )
-					return true;
+					return true && !_negate;
 
 				if( result is AsyncExpressionToken )
 				{
 					if( child.lastResult !== undefined )
-						return child.lastResult
+						return child.lastResult;
 					else
 						return result;
 				}

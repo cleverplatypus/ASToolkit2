@@ -21,12 +21,12 @@
 					</includeAsClasses>
 					<namespaces>
 						<namespace>
-							<uri>http://www.astoolkit.org/ns/2012/workflow</uri>
+							<uri>http://www.astoolkit.org/ns/2012/wfml</uri>
 							<manifest>${basedir}/ns-manifest.xml</manifest>
 						</namespace>
 					</namespaces>
 					<includeNamespaces>
-						<namespace>http://www.astoolkit.org/ns/2012/workflow</namespace>
+						<namespace>http://www.astoolkit.org/ns/2012/wfml</namespace>
 					</includeNamespaces>
 				</configuration>
 			</plugin>

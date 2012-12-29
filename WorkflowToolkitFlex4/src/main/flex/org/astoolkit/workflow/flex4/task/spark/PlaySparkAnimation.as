@@ -25,7 +25,6 @@ package org.astoolkit.workflow.flex4.task.spark
 	import org.astoolkit.workflow.core.BaseTask;
 	import spark.effects.Animate;
 
-	[DefaultProperty( "animation" )]
 	/**
 	 * Plays a Spark <code>Effect</code>
 	 * <p>If <code>blocking</code> is set to true the task waits
@@ -61,6 +60,7 @@ package org.astoolkit.workflow.flex4.task.spark
 	 */
 	public class PlaySparkAnimation extends BaseTask
 	{
+		[AutoConfig]
 		/**
 		 * the animation to play (default property)
 		 */

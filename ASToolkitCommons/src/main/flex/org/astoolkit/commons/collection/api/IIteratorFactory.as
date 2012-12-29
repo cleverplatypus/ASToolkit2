@@ -2,7 +2,7 @@ package org.astoolkit.commons.collection.api
 {
 
 	import mx.core.IFactory;
-	import org.astoolkit.commons.factory.IPooledFactory;
+	import org.astoolkit.commons.factory.api.IPooledFactory;
 
 	public interface IIteratorFactory extends IPooledFactory
 	{

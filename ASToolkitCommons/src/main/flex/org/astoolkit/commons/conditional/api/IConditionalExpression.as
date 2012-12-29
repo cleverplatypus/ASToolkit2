@@ -21,8 +21,10 @@ package org.astoolkit.commons.conditional.api
 {
 
 	import mx.core.IMXMLObject;
+	
+	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
 
-	public interface IConditionalExpression extends IMXMLObject
+	public interface IConditionalExpression extends IMXMLObject, IIODataTransformerClient
 	{
 		function get async() : Boolean;
 		function clearResult() : void;
@@ -33,5 +35,6 @@ package org.astoolkit.commons.conditional.api
 		function get parent() : IConditionalExpressionGroup;
 		function set parent( inValue : IConditionalExpressionGroup ) : void;
 		function set resolver( inValue : IExpressionResolver ) : void;
+		function set negate( inValue : Boolean ) : void;
 	}
 }

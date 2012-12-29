@@ -27,7 +27,7 @@ package org.astoolkit.commons.collection
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
 	import org.astoolkit.commons.factory.PooledFactory;
-	import org.astoolkit.commons.reflection.ClassInfo;
+	import org.astoolkit.commons.reflection.Type;
 	import org.astoolkit.commons.reflection.IAnnotation;
 	import org.astoolkit.commons.reflection.Metadata;
 
@@ -45,7 +45,7 @@ package org.astoolkit.commons.collection
 
 			if( !_iteratorsMetaCache[ cName ].hasOwnProperty( "IteratorSource" ) )
 			{
-				var ci : ClassInfo = ClassInfo.forType( inObject );
+				var ci : Type = Type.forType( inObject );
 				var annotation : IteratorSource;
 				var annotations : Vector.<IAnnotation> = ci.getAnnotationsOfType( IteratorSource );
 

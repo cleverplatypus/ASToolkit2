@@ -81,14 +81,11 @@ package org.astoolkit.workflow.flex4.iterator
 
 		public function get progress() : Number
 		{
-			// TODO Auto Generated method stub
 			return _currentFraction;
 		}
 
 		public function pushBack() : void
 		{
-			// TODO Auto Generated method stub
-
 		}
 
 		public function reset() : void

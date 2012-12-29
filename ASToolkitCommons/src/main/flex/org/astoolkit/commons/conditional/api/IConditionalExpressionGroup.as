@@ -24,6 +24,5 @@ package org.astoolkit.commons.conditional.api
 	{
 		function get children() : Vector.<IConditionalExpression>
 		function set children( inValue : Vector.<IConditionalExpression> ) : void;
-		function set withValue( inValue : * ) : void;
 	}
 }

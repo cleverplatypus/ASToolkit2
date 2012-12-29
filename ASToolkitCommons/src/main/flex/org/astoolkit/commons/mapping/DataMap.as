@@ -21,7 +21,7 @@ package org.astoolkit.commons.mapping
 {
 
 	import org.astoolkit.commons.factory.DynamicPoolFactoryDelegate;
-	import org.astoolkit.commons.factory.IPooledFactory;
+	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.factory.PooledFactory;
 	import org.astoolkit.commons.io.transform.DefaultDataTransformRegistry;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
@@ -51,6 +51,11 @@ package org.astoolkit.commons.mapping
 		{
 			return new MapperWrapper( factory, inMapping, inTarget, inStrict );
 		}
+		
+		public function newObject( inTargetClass : Class, inMapping : Object, inStrict : Boolean = true ) : IPropertiesMapper
+		{
+			return new MapperWrapper( factory, inMapping, inTargetClass, inStrict );
+		}
 
 		public function property( inTarget : Object, inPropertyName : String ) : IPropertiesMapper
 		{
@@ -69,9 +74,9 @@ package org.astoolkit.commons.mapping
 			if( !_factory )
 			{
 				_factory = new PooledFactory();
-				_factory.defaultType = SimplePropertiesMapper;
+				_factory.type = SimplePropertiesMapper;
 				_factory.delegate = new DynamicPoolFactoryDelegate(
-					null, postCreateFactoryHandler );
+					null, postCreateFactoryHandler, null, null );
 			}
 			return _factory;
 		}
@@ -81,15 +86,25 @@ package org.astoolkit.commons.mapping
 			if( !_transformerRegistry )
 				_transformerRegistry = new DefaultDataTransformRegistry();
 			inInstance.transformerRegistry = _transformerRegistry;
+			inInstance.targetClass = null;
+			inInstance.target = null;
+			inInstance.mapping = null;
+		}
+		
+		private function onMapperRelease( inInstance : SimplePropertiesMapper ) : void
+		{
+			
 		}
 	}
 }
 
+import mx.core.ClassFactory;
 import mx.core.IFactory;
-import org.astoolkit.commons.factory.IPooledFactory;
+
+import org.astoolkit.commons.factory.api.IPooledFactory;
 import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
-import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 import org.astoolkit.commons.mapping.SimplePropertiesMapper;
+import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 
 class MapperWrapper implements IPropertiesMapper
 {
@@ -101,7 +116,8 @@ class MapperWrapper implements IPropertiesMapper
 		)
 	{
 		_strict = inStrict;
-		_target = inTarget;
+		_target = inTarget is Class ? null : inTarget;
+		_targetClass = inTarget is Class ? inTarget as Class : null;
 		_mapping = inMapping;
 		_factory = inFactory;
 	}
@@ -113,7 +129,9 @@ class MapperWrapper implements IPropertiesMapper
 	private var _strict : Boolean;
 
 	private var _target : Object;
-
+	
+	private var _targetClass : Class;
+	
 	private var _transformerRegistry : IIODataTransformerRegistry;
 
 	public function hasTarget() : Boolean
@@ -124,7 +142,14 @@ class MapperWrapper implements IPropertiesMapper
 	public function map( inSource : Object, inTarget : Object = null ) : *
 	{
 		var mapper : IPropertiesMapper = create();
-		var out : * = mapper.map( inSource, _target );
+		var out : *;
+		if( _targetClass )
+		{
+			mapper.targetClass = new ClassFactory( _targetClass );
+			out = mapper.map( inSource );
+		}
+		else
+			out = mapper.map( inSource, _target );
 		_factory.release( mapper );
 		return out;
 	}
@@ -136,7 +161,11 @@ class MapperWrapper implements IPropertiesMapper
 	public function mapWith( inSource : Object, inMapping : Object, inTarget : Object = null ) : *
 	{
 		var mapper : IPropertiesMapper = create();
-		var out : * = mapper.mapWith( inSource, inMapping, _target );
+		var out : * = mapper.mapWith( 
+			inSource, 
+			inMapping, 
+			inTarget != null ? inTarget : _target 
+		);
 		_factory.release( mapper );
 		return out;
 	}
@@ -163,7 +192,6 @@ class MapperWrapper implements IPropertiesMapper
 	{
 		var mapper : SimplePropertiesMapper = _factory.newInstance();
 		mapper.mapping = _mapping;
-		mapper.target = _target;
 		mapper.strict = _strict;
 		return mapper;
 	}

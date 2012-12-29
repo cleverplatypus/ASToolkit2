@@ -57,6 +57,3 @@ package org.astoolkit.workflow.task.variables
 	}
 }
 
-class UndefinedVariable
-{
-}

@@ -67,8 +67,6 @@ package org.astoolkit.workflow.task.misc
 
 		private function filterFunction( inValue : Object, ... rest ) : Boolean
 		{
-			if( includeCondition is IConditionalExpressionGroup )
-				IConditionalExpressionGroup( includeCondition ).withValue = inValue;
 			return includeCondition.evaluate( inValue ) == true;
 
 		}
