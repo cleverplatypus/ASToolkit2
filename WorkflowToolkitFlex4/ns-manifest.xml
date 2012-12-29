@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<componentPackage>
+	<component id="PlaySparkAnimation" class="org.astoolkit.workflow.flex4.task.spark.PlaySparkAnimation"/>
+	<component id="AnimatedPointIterator" class="org.astoolkit.workflow.flex4.iterator.AnimatedPointIterator"/>
+	<component id="AnimatedValueIterator" class="org.astoolkit.workflow.flex4.iterator.AnimatedValueIterator"/>
+</componentPackage>
