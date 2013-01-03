@@ -24,22 +24,42 @@ package org.astoolkit.workflow.internals
 	import mx.events.PropertyChangeEvent;
 	import mx.events.PropertyChangeEventKind;
 	import org.astoolkit.commons.collection.api.IIterator;
-	import org.astoolkit.workflow.api.ITasksFlow;
+	import org.astoolkit.workflow.api.ITasksGroup;
 	import org.astoolkit.workflow.api.IWorkflowTask;
 	import org.astoolkit.workflow.core.WorkflowEvent;
 
 	public class TasksIterator implements IIterator
 	{
-		public function TasksIterator()
+
+		private var _current : IWorkflowTask;
+
+		private var _currentIndex : int;
+
+		private var _cycle : Boolean;
+
+		private var _elements : Vector.<IWorkflowTask>;
+
+		private var _hasNextInvalidated : Boolean;
+
+		private var _isAborted : Boolean;
+
+		private var _pendingTasks : Vector.<IWorkflowTask>;
+
+		private var _prefetchedIndex : int;
+
+		private var _prefetchedTask : IWorkflowTask;
+
+		private var _tasksFlow : ITasksGroup;
+
+		public function set cycle(value:Boolean) : void
 		{
+			_cycle = value;
 		}
 
 		public function get hasPendingTasks() : Boolean
 		{
 			return _pendingTasks.length > 0;
 		}
-
-		private var _isAborted : Boolean;
 
 		public function get isAborted() : Boolean
 		{
@@ -48,33 +68,17 @@ package org.astoolkit.workflow.internals
 
 		public function get progress() : Number
 		{
-			if ( _elements && _elements.length > 0 )
+			if( _elements && _elements.length > 0 )
 				return _currentIndex / _elements.length;
 			return -1;
 		}
 
 		public function set source( inValue : * ) : void
 		{
-			if ( !( inValue is ITasksFlow ) )
+			if( !( inValue is ITasksGroup ) )
 				throw new Error( "TaskIterator source must be an instance of IWorkflow" );
-			_tasksFlow = inValue as ITasksFlow;
+			_tasksFlow = inValue as ITasksGroup;
 		}
-
-		private var _current : IWorkflowTask;
-
-		private var _currentIndex : int;
-
-		private var _elements : Vector.<IWorkflowTask>;
-
-		private var _hasNextInvalidated : Boolean;
-
-		private var _pendingTasks : Vector.<IWorkflowTask>;
-
-		private var _prefetchedIndex : int;
-
-		private var _prefetchedTask : IWorkflowTask;
-
-		private var _tasksFlow : ITasksFlow;
 
 		public function abort() : void
 		{
@@ -93,7 +97,7 @@ package org.astoolkit.workflow.internals
 
 		public function hasNext() : Boolean
 		{
-			if ( _hasNextInvalidated )
+			if( _hasNextInvalidated )
 			{
 				prefetchNext();
 				_hasNextInvalidated = false;
@@ -103,7 +107,7 @@ package org.astoolkit.workflow.internals
 
 		public function next() : Object
 		{
-			if ( hasNext() )
+			if( hasNext() )
 			{
 				_hasNextInvalidated = true;
 				_current = _prefetchedTask;
@@ -141,11 +145,11 @@ package org.astoolkit.workflow.internals
 			_prefetchedTask = null;
 			_elements = GroupUtil.getRuntimeTasks( _tasksFlow.children );
 
-			if ( !_pendingTasks )
+			if( !_pendingTasks )
 				_pendingTasks = new Vector.<IWorkflowTask>();
-			else if ( _pendingTasks.length > 0 )
+			else if( _pendingTasks.length > 0 )
 			{
-				for each ( var task : IWorkflowTask in _pendingTasks )
+				for each( var task : IWorkflowTask in _pendingTasks )
 					task.removeEventListener(
 						WorkflowEvent.COMPLETED,
 						onTaskComplete );
@@ -155,7 +159,7 @@ package org.astoolkit.workflow.internals
 
 		public function supportsSource( inObject : * ) : Boolean
 		{
-			return inObject is ITasksFlow;
+			return inObject is ITasksGroup;
 		}
 
 		private function onTaskComplete( inEvent : WorkflowEvent ) : void
@@ -181,7 +185,7 @@ package org.astoolkit.workflow.internals
 			var task : IWorkflowTask;
 			_prefetchedIndex++;
 
-			if ( _prefetchedIndex < _elements.length )
+			if( _prefetchedIndex < _elements.length )
 				_prefetchedTask = _elements[ _prefetchedIndex ];
 			else
 				_prefetchedTask = null;

@@ -22,17 +22,12 @@ package org.astoolkit.workflow.core
 
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
-	import mx.rpc.IResponder;
 	import org.astoolkit.commons.conditional.AsyncExpressionToken;
 	import org.astoolkit.commons.conditional.api.IConditionalExpression;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 	import org.astoolkit.commons.mxml.IAutoConfigContainerObject;
-	import org.astoolkit.workflow.api.IDeferrableProcess;
-	import org.astoolkit.workflow.api.IElementsGroup;
-	import org.astoolkit.workflow.api.IPipelineConsumer;
-	import org.astoolkit.workflow.api.ITaskProxy;
-	import org.astoolkit.workflow.api.IWorkflowTask;
+	import org.astoolkit.workflow.api.*;
 
 	public class If extends BaseElement implements ITaskProxy,
 		IDeferrableProcess,
@@ -159,10 +154,18 @@ package org.astoolkit.workflow.core
 			super.initialize();
 
 			if( _isFalseTask )
+			{
+				_isFalseTask.context = _context;
+				_isFalseTask.parent = _parent;
 				_isFalseTask.initialize();
+			}
 
 			if( _isTrueTask )
+			{
+				_isTrueTask.context = _context;
+				_isTrueTask.parent = _parent;
 				_isTrueTask.initialize();
+			}
 		}
 
 		public function isProcessDeferred() : Boolean

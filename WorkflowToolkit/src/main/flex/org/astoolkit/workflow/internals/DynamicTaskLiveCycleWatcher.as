@@ -2,7 +2,7 @@ package org.astoolkit.workflow.internals
 {
 
 	import org.astoolkit.workflow.api.ITaskLiveCycleWatcher;
-	import org.astoolkit.workflow.api.ITasksFlow;
+	import org.astoolkit.workflow.api.ITasksGroup;
 	import org.astoolkit.workflow.api.IWorkflowElement;
 	import org.astoolkit.workflow.api.IWorkflowTask;
 	import org.astoolkit.workflow.core.ExitStatus;
@@ -120,7 +120,7 @@ package org.astoolkit.workflow.internals
 		{
 		}
 
-		public function onWorkflowCheckingNextTask( inWorkflow : ITasksFlow, inPipelineData : Object ) : void
+		public function onWorkflowCheckingNextTask( inWorkflow : ITasksGroup, inPipelineData : Object ) : void
 		{
 		}
 	}

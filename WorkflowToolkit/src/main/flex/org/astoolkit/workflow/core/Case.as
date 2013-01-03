@@ -23,38 +23,33 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.workflow.api.IElementsGroup;
 	import org.astoolkit.workflow.api.ISwitchCase;
 	import org.astoolkit.workflow.api.IWorkflowElement;
+	import org.astoolkit.workflow.api.IWorkflowTask;
 	import org.astoolkit.workflow.internals.GroupUtil;
 
-	[DefaultProperty( "children" )]
+	[DefaultProperty( "task" )]
 	/**
 	 * A group of elements to enable if <code>value</code> or one of <code>values</code>
 	 * matches the parent <code>Switch</code>'s <code>source</code>
 	 *
 	 * @see org.astoolkit.workflow.core.Switch
 	 */
-	public class Case extends Group implements ISwitchCase
+	public class Case extends BaseElement implements ISwitchCase
 	{
+
+		private var _task : IWorkflowTask
+
+		private var _value:*;
+
 		private var _values : Array;
 
-		/**
-		 * @private
-		 */
-		override public function set parent( inParent : IElementsGroup ) : void
+		public function get task() : IWorkflowTask
 		{
-			if( !( inParent is Switch ) )
-				throw new Error( "Case can only be used as child of Switch" );
-			super.parent = inParent;
+			return null;
 		}
 
-		public function switchChildren( inEnabled : Boolean ) : void
+		public function get value() : *
 		{
-			if( _children )
-			{
-				for each( var element : IWorkflowElement in _children )
-				{
-					element.enabled = inEnabled;
-				}
-			}
+			return _value;
 		}
 
 		/**
@@ -73,6 +68,11 @@ package org.astoolkit.workflow.core
 		public function set values( inValue : Array ) : void
 		{
 			_values = inValue;
+		}
+
+		public function getTask() : IWorkflowTask
+		{
+			return _task;
 		}
 	}
 }

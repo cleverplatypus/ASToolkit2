@@ -46,6 +46,7 @@ package org.astoolkit.commons.reflection
 			i._writeOnly = inWriteOnly;
 			i._scope = inScope;
 			i._type = inType;
+			i._subtype = inSubtype;
 			i._annotationsForName = {};
 			i._annotations = inAnnotations.concat();
 			i._owner = inOwner;
@@ -77,6 +78,8 @@ package org.astoolkit.commons.reflection
 
 		private var _scope : String;
 
+		private var _subtype : Class;
+
 		private var _type : Class;
 
 		private var _writeOnly : Boolean;
@@ -94,6 +97,11 @@ package org.astoolkit.commons.reflection
 		public function get scope() : String
 		{
 			return _scope;
+		}
+
+		public function get subtype() : Class
+		{
+			return _subtype;
 		}
 
 		public function get type() : Class

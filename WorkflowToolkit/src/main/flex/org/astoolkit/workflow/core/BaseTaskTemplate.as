@@ -26,6 +26,7 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.databinding.BindingUtility;
 	import org.astoolkit.commons.databinding.Watch;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
+	import org.astoolkit.commons.mxml.IAutoConfigContainerObject;
 	import org.astoolkit.commons.reflection.Type;
 	import org.astoolkit.workflow.api.IContextAwareElement;
 	import org.astoolkit.workflow.api.IDeferrableProcess;
@@ -39,7 +40,7 @@ package org.astoolkit.workflow.core
 	use namespace flash_proxy;
 
 	[DefaultProperty("autoConfigChildren")]
-	public class BaseTaskTemplate extends Group implements ITaskTemplate, IWorkflowTask
+	public class BaseTaskTemplate extends BaseElement implements ITaskTemplate, IWorkflowTask, IAutoConfigContainerObject
 	{
 
 		private var _bindings : Vector.<Watch>;
@@ -58,11 +59,6 @@ package org.astoolkit.workflow.core
 		public function get blocker() : HeldTaskInfo
 		{
 			return null;
-		}
-
-		override public function set children( inChildren : Vector.<IWorkflowElement> ) : void
-		{
-			throw new Error( "BaseTaskTemplate cannot have children assigned" );
 		}
 
 		public function get currentProgress() : Number
@@ -111,12 +107,12 @@ package org.astoolkit.workflow.core
 		{
 		}
 
-		override public function get failurePolicy() : String
+		public function get failurePolicy() : String
 		{
 			return null;
 		}
 
-		override public function set failurePolicy( inValue : String ) : void
+		public function set failurePolicy( inValue : String ) : void
 		{
 			setImplementationProperty( "failurePolicy", inValue );
 		}
@@ -248,9 +244,16 @@ package org.astoolkit.workflow.core
 
 		override public function cleanUp() : void
 		{
-			_children.length = 0;
-			context.config.templateRegistry.releaseImplementation( _templateImplementation );
-			_templateImplementation = null;
+			if( _templateImplementation )
+			{
+				_context.config.templateRegistry.releaseImplementation( _templateImplementation );
+				_templateImplementation = null;
+			}
+		}
+
+		public function getTask() : IWorkflowTask
+		{
+			return _templateImplementation;
 		}
 
 		public function hold() : HeldTaskInfo
@@ -282,18 +285,21 @@ package org.astoolkit.workflow.core
 				_templateImplementation.initialized( _document, id + "_impl" );
 				_templateImplementation.parent = parent;
 				_templateImplementation.description = description;
-				_children = Vector.<IWorkflowElement>([ _templateImplementation ]);
+
+				if( _templateImplementation is IAutoConfigContainerObject )
+					IAutoConfigContainerObject( _templateImplementation )
+						.autoConfigChildren = _autoConfigChildren;
 			}
 			else
 			{
 				throw new Error( "Template " + getQualifiedClassName( this ) +
 					" has no available implementation." );
 			}
+
 		}
 
 		public function isProcessDeferred() : Boolean
 		{
-			// TODO Auto Generated method stub
 			return false;
 		}
 

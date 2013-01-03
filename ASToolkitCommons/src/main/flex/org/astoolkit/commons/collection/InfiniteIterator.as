@@ -25,6 +25,13 @@ package org.astoolkit.commons.collection
 	[IteratorSource( "null" )]
 	public class InfiniteIterator implements IIterator
 	{
+		private var _cycle : Boolean;
+
+		public function set cycle(value:Boolean):void
+		{
+			_cycle = value;
+		}
+
 
 		private var _index : int;
 

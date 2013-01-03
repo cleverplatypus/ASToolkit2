@@ -21,19 +21,44 @@ package org.astoolkit.commons.collection
 {
 
 	import flash.utils.ByteArray;
-	
 	import org.astoolkit.commons.collection.api.IIterator;
 
 	[IteratorSource( "flash.utils.ByteArray" )]
 	public class ByteArrayIterator implements IIterator
 	{
-		public var readChunk : uint = 1024;
 
 		private var _current : ByteArray;
+
+		private var _cycle : Boolean;
 
 		private var _isAborted : Boolean;
 
 		private var _source : ByteArray;
+
+		public function set cycle(value:Boolean) : void
+		{
+			_cycle = value;
+		}
+
+		public function get isAborted() : Boolean
+		{
+			return _isAborted;
+		}
+
+		public function get progress() : Number
+		{
+			if( _source )
+				return ( _source.position / readChunk ) /
+					( _source.length / readChunk );
+			return -1;
+		}
+
+		public var readChunk : uint = 1024;
+
+		public function set source( inValue : * ) : void
+		{
+			_source = inValue as ByteArray;
+		}
 
 		public function abort() : void
 		{
@@ -57,11 +82,6 @@ package org.astoolkit.commons.collection
 			return _source && _source.bytesAvailable > 0;
 		}
 
-		public function get isAborted() : Boolean
-		{
-			return _isAborted;
-		}
-
 		public function next() : Object
 		{
 			if( _source )
@@ -75,12 +95,10 @@ package org.astoolkit.commons.collection
 			return null;
 		}
 
-		public function get progress() : Number
+		public function pushBack() : void
 		{
-			if( _source )
-				return ( _source.position / readChunk ) /
-					( _source.length / readChunk );
-			return -1;
+			// TODO Auto Generated method stub
+
 		}
 
 		public function reset() : void
@@ -91,21 +109,9 @@ package org.astoolkit.commons.collection
 			_isAborted = false;
 		}
 
-		public function set source( inValue : * ) : void
-		{
-			_source = inValue as ByteArray;
-		}
-
 		public function supportsSource( inObject : * ) : Boolean
 		{
 			return inObject is ByteArray;
 		}
-		
-		public function pushBack():void
-		{
-			// TODO Auto Generated method stub
-			
-		}
-		
 	}
 }

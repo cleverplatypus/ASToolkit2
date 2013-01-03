@@ -190,7 +190,7 @@ package org.astoolkit.workflow.parsleysupport
 		 */
 		private function onTaskComplete( inEvent : WorkflowEvent ) : void
 		{
-			var workflow : ITasksFlow = ITasksFlow( inEvent.target );
+			var workflow : ITasksGroup = ITasksGroup( inEvent.target );
 			workflow.removeEventListener(
 				WorkflowEvent.COMPLETED,
 				onTaskComplete );
@@ -207,7 +207,7 @@ package org.astoolkit.workflow.parsleysupport
 						ResultEvent.RESULT,
 						false,
 						true,
-						ITasksFlow( inEvent.target ).output ) );
+						ITasksGroup( inEvent.target ).output ) );
 				}, 1 );
 			}
 			else if ( behaviour == "resultOverride" )

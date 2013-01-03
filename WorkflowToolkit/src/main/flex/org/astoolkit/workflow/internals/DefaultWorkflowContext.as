@@ -25,6 +25,7 @@ package org.astoolkit.workflow.internals
 	import flash.utils.getQualifiedClassName;
 	import mx.core.IFactory;
 	import mx.logging.ILogger;
+	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluator;
 	import org.astoolkit.commons.factory.*;
 	import org.astoolkit.commons.factory.api.*;
@@ -190,7 +191,7 @@ package org.astoolkit.workflow.internals
 
 		public function addTaskLiveCycleWatcher( 
 			inValue : ITaskLiveCycleWatcher, 
-			inGroupScope : ITasksFlow = null ) : void
+			inGroupScope : ITasksGroup = null ) : void
 		{
 			_taskLiveCycleWatchers.push( inValue );
 			_taskLiveCycleWatchers.sort(
@@ -273,6 +274,29 @@ package org.astoolkit.workflow.internals
 		{
 			if( _taskLiveCycleWatchers.indexOf( inValue ) > -1 )
 				_taskLiveCycleWatchers.splice( _taskLiveCycleWatchers.indexOf( inValue ), 1 );
+		}
+
+		public function resolveIterator( inSource : Object, inIteratorConfig : Object = null ) : IIterator
+		{
+			var out : IIterator =
+				config.iteratorFactory.iteratorForSource( inSource );
+
+			if( out && out.supportsSource( inSource ) )
+			{
+				out.source = inSource;
+
+				if( inIteratorConfig )
+				{
+					for( var key : String in inIteratorConfig )
+					{
+						if( Object( out ).hasOwnProperty( key ) )
+							out[ key ] = inIteratorConfig[ key ];
+					}
+				}
+				return out;
+			}
+			return null;
+
 		}
 
 		private function configureObject( inObject : Object ) : void

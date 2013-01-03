@@ -22,7 +22,7 @@ package org.astoolkit.workflow.parsleysupport
 	import mx.core.IFactory;
 	
 	import org.astoolkit.commons.factory.api.IExtendedFactory;
-	import org.astoolkit.workflow.api.ITasksFlow;
+	import org.astoolkit.workflow.api.ITasksGroup;
 	import org.spicefactory.parsley.core.context.Context;
 	import org.spicefactory.parsley.core.registry.DynamicObjectDefinition;
 	import org.spicefactory.parsley.core.registry.ObjectDefinition;

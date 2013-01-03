@@ -20,20 +20,20 @@ Version 2.x
 package org.astoolkit.workflow.task.flowcontrol
 {
 	
-	import org.astoolkit.workflow.api.ITasksFlow;
+	import org.astoolkit.workflow.api.ITasksGroup;
 	import org.astoolkit.workflow.constant.TaskStatus;
 	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.internals.GroupUtil;
 	
 	public class Break extends BaseTask
 	{
-		public var target : ITasksFlow;
+		public var target : ITasksGroup;
 		
 		override public function begin() : void
 		{
 			super.begin();
 			_status = TaskStatus.IDLE;
-			var t : ITasksFlow = target ? target : GroupUtil.getParentWorkflow( this );
+			var t : ITasksGroup = target ? target : GroupUtil.getParentWorkflow( this );
 			t.abort()
 		}
 	}

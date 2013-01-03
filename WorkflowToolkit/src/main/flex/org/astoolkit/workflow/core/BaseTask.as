@@ -24,7 +24,6 @@ package org.astoolkit.workflow.core
 	import flash.events.Event;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
-	import flash.utils.clearTimeout;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
 	import mx.binding.utils.ChangeWatcher;
@@ -32,7 +31,6 @@ package org.astoolkit.workflow.core
 	import mx.events.PropertyChangeEventKind;
 	import mx.logging.ILogger;
 	import mx.logging.Log;
-	import mx.rpc.IResponder;
 	import mx.utils.StringUtil;
 	import org.astoolkit.commons.databinding.BindingUtility;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
@@ -146,7 +144,7 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		private var _root : ITasksFlow;
+		private var _root : ITasksGroup;
 
 		/**
 		 * @private
@@ -395,7 +393,7 @@ package org.astoolkit.workflow.core
 		 *
 		 * @see org.astoolkit.workflow.core.ExitStatus
 	 * @inheritDoc
-																									*/
+																									   */
 		public function set exitStatus( inStatus : ExitStatus ) : void
 		{
 			_exitStatus = inStatus;
@@ -684,7 +682,7 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		public function get root() : ITasksFlow
+		public function get root() : ITasksGroup
 		{
 			if( _root )
 				return _root;
@@ -694,7 +692,7 @@ package org.astoolkit.workflow.core
 			{
 				out = out.parent;
 			}
-			_root = out as ITasksFlow;
+			_root = out as ITasksGroup;
 			return _root;
 		}
 
@@ -764,7 +762,7 @@ package org.astoolkit.workflow.core
 			}
 			_taskCompleted = false;
 
-			if( !_context || ( !( this is ITasksFlow ) && !_parent ) )
+			if( !_context || ( !( this is ITasksGroup ) && !_parent ) )
 			{
 				throw new Error( "This task is not initialized properly." +
 					"Tasks are not meant to run stand-alone." +
@@ -876,8 +874,7 @@ package org.astoolkit.workflow.core
 		{
 			if( parent )
 			{
-				GroupUtil.getParentWorkflow( this )
-					.addEventListener(
+				parent.addEventListener(
 					"status_change",
 					onParentStatusChange );
 				_pipelineData = UNDEFINED;
@@ -1023,6 +1020,9 @@ package org.astoolkit.workflow.core
 		{
 			if( _status != TaskStatus.RUNNING )
 				return;
+
+			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+				w.onTaskComplete( this );
 
 			if( inOutputData != UNDEFINED && inOutputData !== undefined )
 				_pipelineData = inOutputData;

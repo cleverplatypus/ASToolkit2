@@ -21,8 +21,13 @@ package org.astoolkit.workflow.core
 {
 
 	import mx.skins.spark.DefaultButtonSkin;
+	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
+	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
+	import org.astoolkit.workflow.api.IPipelineConsumer;
 	import org.astoolkit.workflow.api.ISwitchCase;
+	import org.astoolkit.workflow.api.ITaskProxy;
 	import org.astoolkit.workflow.api.IWorkflowElement;
+	import org.astoolkit.workflow.api.IWorkflowTask;
 
 	[DefaultProperty( "cases" )]
 	/**
@@ -70,7 +75,7 @@ package org.astoolkit.workflow.core
 	 * @see org.astoolkit.workflow.core.Default
 	 * @see org.astoolkit.workflow.api.ISwitchCase
 	 */
-	public class Switch extends Group
+	public class Switch extends BaseElement implements ITaskProxy, IPipelineConsumer, IIODataTransformerClient
 	{
 		/**
 		 * @private
@@ -81,6 +86,8 @@ package org.astoolkit.workflow.core
 		 * @private
 		 */
 		private var _default : Default;
+
+		private var _input:*;
 
 		/**
 		 * @private
@@ -124,22 +131,54 @@ package org.astoolkit.workflow.core
 			}
 		}
 
-		/**
-		 * @private
-		 */
-		override public function get children() : Vector.<IWorkflowElement>
+		public function set dataTransformerRegistry(inRegistry:IIODataTransformerRegistry) : void
 		{
-			if( _joinedChildren == null )
+			// TODO Auto Generated method stub
+
+		}
+
+		public function set input(inData:*) : void
+		{
+			// TODO Auto Generated method stub
+
+		}
+
+		public function set inputFilter(inValue:Object) : void
+		{
+			// TODO Auto Generated method stub
+
+		}
+
+		/**
+		 * The value to compare to the children cases
+		 */
+		public function set source( inValue : * ) : void
+		{
+			_source = inValue;
+		}
+
+		public function getTask() : IWorkflowTask
+		{
+			if( _cases != null )
 			{
-				_joinedChildren = new Vector.<IWorkflowElement>();
+				var data : * = resolveInput();
+				var result : Boolean;
 
-				for each( var group : Group in _cases )
-					_joinedChildren = _joinedChildren.concat( group.children );
+				if( _cases != null )
+				{
+					for each( var aCase : ISwitchCase in _cases )
+					{
+						result = checkCaseValues( aCase, data );
 
-				if( _default )
-					_joinedChildren = _joinedChildren.concat( _default.children );
+						if( result )
+							return aCase.task;
+					}
+
+					if( _default != null )
+						return _default.task;
+				}
 			}
-			return _joinedChildren;
+			return null;
 		}
 
 		/**
@@ -151,11 +190,13 @@ package org.astoolkit.workflow.core
 
 			if( _cases != null )
 			{
-				for each( var group : Group in _cases )
-					group.delegate = _delegate;
-				group.context = _context;
-				group.parent = this;
-				group.initialize();
+				for each( var caze : ISwitchCase in _cases )
+				{
+					caze.task.delegate = _delegate;
+					caze.task.context = _context;
+					caze.task.parent = _parent;
+					caze.task.initialize();
+				}
 			}
 		}
 
@@ -166,44 +207,15 @@ package org.astoolkit.workflow.core
 		{
 			if( _cases != null )
 			{
-				for each( var group : Group in _cases )
-					group.prepare();
-			}
-		}
-
-		/**
-		 * The value to compare to the children cases
-		 */
-		public function set source( inValue : * ) : void
-		{
-			_source = inValue;
-
-			if( _cases != null )
-			{
-				var useDefault : Boolean = true;
-				var enableCase : Boolean;
-
-				if( _cases != null )
-				{
-					for each( var aCase : ISwitchCase in _cases )
-					{
-						enableCase = checkCaseValues( Case( aCase ), inValue ) && useDefault;
-						aCase.switchChildren( enableCase );
-
-						if( enableCase )
-							useDefault = false;
-					}
-
-					if( _default != null )
-						_default.switchChildren( useDefault );
-				}
+				for each( var caze : ISwitchCase in _cases )
+					caze.task.prepare();
 			}
 		}
 
 		/**
 		 * @private
 		 */
-		private function checkCaseValues( inCase : Case, inValue : * ) : Boolean
+		private function checkCaseValues( inCase : ISwitchCase, inValue : * ) : Boolean
 		{
 			for each( var val : * in inCase.values )
 			{
@@ -211,6 +223,11 @@ package org.astoolkit.workflow.core
 					return true;
 			}
 			return false;
+		}
+
+		private function resolveInput() : *
+		{
+			return _input;
 		}
 	}
 }

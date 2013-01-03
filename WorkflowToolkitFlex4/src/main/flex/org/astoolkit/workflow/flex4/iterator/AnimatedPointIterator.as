@@ -30,6 +30,14 @@ package org.astoolkit.workflow.flex4.iterator
 
 	public class AnimatedPointIterator implements IIterator
 	{
+		private var _cycle : Boolean;
+
+		public function set cycle(value:Boolean):void
+		{
+			_cycle = value;
+		}
+
+
 		public var easerX : IEaser = _linearEaser;
 
 		public var easerY : IEaser = _linearEaser;

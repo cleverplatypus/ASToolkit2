@@ -44,7 +44,7 @@ package org.astoolkit.workflow.api
 		name="prepare",
 		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Bindable]
-	public interface ITasksFlow extends IWorkflowTask, IRepeater, IElementsGroup, IChildrenAwareDocument
+	public interface ITasksGroup extends IWorkflowTask, IRepeater, IElementsGroup, IChildrenAwareDocument
 	{
 		function get contextFactory() : IFactory;
 		function set contextFactory( inFactory : IFactory ) : void;

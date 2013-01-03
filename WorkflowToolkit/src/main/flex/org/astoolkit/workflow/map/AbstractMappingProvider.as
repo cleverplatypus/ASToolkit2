@@ -8,7 +8,7 @@ package org.astoolkit.workflow.map
 	
 	import org.astoolkit.commons.mapping.api.IPropertyMappingDescriptor;
 	import org.astoolkit.commons.ns.astoolkit_private;
-	import org.astoolkit.workflow.api.ITasksFlow;
+	import org.astoolkit.workflow.api.ITasksGroup;
 	import org.astoolkit.workflow.api.IWorkflowContext;
 	import org.astoolkit.workflow.api.IWorkflowTask;
 
@@ -49,7 +49,7 @@ package org.astoolkit.workflow.map
 
 		public function initialized( inDocument : Object, inId : String ) : void
 		{
-			if( !inDocument is ITasksFlow )
+			if( !inDocument is ITasksGroup )
 				throw new Error( getQualifiedClassName( this ) +
 					" can only be used in a Workflow" );
 			BindingUtils.bindSetter( onContextChange, inDocument, "context" );

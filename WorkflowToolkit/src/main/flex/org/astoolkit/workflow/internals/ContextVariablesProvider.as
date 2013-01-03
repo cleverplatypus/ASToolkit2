@@ -69,7 +69,7 @@ package org.astoolkit.workflow.internals
 		/**
 		 * @private
 		 */
-		private var _runningWorkflow : ITasksFlow;
+		private var _runningWorkflow : ITasksGroup;
 
 		/**
 		 * @private
@@ -236,14 +236,14 @@ package org.astoolkit.workflow.internals
 		/**
 		 * the first <code>IWorkflow</code> found in the parents chain
 		 */
-		public function get $parentWorkflow() : ITasksFlow
+		public function get $parentWorkflow() : ITasksGroup
 		{
 			if( !astoolkit_private::runningTask )
 				return null;
 			return GroupUtil.getParentWorkflow( astoolkit_private::runningTask );
 		}
 
-		public function set $parentWorkflow( inValue : ITasksFlow ) : void
+		public function set $parentWorkflow( inValue : ITasksGroup ) : void
 		{
 			throw new Error( "\"parentWorkflow\" is a read-only reserved word." )
 		}
@@ -327,7 +327,7 @@ package org.astoolkit.workflow.internals
 		 */
 		public function beforeTaskBegin( inTask : IWorkflowTask ) : void
 		{
-			if( !( inTask is ITasksFlow ) )
+			if( !( inTask is ITasksGroup ) )
 			{
 				astoolkit_private::runningTask = inTask;
 			}
@@ -407,7 +407,7 @@ package org.astoolkit.workflow.internals
 		 */
 		public function onTaskComplete( inTask : IWorkflowTask ) : void
 		{
-			if( inTask is ITasksFlow && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
+			if( inTask is ITasksGroup && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
 				delete _namespaces[ UIDUtil.getUID( inTask ) ];
 		}
 
@@ -422,10 +422,10 @@ package org.astoolkit.workflow.internals
 		 */
 		public function onTaskExitStatus( inTask : IWorkflowTask, inStatus : ExitStatus ) : void
 		{
-			var parent : ITasksFlow = GroupUtil.getParentWorkflow( inTask );
+			var parent : ITasksGroup = GroupUtil.getParentWorkflow( inTask );
 
 			if( !parent )
-				parent = astoolkit_private::runningTask as ITasksFlow;
+				parent = astoolkit_private::runningTask as ITasksGroup;
 			var n : String = UIDUtil.getUID( parent );
 
 			if( !_namespaces.hasOwnProperty( n ) )
@@ -438,7 +438,7 @@ package org.astoolkit.workflow.internals
 		 */
 		public function onTaskFail( inTask : IWorkflowTask ) : void
 		{
-			if( inTask is ITasksFlow && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
+			if( inTask is ITasksGroup && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
 				delete _namespaces[ UIDUtil.getUID( inTask ) ];
 		}
 
@@ -466,7 +466,7 @@ package org.astoolkit.workflow.internals
 		 * @private
 		 */
 		public function onWorkflowCheckingNextTask(
-			inWorkflow : ITasksFlow,
+			inWorkflow : ITasksGroup,
 			inPipelineData : Object ) : void
 		{
 			_runningWorkflow = inWorkflow;
@@ -525,11 +525,11 @@ package org.astoolkit.workflow.internals
 				return;
 			var name : String = inName.localName.replace( /^\$/, "" );
 			super.setProperty( name, inValue );
-			var parent : ITasksFlow = GroupUtil.getParentWorkflow( astoolkit_private::runningTask );
+			var parent : ITasksGroup = GroupUtil.getParentWorkflow( astoolkit_private::runningTask );
 			var n : String = UIDUtil.getUID( parent );
 
 			if( !parent )
-				parent = astoolkit_private::runningTask as ITasksFlow;
+				parent = astoolkit_private::runningTask as ITasksGroup;
 
 			if( !name.match( /^_.*/ ) )
 			{

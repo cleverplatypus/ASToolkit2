@@ -22,6 +22,7 @@ package org.astoolkit.workflow.api
 
 	import flash.events.IEventDispatcher;
 	import mx.core.IFactory;
+	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.factory.api.IPooledFactoryDelegate;
 	import org.astoolkit.commons.io.transform.api.IIODataSourceResolverDelegate;
@@ -74,7 +75,7 @@ package org.astoolkit.workflow.api
 		/**
 		 * register the passed implementation of ITaskLiveCycleWatcher
 		 */
-		function addTaskLiveCycleWatcher( inValue : ITaskLiveCycleWatcher, inGroupScope : ITasksFlow = null ) : void;
+		function addTaskLiveCycleWatcher( inValue : ITaskLiveCycleWatcher, inGroupScope : ITasksGroup = null ) : void;
 
 		/**
 		 * called just before the owning workflow calls its cleanup()
@@ -90,5 +91,6 @@ package org.astoolkit.workflow.api
 		 * unregister the passed implementation of ITaskLiveCycleWatcher
 		 */
 		function removeTaskLiveCycleWatcher( inValue : ITaskLiveCycleWatcher ) : void;
+		function resolveIterator( inSource : Object, inConfig : Object = null ) : IIterator;
 	}
 }

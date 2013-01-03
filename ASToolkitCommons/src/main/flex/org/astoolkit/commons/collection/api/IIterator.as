@@ -28,6 +28,28 @@ package org.astoolkit.commons.collection.api
 	 */
 	public interface IIterator
 	{
+
+		/**
+		 * whether to restart iteration after the last element
+		 */
+		function set cycle( inValue : Boolean ) : void;
+		/**
+		 * true if <code>abort()</code> was previously called
+		 */
+		function get isAborted() : Boolean;
+
+		/**
+		 * a value between 0 and 1 reppresenting
+		 * the iteration's progress
+		 */
+		function get progress() : Number;
+
+		/**
+		 * the source object for this iteration, typically a list
+		 * or any other object with enumerable properties
+		 */
+		function set source( inValue : * ) : void;
+
 		/**
 		 * Interrupts the iteration. Typically, after calling this method,
 		 * <code>isAborted</code> will return true.
@@ -48,10 +70,6 @@ package org.astoolkit.commons.collection.api
 		 * a value when calling <code>next()</code>
 		 */
 		function hasNext() : Boolean;
-		/**
-		 * true if <code>abort()</code> was previously called
-		 */
-		function get isAborted() : Boolean;
 
 		/**
 		 * tries to move to the next element of the iteration
@@ -59,12 +77,6 @@ package org.astoolkit.commons.collection.api
 		 * at the last element, it should throw an Error
 		 */
 		function next() : Object;
-
-		/**
-		 * a value between 0 and 1 reppresenting
-		 * the iteration's progress
-		 */
-		function get progress() : Number;
 
 		function pushBack() : void;
 
@@ -74,12 +86,6 @@ package org.astoolkit.commons.collection.api
 		 * be reset to false too
 		 */
 		function reset() : void;
-
-		/**
-		 * the source object for this iteration, typically a list
-		 * or any other object with enumerable properties
-		 */
-		function set source( inValue : * ) : void;
 
 		/**
 		 * returns true if the passed value can be handled

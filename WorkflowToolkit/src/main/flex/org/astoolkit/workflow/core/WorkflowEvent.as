@@ -66,39 +66,13 @@ package org.astoolkit.workflow.core
 
 		public static const TRANSFORM_INPUT : String = "transformInput";
 
-		public function WorkflowEvent(
-			inType : String,
-			inContext : IWorkflowContext,
-			inRelatedTask : IWorkflowTask = null,
-			inData : Object = "" )
-		{
-			super( inType );
-			_data = inData;
-			_relatedTask = inRelatedTask;
-			_context = inContext;
-		}
-
 		private var _context : IWorkflowContext;
 
 		private var _data : Object = "";
 
 		private var _dataChanged : Boolean;
 
-		private var _relatedTask : IWorkflowTask;
-
-		public function changeData( inData : Object ) : void
-		{
-			if( type != TRANSFORM_INPUT )
-				throw new Error( "Data can only be changed on 'transformInput' events" );
-			_data = inData;
-			_dataChanged = true;
-		}
-
-		override public function clone() : Event
-		{
-			var e : WorkflowEvent = new WorkflowEvent( type, _context, _relatedTask, _data );
-			return e;
-		}
+		private var _relatedElement : IWorkflowElement;
 
 		public function get data() : Object
 		{
@@ -110,9 +84,35 @@ package org.astoolkit.workflow.core
 			return _dataChanged;
 		}
 
-		public function get relatedTask() : IWorkflowTask
+		public function get relatedElement() : IWorkflowElement
 		{
-			return _relatedTask;
+			return _relatedElement;
+		}
+
+		public function WorkflowEvent(
+			inType : String,
+			inContext : IWorkflowContext,
+			inRelatedTask : IWorkflowElement = null,
+			inData : Object = "" )
+		{
+			super( inType );
+			_data = inData;
+			_relatedElement = inRelatedTask;
+			_context = inContext;
+		}
+
+		public function changeData( inData : Object ) : void
+		{
+			if( type != TRANSFORM_INPUT )
+				throw new Error( "Data can only be changed on 'transformInput' events" );
+			_data = inData;
+			_dataChanged = true;
+		}
+
+		override public function clone() : Event
+		{
+			var e : WorkflowEvent = new WorkflowEvent( type, _context, _relatedElement, _data );
+			return e;
 		}
 	}
 }

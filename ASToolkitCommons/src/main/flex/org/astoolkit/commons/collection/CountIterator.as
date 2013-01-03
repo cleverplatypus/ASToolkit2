@@ -21,22 +21,53 @@ package org.astoolkit.commons.collection
 {
 
 	import org.astoolkit.commons.collection.api.IIterator;
+	import org.astoolkit.commons.utils.Range;
 
-	[IteratorSource( "Number,int,uint" )]
+	[IteratorSource( "org.astoolkit.commons.utils.Range,Number,int,uint" )]
 	public class CountIterator implements IIterator
 	{
-		public function CountIterator()
-		{
-			countTo = int.MIN_VALUE;
-		}
+
+		private var _currentCount : int;
+
+		private var _cycle : Boolean;
+
+		private var _isAborted : Boolean;
 
 		public var countFrom : int = 0;
 
 		public var countTo : int;
 
-		private var _currentCount : int;
+		public function set cycle(value:Boolean) : void
+		{
+			_cycle = value;
+		}
 
-		private var _isAborted : Boolean;
+		public function get isAborted() : Boolean
+		{
+			return _isAborted;
+		}
+
+		public function get progress() : Number
+		{
+			return countFrom / countTo;
+		}
+
+		public function set source( inValue : * ) : void
+		{
+			if( inValue is Range )
+			{
+				countFrom = Range( inValue ).from;
+				countTo = Range( inValue ).to;
+				return;
+			}
+			else if( !isNaN( inValue ) && inValue != null )
+				countTo = int( inValue );
+		}
+
+		public function CountIterator()
+		{
+			countTo = int.MIN_VALUE;
+		}
 
 		public function abort() : void
 		{
@@ -58,26 +89,15 @@ package org.astoolkit.commons.collection
 			return countTo != int.MIN_VALUE && _currentCount < countTo;
 		}
 
-		public function get isAborted() : Boolean
-		{
-			return _isAborted;
-		}
-
 		public function next() : Object
 		{
 			_currentCount++;
 			return _currentCount;
 		}
 
-		public function get progress() : Number
-		{
-			return countFrom / countTo;
-		}
-
 		public function pushBack() : void
 		{
-			// TODO Auto Generated method stub
-
+			_currentCount --;
 		}
 
 		public function reset() : void
@@ -86,15 +106,10 @@ package org.astoolkit.commons.collection
 			_isAborted = false;
 		}
 
-		public function set source( inValue : * ) : void
-		{
-			if( !isNaN( inValue ) && inValue != null )
-				countTo = int( inValue );
-		}
-
 		public function supportsSource( inObject : * ) : Boolean
 		{
-			return !isNaN( inObject );
+			return ( inObject is Range && !isNaN( Range( inObject ).from ) )
+				|| !isNaN( inObject );
 		}
 	}
 }

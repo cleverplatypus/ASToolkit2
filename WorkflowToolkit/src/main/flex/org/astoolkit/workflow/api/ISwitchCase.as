@@ -1,8 +1,10 @@
 package org.astoolkit.workflow.api
 {
 
-	public interface ISwitchCase extends IElementsGroup
+	public interface ISwitchCase extends ITaskProxy
 	{
-		function switchChildren( inEnabled : Boolean ) : void;
+		function get task() : IWorkflowTask;
+		function get value() : *;
+		function get values() : Array;
 	}
 }

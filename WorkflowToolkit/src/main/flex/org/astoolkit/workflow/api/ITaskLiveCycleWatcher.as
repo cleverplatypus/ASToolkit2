@@ -24,7 +24,7 @@ package org.astoolkit.workflow.api
 		function onTaskPrepared( inTask : IWorkflowTask ) : void;
 		function onTaskSuspend( inTask : IWorkflowTask ) : void;
 		function onWorkflowCheckingNextTask(
-		inWorkflow : ITasksFlow,
+		inWorkflow : ITasksGroup,
 			inPipelineData : Object ) : void;
 	}
 }

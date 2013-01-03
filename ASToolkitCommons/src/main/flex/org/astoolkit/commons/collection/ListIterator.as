@@ -27,11 +27,39 @@ package org.astoolkit.commons.collection
 	[IteratorSource( "Array,Vector,mx.collections.IList,XMLList" )]
 	public class ListIterator implements IIterator
 	{
+		private var _cycle : Boolean;
+
+		private var _list : Object;
+
 		protected var _currentDataIndex : int = -1;
 
 		protected var _isAborted : Boolean;
 
-		private var _list : Object;
+		public function set cycle(value:Boolean) : void
+		{
+			_cycle = value;
+		}
+
+		public function get isAborted() : Boolean
+		{
+			return _isAborted;
+		}
+
+		public function get progress() : Number
+		{
+			if( _list && _currentDataIndex > -1 )
+				return _currentDataIndex / getListLength();
+			return -1;
+		}
+
+		public function set source( inValue : * ) : void
+		{
+			if( inValue &&
+				!( inValue is IList || inValue is Array || inValue is Vector || inValue is XMLList ) )
+				throw new Error( "list must be one of IList, Array, Vector, XMLList, XMListCollection" );
+			_list = inValue;
+			reset();
+		}
 
 		public function abort() : void
 		{
@@ -55,44 +83,33 @@ package org.astoolkit.commons.collection
 
 		public function hasNext() : Boolean
 		{
-			return _list != null &&
+			return _cycle || ( _list != null &&
 				getListLength() > 0 &&
-				_currentDataIndex + 1 < getListLength();
-		}
-
-		public function get isAborted() : Boolean
-		{
-			return _isAborted;
+				_currentDataIndex + 1 < getListLength() );
 		}
 
 		public function next() : Object
 		{
+			if( _cycle && !_list &&  
+				_currentDataIndex + 1 >= getListLength() )
+				reset();
+
 			if( !_list || getListLength() == 0 || _currentDataIndex + 1 >= getListLength() )
 				return null;
 			_currentDataIndex++;
 			return _list[ _currentDataIndex ];
 		}
 
-		public function get progress() : Number
+		public function pushBack() : void
 		{
-			if( _list && _currentDataIndex > -1 )
-				return _currentDataIndex / getListLength();
-			return -1;
+			if( _currentDataIndex > -1 )
+				_currentDataIndex--;
 		}
 
 		public function reset() : void
 		{
 			_currentDataIndex = -1;
 			_isAborted = false;
-		}
-
-		public function set source( inValue : * ) : void
-		{
-			if( inValue &&
-				!( inValue is IList || inValue is Array || inValue is Vector || inValue is XMLList ) )
-				throw new Error( "list must be one of IList, Array, Vector, XMLList, XMListCollection" );
-			_list = inValue;
-			reset();
 		}
 
 		public function supportsSource( inValue : * ) : Boolean
@@ -106,12 +123,5 @@ package org.astoolkit.commons.collection
 				return 0;
 			return _list is XMLList ? XMLList( _list ).length() : _list.length;
 		}
-		
-		public function pushBack():void
-		{
-			// TODO Auto Generated method stub
-			
-		}
-
 	}
 }

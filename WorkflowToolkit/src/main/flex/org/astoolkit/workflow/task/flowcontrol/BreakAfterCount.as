@@ -1,7 +1,7 @@
 package org.astoolkit.workflow.task.flowcontrol
 {
 
-	import org.astoolkit.workflow.api.ITasksFlow;
+	import org.astoolkit.workflow.api.ITasksGroup;
 	import org.astoolkit.workflow.api.IWorkflowElement;
 	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.internals.GroupUtil;
@@ -23,9 +23,9 @@ package org.astoolkit.workflow.task.flowcontrol
 			{
 				var p : IWorkflowElement = parent;
 
-				while( !( p is ITasksFlow ) )
+				while( !( p is ITasksGroup ) )
 					p = p.parent;
-				ITasksFlow( p ).abort();
+				ITasksGroup( p ).abort();
 				return;
 			}
 			complete();
@@ -34,7 +34,7 @@ package org.astoolkit.workflow.task.flowcontrol
 		override public function prepare() : void
 		{
 			super.prepare();
-			var p : ITasksFlow = GroupUtil.getParentWorkflow( this );
+			var p : ITasksGroup = GroupUtil.getParentWorkflow( this );
 
 			if( _lastParentThread != p.currentThread )
 			{

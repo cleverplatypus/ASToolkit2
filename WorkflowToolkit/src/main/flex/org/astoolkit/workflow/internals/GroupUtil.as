@@ -35,7 +35,7 @@ package org.astoolkit.workflow.internals
 
 		private static var __overrideChildrenPropertyMetaTags : Object = {};
 
-		public static function getInserts( inWorkflow : ITasksFlow ) : Vector.<IWorkflowElement>
+		public static function getInserts( inWorkflow : ITasksGroup ) : Vector.<IWorkflowElement>
 		{
 			var out : Vector.<IWorkflowElement> = new Vector.<IWorkflowElement>();
 
@@ -60,7 +60,7 @@ package org.astoolkit.workflow.internals
 			var parent : IElementsGroup = inElement.parent;
 			var rule : IPropertyOverrideRule = inElement.context.config.propertyOverrideRule;
 
-			while( !( parent is ITasksFlow ) )
+			while( !( parent is ITasksGroup ) )
 			{
 				if( !groupOverridesProperty( parent, inProperty ) )
 					break;
@@ -83,11 +83,11 @@ package org.astoolkit.workflow.internals
 			return inElement as IRepeater;
 		}
 
-		public static function getParentWorkflow( inElement : IWorkflowElement ) : ITasksFlow
+		public static function getParentWorkflow( inElement : IWorkflowElement ) : ITasksGroup
 		{
-			while( inElement.parent != null && !( inElement.parent is ITasksFlow ) )
+			while( inElement.parent != null && !( inElement.parent is ITasksGroup ) )
 				inElement = inElement.parent;
-			return inElement.parent as ITasksFlow;
+			return inElement.parent as ITasksGroup;
 		}
 
 		public static function getRuntimeElements( inElements : Vector.<IWorkflowElement> ) : Vector.<IWorkflowElement>
@@ -196,7 +196,7 @@ package org.astoolkit.workflow.internals
 					out.push( element );
 				else if( element is IElementsGroup )
 				{
-					if( !( element is ITasksFlow ) || !inSkipWorkflowChildren )
+					if( !( element is ITasksGroup ) || !inSkipWorkflowChildren )
 						out = out.concat( getRuntimeTasks( IElementsGroup( element ).children ) );
 				}
 			}

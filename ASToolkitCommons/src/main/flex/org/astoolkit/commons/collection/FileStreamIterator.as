@@ -27,15 +27,49 @@ package org.astoolkit.commons.collection
 	[IteratorSource( "flash.filesystem.FileStream" )]
 	public class FileStreamIterator implements IIterator
 	{
-		public var readChunk : uint = 1024;
 
 		private var _current : ByteArray;
+
+		private var _cycle : Boolean;
 
 		private var _isAborted : Boolean;
 
 		private var _source : FileStream;
 
 		private var _totalLength : uint;
+
+		public function set cycle(value:Boolean) : void
+		{
+			_cycle = value;
+		}
+
+		public function get isAborted() : Boolean
+		{
+			return _isAborted;
+		}
+
+		public function get progress() : Number
+		{
+			if( _source )
+				return ( _source.position / readChunk ) /
+					( _totalLength / readChunk );
+			return -1;
+		}
+
+		public var readChunk : uint = 1024;
+
+		public function set source( inValue : * ) : void
+		{
+			_source = inValue as FileStream;
+
+			if( _source )
+			{
+				var oldPosition : uint = _source.position;
+				_source.position = 0;
+				_totalLength = _source.bytesAvailable;
+				_source.position = oldPosition;
+			}
+		}
 
 		public function abort() : void
 		{
@@ -59,11 +93,6 @@ package org.astoolkit.commons.collection
 			return _source && _source.bytesAvailable > 0;
 		}
 
-		public function get isAborted() : Boolean
-		{
-			return _isAborted;
-		}
-
 		public function next() : Object
 		{
 			if( _source )
@@ -75,14 +104,6 @@ package org.astoolkit.commons.collection
 				return current();
 			}
 			return null;
-		}
-
-		public function get progress() : Number
-		{
-			if( _source )
-				return ( _source.position / readChunk ) /
-					( _totalLength / readChunk );
-			return -1;
 		}
 
 		public function pushBack() : void
@@ -97,19 +118,6 @@ package org.astoolkit.commons.collection
 				_source.position = 0;
 			_current = null;
 			_isAborted = false;
-		}
-
-		public function set source( inValue : * ) : void
-		{
-			_source = inValue as FileStream;
-
-			if( _source )
-			{
-				var oldPosition : uint = _source.position;
-				_source.position = 0;
-				_totalLength = _source.bytesAvailable;
-				_source.position = oldPosition;
-			}
 		}
 
 		public function supportsSource( inObject : * ) : Boolean

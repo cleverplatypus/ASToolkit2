@@ -22,26 +22,40 @@ package org.astoolkit.workflow.core
 
 	import org.astoolkit.workflow.api.ISwitchCase;
 	import org.astoolkit.workflow.api.IWorkflowElement;
+	import org.astoolkit.workflow.api.IWorkflowTask;
 
-	[DefaultProperty( "children" )]
+	[DefaultProperty( "task" )]
 	/**
 	 * The <code>default</code> case block for a <code>Switch</code> group.
 	 * <p>Its children are enabled if none of the <code>Case</code> groups are.</p>
 	 */
-	public class Default extends Group implements ISwitchCase
+	public class Default extends BaseElement implements ISwitchCase
 	{
-		/**
-		 * @private
-		 */
-		public function switchChildren( inEnabled : Boolean ) : void
+		private var _task : IWorkflowTask;
+
+		public function get task() : IWorkflowTask
 		{
-			if( _children )
-			{
-				for each( var element : IWorkflowElement in _children )
-				{
-					element.enabled = inEnabled;
-				}
-			}
+			return _task;
+		}
+
+		public function set task( inValue : IWorkflowTask ) : void
+		{
+			_task = inValue;
+		}
+
+		public function get value() : *
+		{
+			return undefined;
+		}
+
+		public function get values() : Array
+		{
+			return null;
+		}
+
+		public function getTask() : IWorkflowTask
+		{
+			return _task;
 		}
 	}
 }

@@ -34,19 +34,42 @@ package org.astoolkit.workflow.flex4.iterator
 	 */
 	public class AnimatedValueIterator implements IIterator
 	{
-		public var easer : IEaser = _linearEaser;
-
-		public var endValue : Number = 1;
-
-		public var startValue : Number = 0;
-
-		public var steps : int = -1;
 
 		private var _currentFraction : Number;
+
+		private var _cycle : Boolean;
 
 		private var _isAborted : Boolean;
 
 		private var _linearEaser : Linear = new Linear();
+
+		public function set cycle(value:Boolean) : void
+		{
+			_cycle = value;
+		}
+
+		public var easer : IEaser = _linearEaser;
+
+		public var endValue : Number = 1;
+
+		public function get isAborted() : Boolean
+		{
+			return _isAborted;
+		}
+
+		public function get progress() : Number
+		{
+			return _currentFraction;
+		}
+
+		public function set source( inValue : * ) : void
+		{
+			//Ignored. Source is generated internally
+		}
+
+		public var startValue : Number = 0;
+
+		public var steps : int = -1;
 
 		public function abort() : void
 		{
@@ -68,20 +91,10 @@ package org.astoolkit.workflow.flex4.iterator
 			return _currentFraction < 1;
 		}
 
-		public function get isAborted() : Boolean
-		{
-			return _isAborted;
-		}
-
 		public function next() : Object
 		{
 			_currentFraction += ( 1 / getActualSteps() );
 			return current();
-		}
-
-		public function get progress() : Number
-		{
-			return _currentFraction;
 		}
 
 		public function pushBack() : void
@@ -91,11 +104,6 @@ package org.astoolkit.workflow.flex4.iterator
 		public function reset() : void
 		{
 			_currentFraction = 0;
-		}
-
-		public function set source( inValue : * ) : void
-		{
-			//Ignored. Source is generated internally
 		}
 
 		public function supportsSource( inObject : * ) : Boolean
