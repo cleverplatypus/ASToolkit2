@@ -36,7 +36,6 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.*;
 	import org.astoolkit.workflow.internals.*;
-	import org.astoolkit.workflow.task.flowcontrol.IDeferrableProcessWatcher;
 
 	[Event(
 		name = "subtaskInitialized",

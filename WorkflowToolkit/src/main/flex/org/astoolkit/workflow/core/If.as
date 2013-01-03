@@ -33,7 +33,6 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.workflow.api.IPipelineConsumer;
 	import org.astoolkit.workflow.api.ITaskProxy;
 	import org.astoolkit.workflow.api.IWorkflowTask;
-	import org.astoolkit.workflow.task.flowcontrol.IDeferrableProcessWatcher;
 
 	public class If extends BaseElement implements ITaskProxy,
 		IDeferrableProcess,

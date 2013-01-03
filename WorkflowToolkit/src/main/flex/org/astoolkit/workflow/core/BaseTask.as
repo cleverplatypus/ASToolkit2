@@ -46,7 +46,6 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.workflow.internals.ContextVariablesProvider;
 	import org.astoolkit.workflow.internals.GroupUtil;
 	import org.astoolkit.workflow.internals.HeldTaskInfo;
-	import org.astoolkit.workflow.task.flowcontrol.IDeferrableProcessWatcher;
 
 	[Exclude( name="ENV", kind="property" )]
 	[Exclude( name="delegate", kind="property" )]

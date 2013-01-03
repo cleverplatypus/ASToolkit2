@@ -35,7 +35,6 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.workflow.internals.DynamicTaskLiveCycleWatcher;
 	import org.astoolkit.workflow.internals.HeldTaskInfo;
 	import org.astoolkit.workflow.task.api.ISendMessage;
-	import org.astoolkit.workflow.task.flowcontrol.IDeferrableProcessWatcher;
 
 	use namespace flash_proxy;
 

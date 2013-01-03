@@ -5,8 +5,8 @@
 		class="org.astoolkit.workflow.core.Do"
 		/>
 	<component 
-		id="Goo"
-		class="org.astoolkit.workflow.core.Goo"
+		id="Do_old"
+		class="org.astoolkit.workflow.core.Do_old"
 		/>
 	<component 
 		id="Workflow"
