@@ -19,12 +19,14 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
-	
+
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
+	import flash.events.TimerEvent;
+	import flash.utils.Timer;
+	import flash.utils.clearTimeout;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
-	
 	import mx.binding.utils.ChangeWatcher;
 	import mx.events.PropertyChangeEvent;
 	import mx.events.PropertyChangeEventKind;
@@ -32,7 +34,6 @@ package org.astoolkit.workflow.core
 	import mx.logging.Log;
 	import mx.rpc.IResponder;
 	import mx.utils.StringUtil;
-	
 	import org.astoolkit.commons.databinding.BindingUtility;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
@@ -45,7 +46,8 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.workflow.internals.ContextVariablesProvider;
 	import org.astoolkit.workflow.internals.GroupUtil;
 	import org.astoolkit.workflow.internals.HeldTaskInfo;
-	
+	import org.astoolkit.workflow.task.flowcontrol.IDeferrableProcessWatcher;
+
 	[Exclude( name="ENV", kind="property" )]
 	[Exclude( name="delegate", kind="property" )]
 	[Exclude( name="currentProgress", kind="property" )]
@@ -133,135 +135,158 @@ package org.astoolkit.workflow.core
 		 */
 		private static const LOGGER : ILogger =
 			Log.getLogger( getQualifiedClassName( BaseTask ).replace( /:+/g, "." ) );
-		
+
+		private var _blocker : HeldTaskInfo;
+
+		private var _deferredExecutionWatchers:Vector.<Function>;
+
+		private var _delayHasElapsed:Boolean;
+
+		private var _delayTimer:Timer;
+
 		/**
 		 * @private
 		 */
-		public function BaseTask()
-		{
-			super();
-			_outlet = PIPELINE_OUTLET;
-			_status = TaskStatus.STOPPED;
-		}
-		
+		private var _root : ITasksFlow;
+
+		/**
+		 * @private
+		 */
+		internal var _pipelineData : * = UNDEFINED;
+
 		/**
 		 * @private
 		 */
 		protected var __status : String;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _actuallyInjectableProperties : Vector.<String>;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _currentProgress : Number = -1;
-		
+
 		protected var _dataTransformerRegistry : IIODataTransformerRegistry
-		
+
 		/**
 		 * @private
 		 */
 		protected var _delay : int;
-		
+
 		/**
 		 * @private
 		 *
 		 * The task's exit status.
 		 */
 		protected var _exitStatus : ExitStatus;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _failureMessage : String;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _failurePolicy : String = FailurePolicy.CASCADE;
-		
+
 		protected var _forceAsync : Boolean;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _ignoreOutput : Boolean;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _injectableProperties : Object;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _injectablePropertiesWatchers : Object;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _inlet : Object;
-		
+
 		/**
 		 * Holds the unfiltered input data passed to the pipeline.
 		 */
 		protected var _inputData : * = UNDEFINED;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _inputFilter : Object;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _invalidPipelinePolicy : String = InvalidPipelinePolicy.IGNORE;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _outlet : Object = PIPELINE_OUTLET;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _outputFilter : Object;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _outputKind : String = "auto";
-		
+
+		/**
+		 * @private
+		 */
+		protected function get _status() : String
+		{
+			return __status;
+		}
+
+		/**
+		 * @private
+		 */
+		protected function set _status( inStatus : String ) : void
+		{
+			var oldValue : String = __status;
+			__status = inStatus;
+			dispatchEvent(
+				new PropertyChangeEvent(
+				"status_change",
+				false,
+				false,
+				PropertyChangeEventKind.UPDATE,
+				"status",
+				oldValue,
+				__status,
+				this ) );
+		}
+
 		/**
 		 * @private
 		 */
 		protected var _taskCompleted : Boolean;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _taskParametersMapping : Object;
-		
+
 		/**
 		 * @private
 		 */
 		protected var _timeout : int = -1;
-		
-		/**
-		 * @private
-		 */
-		internal var _pipelineData : * = UNDEFINED;
-		
-		private var _blocker : HeldTaskInfo;
-		
-		/**
-		 * @private
-		 */
-		private var _root : ITasksFlow;
-		
+
 		/**
 		 * A reference to the context's variables dictionary.
 		 * <p>Tasks' event handlers and bindings can safely use this
@@ -282,7 +307,7 @@ package org.astoolkit.workflow.core
 		{
 			return context ? context.variables : null;
 		}
-		
+
 		public function set ENV( inValue : * ) : void
 		{
 		/*
@@ -290,95 +315,21 @@ package org.astoolkit.workflow.core
 			bindable property warning
 		*/
 		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		public function abort() : void
-		{
-			LOGGER.debug( "abort() '{0}' ({1})", description, getQualifiedClassName( this ) );
-			_status = TaskStatus.ABORTED;
-			exitStatus = new ExitStatus( ExitStatus.ABORTED );
-			_thread++;
-			dispatchTaskEvent( WorkflowEvent.ABORTED, this );
-			
-			if ( _delegate )
-				_delegate.onAbort( this, "Aborted: " + description );
-		}
-		
-		public function begin() : void
-		{
-			if ( _timeout > 0 )
-			{
-				var t : int = currentThread;
-				setTimeout( onTimeout, _timeout, t );
-			}
-			_taskCompleted = false;
-			
-			if ( !_context || ( !( this is ITasksFlow ) && !_parent ) )
-			{
-				throw new Error( "This task is not initialized properly." +
-					"Tasks are not meant to run stand-alone." +
-					"Wrap it with an IWorkflow" );
-			}
-			
-			if ( _status == TaskStatus.RUNNING )
-				throw new Error( "begin() called while task already running: " + getQualifiedClassName( this ) );
-			LOGGER.debug( "begin() '{0}' ({1})", description, getQualifiedClassName( this ) );
-			
-			for each ( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onTaskBegin( this );
-			_context.addEventListener( WorkflowEvent.SUSPENDED, onContextSuspended );
-			_context.addEventListener( WorkflowEvent.RESUMED, onContextResumed );
-			_context.runningTask = this;
-			_status = TaskStatus.RUNNING;
-			
-			if ( suspendBinding && _document != null )
-				BindingUtility.enableAllBindings( _document, this );
-			injectPipeline();
-			
-			if ( _taskParametersMapping )
-			{
-				if ( _taskParametersMapping is IPropertiesMapper )
-					IPropertiesMapper( _taskParametersMapping ).map( filteredInput, this );
-				else
-					ENV.mapTo.object( this, _taskParametersMapping ).map( filteredInput, this );
-			}
-			
-			if ( _delegate )
-				_delegate.onBegin( this );
-		}
-		
+
 		public function get blocker() : HeldTaskInfo
 		{
 			return _blocker;
 		}
-		
-		override public function cleanUp() : void
-		{
-			_status = TaskStatus.STOPPED;
-			
-			if ( _context )
-			{
-				_context.removeEventListener( WorkflowEvent.SUSPENDED, onContextSuspended );
-				_context.removeEventListener( WorkflowEvent.RESUMED, onContextResumed );
-				_context.suspendableFunctions.cleanUp();
-				
-				for each ( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-					w.onBeforeContextUnbond( this );
-				_context = null;
-			}
-		}
-		
+
 		override public function set context( inContext : IWorkflowContext ) : void
 		{
 			super.context = inContext;
-			
-			if ( _context )
-				for each ( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+
+			if( _context )
+				for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
 					w.onContextBond( this );
 		}
-		
+
 		/**
 		 * @inheritDoc
 		 */
@@ -386,12 +337,12 @@ package org.astoolkit.workflow.core
 		{
 			return _currentProgress;
 		}
-		
+
 		public function set currentProgress( inProgress : Number ) : void
 		{
 			_currentProgress = inProgress;
 		}
-		
+
 		/**
 		 * an integer that identifies a task's cycle of execution.
 		 * <p>Used to keep track of resources allocated for each cycle.
@@ -403,12 +354,12 @@ package org.astoolkit.workflow.core
 		{
 			return _thread;
 		}
-		
+
 		public function set dataTransformerRegistry( inRegistry : IIODataTransformerRegistry) : void
 		{
 			_dataTransformerRegistry = inRegistry;
 		}
-		
+
 		/**
 		 * @inheritDoc
 		 */
@@ -416,17 +367,23 @@ package org.astoolkit.workflow.core
 		{
 			return _delay;
 		}
-		
+
 		public function set delay( inDelay : int ) : void
 		{
 			_delay = inDelay;
+
+			if( _delay > 0 && !_delayTimer )
+				_delayTimer = new Timer( _delay, 1 );
+
+			if( _delayTimer )
+				_delayTimer.delay = _delay;
 		}
-		
+
 		public function get exitStatus() : ExitStatus
 		{
 			return _exitStatus;
 		}
-		
+
 		/**
 		 * @example Custom failure status.
 		 * 			<p>In the following example, our task is failing using a custom
@@ -439,17 +396,17 @@ package org.astoolkit.workflow.core
 		 *
 		 * @see org.astoolkit.workflow.core.ExitStatus
 	 * @inheritDoc
-													   */
+																									*/
 		public function set exitStatus( inStatus : ExitStatus ) : void
 		{
 			_exitStatus = inStatus;
 		}
-		
+
 		public function get failureMessage() : String
 		{
 			return _failureMessage;
 		}
-		
+
 		/**
 		 * @inheritDoc
 		 */
@@ -457,7 +414,7 @@ package org.astoolkit.workflow.core
 		{
 			_failureMessage = inValue;
 		}
-		
+
 		[Inspectable( 
 			defaultValue="cascade", 
 			enumeration="cascade,abort,suspend,ignore,continue,log-debug,log-info,log-warn,log-error" )]
@@ -468,12 +425,12 @@ package org.astoolkit.workflow.core
 		{
 			return _failurePolicy;
 		}
-		
+
 		override public function set failurePolicy( inPolicy : String ) : void
 		{
 			_failurePolicy = inPolicy;
 		}
-		
+
 		/**
 		 *
 		 * returns the pipeline data used by this task.<br><br>
@@ -482,14 +439,14 @@ package org.astoolkit.workflow.core
 		 */
 		public function get filteredInput() : Object
 		{
-			if ( _inputFilter )
+			if( _inputFilter )
 			{
 				var filter : IIODataTransformer =
 					_inputFilter is IIODataTransformer ?
-						_inputFilter as IIODataTransformer :
-						_dataTransformerRegistry.getTransformer( _inputData, _inputFilter );
-				
-				if ( !filter )
+					_inputFilter as IIODataTransformer :
+					_dataTransformerRegistry.getTransformer( _inputData, _inputFilter );
+
+				if( !filter )
 				{
 					var filterData : String = _inputFilter is String ?
 						"\"" + _inputFilter + "\"" : getQualifiedClassName( _inputFilter );
@@ -501,8 +458,8 @@ package org.astoolkit.workflow.core
 					throw new Error( "Error filtering input data for task \"" + description + "\"" );
 				}
 				var data : Object = _inputData;
-				
-				while ( filter )
+
+				while( filter )
 				{
 					data = filter.transform(
 						data,
@@ -515,7 +472,7 @@ package org.astoolkit.workflow.core
 			else
 				return _inputData;
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -523,7 +480,7 @@ package org.astoolkit.workflow.core
 		{
 			return _forceAsync;
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -531,72 +488,22 @@ package org.astoolkit.workflow.core
 		{
 			_forceAsync = value;
 		}
-		
-		public function hold() : HeldTaskInfo
-		{
-			if ( _status != TaskStatus.IDLE )
-				throw new Error( "hold() can only be called with status == TaskStatus.IDLE" );
-			
-			if ( !_blocker )
-			{
-				_blocker = new HeldTaskInfo( this );
-				blocker.addEventListener( Event.COMPLETE, onRelease );
-				blocker.addEventListener( ErrorEvent.ERROR, onRelease );
-			}
-			return blocker;
-		}
-		
+
 		public function get ignoreOutput() : Boolean
 		{
 			return _ignoreOutput;
 		}
-		
+
 		public function set ignoreOutput( inIgnoreOutput : Boolean ) : void
 		{
 			_ignoreOutput = inIgnoreOutput;
 		}
-		
-		/**
-		* @inheritDoc
-		*/
-		override public function initialize() : void
-		{
-			super.initialize();
-			
-			if ( _status != TaskStatus.STOPPED )
-				return;
-			
-			for each ( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onTaskInitialize( this );
-			
-			if ( !_injectableProperties )
-			{
-				var ci : Type = Type.forType( this );
-				var fields : Vector.<Field> = ci.getFieldsWithAnnotation( InjectPipeline );
-				_injectableProperties = {};
-				
-				for each ( var field : Field in fields )
-				{
-					_injectableProperties[ field.name ] = new InjectablePropertyInfo( field.name );
-				}
-				initializePropertyInjection()
-			}
-			
-			if ( _parent )
-				_status = TaskStatus.IDLE;
-			
-			if ( _delegate )
-				_delegate.onInitialize( this );
-			
-			if ( _document == null )
-				_document = this;
-		}
-		
+
 		public function get inlet() : Object
 		{
 			return _inlet;
 		}
-		
+
 		/**
 		 * an optional object used to map data to this task's properties.
 		 * <p>If set to a String, the parent workflow will try to inject
@@ -617,17 +524,17 @@ package org.astoolkit.workflow.core
 		{
 			_inlet = inInlet;
 		}
-		
+
 		public function set input( inData : * ) : void
 		{
 			_pipelineData = _inputData = inData;
 		}
-		
+
 		public function get inputFilter() : Object
 		{
 			return _inputFilter;
 		}
-		
+
 		/**
 		 * a filter for this task's pipeline data.<br><br>
 		 * It can be either a <code>String</code> representing
@@ -690,12 +597,12 @@ package org.astoolkit.workflow.core
 		{
 			_inputFilter = inValue;
 		}
-		
+
 		public function get invalidPipelinePolicy() : String
 		{
 			return _invalidPipelinePolicy;
 		}
-		
+
 		/**
 		 * determines what to do when the parent's pipeline data
 		 * is <code>EMPTY_PIPELINE</code> <u>before</u> executing this task.<br>
@@ -708,12 +615,12 @@ package org.astoolkit.workflow.core
 		{
 			_invalidPipelinePolicy = inValue;
 		}
-		
+
 		public function get outlet() : Object
 		{
 			return _outlet;
 		}
-		
+
 		/**
 		 * the destination of the task's output data.
 		 * <p>Possible values:
@@ -750,7 +657,7 @@ package org.astoolkit.workflow.core
 		{
 			_outlet = inOutlet;
 		}
-		
+
 		/**
 		 * after <code>complete()</code> will return this task's pipelineData
 		 */
@@ -758,104 +665,55 @@ package org.astoolkit.workflow.core
 		{
 			return _pipelineData;
 		}
-		
+
 		public function get outputFilter() : Object
 		{
 			return _outputFilter;
 		}
-		
+
 		public function set outputFilter( inValue : Object ) : void
 		{
 			_outputFilter = inValue;
 		}
-		
+
 		[Inspectable( enumeration="auto", defaultValue="auto" )]
 		public function set outputKind( inValue : String ) : void
 		{
 			_outputKind = inValue;
 		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		override public function prepare() : void
-		{
-			if ( parent )
-			{
-				GroupUtil.getParentWorkflow( this )
-					.addEventListener(
-					"status_change",
-					onParentStatusChange );
-				_pipelineData = UNDEFINED;
-				_status = TaskStatus.IDLE;
-			}
-			_exitStatus = null;
-			
-			if ( _delegate )
-				_delegate.onPrepare( this );
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		public function resume() : void
-		{
-			if ( _status != TaskStatus.RUNNING )
-			{
-				_status = TaskStatus.RUNNING;
-				
-				if ( _delegate )
-					_delegate.onResume( this );
-				_context.suspendableFunctions.invokeResumeCallBacks();
-			}
-		}
-		
+
 		/**
 		 * @private
 		 */
 		public function get root() : ITasksFlow
 		{
-			if ( _root )
+			if( _root )
 				return _root;
 			var out : IWorkflowElement = this;
-			
-			while ( out.parent != null )
+
+			while( out.parent != null )
 			{
 				out = out.parent;
 			}
 			_root = out as ITasksFlow;
 			return _root;
 		}
-		
+
 		public function get running() : Boolean
 		{
 			return _status == TaskStatus.RUNNING && !_taskCompleted;
 		}
-		
+
 		public function get status() : String
 		{
 			return _status;
 		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		public function suspend() : void
-		{
-			if ( _status != TaskStatus.SUSPENDED )
-			{
-				_status = TaskStatus.SUSPENDED;
-				
-				if ( _delegate )
-					_delegate.onSuspend( this );
-			}
-		}
-		
+
 		public function set taskParametersMapping( inValue : Object ) : void
 		{
 			_taskParametersMapping = inValue;
 		}
-		
+
 		/**
 		 * an optional timeout expressed in milliseconds after which
 		 * if the task hasn't completed it will fail with
@@ -865,7 +723,203 @@ package org.astoolkit.workflow.core
 		{
 			_timeout = inMillisecs;
 		}
-		
+
+		/**
+		 * @private
+		 */
+		public function BaseTask()
+		{
+			super();
+			_outlet = PIPELINE_OUTLET;
+			_status = TaskStatus.STOPPED;
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public function abort() : void
+		{
+			LOGGER.debug( "abort() '{0}' ({1})", description, getQualifiedClassName( this ) );
+			_status = TaskStatus.ABORTED;
+			exitStatus = new ExitStatus( ExitStatus.ABORTED );
+			_thread++;
+			dispatchTaskEvent( WorkflowEvent.ABORTED, this );
+
+			if( _delegate )
+				_delegate.onAbort( this, "Aborted: " + description );
+		}
+
+		public function addDeferredProcessWatcher( inWatcher : Function ) : void
+		{
+			if( !_deferredExecutionWatchers )
+				_deferredExecutionWatchers = new Vector.<Function>();
+			_deferredExecutionWatchers.push( inWatcher );
+		}
+
+		public function begin() : void
+		{
+			if( _timeout > 0 )
+			{
+				var t : int = currentThread;
+				setTimeout( onTimeout, _timeout, t );
+			}
+			_taskCompleted = false;
+
+			if( !_context || ( !( this is ITasksFlow ) && !_parent ) )
+			{
+				throw new Error( "This task is not initialized properly." +
+					"Tasks are not meant to run stand-alone." +
+					"Wrap it with an IWorkflow" );
+			}
+
+			if( _status == TaskStatus.RUNNING )
+				throw new Error( "begin() called while task already running: " + getQualifiedClassName( this ) );
+			LOGGER.debug( "begin() '{0}' ({1})", description, getQualifiedClassName( this ) );
+
+			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+				w.onTaskBegin( this );
+			_context.addEventListener( WorkflowEvent.SUSPENDED, onContextSuspended );
+			_context.addEventListener( WorkflowEvent.RESUMED, onContextResumed );
+			_context.runningTask = this;
+			_status = TaskStatus.RUNNING;
+
+			if( suspendBinding && _document != null )
+				BindingUtility.enableAllBindings( _document, this );
+			injectPipeline();
+
+			if( _taskParametersMapping )
+			{
+				if( _taskParametersMapping is IPropertiesMapper )
+					IPropertiesMapper( _taskParametersMapping ).map( filteredInput, this );
+				else
+					ENV.mapTo.object( this, _taskParametersMapping ).map( filteredInput, this );
+			}
+
+			if( _delegate )
+				_delegate.onBegin( this );
+		}
+
+		override public function cleanUp() : void
+		{
+			_status = TaskStatus.STOPPED;
+
+			if( _context )
+			{
+				_context.removeEventListener( WorkflowEvent.SUSPENDED, onContextSuspended );
+				_context.removeEventListener( WorkflowEvent.RESUMED, onContextResumed );
+				_context.suspendableFunctions.cleanUp();
+
+				for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+					w.onBeforeContextUnbond( this );
+				_context = null;
+			}
+		}
+
+		public function hold() : HeldTaskInfo
+		{
+			if( _status != TaskStatus.IDLE )
+				throw new Error( "hold() can only be called with status == TaskStatus.IDLE" );
+
+			if( !_blocker )
+			{
+				_blocker = new HeldTaskInfo( this );
+				blocker.addEventListener( Event.COMPLETE, onRelease );
+				blocker.addEventListener( ErrorEvent.ERROR, onRelease );
+			}
+			return blocker;
+		}
+
+		/**
+		* @inheritDoc
+		*/
+		override public function initialize() : void
+		{
+			super.initialize();
+
+			if( _status != TaskStatus.STOPPED )
+				return;
+
+			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+				w.onTaskInitialize( this );
+
+			if( !_injectableProperties )
+			{
+				var ci : Type = Type.forType( this );
+				var fields : Vector.<Field> = ci.getFieldsWithAnnotation( InjectPipeline );
+				_injectableProperties = {};
+
+				for each( var field : Field in fields )
+				{
+					_injectableProperties[ field.name ] = new InjectablePropertyInfo( field.name );
+				}
+				initializePropertyInjection()
+			}
+
+			if( _parent )
+				_status = TaskStatus.IDLE;
+
+			if( _delegate )
+				_delegate.onInitialize( this );
+
+			if( _document == null )
+				_document = this;
+		}
+
+		public function isProcessDeferred() : Boolean
+		{
+			return _delay > 0 && !_delayHasElapsed;
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		override public function prepare() : void
+		{
+			if( parent )
+			{
+				GroupUtil.getParentWorkflow( this )
+					.addEventListener(
+					"status_change",
+					onParentStatusChange );
+				_pipelineData = UNDEFINED;
+				_status = TaskStatus.IDLE;
+			}
+			_delayHasElapsed = false;
+			_exitStatus = null;
+
+			if( _delegate )
+				_delegate.onPrepare( this );
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public function resume() : void
+		{
+			if( _status != TaskStatus.RUNNING )
+			{
+				_status = TaskStatus.RUNNING;
+
+				if( _delegate )
+					_delegate.onResume( this );
+				_context.suspendableFunctions.invokeResumeCallBacks();
+			}
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public function suspend() : void
+		{
+			if( _status != TaskStatus.SUSPENDED )
+			{
+				_status = TaskStatus.SUSPENDED;
+
+				if( _delegate )
+					_delegate.onSuspend( this );
+			}
+		}
+
 		/**
 		 * @private
 		 */
@@ -873,24 +927,38 @@ package org.astoolkit.workflow.core
 		{
 			return getQualifiedClassName( this );
 		}
-		
+
+		override public function wakeup() : void
+		{
+			super.wakeup();
+
+			if( _delay > 0 && !_delayHasElapsed )
+			{
+				_delayTimer.addEventListener( 
+					TimerEvent.TIMER, 
+					threadSafe( onDelayTimeout ) );
+				_delayTimer.reset();
+				_delayTimer.start();
+			}
+		}
+
 		/**
 		 * @private
 		 */
 		protected function _deferredComplete( inThread : uint ) : void
 		{
-			if ( inThread != _thread )
+			if( inThread != _thread )
 				return;
-			
-			if ( !exitStatus )
+
+			if( !exitStatus )
 				exitStatus = new ExitStatus( ExitStatus.COMPLETE, null, _pipelineData );
 			LOGGER.debug(
 				"Task '{0}' completed", description );
-			
-			if ( suspendBinding && _document != null )
+
+			if( suspendBinding && _document != null )
 				BindingUtility.disableAllBindings( _document, this );
-			
-			if ( _status == TaskStatus.SUSPENDED )
+
+			if( _status == TaskStatus.SUSPENDED )
 			{
 				_context.suspendableFunctions.addResumeCallBack(
 					function() : void
@@ -902,20 +970,20 @@ package org.astoolkit.workflow.core
 			_context.runningTask = null;
 			_thread++;
 			_status = TaskStatus.IDLE;
-			
-			if ( _delegate )
+
+			if( _delegate )
 				_delegate.onComplete( this );
 		}
-		
+
 		/**
 		 * @private
 		 */
 		protected function _deferredFail( inMessage : String, inThread : uint ) : void
 		{
-			if ( inThread != _thread )
+			if( inThread != _thread )
 				return;
-			
-			if ( failurePolicy == FailurePolicy.CASCADE ||
+
+			if( failurePolicy == FailurePolicy.CASCADE ||
 				failurePolicy == FailurePolicy.ABORT )
 				LOGGER.error(
 					"Task {0}:\"{1}\" failed. Reason: {2} \nData:\n{3}",
@@ -923,7 +991,7 @@ package org.astoolkit.workflow.core
 					getQualifiedClassName( this ),
 					inMessage,
 					_inputData );
-			else if ( failurePolicy.toLowerCase().match( /^log\-/ ) )
+			else if( failurePolicy.toLowerCase().match( /^log\-/ ) )
 			{
 				LOGGER[ failurePolicy.replace( /^log\-/, "" ) ](
 					"Task " + description + " failed with message:\n" + inMessage );
@@ -932,8 +1000,8 @@ package org.astoolkit.workflow.core
 			{
 				LOGGER.debug( inMessage );
 			}
-			
-			if ( _status == TaskStatus.SUSPENDED )
+
+			if( _status == TaskStatus.SUSPENDED )
 			{
 				_context.suspendableFunctions.addResumeCallBack(
 					function() : void
@@ -944,52 +1012,25 @@ package org.astoolkit.workflow.core
 			}
 			_thread++
 			_status = TaskStatus.IDLE;
-			
-			if ( _delegate )
+
+			if( _delegate )
 				_delegate.onFault( this, inMessage );
 		}
-		
-		/**
-		 * @private
-		 */
-		protected function get _status() : String
-		{
-			return __status;
-		}
-		
-		/**
-		 * @private
-		 */
-		protected function set _status( inStatus : String ) : void
-		{
-			var oldValue : String = __status;
-			__status = inStatus;
-			dispatchEvent(
-				new PropertyChangeEvent(
-				"status_change",
-				false,
-				false,
-				PropertyChangeEventKind.UPDATE,
-				"status",
-				oldValue,
-				__status,
-				this ) );
-		}
-		
+
 		/**
 		 * @private
 		 */
 		protected function complete( inOutputData : * = undefined ) : void
 		{
-			if ( _status != TaskStatus.RUNNING )
+			if( _status != TaskStatus.RUNNING )
 				return;
-			
-			if ( inOutputData != UNDEFINED && inOutputData !== undefined )
+
+			if( inOutputData != UNDEFINED && inOutputData !== undefined )
 				_pipelineData = inOutputData;
 			_taskCompleted = true;
 			_deferredComplete( _thread );
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -1000,16 +1041,16 @@ package org.astoolkit.workflow.core
 		{
 			var task : IWorkflowElement = inTask;
 			var subEventType : String = "subtask" + inEventType.substr( 0, 1 ).toUpperCase() + inEventType.substr( 1 );
-			
-			if ( _context.owner.hasEventListener( subEventType ) )
+
+			if( _context.owner.hasEventListener( subEventType ) )
 				_context.owner.dispatchEvent( 
 					new WorkflowEvent( subEventType, _context, inTask, inData ) )
-			
-			while ( task )
+
+			while( task )
 			{
-				if ( inTask == task )
+				if( inTask == task )
 				{
-					if ( task.hasEventListener( inEventType ) )
+					if( task.hasEventListener( inEventType ) )
 					{
 						var event : WorkflowEvent = new WorkflowEvent( inEventType, _context, inTask, inData )
 						task.dispatchEvent( event );
@@ -1017,7 +1058,7 @@ package org.astoolkit.workflow.core
 				}
 				else
 				{
-					if ( task.hasEventListener( subEventType ) )
+					if( task.hasEventListener( subEventType ) )
 					{
 						var subEvent : WorkflowEvent = new WorkflowEvent( subEventType, _context, inTask, inData );
 						task.dispatchEvent( subEvent );
@@ -1026,7 +1067,7 @@ package org.astoolkit.workflow.core
 				task = task.parent;
 			}
 		}
-		
+
 		/**
 		 * call this method if a failure occurs during a task's execution.
 		 *
@@ -1050,16 +1091,16 @@ package org.astoolkit.workflow.core
 		 */
 		protected function fail( inMessage : String, ... inRest ) : void
 		{
-			if ( _status == TaskStatus.ABORTED )
+			if( _status == TaskStatus.ABORTED )
 				return;
-			
-			if ( !exitStatus )
+
+			if( !exitStatus )
 				exitStatus = new ExitStatus( ExitStatus.FAILED, inMessage )
 			var args : Array = [ inMessage ].concat( inRest );
 			var message : String = StringUtil.substitute.apply( null, args );
 			_deferredFail( message, _thread );
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -1067,17 +1108,17 @@ package org.astoolkit.workflow.core
 		{
 			_injectablePropertiesWatchers = {};
 			_actuallyInjectableProperties = new Vector.<String>();
-			
-			for each ( var prop : InjectablePropertyInfo in _injectableProperties )
+
+			for each( var prop : InjectablePropertyInfo in _injectableProperties )
 			{
-				if ( !prop.hasExplicitValue )
+				if( !prop.hasExplicitValue )
 				{
 					_injectablePropertiesWatchers[ prop.name ] = ChangeWatcher.watch( this, prop.name, onInjectablePropertyChange );
 					_actuallyInjectableProperties.push( prop.name );
 				}
 			}
 		}
-		
+
 		protected function injectPipeline() : void
 		{
 			var ci : Type = Type.forType( this );
@@ -1085,74 +1126,83 @@ package org.astoolkit.workflow.core
 			var data : Object = filteredInput;
 			var defaultPropSet : Boolean;
 			var annotation : InjectPipeline;
-			
-			for each ( var field : Field in fields )
+
+			for each( var field : Field in fields )
 			{
-				if ( _actuallyInjectableProperties.indexOf( field.name ) > -1 )
+				if( _actuallyInjectableProperties.indexOf( field.name ) > -1 )
 				{
 					annotation = field.getAnnotationsOfType( InjectPipeline )[ 0 ] as InjectPipeline;
 					var watchInfo : ChangeWatcher = _injectablePropertiesWatchers[ field.name ];
-					
-					if ( watchInfo )
+
+					if( watchInfo )
 						watchInfo.unwatch();
-					
-					if ( !defaultPropSet && annotation.filterText == null &&
+
+					if( !defaultPropSet && annotation.filterText == null &&
 						( field.type == null || data is field.type ) )
 					{
 						this[ field.name ] = data;
 						defaultPropSet = true;
 					}
-					else if ( annotation.filterText != null )
+					else if( annotation.filterText != null )
 					{
 						this[ field.name ] = _context.config.dataTransformerRegistry.getTransformer( data, annotation.filterText ).transform(
 							data, annotation.filterText, this );
 					}
-					
-					if ( watchInfo )
+
+					if( watchInfo )
 					{
 						_injectablePropertiesWatchers[ field.name ] = ChangeWatcher.watch( this, field.name, onInjectablePropertyChange );
 					}
 				}
 			}
 		}
-		
+
+		protected function notifyDeferredProcessWatchers() : void
+		{
+			var watchers : Vector.<Function> = _deferredExecutionWatchers.concat();
+			_deferredExecutionWatchers.length = 0;
+
+			while( watchers.length > 0 )
+				( watchers.pop() as Function )( this );
+		}
+
 		/**
 		 * @private
 		 */
 		protected function onContextResumed( inEvent : WorkflowEvent ) : void
 		{
-			if ( status == TaskStatus.SUSPENDED )
+			if( status == TaskStatus.SUSPENDED )
 			{
 				resume();
 			}
 		}
-		
+
 		/**
 		 * @private
 		 */
 		protected function onContextSuspended( inEvent : WorkflowEvent ) : void
 		{
-			if ( _status == TaskStatus.RUNNING )
+			if( _status == TaskStatus.RUNNING )
 			{
 				suspend();
 			}
 		}
-		
+
 		/**
 		 * @private
 		 */
 		protected function onInjectablePropertyChange( inEvent : PropertyChangeEvent ) : void
 		{
 			var index : int = _actuallyInjectableProperties.indexOf( inEvent.property );
-			
-			if ( index > -1 )
+
+			if( index > -1 )
 			{
 				_actuallyInjectableProperties.splice( index, 1 );
 				var cw : ChangeWatcher = _injectablePropertiesWatchers[ inEvent.property ];
 				cw.unwatch();
 				delete _injectablePropertiesWatchers[ inEvent.property ];
-				
-				if ( !_document )
+
+				if( !_document )
 				{
 					LOGGER.debug( "Property {0} set explicitly in MXML. Disabling injection", inEvent.property );
 					//this will ensure that only properties set explicityly in the MXML
@@ -1166,31 +1216,31 @@ package org.astoolkit.workflow.core
 				}
 			}
 		}
-		
+
 		/**
 		 * @private
 		 */
 		protected function onParentStatusChange( inEvent : PropertyChangeEvent ) : void
 		{
-			if ( inEvent.newValue == TaskStatus.ABORTED )
+			if( inEvent.newValue == TaskStatus.ABORTED )
 			{
 				_status = TaskStatus.ABORTED;
 			}
 		}
-		
+
 		/**
 		 * @private
 		 */
 		protected function onTimeout( inOriginalThread : int ) : void
 		{
-			if ( currentThread != inOriginalThread )
+			if( currentThread != inOriginalThread )
 				return;
 			_exitStatus = new ExitStatus( ExitStatus.TIME_OUT );
 			fail( "Task {0} failed because a {1}s timeout occourred",
 				description,
 				Number( _timeout ) / 1000 );
 		}
-		
+
 		/**
 		 * returns the value of this task's <code>inProperty</code> property
 		 * checking if any value override applies.
@@ -1201,7 +1251,7 @@ package org.astoolkit.workflow.core
 		{
 			return GroupUtil.getOverrideSafeValue( this, inProperty );
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -1209,10 +1259,10 @@ package org.astoolkit.workflow.core
 		{
 			var oldVal : Number = _currentProgress;
 			_currentProgress = inValue;
-			
-			if ( _currentProgress >= 0 && _currentProgress <= 1 )
+
+			if( _currentProgress >= 0 && _currentProgress <= 1 )
 			{
-				if ( _delegate )
+				if( _delegate )
 					_delegate.onProgress( this );
 				dispatchEvent(
 					new PropertyChangeEvent(
@@ -1225,11 +1275,11 @@ package org.astoolkit.workflow.core
 					_currentProgress,
 					this ) );
 			}
-			
-			if ( _delegate )
+
+			if( _delegate )
 				_delegate.onProgress( this );
 		}
-		
+
 		/**
 		 * returns a function wrapper that prevents functions called by async
 		 * processes from being invoked if the task is aborted before
@@ -1255,39 +1305,33 @@ package org.astoolkit.workflow.core
 		{
 			return _context.suspendableFunctions.getThreadSafeFunction( this, inHandler );
 		}
-		
+
+		private function onDelayTimeout( inEvent : TimerEvent ) : void
+		{
+			_delayHasElapsed = true;
+
+			if( !isProcessDeferred() )
+				notifyDeferredProcessWatchers();
+		}
+
 		private function onRelease( inEvent : Event ) : void
 		{
 			_blocker = null;
 		}
-		
-		public function addDeferredExecutionResponder( inResponser : IResponder ) : void
-		{
-			// TODO Auto Generated method stub
-		}
-		
-		public function isExecutionDeferred() : Boolean
-		{
-			return delay > 0;
-		}
-		
-		override public function wakeup() : void
-		{
-			//TODO: perform flightcheck operations here
-		}
-		
 	}
 }
+
 import mx.binding.utils.ChangeWatcher;
 
 class InjectablePropertyInfo
 {
+
+	public var hasExplicitValue : Boolean;
+
+	public var name : String;
+
 	public function InjectablePropertyInfo( inName : String )
 	{
 		name = inName;
 	}
-	
-	public var hasExplicitValue : Boolean;
-	
-	public var name : String;
 }

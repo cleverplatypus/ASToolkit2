@@ -55,7 +55,7 @@ package org.astoolkit.workflow.api
 		IEventDispatcher,
 		IIODataTransformerClient,
 		IPipelineConsumer,
-		IExecutionDeferrable
+		IDeferrableProcess
 	{
 
 		//TODO: replace with IExecutionDeferrable functionality

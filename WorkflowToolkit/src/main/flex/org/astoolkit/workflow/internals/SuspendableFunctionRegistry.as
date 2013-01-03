@@ -121,13 +121,6 @@ import org.astoolkit.workflow.internals.SuspendableFunctionRegistry;
 
 class SuspendableFunction
 {
-	public function SuspendableFunction( inTask : IWorkflowTask, inHandler : Function, inRegistry : SuspendableFunctionRegistry )
-	{
-		_task = inTask;
-		_thread = inTask.currentThread;
-		_handler = inHandler;
-		_registry = inRegistry;
-	}
 
 	private var _handler : Function;
 
@@ -136,6 +129,14 @@ class SuspendableFunction
 	private var _task : IWorkflowTask;
 
 	private var _thread : uint;
+
+	public function SuspendableFunction( inTask : IWorkflowTask, inHandler : Function, inRegistry : SuspendableFunctionRegistry )
+	{
+		_task = inTask;
+		_thread = inTask.currentThread;
+		_handler = inHandler;
+		_registry = inRegistry;
+	}
 
 	public function wrapper( ... args ) : void
 	{
@@ -147,6 +148,6 @@ class SuspendableFunction
 			_registry.addResumeCallBack( wrapper );
 			return;
 		}
-		_handler.apply( null, args );
+		_handler.apply( _task, args );
 	}
 }

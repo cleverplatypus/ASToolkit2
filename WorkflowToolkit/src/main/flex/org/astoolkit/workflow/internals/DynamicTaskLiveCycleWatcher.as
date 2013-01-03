@@ -11,26 +11,34 @@ package org.astoolkit.workflow.internals
 	public final class DynamicTaskLiveCycleWatcher implements ITaskLiveCycleWatcher
 	{
 		private var _taskWatcherPriority : int;
-		
-		public function get taskWatcherPriority():int
-		{
-			return _taskWatcherPriority;
-		}
-
-		public function set taskWatcherPriority(value:int):void
-		{
-			_taskWatcherPriority = value;
-		}
 
 		public var afterTaskBeginWatcher : Function;
 
 		public var beforeTaskBeginWatcher : Function;
-		
+
 		public var contextBoundWatcher : Function;
-		
-		public var taskPreparedWatcher : Function;
+
+		public var deferredTaskResumeWatcher : Function;
+
+		public var taskBeginWatcher : Function;
+
+		public var taskCompleteWatcher : Function;
 
 		public var taskDataSetWatcher : Function;
+
+		public var taskDeferExecutionWatcher : Function;
+
+		public var taskPreparedWatcher : Function;
+
+		public function get taskWatcherPriority() : int
+		{
+			return _taskWatcherPriority;
+		}
+
+		public function set taskWatcherPriority(value:int) : void
+		{
+			_taskWatcherPriority = value;
+		}
 
 		public function afterTaskBegin( inTask : IWorkflowTask ) : void
 		{
@@ -50,28 +58,43 @@ package org.astoolkit.workflow.internals
 				beforeTaskBeginWatcher( inTask );
 		}
 
+		public function onBeforeContextUnbond( inElement : IWorkflowElement ) : void
+		{
+
+		}
+
 		public function onContextBond( inElement : IWorkflowElement ) : void
 		{
 			if( contextBoundWatcher != null )
 				contextBoundWatcher( inElement );
 		}
 
-		public function onBeforeContextUnbond( inElement : IWorkflowElement ) : void
-		{
-			
-		}
-		
-		
 		public function onTaskAbort( inTask : IWorkflowTask ) : void
 		{
 		}
 
 		public function onTaskBegin( inTask : IWorkflowTask ) : void
 		{
+			if( taskBeginWatcher is Function )
+				taskBeginWatcher( inTask );
 		}
 
 		public function onTaskComplete( inTask : IWorkflowTask ) : void
 		{
+			if( taskCompleteWatcher is Function )
+				taskCompleteWatcher( inTask );
+		}
+
+		public function onTaskDeferExecution( inTask : IWorkflowTask ) : void
+		{
+			if( taskDeferExecutionWatcher is Function )
+				taskDeferExecutionWatcher( inTask );
+		}
+
+		public function onDeferredTaskResume( inTask : IWorkflowTask ) : void
+		{
+			if( deferredTaskResumeWatcher is Function )
+				deferredTaskResumeWatcher( inTask );
 		}
 
 		public function onTaskExitStatus( inTask : IWorkflowTask, inStatus : ExitStatus ) : void
@@ -86,6 +109,13 @@ package org.astoolkit.workflow.internals
 		{
 		}
 
+		public function onTaskPrepared(inTask:IWorkflowTask) : void
+		{
+			if( taskPreparedWatcher is Function )
+				taskPreparedWatcher( inTask );
+
+		}
+
 		public function onTaskSuspend( inTask : IWorkflowTask ) : void
 		{
 		}
@@ -93,13 +123,5 @@ package org.astoolkit.workflow.internals
 		public function onWorkflowCheckingNextTask( inWorkflow : ITasksFlow, inPipelineData : Object ) : void
 		{
 		}
-		
-		public function onTaskPrepared(inTask:IWorkflowTask):void
-		{
-			if( taskPreparedWatcher is Function )
-				taskPreparedWatcher( inTask );
-			
-		}
-		
 	}
 }

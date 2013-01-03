@@ -5,12 +5,20 @@
 		class="org.astoolkit.workflow.core.Do"
 		/>
 	<component 
+		id="Goo"
+		class="org.astoolkit.workflow.core.Goo"
+		/>
+	<component 
 		id="Workflow"
 		class="org.astoolkit.workflow.core.Workflow"
 		/>
 	<component 
 		id="If"
 		class="org.astoolkit.workflow.core.If"
+		/>
+	<component 
+		id="If_old"
+		class="org.astoolkit.workflow.core.If_old"
 		/>
 	<component 
 		id="Switch"

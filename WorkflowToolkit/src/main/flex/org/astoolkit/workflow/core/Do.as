@@ -20,33 +20,23 @@ Version 2.x
 package org.astoolkit.workflow.core
 {
 
-	import flash.events.ErrorEvent;
-	import flash.events.Event;
+	import flash.events.IEventDispatcher;
 	import flash.utils.getQualifiedClassName;
-	import flash.utils.setTimeout;
 	import mx.core.IFactory;
-	import mx.core.IMXMLObject;
-	import mx.events.PropertyChangeEvent;
-	import mx.events.PropertyChangeEventKind;
 	import mx.logging.ILogger;
 	import mx.logging.Log;
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.collection.api.IRepeater;
 	import org.astoolkit.commons.databinding.BindingUtility;
-	import org.astoolkit.commons.io.transform.api.IIODataSourceClient;
-	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
 	import org.astoolkit.commons.mapping.MappingError;
 	import org.astoolkit.commons.mapping.SimplePropertiesMapper;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 	import org.astoolkit.commons.mapping.api.IPropertyMappingDescriptor;
-	import org.astoolkit.commons.ns.astoolkit_private;
-	import org.astoolkit.commons.reflection.IAnnotation;
-	import org.astoolkit.commons.reflection.Type;
-	import org.astoolkit.commons.utils.ListUtil;
 	import org.astoolkit.workflow.annotation.*;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.*;
 	import org.astoolkit.workflow.internals.*;
+	import org.astoolkit.workflow.task.flowcontrol.IDeferrableProcessWatcher;
 
 	[Event(
 		name = "subtaskInitialized",
@@ -88,26 +78,88 @@ package org.astoolkit.workflow.core
 		protected static const LOGGER : ILogger =
 			Log.getLogger( getQualifiedClassName( Do ).replace( /:+/g, "." ) );
 
+		private static var _metadataInitialized : Boolean;
+
+		private var _elementsQueue:ElementsQueue;
+
+		/**
+		 * @private
+		 *
+		 * holds a reference to the child task currently in its begin() function
+		 */
+		private var _executingTask : IWorkflowTask;
+
 		/**
 		 * @private
 		 */
-		protected static var _retainedWorkflows : Object = [];
-
-		private static var _metadataInitialized : Boolean;
-
-		//============================ CONSTRUCTOR =============================
-		public function Do()
-		{
-			super();
-			_childrenDelegate = createChildrenDelegate()
-			_feed = Feed.AUTO;
-			_tasksIterator = new TasksIterator();
-		}
+		protected var _childNodes : Array;
 
 		/**
 		 * @private
 		 */
 		protected var _children : Vector.<IWorkflowElement> = new Vector.<IWorkflowElement>();
+
+		/**
+		 * @private
+		 */
+		protected var _childrenDelegate : IWorkflowDelegate;
+
+		/**
+		 * @private
+		 */
+		protected var _contextAwareElements : Vector.<IContextAwareElement>;
+
+		/**
+		 * @private
+		 */
+		protected var _contextFactory : IFactory;
+
+		/**
+		 * @private
+		 *
+		 * the data source for this repeater's iteration.
+		 */
+		protected var _dataProvider : Object;
+
+		/**
+		 * @private
+		 */
+		protected var _feed : String = undefined;
+
+		/**
+		 * @private
+		 */
+		protected var _flow : String = Flow.SERIAL;
+
+		/**
+		 * @private
+		 */
+		protected var _insert : Vector.<Insert>;
+
+		/**
+		 * @private
+		 */
+		protected var _iterate : String = Iterate.ONCE;
+
+		/**
+		 * @private
+		 */
+		protected var _iterator : IIterator;
+
+		/**
+		 * @private
+		 */
+		protected var _iteratorConfig : Object;
+
+		/**
+		 * @private
+		 */
+		protected var _root : ITasksFlow;
+
+		/**
+		 * @private
+		 */
+		protected var _subPipelineData : *;
 
 		public function get children() : Vector.<IWorkflowElement>
 		{
@@ -116,18 +168,13 @@ package org.astoolkit.workflow.core
 
 		public function set children( inChildren : Vector.<IWorkflowElement> ) : void
 		{
-			if ( _children && _children.length > 0 )
+			if( _children && _children.length > 0 )
 				throw new Error( "Tasks list cannot be overridden" );
 			_children = inChildren;
 
-			for each ( var child : IWorkflowElement in _children )
+			for each( var child : IWorkflowElement in _children )
 				child.parent = this;
 		}
-
-		/**
-		 * @private
-		 */
-		protected var _contextFactory : IFactory;
 
 		public function get contextFactory() : IFactory
 		{
@@ -136,16 +183,9 @@ package org.astoolkit.workflow.core
 
 		public function set contextFactory( inFactory : IFactory ) : void
 		{
-			if ( inFactory )
+			if( inFactory )
 				_contextFactory = inFactory;
 		}
-
-		/**
-		 * @private
-		 *
-		 * the data source for this repeater's iteration.
-		 */
-		protected var _dataProvider : Object;
 
 		public function get dataProvider() : Object
 		{
@@ -155,15 +195,10 @@ package org.astoolkit.workflow.core
 		[InjectPipeline]
 		public function set dataProvider( inValue : Object ) : void
 		{
-			if ( status == TaskStatus.RUNNING )
+			if( status == TaskStatus.RUNNING )
 				return;
 			_dataProvider = inValue;
 		}
-
-		/**
-		 * @private
-		 */
-		protected var _feed : String = undefined;
 
 		public function get feed() : String
 		{
@@ -176,11 +211,6 @@ package org.astoolkit.workflow.core
 			_feed = inFeed;
 		}
 
-		/**
-		 * @private
-		 */
-		protected var _flow : String = Flow.SERIAL;
-
 		public function get flow() : String
 		{
 			return _flow;
@@ -191,11 +221,6 @@ package org.astoolkit.workflow.core
 		{
 			_flow = inFlow;
 		}
-
-		/**
-		 * @private
-		 */
-		protected var _insert : Vector.<Insert>;
 
 		public function get insert() : Vector.<Insert>
 		{
@@ -225,15 +250,10 @@ package org.astoolkit.workflow.core
 		 */
 		public function set insert( inInsert : Vector.<Insert> ) : void
 		{
-			if ( _insert )
+			if( _insert )
 				throw new Error( "insert cannot be redefined" );
 			_insert = inInsert;
 		}
-
-		/**
-		 * @private
-		 */
-		protected var _iterate : String = Iterate.ONCE;
 
 		/**
 		 * @inheritDoc
@@ -249,11 +269,6 @@ package org.astoolkit.workflow.core
 			_iterate = inIterate;
 		}
 
-		/**
-		 * @private
-		 */
-		protected var _iterator : IIterator;
-
 		public function get iterator() : IIterator
 		{
 			return _iterator;
@@ -263,70 +278,26 @@ package org.astoolkit.workflow.core
 		//============================ GETTERS/SETTERS =============================
 		public function set iterator( inValue : IIterator ) : void
 		{
-			if ( status != TaskStatus.RUNNING && status != TaskStatus.IDLE )
+			if( status != TaskStatus.RUNNING && status != TaskStatus.IDLE )
 			{
-				if ( _iterator )
+				if( _iterator )
 					_context.config.iteratorFactory.release( _iterator );
 				_iterator = inValue;
 			}
 		}
-
-		/**
-		 * @private
-		 */
-		protected var _iteratorConfig : Object;
 
 		public function set iteratorConfig( inValue : Object ) : void
 		{
 			_iteratorConfig = inValue;
 		}
 
-		/**
-		 * @private
-		 */
-		protected var _childNodes : Array;
-
-		/**
-		 * @private
-		 */
-		protected var _childrenDelegate : IWorkflowDelegate;
-
-		/**
-		 * @private
-		 */
-		protected var _contextAwareElements : Vector.<IContextAwareElement>;
-
-		/**
-		 * @private
-		 */
-		protected var _root : ITasksFlow;
-
-		/**
-		 * @private
-		 */
-		protected var _subPipelineData : *;
-
-		/**
-		 * @private
-		 */
-		protected var _tasksIterator : IIterator;
-
-		protected function get runtimeElements() : Vector.<IWorkflowElement>
+		//============================ CONSTRUCTOR =============================
+		public function Do()
 		{
-			return GroupUtil.getRuntimeElements( _children );
+			super();
+			_childrenDelegate = createChildrenDelegate()
+			_feed = Feed.AUTO;
 		}
-
-		protected function get runtimeTasks() : Vector.<IWorkflowTask>
-		{
-			return GroupUtil.getRuntimeTasks( _children );
-		}
-
-		/**
-		 * @private
-		 *
-		 * holds a reference to the child task currently in its begin() function
-		 */
-		private var _executingTask : IWorkflowTask;
 
 		/**
 		 * Execution entry point for the workflow.
@@ -334,7 +305,7 @@ package org.astoolkit.workflow.core
 		 */
 		override public function begin() : void
 		{
-			if ( !_context )
+			if( !_context )
 			{
 				throw new Error( "This workflow is not initialized properly." +
 					"You might want to call run() instead of begin()" );
@@ -343,7 +314,7 @@ package org.astoolkit.workflow.core
 			_subPipelineData = _inputData === undefined ? UNDEFINED : _inputData;
 			var w : ITaskLiveCycleWatcher;
 
-			if ( runtimeTasks == null || runtimeTasks.length == 0 )
+			if( _children == null || _children.length == 0 )
 			{
 				LOGGER.warn( 
 					"Workflow {0} has no tasks to perform", 
@@ -355,33 +326,33 @@ package org.astoolkit.workflow.core
 			try
 			{
 				//setting iterate to Iterate.DATA automatically if dataProvider wasn't injected
-				if ( _dataProvider && _actuallyInjectableProperties.indexOf( "dataProvider" ) == -1 )
+				if( _dataProvider && _actuallyInjectableProperties.indexOf( "dataProvider" ) == -1 )
 				{
 					_iterate = Iterate.DATA;
 					LOGGER.info( "Setting iterate=\"data\" as dataProvider has been" +
 						"set explicitly" );
 				}
 
-				if ( _iterate == Iterate.DATA || iterator != null )
+				if( _iterate == Iterate.DATA || iterator != null )
 				{
 					var currentIterator : IIterator = iterator;
 
-					if ( currentIterator == null )
+					if( currentIterator == null )
 					{
-						if ( _dataProvider )
+						if( _dataProvider )
 							currentIterator = getIterator( _dataProvider );
 						else
 							currentIterator = getIterator( filteredInput );
 					}
 
-					if ( currentIterator != null && currentIterator.hasNext() )
+					if( currentIterator != null && currentIterator.hasNext() )
 					{
 						nextData();
 						prepareChildren();
 					}
 					else
 					{
-						if ( !currentIterator )
+						if( !currentIterator )
 						{
 							fail( "Flow \"{0}\" failed because" +
 								" no data iterator was found for type {1}",
@@ -400,9 +371,9 @@ package org.astoolkit.workflow.core
 						return;
 					}
 				}
-				else if ( _iterate == Iterate.LOOP )
+				else if( _iterate == Iterate.LOOP )
 				{
-					if ( !getIterator( null ) )
+					if( !getIterator( null ) )
 					{
 						fail( "Flow \"{0}\" failed because" +
 							" no loop iterator was found for type",
@@ -417,9 +388,9 @@ package org.astoolkit.workflow.core
 				{
 					prepareChildren();
 				}
-				runNextTask();
+				processChildren();
 			}
-			catch ( e : Error )
+			catch( e : Error )
 			{
 				fail( e.getStackTrace() );
 				return;
@@ -428,7 +399,7 @@ package org.astoolkit.workflow.core
 
 		public function childNodeAdded( inNode : Object ) : void
 		{
-			if ( !_childNodes )
+			if( !_childNodes )
 				_childNodes = [];
 			_childNodes.push( inNode );
 		}
@@ -438,12 +409,12 @@ package org.astoolkit.workflow.core
 			var aContext : IWorkflowContext = _context; //super.cleanup() makes _context == null
 			super.cleanUp();
 
-			if ( _actuallyInjectableProperties.indexOf( "dataProvider" ) > -1 )
+			if( _actuallyInjectableProperties.indexOf( "dataProvider" ) > -1 )
 			{
 				_dataProvider = null;
 			}
 
-			for each ( var child : IWorkflowElement in runtimeTasks )
+			for each( var child : IWorkflowElement in _children )
 			{
 				child.cleanUp();
 			}
@@ -452,20 +423,20 @@ package org.astoolkit.workflow.core
 		//============================ LIFE CYCLE =============================
 		override public function initialize() : void
 		{
-			if ( _status != TaskStatus.STOPPED )
+			if( _status != TaskStatus.STOPPED )
 				return;
 			super.initialize();
-			_tasksIterator.source = this;
 
-			if ( _childNodes )
+			if( _childNodes )
 			{
 				_context.configureObjects( _childNodes );
 			}
 
-			if ( children )
+			if( children )
 			{
-				for each ( var element : IWorkflowElement in children.concat( GroupUtil.getInserts( this ) ) )
+				for each( var element : IWorkflowElement in _children )
 				{
+					//TODO: review this as some assignments could be redundant
 					element.delegate = _childrenDelegate;
 					element.context = _context;
 					element.parent = this;
@@ -473,67 +444,72 @@ package org.astoolkit.workflow.core
 				}
 			}
 
-			for each ( var cae : IContextAwareElement in _contextAwareElements )
+			for each( var cae : IContextAwareElement in _contextAwareElements )
 			{
 				cae.context = _context;
 			}
+			_elementsQueue = new ElementsQueue( _children );
 		}
 
 		override public function prepare() : void
 		{
 			super.prepare();
 
-			if ( _iterator )
+			if( _iterator )
 				_iterator.reset();
-			_tasksIterator.reset();
+
 		}
 
-		protected function checkPipelineStatus( inTask : IWorkflowTask ) : String
-		{
-			if ( _subPipelineData == EMPTY_PIPELINE &&
-				inTask.invalidPipelinePolicy == InvalidPipelinePolicy.FAIL )
-			{
-				fail( "Empty pipeline in task '{0}' ({1})", 
-					description, 
-					getQualifiedClassName( inTask ) );
-				return InvalidPipelinePolicy.FAIL;
-			}
-			var constraints : Vector.<IAnnotation> =
-				Type.forType( inTask ).getAnnotationsOfType( TaskInput );
-
-			if ( !constraints || constraints.length == 0 )
-				return InvalidPipelinePolicy.IGNORE;
-			var data : Object = _subPipelineData;
-
-			for each ( var type : Class in TaskInput( constraints[ 0 ] ).types )
-			{
-				if ( data is type )
-					return InvalidPipelinePolicy.IGNORE;
-			}
-
-			if ( inTask.invalidPipelinePolicy == InvalidPipelinePolicy.FAIL )
-				fail( "Unexpected taskInput type \"{0}\":  for task {1}. Expected type: {2}",
-					getQualifiedClassName( _subPipelineData ),
-					inTask.description,
-					ListUtil.convert( TaskInput( constraints[ 0 ] ).types )
-					.map( function( inClass : Class, inIndex : int, inArray : Array ) : String
+		/*
+				//TODO: encapsulate this into an assertion-style class
+				//		It could be a IPipelineConsumer assertion so that it's
+				// 		invoked at the right time, i.e. when data is set
+				protected function checkPipelineStatus( inTask : IWorkflowTask ) : String
+				{
+					if( _subPipelineData == EMPTY_PIPELINE &&
+						inTask.invalidPipelinePolicy == InvalidPipelinePolicy.FAIL )
 					{
-						return getQualifiedClassName( inClass );
-					} )
-					);
-			return inTask.invalidPipelinePolicy;
-		}
+						fail( "Empty pipeline in task '{0}' ({1})",
+							description,
+							getQualifiedClassName( inTask ) );
+						return InvalidPipelinePolicy.FAIL;
+					}
+					var constraints : Vector.<IAnnotation> =
+						Type.forType( inTask ).getAnnotationsOfType( TaskInput );
 
+					if( !constraints || constraints.length == 0 )
+						return InvalidPipelinePolicy.IGNORE;
+					var data : Object = _subPipelineData;
+
+					for each( var type : Class in TaskInput( constraints[ 0 ] ).types )
+					{
+						if( data is type )
+							return InvalidPipelinePolicy.IGNORE;
+					}
+
+					if( inTask.invalidPipelinePolicy == InvalidPipelinePolicy.FAIL )
+						fail( "Unexpected taskInput type \"{0}\":  for task {1}. Expected type: {2}",
+							getQualifiedClassName( _subPipelineData ),
+							inTask.description,
+							ListUtil.convert( TaskInput( constraints[ 0 ] ).types )
+							.map( function( inClass : Class, inIndex : int, inArray : Array ) : String
+							{
+								return getQualifiedClassName( inClass );
+							} )
+							);
+					return inTask.invalidPipelinePolicy;
+				}
+		*/
 		override protected function complete( inOutputData : * = undefined ) : void
 		{
-			for each ( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
 				w.onTaskComplete( this );
 			var wasAborted : Boolean = _status == TaskStatus.ABORTED;
 
-			if ( wasAborted )
+			if( wasAborted )
 				return;
 
-			if ( _iterate != Iterate.ONCE || iterator )
+			if( _iterate != Iterate.ONCE || iterator )
 			{
 				//_iterator != null otherwise begin() would have failed
 				LOGGER.debug(
@@ -541,27 +517,27 @@ package org.astoolkit.workflow.core
 					description,
 					_iterator.currentIndex() );
 
-				if ( !_iterator.isAborted && _iterator.hasNext() )
+				if( !_iterator.isAborted && _iterator.hasNext() )
 				{
 					nextData();
 					prepareChildren();
-					runNextTask();
+					processChildren();
 					return;
 				}
 			}
 
-			if ( !_ignoreOutput )
+			if( !_ignoreOutput )
 				_pipelineData = _subPipelineData;
 
-			if ( _iterate == Iterate.DATA && _dataProvider != null )
+			if( _iterate == Iterate.DATA && _dataProvider != null )
 			{
-				if ( _actuallyInjectableProperties.indexOf( "dataProvider" ) > -1 )
+				if( _actuallyInjectableProperties.indexOf( "dataProvider" ) > -1 )
 				{
 					_dataProvider = null;
 				}
 			}
 
-			if ( _iterator )
+			if( _iterator )
 				_context.config.iteratorFactory.release( _iterator );
 			super.complete( _pipelineData );
 		}
@@ -587,24 +563,24 @@ package org.astoolkit.workflow.core
 			var c : IWorkflowContext = _context;
 			super.fail( inMessage, inRest );
 
-			if ( _iterator )
+			if( _iterator )
 				c.config.iteratorFactory.release( _iterator );
 		}
 
 		protected function getIterator( inSource : Object ) : IIterator
 		{
-			if ( !_iterator )
+			if( !_iterator )
 				_iterator = _context.config.iteratorFactory.iteratorForSource( inSource );
 
-			if ( _iterator && _iterator.supportsSource( inSource ) )
+			if( _iterator && _iterator.supportsSource( inSource ) )
 			{
 				_iterator.source = inSource;
 
-				if ( _iteratorConfig )
+				if( _iteratorConfig )
 				{
-					for ( var key : String in _iteratorConfig )
+					for( var key : String in _iteratorConfig )
 					{
-						if ( Object( _iterator ).hasOwnProperty( key ) )
+						if( Object( _iterator ).hasOwnProperty( key ) )
 							_iterator[ key ] = _iteratorConfig[ key ];
 					}
 				}
@@ -619,9 +595,9 @@ package org.astoolkit.workflow.core
 		protected function nextData() : void
 		{
 			_subPipelineData = UNDEFINED;
-			_tasksIterator.reset();
+			_elementsQueue.init();
 
-			if ( _iterator )
+			if( _iterator )
 			{
 				_iterator.next();
 			}
@@ -646,38 +622,38 @@ package org.astoolkit.workflow.core
 
 		protected function onSubtaskCompleted( inTask : IWorkflowTask ) : void
 		{
-			for each ( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
 				w.onTaskExitStatus( inTask, inTask.exitStatus );
 
-			if ( _status == TaskStatus.ABORTED )
+			if( _status == TaskStatus.ABORTED )
 			{
 				complete();
 				return;
 			}
 
-			if ( inTask.status != TaskStatus.ABORTED )
+			if( inTask.status != TaskStatus.ABORTED )
 			{
 				dispatchTaskEvent( WorkflowEvent.COMPLETED, inTask, _pipelineData );
 
-				if ( !_ignoreOutput )
+				if( !_ignoreOutput )
 				{
-					if ( !inTask.exitStatus.interrupted )
+					if( !inTask.exitStatus.interrupted )
 					{
-						if ( inTask.outlet == PIPELINE_OUTLET && flow != Flow.PARALLEL )
+						if( inTask.outlet == PIPELINE_OUTLET && flow != Flow.PARALLEL )
 							_subPipelineData = inTask.output;
-						else if ( inTask.outlet is String )
+						else if( inTask.outlet is String )
 						{
 							var sOutlet : String = inTask.outlet as String;
 
 							//TODO: reimplement using IExpressionResolver
-							if ( sOutlet.match( /^\$?\w+$/ ) )
+							if( sOutlet.match( /^\$?\w+$/ ) )
 								context.variables[ inTask.outlet ] = inTask.output;
-							else if ( sOutlet.match( /^\|?\w+$/ ) )
+							else if( sOutlet.match( /^\|?\w+$/ ) )
 							{
 								//TODO: change this to use an outputFilter ???
 								try
 								{
-									if ( sOutlet.charAt( 0 ) == "|" )
+									if( sOutlet.charAt( 0 ) == "|" )
 										//output is set as a property of the unmodified pipelineData passed
 										//to this task. The property name is the outlet text after "|"
 										_subPipelineData[ sOutlet.substr( 1 ) ] = inTask.output;
@@ -685,7 +661,7 @@ package org.astoolkit.workflow.core
 										//output is set as the [ outlet ] property of the input object (after filtering)
 										inTask.filteredInput[ sOutlet ] = inTask.output
 								}
-								catch ( e : Error )
+								catch( e : Error )
 								{
 									fail( "Injecting task {0} output failed. {1} class doesn't have " +
 										"the \"{2}\" property.",
@@ -696,7 +672,7 @@ package org.astoolkit.workflow.core
 								}
 							}
 						}
-						else if ( inTask.outlet is IPropertiesMapper )
+						else if( inTask.outlet is IPropertiesMapper )
 						{
 							var mapped : *;
 
@@ -704,7 +680,7 @@ package org.astoolkit.workflow.core
 							{
 								mapped = IPropertiesMapper( inTask.outlet ).map( inTask.output );
 							}
-							catch ( e : Error )
+							catch( e : Error )
 							{
 								var cause : String =
 									e is MappingError ? e.message : e.getStackTrace();
@@ -712,10 +688,10 @@ package org.astoolkit.workflow.core
 								return;
 							}
 
-							if ( mapped !== undefined && flow != Flow.PARALLEL )
+							if( mapped !== undefined && flow != Flow.PARALLEL )
 								_subPipelineData = mapped;
 						}
-						else if ( inTask.outlet is IPropertyMappingDescriptor )
+						else if( inTask.outlet is IPropertyMappingDescriptor )
 						{
 							//TODO: cache property mapping
 							var descriptor : IPropertyMappingDescriptor =
@@ -731,7 +707,7 @@ package org.astoolkit.workflow.core
 								descriptor.getMapping(),
 								target );
 						}
-						else if ( !inTask.ignoreOutput && flow != Flow.PARALLEL )
+						else if( !inTask.ignoreOutput && flow != Flow.PARALLEL )
 						{
 							_subPipelineData = inTask.outlet;
 						}
@@ -740,21 +716,21 @@ package org.astoolkit.workflow.core
 			}
 
 			/*
-				if inTask == _executingTask
-				it means that the task has completed synchronously.
-				Therefore the next task will be processed inside
-				the synchronous loop in runNextTask()
+			if inTask == _executingTask
+			it means that the task has completed synchronously.
+			Therefore the next task will be processed inside
+			the synchronous loop in runNextTask()
 			*/
-			if ( inTask != _executingTask )
+			if( inTask != _executingTask )
 			{
-				if ( _flow == Flow.SERIAL && _tasksIterator.hasNext() )
+				if( _flow == Flow.SERIAL && _elementsQueue.hasNext() )
 				{
-					runNextTask();
+					processChildren();
 					return;
 				}
 				else
 				{
-					if ( !_tasksIterator.hasNext() )
+					if( !_elementsQueue.hasNext() )
 					{
 						complete();
 					}
@@ -767,28 +743,28 @@ package org.astoolkit.workflow.core
 		 */
 		protected function onSubtaskFault( inTask : IWorkflowTask, inMessage : String ) : void
 		{
-			if ( inTask.status != TaskStatus.ABORTED )
+			if( inTask.status != TaskStatus.ABORTED )
 			{
 				dispatchTaskEvent( WorkflowEvent.FAULT, inTask, inMessage );
 
-				if ( inTask.failurePolicy == FailurePolicy.ABORT )
+				if( inTask.failurePolicy == FailurePolicy.ABORT )
 				{
 					abort();
 					return;
 				}
-				else if ( inTask.failurePolicy == FailurePolicy.SUSPEND )
+				else if( inTask.failurePolicy == FailurePolicy.SUSPEND )
 				{
 					inTask.suspend();
 					onSubtaskCompleted( inTask );
 				}
-				else if ( inTask.failurePolicy == FailurePolicy.CASCADE )
+				else if( inTask.failurePolicy == FailurePolicy.CASCADE )
 				{
 					fail( "Subtask {0} failed with message:\n{1}", inTask.description, inMessage );
 					return;
 				}
-				else if ( inTask.failurePolicy == FailurePolicy.CONTINUE )
+				else if( inTask.failurePolicy == FailurePolicy.CONTINUE )
 				{
-					if ( iterate == Iterate.DATA || iterator )
+					if( iterate == Iterate.DATA || iterator )
 					{
 						nextData();
 						prepareChildren();
@@ -797,7 +773,7 @@ package org.astoolkit.workflow.core
 					else
 						complete();
 				}
-				else if ( inTask.failurePolicy.match( /^log\-/ ) )
+				else if( inTask.failurePolicy.match( /^log\-/ ) )
 				{
 					onSubtaskCompleted( inTask );
 				}
@@ -827,7 +803,7 @@ package org.astoolkit.workflow.core
 		 */
 		protected function onSubtaskProgress( inTask : IWorkflowTask ) : void
 		{
-			if ( inTask.status == TaskStatus.SUSPENDED )
+			if( inTask.status == TaskStatus.SUSPENDED )
 				return;
 			dispatchTaskEvent( WorkflowEvent.PROGRESS, inTask );
 		}
@@ -837,7 +813,7 @@ package org.astoolkit.workflow.core
 		 */
 		protected function onSubtaskResumed( inTask : IWorkflowTask ) : void
 		{
-			if ( context.status == TaskStatus.SUSPENDED )
+			if( context.status == TaskStatus.SUSPENDED )
 			{
 				context.status = TaskStatus.RUNNING;
 				context.dispatchEvent( new WorkflowEvent( WorkflowEvent.RESUMED, _context ) );
@@ -851,7 +827,7 @@ package org.astoolkit.workflow.core
 		protected function onSubtaskSuspended( inTask : IWorkflowTask ) : void
 		{
 			//TODO: this should be managed at workflow/context level
-			if ( root.context.status != TaskStatus.SUSPENDED )
+			if( root.context.status != TaskStatus.SUSPENDED )
 			{
 				context.status = TaskStatus.SUSPENDED;
 				context.dispatchEvent( new WorkflowEvent( WorkflowEvent.SUSPENDED, _context ) );
@@ -862,7 +838,7 @@ package org.astoolkit.workflow.core
 		//============================ INTERNALS =============================
 		protected function prepareChildren() : void
 		{
-			for each ( var element : IWorkflowElement in runtimeElements )
+			for each( var element : IWorkflowElement in _children )
 			{
 				element.delegate = _childrenDelegate;
 				element.currentIterator = _iterator;
@@ -870,168 +846,121 @@ package org.astoolkit.workflow.core
 			}
 		}
 
-		protected function runNextTask( inForceSync : Boolean = false, inUseCurrent : Boolean = false ) : void
+		protected function processChildren() : void
 		{
-			if ( _tasksIterator.current() != null && IWorkflowTask( _tasksIterator.current() ).blocker )
-				return;
-
-			if ( !( _tasksIterator.hasNext() ||
-				( inUseCurrent && _tasksIterator.current() != null ) ) )
+			if( _status == TaskStatus.SUSPENDED )
 			{
-				if ( flow == Flow.SERIAL )
-					complete();
+				_context.suspendableFunctions.addResumeCallBack( processChildren );
 				return;
 			}
 
-			/*--------------------------------------------------------------
-				//TODO stack overflow shouldn't occur as the design
-				relies on a while loop with no recursion.
-				Check why recursion is happening.
-			----------------------------------------------------------------*/
-			if ( !inForceSync &&
-				_iterator &&
-				_iterator.currentIndex() != 0 &&
-				_iterator.currentIndex() % 500 == 0 )
+			if( _status != TaskStatus.RUNNING )
+				return;
+
+			if( !_elementsQueue.hasPendingElements() )
 			{
-				setTimeout( runNextTask, 1, true );
-				LOGGER.debug( "Going async to avoid stack overflow" );
+				complete();
 				return;
 			}
 
-			//--------------------------------------------------------------
-			for each ( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+			if( !_elementsQueue.hasNext() )
+				return;
+
+			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
 				w.onWorkflowCheckingNextTask( this, _subPipelineData );
-			var task : IWorkflowTask;
+			var element : IWorkflowElement;
 
-			while ( _status != TaskStatus.ABORTED &&
-				( _tasksIterator.hasNext() ||
-				( inUseCurrent && _tasksIterator.current() != null ) ) )
+			while( _status != TaskStatus.ABORTED && _elementsQueue.hasNext() )
 			{
-				if ( inUseCurrent )
+				var task : IWorkflowTask;
+				element = _elementsQueue.next();
+				element.wakeup();
+
+				if( element is IDeferrableProcess && IDeferrableProcess( element ).isProcessDeferred() )
 				{
-					inUseCurrent = false;
-					task = _tasksIterator.current() as IWorkflowTask;
-				}
-				else
-					task = _tasksIterator.next() as IWorkflowTask;
-				var previousTaskProps : Object =
-					_context.variables.astoolkit_private::nextTaskProperties; //this must be called here as beforeTaskBegin wipes nextTaskProperties
+					_elementsQueue.onElementProcessDeferred( element as IDeferrableProcess );
+					IDeferrableProcess( element ).addDeferredProcessWatcher( 
+						onDeferredProcessResume );
 
-				for each ( w in _context.taskLiveCycleWatchers )
-					w.beforeTaskBegin( task );
-
-				if ( task.blocker )
-				{
-					task.blocker.addEventListener(
-						Event.COMPLETE,
-						threadSafe( onTaskBlockerComplete ) );
-					task.blocker.addEventListener(
-						ErrorEvent.ERROR,
-						threadSafe( onTaskBlockerError ) );
-					return;
-				}
-				setSubtaskPipelineData( task );
-				BindingUtility.touch( _document, "ENV", _context.variables );
-
-				for ( var prop : String in previousTaskProps )
-				{
-					task[ prop ] = previousTaskProps[ prop ];
-				}
-				switchBindingOnWrappingGroups( task, true );
-				BindingUtility.firePropertyBinding( task.document, task, "enabled" );
-				var taskEnabled : Boolean =
-					GroupUtil.getOverrideSafeValue(
-					task,
-					"enabled" );
-
-				if ( taskEnabled )
-				{
-					var pipelineStatus : String = checkPipelineStatus( task );
-
-					if ( pipelineStatus == InvalidPipelinePolicy.SKIP )
-						continue;
-					else if ( pipelineStatus == InvalidPipelinePolicy.FAIL )
+					if( flow == Flow.SERIAL )
 						return;
 					else
-						LOGGER.debug( 
-							"Pipeline checks passed or ignored for task {0}", 
-							task.description );
-					dispatchTaskEvent( WorkflowEvent.DATA_SET, task, task.output );
-					runSubTask( task );
-					switchBindingOnWrappingGroups( task, false );
-
-					if ( task.exitStatus &&
-						task.exitStatus.interrupted &&
-						( task.failurePolicy == FailurePolicy.CASCADE ||
-						task.failurePolicy == FailurePolicy.ABORT ) )
-						return;
-
-					if ( _status != TaskStatus.RUNNING )
-						return;
-
-					if ( task.running && _flow != Flow.PARALLEL )
-						return;
+						continue;
 				}
+
+				if( element is IPipelineConsumer )
+					setSubtaskPipelineData( IPipelineConsumer( element ) );
+
+				if( element is IWorkflowTask )
+					task = element as IWorkflowTask;
+				else if( element is ITaskProxy )
+					task = ITaskProxy( element ).getTask();
+				else
+					continue;
+
+				for each( w in _context.taskLiveCycleWatchers )
+					w.beforeTaskBegin( task );
+
+				if( !task.enabled )
+					continue;
+
+				BindingUtility.touch( _document, "ENV", _context.variables );
+
+				dispatchTaskEvent( WorkflowEvent.DATA_SET, task );
+				_executingTask = task;
+				runSubTask( task );
+				_executingTask = null;
+
+				if( task.exitStatus &&
+					task.exitStatus.interrupted &&
+					( task.failurePolicy == FailurePolicy.CASCADE ||
+					task.failurePolicy == FailurePolicy.ABORT ) )
+					return;
+
+				if( _status != TaskStatus.RUNNING )
+					return;
+
+				if( task.running && _flow == Flow.SERIAL )
+					return;
 			}
 			complete();
 		}
 
-		protected function runSubTask( inTask : IWorkflowTask, inNow : Boolean = false ) : void
+		protected function runSubTask( inTask : IWorkflowTask ) : void
 		{
-			if ( _status == TaskStatus.SUSPENDED )
+			var w : ITaskLiveCycleWatcher;
+
+			try
 			{
-				_context.suspendableFunctions.addResumeCallBack(
-					function() : void
-					{
-						runSubTask( inTask, inNow );
-					} );
+				inTask.begin();
+
+				if( _status != TaskStatus.RUNNING ) //inTask could have invoked suspend()
+					return;
+			}
+			catch( taskError : Error )
+			{
+				onSubtaskFault(
+					inTask,
+					taskError.getStackTrace()
+					);
 				return;
 			}
+			_executingTask = null;
 
-			if ( inNow || inTask.delay == 0 )
-			{
-				var w : ITaskLiveCycleWatcher;
-
-				try
-				{
-					//TODO: The below if seems unnecessary. Investigate
-					if ( inTask is ITasksFlow && ITasksFlow( inTask ).contextFactory == null )
-						ITasksFlow( inTask ).contextFactory = _contextFactory;
-					_executingTask = inTask;
-					inTask.begin();
-
-					if ( _status != TaskStatus.RUNNING )
-						return;
-				}
-				catch ( taskError : Error )
-				{
-					_childrenDelegate.onFault(
-						inTask,
-						taskError.getStackTrace()
-						);
-					return;
-				}
-				_executingTask = null;
-
-				for each ( w in _context.taskLiveCycleWatchers )
-					w.afterTaskBegin( inTask );
-			}
-			else
-			{
-				setTimeout( runSubTask, inTask.delay, inTask, true );
-			}
+			for each( w in _context.taskLiveCycleWatchers )
+				w.afterTaskBegin( inTask );
 		}
 
-		protected function setSubtaskPipelineData( inTask : IWorkflowTask ) : void
+		protected function setSubtaskPipelineData( inElement : IPipelineConsumer ) : void
 		{
-			if ( _subPipelineData == UNDEFINED )
+			if( _subPipelineData == UNDEFINED )
 			{
-				if ( _feed == Feed.PIPELINE ||
+				if( _feed == Feed.PIPELINE ||
 					( _feed == Feed.AUTO && _iterator == null ) )
 				{
 					_subPipelineData = filteredInput;
 				}
-				else if ( _feed == Feed.CURRENT_DATA ||
+				else if( _feed == Feed.CURRENT_DATA ||
 					( _feed == Feed.AUTO && _iterator != null ) )
 				{
 					_subPipelineData = _iterator.current();
@@ -1039,83 +968,70 @@ package org.astoolkit.workflow.core
 			}
 			var taskData : Object = _subPipelineData;
 
-			if ( inTask.hasEventListener( WorkflowEvent.TRANSFORM_INPUT ) )
+			if( inElement is IWorkflowTask )
 			{
-				var transformEvent : WorkflowEvent =
-					new WorkflowEvent(
-					WorkflowEvent.TRANSFORM_INPUT,
-					context,
-					inTask,
-					taskData );
-				inTask.dispatchEvent( transformEvent );
-				taskData = transformEvent.data;
-			}
+				var task : IWorkflowTask = inElement as IWorkflowTask;
 
-			if ( inTask.output == UNDEFINED )
-			{
-				if ( inTask.inlet is String )
+				if( task.hasEventListener( WorkflowEvent.TRANSFORM_INPUT ) )
 				{
-					try
+					var transformEvent : WorkflowEvent =
+						new WorkflowEvent(
+						WorkflowEvent.TRANSFORM_INPUT,
+						context,
+						task,
+						taskData );
+					task.dispatchEvent( transformEvent );
+					taskData = transformEvent.data;
+				}
+
+				if( task.output == UNDEFINED )
+				{
+					if( task.inlet is String )
 					{
-						if ( Object( inTask ).hasOwnProperty( inTask.inlet ) )
+						try
 						{
-							if ( inTask[ inTask.inlet ] is Function )
+							if( Object( inElement ).hasOwnProperty( task.inlet ) )
 							{
-								var f : Function = inTask[ inTask.inlet ] as Function;
-								f.apply( inTask, [ taskData ] );
+								if( inElement[ task.inlet ] is Function )
+								{
+									var f : Function = inElement[ task.inlet ] as Function;
+									f.apply( task, [ taskData ] );
+								}
+								else
+									inElement[ task.inlet ] = taskData;
 							}
-							else
-								inTask[ inTask.inlet ] = taskData;
+						}
+						catch( e : Error )
+						{
+							throw new Error( "Error while trying to set pipeline data to  " +
+								"task's property/function '" + task.inlet + "'\n\n" +
+								e.getStackTrace() );
 						}
 					}
-					catch ( e : Error )
+					else if( task.inlet is IPropertiesMapper )
 					{
-						throw new Error( "Error while trying to set pipeline data to  " +
-							"task's property/function '" + inTask.inlet + "'\n\n" +
-							e.getStackTrace() );
-					}
-				}
-				else if ( inTask.inlet is IPropertiesMapper )
-				{
-					var mapper : IPropertiesMapper = inTask.inlet as IPropertiesMapper;
+						var mapper : IPropertiesMapper = task.inlet as IPropertiesMapper;
 
-					try
-					{
-						mapper.map( taskData, inTask );
-					}
-					catch ( e : Error )
-					{
-						throw new Error( "Error while trying to map pipeline " +
-							"data properties to task properties with IPropertiesMapper.\n\n" +
-							e.getStackTrace() );
+						try
+						{
+							mapper.map( taskData, inElement );
+						}
+						catch( e : Error )
+						{
+							throw new Error( "Error while trying to map pipeline " +
+								"data properties to task properties with IPropertiesMapper.\n\n" +
+								e.getStackTrace() );
+						}
 					}
 				}
-				inTask.input = taskData;
+				inElement.input = taskData;
 			}
 		}
 
-		private function onTaskBlockerComplete( inEvent : Event ) : void
+		private function onDeferredProcessResume( inProcess : IDeferrableProcess ) : void
 		{
-			runNextTask( false, true );
-		}
-
-		private function onTaskBlockerError( inEvent : ErrorEvent ) : void
-		{
-			fail( inEvent.text );
-		}
-
-		private function switchBindingOnWrappingGroups( inTask : IWorkflowTask, inEnable : Boolean ) : void
-		{
-			var p : IElementsGroup = inTask.parent;
-
-			while ( !( p is ITasksFlow ) )
-			{
-				if ( inEnable )
-					BindingUtility.enableAllBindings( p.document, p );
-				else
-					BindingUtility.disableAllBindings( p.document, p );
-				p = p.parent;
-			}
+			_elementsQueue.onDeferredElementResume( inProcess );
+			processChildren();
 		}
 	}
 }

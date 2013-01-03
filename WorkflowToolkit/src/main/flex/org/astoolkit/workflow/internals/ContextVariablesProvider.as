@@ -21,10 +21,8 @@ package org.astoolkit.workflow.internals
 {
 
 	import flash.utils.flash_proxy;
-	
 	import mx.utils.ObjectProxy;
 	import mx.utils.UIDUtil;
-	
 	import org.astoolkit.commons.collection.api.IRepeater;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 	import org.astoolkit.commons.ns.astoolkit_private;
@@ -47,26 +45,6 @@ package org.astoolkit.workflow.internals
 	 */
 	public dynamic class ContextVariablesProvider extends ObjectProxy implements ITaskLiveCycleWatcher
 	{
-		/**
-		 * @private
-		 */
-		public function ContextVariablesProvider( inContext : IWorkflowContext ) : void
-		{
-			_context = inContext;
-			_namespaces = {};
-			_local = {};
-		}
-
-		private var _taskWatcherPriority : int = int.MAX_VALUE;
-		
-		astoolkit_private var nextTaskProperties : Object;
-
-		/**
-		 * @private
-		 *
-		 * the task currently in its begin() method execution
-		 */
-		astoolkit_private var runningTask : IWorkflowTask;
 
 		/**
 		 * @private
@@ -98,15 +76,16 @@ package org.astoolkit.workflow.internals
 		 */
 		private var _runningWorkflowPipelineData : Object;
 
-		public function get taskWatcherPriority():int
-		{
-			return _taskWatcherPriority;
-		}
+		private var _taskWatcherPriority : int = int.MAX_VALUE;
 
-		public function set taskWatcherPriority(value:int):void
-		{
-			
-		}
+		astoolkit_private var nextTaskProperties : Object;
+
+		/**
+		 * @private
+		 *
+		 * the task currently in its begin() method execution
+		 */
+		astoolkit_private var runningTask : IWorkflowTask;
 
 		public function get $config() : IContextConfig
 		{
@@ -192,12 +171,6 @@ package org.astoolkit.workflow.internals
 			throw new Error( "\"exitStatus\" is a read-only reserved word." )
 		}
 
-		
-		public function propertyIsEnumerable(V:*=null):Boolean
-		{
-			return true;
-		}
-		
 		/**
 		 * the current index of the parent <code>IWorkflow</code>'s IIterator, if any; -1 otherwise.
 		 * <p>It can be used with a trailing index number (0-<em>n</em>) to access outer
@@ -303,6 +276,36 @@ package org.astoolkit.workflow.internals
 			throw new Error( "\"self\" is a read-only reserved word." )
 		}
 
+		public function get mapTo() : ContextAwareDataMap
+		{
+			if( !_dataMap )
+			{
+				_dataMap = new ContextAwareDataMap( _context );
+				_dataMap.transformerRegistry = _context.config.dataTransformerRegistry;
+			}
+			return _dataMap;
+		}
+
+		public function get taskWatcherPriority() : int
+		{
+			return _taskWatcherPriority;
+		}
+
+		public function set taskWatcherPriority(value:int) : void
+		{
+
+		}
+
+		/**
+		 * @private
+		 */
+		public function ContextVariablesProvider( inContext : IWorkflowContext ) : void
+		{
+			_context = inContext;
+			_namespaces = {};
+			_local = {};
+		}
+
 		/**
 		 * @private
 		 */
@@ -330,15 +333,11 @@ package org.astoolkit.workflow.internals
 			}
 			astoolkit_private::nextTaskProperties = {};
 		}
-		
-		public function onTaskPrepared(inTask:IWorkflowTask):void
-		{
-		}
-		
+
 		/**
 		 * Utility method to bind non-binding expressions in workflows
-		 * properties. 
-		 * 
+		 * properties.
+		 *
 		 * <code>&lt;MyTask prop="{ ENV.bind( nonBindingExpression ) }"/&gt;</code>
 		 * will be updated when ENV property change is dispatched.
 		 */
@@ -369,16 +368,11 @@ package org.astoolkit.workflow.internals
 			return undefined;
 		}
 
-		public function get mapTo() : ContextAwareDataMap
+		public function onBeforeContextUnbond( inTask : IWorkflowElement ) : void
 		{
-			if( !_dataMap )
-			{
-				_dataMap = new ContextAwareDataMap( _context );
-				_dataMap.transformerRegistry = _context.config.dataTransformerRegistry;
-			}
-			return _dataMap;
+
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -386,11 +380,12 @@ package org.astoolkit.workflow.internals
 		{
 		}
 
-		public function onBeforeContextUnbond( inTask : IWorkflowElement ) : void
+		public function onDeferredTaskResume(inTask:IWorkflowTask) : void
 		{
-			
+			// TODO Auto Generated method stub
+
 		}
-		
+
 		/**
 		 * @private
 		 */
@@ -414,6 +409,12 @@ package org.astoolkit.workflow.internals
 		{
 			if( inTask is ITasksFlow && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
 				delete _namespaces[ UIDUtil.getUID( inTask ) ];
+		}
+
+		public function onTaskDeferExecution(inTask:IWorkflowTask) : void
+		{
+			// TODO Auto Generated method stub
+
 		}
 
 		/**
@@ -449,6 +450,10 @@ package org.astoolkit.workflow.internals
 			// TODO Auto Generated method stub
 		}
 
+		public function onTaskPrepared(inTask:IWorkflowTask) : void
+		{
+		}
+
 		/**
 		 * @private
 		 */
@@ -466,6 +471,11 @@ package org.astoolkit.workflow.internals
 		{
 			_runningWorkflow = inWorkflow;
 			_runningWorkflowPipelineData = inPipelineData;
+		}
+
+		public function propertyIsEnumerable(V:*=null) : Boolean
+		{
+			return true;
 		}
 
 		public function variableIsDefined( inName : String ) : Boolean

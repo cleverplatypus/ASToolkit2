@@ -19,139 +19,65 @@ Version 2.x
 */
 package org.astoolkit.workflow.core
 {
-	
+
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
-	import flash.utils.getQualifiedClassName;
-	import flash.utils.setTimeout;
-	import mx.logging.ILogger;
-	import mx.logging.Log;
-	import mx.utils.ObjectUtil;
-	import mx.utils.UIDUtil;
+	import mx.rpc.IResponder;
 	import org.astoolkit.commons.conditional.AsyncExpressionToken;
 	import org.astoolkit.commons.conditional.api.IConditionalExpression;
-	import org.astoolkit.commons.conditional.api.IConditionalExpressionGroup;
-	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluator;
-	import org.astoolkit.commons.io.transform.api.IIODataSourceClient;
-	import org.astoolkit.commons.io.transform.api.IIODataSourceResolverDelegate;
-	import org.astoolkit.workflow.api.IContextAwareElement;
-	import org.astoolkit.workflow.api.IWorkflowElement;
+	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
+	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
+	import org.astoolkit.commons.mxml.IAutoConfigContainerObject;
+	import org.astoolkit.workflow.api.IDeferrableProcess;
+	import org.astoolkit.workflow.api.IElementsGroup;
+	import org.astoolkit.workflow.api.IPipelineConsumer;
+	import org.astoolkit.workflow.api.ITaskProxy;
 	import org.astoolkit.workflow.api.IWorkflowTask;
-	import org.astoolkit.workflow.internals.DynamicTaskLiveCycleWatcher;
-	import org.astoolkit.workflow.internals.GroupUtil;
-	import org.astoolkit.workflow.internals.HeldTaskInfo;
-	import org.astoolkit.workflow.internals.WorkflowExpressionResolver;
-	
-	[DefaultProperty("autoConfigChildren")]
-	/**
-	 * Group for conditional execution of tasks.
-	 * <p>The default property <code>Then</code> is a Vector of elements
-	 * that are enabled if <code>condition == true</code><br><br>
-	 * An <code>&lt;Else&gt;...&lt;/Else&gt;</code> block can also be declared
-	 * for <code>condition == false</code>.
-	 * </p>
-	 * <p>
-	 * <b>Params</b>
-	 * <ul>
-	 * <li><code>condition</code>: a boolean expression or an implementation of IConditionalExpression</li>
-	 * </ul>
-	 * </p>
-	 *
-	 * @example In the following example, an Employee object is expected as input.<br>
-	 * 			If its isPermanent property is set to true, then a (hypotetical) SendMail task is executed.
-	 * <listing version="3.0">
-	 * <pre>
-	 * &lt;If condition=&quot;{ Employee( ENV.$data ).isPermanent }&quot;&gt;
-	 *     &lt;net:SendEmail
-	 *         content=&quot;Hi {0}.\nYou're invited to the permanent-employees-only party.&quot;
-	 *         parameters=&quot;{ [ Employee( ENV.$data ).fullName ] }&quot;
-	 *         /&gt;
-	 * &lt;/If&gt;
-	 * </pre>
-	 * </listing>
-	 *
-	 * @example Same example but with an Else block.
-	 * <listing version="3.0">
-	 * <pre>
-	 * &lt;If condition=&quot;{ Employee( ENV.$data ).isPermanent }&quot;&gt;
-	 *     &lt;Then&gt;
-	 *         &lt;net:SendEmail
-	 *             content=&quot;Hi {0}.\nYou're invited to the permanent-employees-only party.&quot;
-	 *             parameters=&quot;{ [ Employee( ENV.$data ).fullName ] }&quot;
-	 *             /&gt;
-	 *     &lt;/Then&gt;
-	 *     &lt;Else&gt;
-	 *         &lt;net:SendEmail
-	 *             content=&quot;Hi {0}.\nYou can stay home that day&quot;
-	 *             parameters=&quot;{ [ Employee( ENV.$data ).fullName ] }&quot;
-	 *             /&gt;
-	 *     &lt;/Else&gt;
-	 * &lt;/If&gt;
-	 * </pre>
-	 * </listing>
-	 *
-	 * @example The <code>&lt;Then&gt;...&lt;/Then&gt;</code> can be always omitted although,
-	 * 			when declaring complex If groups, its use makes the syntax a little bit clearer.
-	 * <listing version="3.0">
-	 * <pre>
-	 * &lt;If condition=&quot;{ Employee( ENV.$data ).isPermanent }&quot;&gt;
-	 *     &lt;net:SendEmail
-	 *         content=&quot;Hi {0}.\nYou're invited to the permanent-employees-only party.&quot;
-	 *         parameters=&quot;{ [ Employee( ENV.$data ).fullName ] }&quot;
-	 *         /&gt;
-	 *     &lt;Else&gt;
-	 *         &lt;net:SendEmail
-	 *             content=&quot;Hi {0}.\nYou can stay home that day&quot;
-	 *             parameters=&quot;{ [ Employee( ENV.$data ).fullName ] }&quot;
-	 *             /&gt;
-	 *     &lt;/Else&gt;
-	 * &lt;/If&gt;
-	 * </pre>
-	 * </listing>
-	 */
-	public class If extends Group
+	import org.astoolkit.workflow.task.flowcontrol.IDeferrableProcessWatcher;
+
+	public class If extends BaseElement implements ITaskProxy,
+		IDeferrableProcess,
+		IAutoConfigContainerObject,
+		IPipelineConsumer,
+		IIODataTransformerClient
 	{
-		private static const LOGGER : ILogger =
-			Log.getLogger( getQualifiedClassName( If ).replace( /:+/g, "." ) );
-		
+
+		private var _cachedConditionResult : Boolean;
+
 		/**
 		 * @private
 		 */
 		private var _condition : Object;
-		
+
+		private var _deferredProcessWatchers : Vector.<Function> = new Vector.<Function>();
+
+		private var _executionIsDeferred : Boolean;
+
 		/**
 		 * @private
 		 */
 		private var _expression : IConditionalExpression;
-		
+
+		private var _input : *;
+
+		private var _inputFilter : Object;
+
 		/**
 		 * @private
 		 */
 		private var _isFalseTask : IWorkflowTask;
-		
+
 		/**
 		 * @private
 		 */
 		private var _isTrueTask : IWorkflowTask;
-		
-		/**
-		 * @private
-		 */
-		private var _joinedChildren : Vector.<IWorkflowElement>;
-		
-		/**
-		 * @private
-		 */
-		private var _myTasksLUT : Object;
-		
+
 		/**
 		 * @private
 		 */
 		private var _stringExpression : String;
-		
-		private var _taskBlocker : HeldTaskInfo;
-		
-		[AutoConfig(order="2")]
+
+		[AutoConfig( order = "2" )]
 		/**
 		 * (optional) the tasks to enable with <code>condition == false</code>
 		 */
@@ -159,8 +85,8 @@ package org.astoolkit.workflow.core
 		{
 			_isFalseTask = inValue;
 		}
-		
-		[AutoConfig(order="1")]
+
+		[AutoConfig( order = "1" )]
 		/**
 		 * the tasks to enable with <code>condition == true</code>
 		 */
@@ -168,240 +94,163 @@ package org.astoolkit.workflow.core
 		{
 			_isTrueTask = inValue;
 		}
-		
-		/**
-		 * @private
-		 */
-		override public function get children() : Vector.<IWorkflowElement>
-		{
-			if ( _joinedChildren == null )
-			{
-				_joinedChildren = new Vector.<IWorkflowElement>();
-				
-				if ( _isTrueTask )
-					_joinedChildren.push( _isTrueTask );
-				
-				if ( _isFalseTask )
-					_joinedChildren.push( _isFalseTask );
-			}
-			return _joinedChildren;
-		}
-		
-		[AutoConfig(type="org.astoolkit.commons.conditional.api.IConditionalExpression")]
-		/**
-		 * the Boolean evaluated for conditional execution.
-		 *
-		 * @see #Then
-		 * @see #Else
-		 */
+
+		[AutoConfig( type = "org.astoolkit.commons.conditional.api.IConditionalExpression" )]
 		public function set condition( inValue : Object ) : void
 		{
-			if ( inValue is Boolean )
+			if( inValue is Boolean )
 			{
 				_condition = inValue as Boolean;
 				applyCondition();
 			}
-			else if ( inValue is String )
+			else if( inValue is String )
 			{
 				_stringExpression = inValue as String;
 			}
-			
-			if ( inValue is IConditionalExpression )
+
+			if( inValue is IConditionalExpression )
 			{
 				_expression = inValue as IConditionalExpression;
 			}
 		}
-		
-		/**
-		 * @private
-		 */
+
+		public function set dataTransformerRegistry( inRegistry : IIODataTransformerRegistry ) : void
+		{
+			// TODO Auto Generated method stub
+
+		}
+
+		public function set input( inData : * ) : void
+		{
+			_input  = inData;
+		}
+
+		public function set inputFilter( inValue : Object ) : void
+		{
+			_inputFilter  = inValue;
+		}
+
+		override public function set parent( inValue : IElementsGroup ) : void
+		{
+			super.parent = inValue;
+
+			if( _isTrueTask )
+				_isTrueTask.parent = inValue;
+
+			if( _isFalseTask )
+				_isFalseTask.parent = inValue;
+
+		}
+
+		public function addDeferredProcessWatcher( inWatcher : Function ) : void
+		{
+			_deferredProcessWatchers.push( inWatcher );
+		}
+
+		public function getTask() : IWorkflowTask
+		{
+			if( _executionIsDeferred )
+				throw new Error(  "Cannot get proxied task while in deferred execution state" );
+			return _cachedConditionResult ?
+				_isTrueTask : _isFalseTask;
+		}
+
 		override public function initialize() : void
 		{
 			super.initialize();
-			_myTasksLUT = {};
-			
-			if ( _stringExpression )
-			{
-				_expression =
-					_context
-					.config
-					.runtimeExpressionEvalutators
-					.getEvaluator( _stringExpression, IConditionalExpression )
-					as IConditionalExpression;
-				
-				if ( _expression )
-				{
-					if ( _expression is IContextAwareElement )
-						IContextAwareElement( _expression ).context = _context;
-					IRuntimeExpressionEvaluator( _expression ).runtimeExpression = _stringExpression;
-				}
-				else
-				{
-					throw new Error( "Runtime expression evaluator " +
-						"not found for string " + _stringExpression );
-				}
-			}
-			
-			if ( _expression )
-			{
-				setDataSourceResolver( _expression )
-				_expression.invalidate();
-			}
-			
-			for each ( var task : IWorkflowTask in GroupUtil.getRuntimeOverridableTasks( children ) )
-			{
-				_myTasksLUT[ UIDUtil.getUID( task ) ] = UIDUtil.getUID( task );
-			}
-			var watcher : DynamicTaskLiveCycleWatcher = new DynamicTaskLiveCycleWatcher();
-			watcher.beforeTaskBeginWatcher = onBeforeTaskBegin;
-			_context.addTaskLiveCycleWatcher( watcher );
-			
-			if ( _isTrueTask != null )
-			{
-				_isTrueTask.delegate = _delegate;
-				IContextAwareElement( _isTrueTask ).context = _context;
-				_isTrueTask.parent = this;
-					//_isTrueTask.initialize();
-			}
-			
-			if ( _isFalseTask != null )
-			{
-				_isFalseTask.delegate = _delegate;
-				IContextAwareElement( _isFalseTask ).context = _context;
-				_isFalseTask.parent = this;
-			}
-			
-			if ( _expression )
-				_expression.resolver = new WorkflowExpressionResolver( _context );
+
+			if( _isFalseTask )
+				_isFalseTask.initialize();
+
+			if( _isTrueTask )
+				_isTrueTask.initialize();
 		}
-		
-		private function setDataSourceResolver( inExpression : IConditionalExpression ) : void
+
+		public function isProcessDeferred() : Boolean
 		{
-			if ( inExpression is IIODataSourceClient )
-				IIODataSourceClient( inExpression ).sourceResolverDelegate
-					= _context.dataSourceResolverDelegate;
-			
-			if ( inExpression is IConditionalExpressionGroup )
-			{
-				for each ( var exp : IConditionalExpression in IConditionalExpressionGroup( inExpression ).children )
-				{
-					setDataSourceResolver( exp );
-				}
-			}
+			return _executionIsDeferred;
 		}
-		
-		/**
-		 * @private
-		 */
-		override public function initialized( inDocument : Object, inId : String ) : void
-		{
-			super.initialized( inDocument, inId );
-		}
-		
-		/**
-		 * @private
-		 */
+
 		override public function prepare() : void
 		{
-			if ( _isTrueTask != null )
-				_isTrueTask.prepare();
-			
-			if ( _isFalseTask != null )
+			super.prepare();
+
+			if( _isFalseTask )
 				_isFalseTask.prepare();
-			
-			if ( _expression )
-				_expression.clearResult();
+
+			if( _isTrueTask )
+				_isTrueTask.prepare();
 		}
-		
+
+		override public function wakeup() : void
+		{
+			_executionIsDeferred = false;
+			var result : Object = applyCondition();
+
+			if( result is AsyncExpressionToken )
+				setUpAsyncResultHandler( result as AsyncExpressionToken );
+			else if( result is Error )
+				throw result as Error;
+			else if( result is Boolean )
+				_cachedConditionResult = result as Boolean;
+		}
+
 		private function applyCondition() : Object
 		{
 			var result : Object;
-			
-			if ( _expression )
-				result = _expression.async && _expression.lastResult !== undefined ?
+
+			if( _expression )
+			{
+				result = _expression.async && 
+					_expression.lastResult !== undefined ?
 					_expression.lastResult :
 					_expression.evaluate();
+			}
 			else
 				result = _condition;
-			
-			if ( result is Boolean )
-			{
-				if ( _isTrueTask )
-					_isTrueTask.enabled = result;
-				
-				if ( _isFalseTask )
-					_isFalseTask.enabled = !result;
-			}
+
+			if( result is Boolean )
+				_cachedConditionResult = result as Boolean;
 			return result;
 		}
-		
-		/**
-		 * @private
-		 */
-		private function onBeforeTaskBegin( inTask : IWorkflowTask ) : void
-		{
-			if ( _myTasksLUT.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
-			{
-				var isEnabled : Boolean =
-					GroupUtil.getOverrideSafeValue(
-					this,
-					"enabled"
-					);
-				
-				if ( isEnabled )
-				{
-					var result : Object = applyCondition();
-					
-					if ( result is AsyncExpressionToken )
-					{
-						_taskBlocker = inTask.hold();
-						setUpAsyncResultHandler( result as AsyncExpressionToken );
-					}
-					else if ( result is Error )
-					{
-						_taskBlocker = inTask.hold();
-						setTimeout( function() : void {
-							_taskBlocker.release( Error( result ) );
-						}, 1 );
-					}
-				}
-			}
-		}
-		
+
 		private function onEvaluationAsyncResult( inEvent : Event ) : void
 		{
 			IEventDispatcher( inEvent.target ).removeEventListener(
 				Event.COMPLETE,
 				onEvaluationAsyncResult );
 			var result : Object = applyCondition();
-			
-			if ( result is Boolean )
+
+			if( result is Boolean )
 			{
-				if ( _isTrueTask )
-					_isTrueTask.enabled = result == true;
-				
-				if ( _isFalseTask )
-					_isFalseTask.enabled = result == false;
-				_taskBlocker.release();
-				_taskBlocker = null;
+				_cachedConditionResult = result as Boolean;
+
+				while( _deferredProcessWatchers.length )
+					( _deferredProcessWatchers.pop() as Function )( result );
+				_executionIsDeferred = false;
 			}
-			else if ( result is AsyncExpressionToken )
+			else if( result is AsyncExpressionToken )
 			{
 				AsyncExpressionToken( result ).addEventListener(
 					Event.COMPLETE,
 					onEvaluationAsyncResult );
 			}
-			else if ( result is Error )
+			else if( result is Error )
 			{
-				_taskBlocker.release( result as Error );
+				_context.fail( 
+					this, 
+					"Async evaluation failed" + ( result as Error ).getStackTrace() );
+				return;
 			}
 		}
-		
+
 		private function setUpAsyncResultHandler( inToken : AsyncExpressionToken ) : void
 		{
+			_executionIsDeferred = true;
 			inToken.addEventListener(
 				Event.COMPLETE,
 				onEvaluationAsyncResult );
+
 		}
 	}
 }
