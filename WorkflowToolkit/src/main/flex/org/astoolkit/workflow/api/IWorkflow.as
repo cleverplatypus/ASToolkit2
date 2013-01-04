@@ -19,16 +19,19 @@ Version 2.x
 */
 package org.astoolkit.workflow.api
 {
-	
+
 	import flash.events.IEventDispatcher;
-	
 	import mx.core.IFactory;
-	
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
 	import org.astoolkit.commons.utils.IChildrenAwareDocument;
-	
-	public interface IWorkflow extends IEventDispatcher, IChildrenAwareDocument
+
+	public interface IWorkflow extends IEventDispatcher, IChildrenAwareDocument, IIODataTransformerClient
 	{
+		function get context() : IWorkflowContext;
+		function set contextFactory( inValue : IFactory ) : void;
+		function get rootTask() : IWorkflowTask;
+		function set rootTask( inValue : IWorkflowTask ) : void;
+
 		/**
 		 * Execution entry point for the root <code>IWorkflow</code>.
 		 * <p>The optional parameter sets the pipeline data.</p>
@@ -51,9 +54,5 @@ package org.astoolkit.workflow.api
 		 * </listing>
 		 */
 		function run( inData : * = undefined ) : *;
-		function set rootTask( inValue : IWorkflowTask ) : void;
-		function get rootTask() : IWorkflowTask;
-		function set contextFactory( inValue : IFactory ) : void;
-		function get context() : IWorkflowContext;
 	}
 }

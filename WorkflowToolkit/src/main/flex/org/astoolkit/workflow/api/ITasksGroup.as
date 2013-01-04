@@ -19,12 +19,12 @@ Version 2.x
 */
 package org.astoolkit.workflow.api
 {
-	
+
 	import mx.core.IFactory;
 	import org.astoolkit.commons.collection.api.IRepeater;
 	import org.astoolkit.commons.utils.IChildrenAwareDocument;
 	import org.astoolkit.workflow.core.Insert;
-	
+
 	[Event(
 		name="started",
 		type="org.astoolkit.workflow.core.WorkflowEvent" )]
@@ -44,8 +44,14 @@ package org.astoolkit.workflow.api
 		name="prepare",
 		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Bindable]
-	public interface ITasksGroup extends IWorkflowTask, IRepeater, IElementsGroup, IChildrenAwareDocument
+	public interface ITasksGroup extends IWorkflowTask, IRepeater,  IChildrenAwareDocument
 	{
+		/**
+		 * the declared elements
+		 */
+		function get children() : Vector.<IWorkflowElement>;
+		function set children( inChildren : Vector.<IWorkflowElement> ) : void;
+
 		function get contextFactory() : IFactory;
 		function set contextFactory( inFactory : IFactory ) : void;
 		function get feed() : String;

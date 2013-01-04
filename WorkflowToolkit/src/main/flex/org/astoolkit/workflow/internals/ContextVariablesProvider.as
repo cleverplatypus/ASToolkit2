@@ -221,14 +221,14 @@ package org.astoolkit.workflow.internals
 		/**
 		 * the parent group
 		 */
-		public function get $parent() : IElementsGroup
+		public function get $parent() : ITasksGroup
 		{
 			if( !astoolkit_private::runningTask )
 				return null;
 			return astoolkit_private::runningTask.parent;
 		}
 
-		public function set $parent( inValue : IElementsGroup ) : void
+		public function set $parent( inValue : ITasksGroup ) : void
 		{
 			throw new Error( "\"parent\" is a read-only reserved word." )
 		}
@@ -348,7 +348,7 @@ package org.astoolkit.workflow.internals
 
 		public function byType( inType : Class, inGetDescriptor : Boolean = false ) : *
 		{
-			var parent : IElementsGroup = GroupUtil.getParentWorkflow( astoolkit_private::runningTask );
+			var parent : ITasksGroup = GroupUtil.getParentWorkflow( astoolkit_private::runningTask );
 			var n : String;
 
 			do
@@ -499,7 +499,7 @@ package org.astoolkit.workflow.internals
 			{
 				return getAncestorCurrentData( int( name.match( /^currentData(\d+)$/ )[ 1 ] ) );
 			}
-			var parent : IElementsGroup = GroupUtil.getParentWorkflow( astoolkit_private::runningTask );
+			var parent : ITasksGroup = GroupUtil.getParentWorkflow( astoolkit_private::runningTask );
 			var n : String;
 
 			do

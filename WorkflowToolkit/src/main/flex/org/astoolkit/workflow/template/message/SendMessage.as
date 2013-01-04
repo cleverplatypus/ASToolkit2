@@ -40,13 +40,13 @@ package org.astoolkit.workflow.template.message
 		{
 			setImplementationProperty( "message", inValue );
 		}
-		
+
 		[AutoConfig]
 		public function set messageClass( inValue : Class ) : void
 		{
 			setImplementationProperty( "messageClass", inValue );
 		}
-		
+
 		[AutoConfig]
 		public function set messageFactory( inValue : IFactory ) : void
 		{
@@ -67,7 +67,7 @@ package org.astoolkit.workflow.template.message
 		{
 			setImplementationProperty( "scope", inValue );
 		}
-		
+
 		public function set selector( inValue : * ) : void
 		{
 			setImplementationProperty( "selector", inValue );

@@ -20,13 +20,13 @@ Version 2.x
 package org.astoolkit.workflow.internals
 {
 
-	import org.astoolkit.workflow.api.IElementsGroup;
+	import org.astoolkit.workflow.api.ITasksGroup;
 	import org.astoolkit.workflow.api.IPropertyOverrideRule;
 	import org.astoolkit.workflow.api.IWorkflowElement;
 
 	public class DefaultPropertyOverrideRule implements IPropertyOverrideRule
 	{
-		public function shouldOverride( inProperty : String, inTarget : IWorkflowElement, inParent : IElementsGroup, inCurrentValue : Object ) : Boolean
+		public function shouldOverride( inProperty : String, inTarget : IWorkflowElement, inParent : ITasksGroup, inCurrentValue : Object ) : Boolean
 		{
 			switch( inProperty )
 			{

@@ -221,39 +221,6 @@ package org.astoolkit.workflow.core
 			_flow = inFlow;
 		}
 
-		public function get insert() : Vector.<Insert>
-		{
-			return _insert;
-		}
-
-		/**
-		 * @example Adding a logging task to an existing workflow.
-		 * <listing version="3.0">
-		 * &lt;wf:DoSomethingWorkflow
-		 *     id=&quot;w_doSomethingWF&quot;
-		 *     &gt;
-		 *     &lt;wf:insert&gt;
-		 *         &lt;Insert
-		 *             parent=&quot;{ w_doSomethingWF }&quot;
-		 *             relativeTo=&quot;{ w_doSomethingWF.t_sendMessage }&quot;
-		 *             mode=&quot;after&quot;
-		 *             &gt;
-		 *             &lt;log:WriteLog
-		 *                 level=&quot;info&quot;
-		 *                 /&gt;
-		 *         &lt;/Insert&gt;
-		 *     &lt;/wf:insert&gt;
-		 * &lt;/wf:DoSomethingWorkflow&gt;
-		 * </listing>
-		 * @inheritDoc
-		 */
-		public function set insert( inInsert : Vector.<Insert> ) : void
-		{
-			if( _insert )
-				throw new Error( "insert cannot be redefined" );
-			_insert = inInsert;
-		}
-
 		/**
 		 * @inheritDoc
 		 */
@@ -364,7 +331,6 @@ package org.astoolkit.workflow.core
 
 		override public function cleanUp() : void
 		{
-			var aContext : IWorkflowContext = _context; //super.cleanup() makes _context == null
 			super.cleanUp();
 
 			if( _actuallyInjectableProperties.indexOf( "dataProvider" ) > -1 )
@@ -378,7 +344,6 @@ package org.astoolkit.workflow.core
 			}
 		}
 
-		//============================ LIFE CYCLE =============================
 		override public function initialize() : void
 		{
 			if( _status != TaskStatus.STOPPED )
@@ -418,46 +383,6 @@ package org.astoolkit.workflow.core
 
 		}
 
-		/*
-				//TODO: encapsulate this into an assertion-style class
-				//		It could be a IPipelineConsumer assertion so that it's
-				// 		invoked at the right time, i.e. when data is set
-				protected function checkPipelineStatus( inTask : IWorkflowTask ) : String
-				{
-					if( _subPipelineData == EMPTY_PIPELINE &&
-						inTask.invalidPipelinePolicy == InvalidPipelinePolicy.FAIL )
-					{
-						fail( "Empty pipeline in task '{0}' ({1})",
-							description,
-							getQualifiedClassName( inTask ) );
-						return InvalidPipelinePolicy.FAIL;
-					}
-					var constraints : Vector.<IAnnotation> =
-						Type.forType( inTask ).getAnnotationsOfType( TaskInput );
-
-					if( !constraints || constraints.length == 0 )
-						return InvalidPipelinePolicy.IGNORE;
-					var data : Object = _subPipelineData;
-
-					for each( var type : Class in TaskInput( constraints[ 0 ] ).types )
-					{
-						if( data is type )
-							return InvalidPipelinePolicy.IGNORE;
-					}
-
-					if( inTask.invalidPipelinePolicy == InvalidPipelinePolicy.FAIL )
-						fail( "Unexpected taskInput type \"{0}\":  for task {1}. Expected type: {2}",
-							getQualifiedClassName( _subPipelineData ),
-							inTask.description,
-							ListUtil.convert( TaskInput( constraints[ 0 ] ).types )
-							.map( function( inClass : Class, inIndex : int, inArray : Array ) : String
-							{
-								return getQualifiedClassName( inClass );
-							} )
-							);
-					return inTask.invalidPipelinePolicy;
-				}
-		*/
 		protected function completeGroup() : void
 		{
 			if( _status == TaskStatus.ABORTED )
@@ -482,7 +407,6 @@ package org.astoolkit.workflow.core
 			complete( _pipelineData );
 		}
 
-		//------------------------------------- DELEGATE ------------------------------------------
 		protected function createChildrenDelegate() : IWorkflowDelegate
 		{
 			var out : DynamicWorkflowDelegate = new DynamicWorkflowDelegate();
@@ -557,7 +481,7 @@ package org.astoolkit.workflow.core
 
 				if( !_ignoreOutput )
 				{
-					if( !inTask.exitStatus.interrupted )
+					if( !inTask.exitStatus || !inTask.exitStatus.interrupted )
 					{
 						if( inTask.outlet == PIPELINE_OUTLET && flow != Flow.PARALLEL )
 							_subPipelineData = inTask.output;
@@ -665,6 +589,7 @@ package org.astoolkit.workflow.core
 		{
 			if( inTask.status != TaskStatus.ABORTED )
 			{
+				LOGGER.debug( "Subtask fault: {0}", inMessage );
 				dispatchTaskEvent( WorkflowEvent.FAULT, inTask, inMessage );
 
 				if( inTask.failurePolicy == FailurePolicy.ABORT )
@@ -906,7 +831,7 @@ package org.astoolkit.workflow.core
 			if( _subPipelineData == UNDEFINED )
 			{
 				if( _feed == Feed.PIPELINE ||
-					( _feed == Feed.AUTO && _iterator == null ) )
+					( _feed == Feed.AUTO && ( _iterator == null || _iterate == Iterate.ONCE ) ) )
 				{
 					_subPipelineData = filteredInput;
 				}

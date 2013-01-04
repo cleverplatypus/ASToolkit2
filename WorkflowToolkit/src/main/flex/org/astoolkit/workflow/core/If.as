@@ -124,7 +124,7 @@ package org.astoolkit.workflow.core
 			_inputFilter  = inValue;
 		}
 
-		override public function set parent( inValue : IElementsGroup ) : void
+		override public function set parent( inValue : ITasksGroup ) : void
 		{
 			super.parent = inValue;
 
@@ -187,6 +187,9 @@ package org.astoolkit.workflow.core
 		override public function wakeup() : void
 		{
 			_executionIsDeferred = false;
+
+			if( _expression )
+				_expression.invalidate();
 			var result : Object = applyCondition();
 
 			if( result is AsyncExpressionToken )

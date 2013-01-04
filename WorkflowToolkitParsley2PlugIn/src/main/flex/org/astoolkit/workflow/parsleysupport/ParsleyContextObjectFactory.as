@@ -19,10 +19,8 @@ Version 2.x
 */
 package org.astoolkit.workflow.parsleysupport
 {
-	import mx.core.IFactory;
-	
-	import org.astoolkit.commons.factory.IExtendedFactory;
-	import org.astoolkit.workflow.api.ITasksFlow;
+
+	import org.astoolkit.commons.factory.api.IExtendedFactory;
 	import org.spicefactory.parsley.core.context.Context;
 	import org.spicefactory.parsley.core.registry.DynamicObjectDefinition;
 	import org.spicefactory.parsley.core.registry.ObjectDefinition;
@@ -31,55 +29,56 @@ package org.astoolkit.workflow.parsleysupport
 	public class ParsleyContextObjectFactory implements IExtendedFactory
 	{
 		private var _context : Context;
-		private var _type : Class;
+
 		private var _singletonInstance : Boolean;
-		
-		public function set singletonInstance( inValue : Boolean ) : void
-		{
-			_singletonInstance = inValue;
-		}
-		
+
+		private var _type : Class;
+
 		[Inject]
 		public function set context( inContext : Context ) : void
 		{
 			_context = inContext;
 		}
-		
-		public function newInstance() : *
+
+		public function set factoryMethod(inValue:String) : void
 		{
-			return getInstance( _type, null, null, null );
+			// TODO Auto Generated method stub
+
 		}
-		
+
+		public function set factoryMethodArguments(inValue:Array) : void
+		{
+			// TODO Auto Generated method stub
+
+		}
+
+		public function set properties(inValue:Object) : void
+		{
+			// TODO Auto Generated method stub
+
+		}
+
+		public function set singletonInstance( inValue : Boolean ) : void
+		{
+			_singletonInstance = inValue;
+		}
+
 		public function set type( inValue : Class ) : void
 		{
 			_type = inValue;
 		}
-		
-		public function set factoryMethod(inValue:String):void
-		{
-			// TODO Auto Generated method stub
-			
-		}
-		
-		public function set factoryMethodArguments(inValue:Array):void
-		{
-			// TODO Auto Generated method stub
-			
-		}
-		
-		public function getInstance(inType:Class, inProperties:Object=null, inFactoryMethodArguments:Array=null, inFactoryMethod:String=null):*
+
+		public function getInstance(inType:Class, inProperties:Object=null, inFactoryMethodArguments:Array=null, inFactoryMethod:String=null) : *
 		{
 			var ob : ObjectDefinition = _context.findDefinitionByType( inType );
 			return ob is DynamicObjectDefinition ? 
 				_context.createDynamicObjectByType( inType ).instance :
 				_context.getObjectByType( inType );
 		}
-		
-		public function set properties(inValue:Object):void
+
+		public function newInstance() : *
 		{
-			// TODO Auto Generated method stub
-			
+			return getInstance( _type, null, null, null );
 		}
-		
 	}
 }

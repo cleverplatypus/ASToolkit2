@@ -20,11 +20,8 @@ Version 2.x
 package org.astoolkit.workflow.core
 {
 
-	import org.astoolkit.workflow.api.IElementsGroup;
 	import org.astoolkit.workflow.api.ISwitchCase;
-	import org.astoolkit.workflow.api.IWorkflowElement;
 	import org.astoolkit.workflow.api.IWorkflowTask;
-	import org.astoolkit.workflow.internals.GroupUtil;
 
 	[DefaultProperty( "task" )]
 	/**

@@ -186,17 +186,17 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		protected var _parent : IElementsGroup;
+		protected var _parent : ITasksGroup;
 
 		/**
 		 * @inheritDoc
 		 */
-		public function get parent() : IElementsGroup
+		public function get parent() : ITasksGroup
 		{
 			return _parent;
 		}
 
-		public function set parent( inParent : IElementsGroup ) : void
+		public function set parent( inParent : ITasksGroup ) : void
 		{
 			_parent = inParent;
 		}

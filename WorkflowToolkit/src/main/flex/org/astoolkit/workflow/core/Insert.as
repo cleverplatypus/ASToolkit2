@@ -24,9 +24,9 @@ package org.astoolkit.workflow.core
 
 	[DefaultProperty( "elements" )]
 	/**
-	 * An entry for the <code>IElementsGroup</code>'s insert list.
+	 * An entry for the <code>ITasksGroup</code>'s insert list.
 	 *
-	 * @see org.astoolkit.workflow.core.IElementsGroup#insert
+	 * @see org.astoolkit.workflow.core.ITasksGroup#insert
 	 */
 	public final class Insert
 	{
@@ -50,7 +50,7 @@ package org.astoolkit.workflow.core
 		/**
 		 * the group into which <code>elements</code> will be inserted
 		 */
-		public var parent : IElementsGroup;
+		public var parent : ITasksGroup;
 
 		/**
 		 * (optional) the element the <code>mode</code> property refers to

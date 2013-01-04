@@ -21,10 +21,12 @@ package org.astoolkit.workflow.core
 {
 
 	import flash.events.EventDispatcher;
+	
 	import mx.core.ClassFactory;
 	import mx.core.IFactory;
 	import mx.core.IMXMLObject;
 	import mx.logging.ILogger;
+	
 	import org.astoolkit.commons.collection.annotation.IteratorSource;
 	import org.astoolkit.commons.io.transform.api.*;
 	import org.astoolkit.commons.ns.astoolkit_private;
@@ -294,6 +296,18 @@ package org.astoolkit.workflow.core
 		{
 		}
 		//------------------------------ END OF ROOT TASK DELEGATE --------------------------------
+		
+		public function set dataTransformerRegistry(inRegistry:IIODataTransformerRegistry):void
+		{
+			// TODO Auto Generated method stub
+			
+		}
+		
+		public function set inputFilter(inValue:Object):void
+		{
+			_inputFilter = inValue;
+		}
+		
 	}
 }
 

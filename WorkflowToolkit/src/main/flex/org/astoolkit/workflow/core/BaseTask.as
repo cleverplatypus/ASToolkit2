@@ -393,7 +393,7 @@ package org.astoolkit.workflow.core
 		 *
 		 * @see org.astoolkit.workflow.core.ExitStatus
 	 * @inheritDoc
-																									   */
+																										  */
 		public function set exitStatus( inStatus : ExitStatus ) : void
 		{
 			_exitStatus = inStatus;
@@ -1238,17 +1238,6 @@ package org.astoolkit.workflow.core
 			fail( "Task {0} failed because a {1}s timeout occourred",
 				description,
 				Number( _timeout ) / 1000 );
-		}
-
-		/**
-		 * returns the value of this task's <code>inProperty</code> property
-		 * checking if any value override applies.
-		 * <p><u>Don't use this method inside a getter as it would generate
-		 * a stack overflow</u></p>
-		 */
-		protected function overrideSafe( inProperty : String ) : *
-		{
-			return GroupUtil.getOverrideSafeValue( this, inProperty );
 		}
 
 		/**

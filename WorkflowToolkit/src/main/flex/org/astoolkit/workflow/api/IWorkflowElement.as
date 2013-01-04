@@ -21,7 +21,6 @@ package org.astoolkit.workflow.api
 {
 
 	import flash.events.IEventDispatcher;
-	import mx.core.IMXMLObject;
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.mxml.IAutoConfigContainerObject;
 
@@ -58,8 +57,8 @@ package org.astoolkit.workflow.api
 		/**
 		 * the wrapping group. Null for root element
 		 */
-		function get parent() : IElementsGroup;
-		function set parent( inParent : IElementsGroup ) : void;
+		function get parent() : ITasksGroup;
+		function set parent( inParent : ITasksGroup ) : void;
 		function get pid() : String;
 
 		/**

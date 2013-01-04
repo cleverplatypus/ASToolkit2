@@ -20,57 +20,14 @@ Version 2.x
 package org.astoolkit.workflow.internals
 {
 
-	import mx.utils.ArrayUtil;
 	import org.astoolkit.commons.collection.api.IRepeater;
-	import org.astoolkit.commons.reflection.AnnotationUtil;
-	import org.astoolkit.commons.reflection.Type;
-	import org.astoolkit.commons.reflection.Field;
-	import org.astoolkit.workflow.annotation.OverrideChildrenProperty;
 	import org.astoolkit.workflow.api.*;
-	import org.astoolkit.workflow.core.Insert;
 
 	public final class GroupUtil
 	{
 		private static var __injectPipelineMetaTags : Object = {};
 
 		private static var __overrideChildrenPropertyMetaTags : Object = {};
-
-		public static function getInserts( inWorkflow : ITasksGroup ) : Vector.<IWorkflowElement>
-		{
-			var out : Vector.<IWorkflowElement> = new Vector.<IWorkflowElement>();
-
-			for each( var insertEntry : Insert in inWorkflow.insert )
-			{
-				var taskParent : IElementsGroup = insertEntry.parent;
-
-				if( insertEntry.relativeTo != null )
-					taskParent = insertEntry.relativeTo.parent;
-
-				if( taskParent == inWorkflow )
-				{
-					out = out.concat( insertEntry.elements );
-				}
-			}
-			return out;
-		}
-
-		public static function getOverrideSafeValue( inElement : IWorkflowElement, inProperty : String ) : *
-		{
-			var out : * = inElement[ inProperty ];
-			var parent : IElementsGroup = inElement.parent;
-			var rule : IPropertyOverrideRule = inElement.context.config.propertyOverrideRule;
-
-			while( !( parent is ITasksGroup ) )
-			{
-				if( !groupOverridesProperty( parent, inProperty ) )
-					break;
-
-				if( rule.shouldOverride( inProperty, inElement, parent, out ) )
-					out = parent[ inProperty ];
-				parent = parent.parent;
-			}
-			return out;
-		}
 
 		public static function getParentRepeater( inElement : IWorkflowElement, inParentCount : int = 0 ) : IRepeater
 		{
@@ -88,119 +45,6 @@ package org.astoolkit.workflow.internals
 			while( inElement.parent != null && !( inElement.parent is ITasksGroup ) )
 				inElement = inElement.parent;
 			return inElement.parent as ITasksGroup;
-		}
-
-		public static function getRuntimeElements( inElements : Vector.<IWorkflowElement> ) : Vector.<IWorkflowElement>
-		{
-			return recursivelyFindMyElements( addInserts( inElements ) );
-		}
-
-		public static function getRuntimeOverridableTasks( inElements : Vector.<IWorkflowElement> ) : Vector.<IWorkflowTask>
-		{
-			return recursivelyFindMyTasks( addInserts( inElements ), true );
-		}
-
-		public static function getRuntimeTasks( inElements : Vector.<IWorkflowElement> ) : Vector.<IWorkflowTask>
-		{
-			return recursivelyFindMyTasks( addInserts( inElements ) );
-		}
-
-		private static function addInserts( inElements : Vector.<IWorkflowElement> ) : Vector.<IWorkflowElement>
-		{
-			var out : Vector.<IWorkflowElement> = inElements.concat();
-
-			if( !inElements || inElements.length == 0 )
-				return out;
-			var thisParent : IElementsGroup = IWorkflowElement( inElements[ 0 ] ).parent;
-			var aParent : IElementsGroup = thisParent;
-
-			while( aParent != null )
-			{
-				for each( var insertEntry : Insert in aParent.insert )
-				{
-					var taskParent : IElementsGroup = insertEntry.parent;
-
-					if( insertEntry.relativeTo != null )
-						taskParent = insertEntry.relativeTo.parent;
-
-					if( taskParent == thisParent )
-					{
-						var insertionPoint : int;
-
-						if( insertEntry.relativeTo != null )
-						{
-							var i : int;
-
-							for( i = 0; i < out.length; i++ )
-							{
-								if( insertEntry.relativeTo == out[ i ] )
-								{
-									break;
-								}
-							}
-							insertionPoint = insertEntry.mode == Insert.BEFORE ? i : i + 1;
-						}
-						else
-						{
-							// if children length == 0 we always add the task starting at 0,
-							// otherwise depending on the position value we add 
-							// to the beginning or end of the tasks array
-							insertionPoint = out.length > 0 ?
-								( insertEntry.mode == Insert.BEFORE ? 0 : out.length ) : 0;
-						}
-
-						for each( var element : IWorkflowElement in insertEntry.elements )
-						{
-							element.parent = taskParent;
-							out.splice( insertionPoint, 0, element );
-							insertionPoint++;
-						}
-					}
-				}
-				aParent = aParent.parent;
-			}
-			return out;
-		}
-
-		private static function groupOverridesProperty( inGroup : IElementsGroup, inProperty : String ) : Boolean
-		{
-			if( inGroup is IRuntimePropertyOverrideGroup )
-				return IRuntimePropertyOverrideGroup( inGroup ).propertyShouldOverride( inProperty );
-			else
-				return Type.forType( inGroup ).getField( inProperty ).hasAnnotation( OverrideChildrenProperty );
-		}
-
-		private static function recursivelyFindMyElements( inElements : Vector.<IWorkflowElement> ) : Vector.<IWorkflowElement>
-		{
-			var out : Vector.<IWorkflowElement> = new Vector.<IWorkflowElement>();
-
-			for each( var element : IWorkflowElement in inElements )
-			{
-				out.push( element );
-
-				if( element is IElementsGroup )
-					out = out.concat( getRuntimeTasks( IElementsGroup( element ).children ) );
-			}
-			return out;
-		}
-
-		private static function recursivelyFindMyTasks( inElements : Vector.<IWorkflowElement>, inSkipWorkflowChildren : Boolean = false ) : Vector.<IWorkflowTask>
-		{
-			var out : Vector.<IWorkflowTask> = new Vector.<IWorkflowTask>();
-
-			for each( var element : IWorkflowElement in inElements )
-			{
-				if( element is ITaskTemplate )
-					out.push( ITaskTemplate( element ).templateImplementation );
-				else if( element is IWorkflowTask )
-					out.push( element );
-				else if( element is IElementsGroup )
-				{
-					if( !( element is ITasksGroup ) || !inSkipWorkflowChildren )
-						out = out.concat( getRuntimeTasks( IElementsGroup( element ).children ) );
-				}
-			}
-			return out;
 		}
 	}
 }

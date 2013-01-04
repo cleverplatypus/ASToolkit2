@@ -151,6 +151,7 @@ package org.astoolkit.workflow.core
 
 		public function set input( inData : * ) : void
 		{
+			setImplementationProperty( "input", inData );
 		}
 
 		public function get inputFilter() : Object
@@ -160,6 +161,7 @@ package org.astoolkit.workflow.core
 
 		public function set inputFilter( inValue : Object ) : void
 		{
+			setImplementationProperty( "inputFilter", inValue );
 		}
 
 		public function get invalidPipelinePolicy() : String
@@ -176,8 +178,9 @@ package org.astoolkit.workflow.core
 			return null;
 		}
 
-		public function set outlet( inInlet : Object ) : void
+		public function set outlet( inValue : Object ) : void
 		{
+			setImplementationProperty( "outlet", inValue );
 		}
 
 		public function get output() : *
@@ -192,10 +195,12 @@ package org.astoolkit.workflow.core
 
 		public function set outputFilter( inValue : Object ) : void
 		{
+			setImplementationProperty( "outputFilter", inValue );
 		}
 
 		public function set outputKind( inValue : String ) : void
 		{
+			setImplementationProperty( "outputKind", inValue );
 		}
 
 		public function get running() : Boolean

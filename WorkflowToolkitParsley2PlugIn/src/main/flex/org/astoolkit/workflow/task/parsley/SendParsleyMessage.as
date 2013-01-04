@@ -26,14 +26,11 @@ package org.astoolkit.workflow.task.parsley
 	import mx.core.IFactory;
 	import mx.logging.ILogger;
 	import mx.logging.Log;
-	import mx.utils.ObjectUtil;
 	import mx.utils.StringUtil;
 	
-	import org.astoolkit.commons.factory.IPooledFactory;
+	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.mapping.MappingError;
-	import org.astoolkit.commons.mapping.SimplePropertiesMapper;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
-	import org.astoolkit.commons.ns.astoolkit_private;
 	import org.astoolkit.workflow.constant.FailurePolicy;
 	import org.astoolkit.workflow.task.api.ISendMessage;
 	import org.spicefactory.parsley.core.messaging.command.CommandObserverProcessor;
@@ -51,6 +48,25 @@ package org.astoolkit.workflow.task.parsley
 	{
 		private static const LOGGER : ILogger =
 			Log.getLogger( getQualifiedClassName( SendParsleyMessage ).replace( /:+/g, "." ) );
+
+		private var _completeObserver : CommandObserver;
+
+		private var _errorObserver : CommandObserver;
+
+		private var _mapper : IPropertiesMapper;
+
+		private var _mappingInfo : Object;
+
+		private var _processor : CommandObserverProcessor;
+
+		protected function get mapper() : IPropertiesMapper
+		{
+			if( !_mapper && _mappingInfo )
+			{
+				_mapper = ENV.mapTo.object( null, _mappingInfo );
+			}
+			return _mapper;
+		}
 
 		/**
 		 * if true this task will add a responder to the message's destination
@@ -71,6 +87,8 @@ package org.astoolkit.workflow.task.parsley
 		 */
 		public var message : Object;
 
+		public var messageClass : Class;
+
 		/**
 		 * a factory to create messages. If set, the <code>message</code> property is ignored.
 		 *
@@ -80,27 +98,40 @@ package org.astoolkit.workflow.task.parsley
 		 */
 		public var messageFactory : IFactory;
 
-		public var messageClass : Class;
-		
 		[Inspectable( enumeration="abort,ignore,log-error,log-warn,log-info,log-debug", defaultValue="abort" )]
 		public var messageMappingFailurePolicy : String = FailurePolicy.ABORT;
+
+		/**
+		 * an optional object which name-value pairs represents the
+		 * mapping between the properties in the pipeline data object
+		 * and the message to be sent where name is the message's property name
+		 * and value is the pipeline data object property name to be copied.
+		 * <br><br>
+		 *
+		 * <br><br>
+		 * @example Mapping message properties from pipeline data<br>
+		 * <listing>
+		 * &lt;SendMessage
+		 * 		messagePropertiesMapping="{ { itemId : 'id', price : 'priceWithVAT' } }"
+		 * 		message="{ new ClassFactory( SendItemPriceMessage ) }"
+		 * 		/&gt;
+		 * </listing>
+		 *
+		 * If inputFilter is set, mapping is performed on the filtered data.
+		 */
+		public function set messagePropertiesMapping( inValue : Object ) : void
+		{
+			if( inValue is IPropertiesMapper )
+				_mapper = inValue as IPropertiesMapper;
+			else
+				_mappingInfo = inValue;
+		}
 
 		/**
 		 * the message handler selector value
 		 */
 		public var selector : *;
 
-		private var _completeObserver : CommandObserver;
-
-		private var _errorObserver : CommandObserver;
-
-		private var _mapper : IPropertiesMapper;
-
-		private var _mappingInfo : Object;
-
-		private var _processor : CommandObserverProcessor;
-
-		
 		override public function begin() : void
 		{
 			super.begin();
@@ -108,7 +139,7 @@ package org.astoolkit.workflow.task.parsley
 			var aFactory : IFactory = messageClass != null ? context.getPooledFactory( messageClass ) : messageFactory;
 
 			var aMessage : Object = aFactory != null ? aFactory.newInstance() : message;
-			
+
 			var pData : Object = filteredInput;
 
 			if( !aMessage )
@@ -134,7 +165,7 @@ package org.astoolkit.workflow.task.parsley
 									getMappingErrorMessage( aMessage, pData, inProperty )
 									);
 						};
-						
+
 						mapper.mapWith( pData, _mappingInfo, aMessage );
 					}
 					catch( e : MappingError )
@@ -167,8 +198,10 @@ package org.astoolkit.workflow.task.parsley
 				registerCommandObserver( _errorObserver );
 			}
 			parsleyContext.scopeManager.getScope( scope as String ).dispatchMessage( aMessage, selector );
+
 			if( aFactory is IPooledFactory )
 				IPooledFactory( aFactory ).release( aMessage );
+
 			if( !hasAsyncResult )
 				complete();
 		}
@@ -181,37 +214,12 @@ package org.astoolkit.workflow.task.parsley
 			{
 				if( _completeObserver )
 					unregisterCommandObserver( _completeObserver );
+
 				if( _errorObserver )
 					registerCommandObserver( _errorObserver );
 				_completeObserver = null;
 				_errorObserver = null;
 			}
-		}
-
-		/**
-		 * an optional object which name-value pairs represents the
-		 * mapping between the properties in the pipeline data object
-		 * and the message to be sent where name is the message's property name
-		 * and value is the pipeline data object property name to be copied.
-		 * <br><br>
-		 *
-		 * <br><br>
-		 * @example Mapping message properties from pipeline data<br>
-		 * <listing>
-		 * &lt;SendMessage
-		 * 		messagePropertiesMapping="{ { itemId : 'id', price : 'priceWithVAT' } }"
-		 * 		message="{ new ClassFactory( SendItemPriceMessage ) }"
-		 * 		/&gt;
-		 * </listing>
-		 *
-		 * If inputFilter is set, mapping is performed on the filtered data.
-		 */
-		public function set messagePropertiesMapping( inValue : Object ) : void
-		{
-			if( inValue is IPropertiesMapper )
-				_mapper = inValue as IPropertiesMapper;
-			else
-				_mappingInfo = inValue;
 		}
 
 		override public function prepare() : void
@@ -222,15 +230,6 @@ package org.astoolkit.workflow.task.parsley
 		override protected function complete( inOutputData : * = null ) : void
 		{
 			super.complete( inOutputData );
-		}
-
-		protected function get mapper() : IPropertiesMapper
-		{
-			if( !_mapper && _mappingInfo )
-			{
-				_mapper = ENV.mapTo.object( null, _mappingInfo );
-			}
-			return _mapper;
 		}
 
 		private function getMappingErrorMessage( inSource : Object, inTarget : Object, inProperty : String ) : String
