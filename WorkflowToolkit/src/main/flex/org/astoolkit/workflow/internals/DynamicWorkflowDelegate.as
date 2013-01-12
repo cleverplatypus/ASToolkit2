@@ -27,70 +27,70 @@ package org.astoolkit.workflow.internals
 	{
 		private var _onAbortHandler : Function;
 
+		private var _onBeginHandler : Function;
+
+		private var _onCompleteHandler : Function;
+
+		private var _onFaultHandler : Function;
+
+		private var _onInitializeHandler : Function;
+
+		private var _onPrepareHandler : Function;
+
+		private var _onProgressHandler : Function;
+
+		private var _onResumeHandler : Function;
+
+		private var _onSuspendHandler : Function;
+
 		public function set onAbortHandler( inValue : Function ) : void
 		{
 			_onAbortHandler = inValue;
 		}
-
-		private var _onBeginHandler : Function;
 
 		public function set onBeginHandler(inValue:Function) : void
 		{
 			_onBeginHandler = inValue;
 		}
 
-		private var _onCompleteHandler : Function;
-
 		public function set onCompleteHandler(inValue:Function) : void
 		{
 			_onCompleteHandler = inValue;
 		}
-
-		private var _onFaultHandler : Function;
 
 		public function set onFaultHandler(inValue:Function) : void
 		{
 			_onFaultHandler = inValue;
 		}
 
-		private var _onInitializeHandler : Function;
-
 		public function set onInitializeHandler(inValue:Function) : void
 		{
 			_onInitializeHandler = inValue;
 		}
-
-		private var _onPrepareHandler : Function;
 
 		public function set onPrepareHandler( inValue : Function ) : void
 		{
 			_onPrepareHandler = inValue;
 		}
 
-		private var _onProgressHandler : Function;
-
 		public function set onProgressHandler(inValue:Function) : void
 		{
 			_onProgressHandler = inValue;
 		}
-
-		private var _onResumeHandler : Function;
 
 		public function set onResumeHandler(inValue:Function) : void
 		{
 			_onResumeHandler = inValue;
 		}
 
-		private var _onSuspendHandler : Function;
-
 		public function set onSuspendHandler(inValue:Function) : void
 		{
 			_onSuspendHandler = inValue;
 		}
 
-		public function onAbort(inTask:IWorkflowTask, inMessage:String) : void
+		public function onAbort(inTask:IWorkflowTask ) : void
 		{
-			_onAbortHandler( inTask, inMessage );
+			_onAbortHandler( inTask );
 		}
 
 		public function onBegin(inTask:IWorkflowTask) : void

@@ -21,6 +21,7 @@ package org.astoolkit.workflow.template.message
 {
 
 	import mx.core.IFactory;
+	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.workflow.core.BaseTaskTemplate;
 	import org.astoolkit.workflow.task.api.ISendMessage;
 
@@ -30,6 +31,13 @@ package org.astoolkit.workflow.template.message
 	 */
 	public dynamic class SendMessage extends BaseTaskTemplate implements ISendMessage
 	{
+
+		public function set factoryResolver( inValue : IFactoryResolver ) : void
+		{
+			setImplementationProperty( "factoryResolver", inValue );
+
+		}
+
 		public function set hasAsyncResult( inValue : Boolean ) : void
 		{
 			setImplementationProperty( "hasAsyncResult", inValue );
@@ -58,6 +66,7 @@ package org.astoolkit.workflow.template.message
 			setImplementationProperty( "messageMappingFailurePolicy", inValue );
 		}
 
+		[AutoConfig]
 		public function set messagePropertiesMapping( inValue : Object ) : void
 		{
 			setImplementationProperty( "messagePropertiesMapping", inValue );

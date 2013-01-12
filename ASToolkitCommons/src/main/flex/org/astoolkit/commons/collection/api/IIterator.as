@@ -20,13 +20,15 @@ Version 2.x
 package org.astoolkit.commons.collection.api
 {
 
+	import org.astoolkit.commons.wfml.IComponent;
+
 	/**
 	 * Contract for an iterator class.
 	 * <p>Iterators are objects that, given a source object,
 	 * provide a set of values on subsequent calls to the <code>next()</code>method.</p>
 	 * <p>Iterators can be interrupted calling <code>abort()</code></p>
 	 */
-	public interface IIterator
+	public interface IIterator extends IComponent
 	{
 
 		/**

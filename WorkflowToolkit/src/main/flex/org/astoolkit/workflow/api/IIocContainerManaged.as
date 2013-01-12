@@ -19,12 +19,13 @@ Version 2.x
 */
 package org.astoolkit.workflow.api
 {
+
+	[Deprecated(message="IIocContainerManaged is deprecated: use the class-level ManagedObject metadata instead")]
 	/**
-	 * Marker class to select which object should 
+	 * Marker class to select which object should
 	 * be autowired with the chosen IoC container.
 	 */
 	public interface IIocContainerManaged
 	{
-		
 	}
 }

@@ -48,9 +48,18 @@ package org.astoolkit.workflow.task.io
 	public class WatchFile extends BaseTask
 	{
 
-		[Bindable]
+		private var _file : File;
+
+		private var _originalTimestamp : Date;
+
+		private var _timer : Timer;
+
 		[InjectPipeline]
-		public var file : File;
+		public function set file( inValue : File ) : void
+		{
+			_onPropertySet( "file" );
+			_file = inValue;
+		}
 
 		public var frequency : int = 5000;
 
@@ -60,20 +69,16 @@ package org.astoolkit.workflow.task.io
 
 		public var recursive : Boolean;
 
-		private var _originalTimestamp : Date;
-
-		private var _timer : Timer;
-
 		override public function begin() : void
 		{
 			super.begin();
 
-			if( !file )
+			if( !_file )
 			{
 				fail( "No directory set" );
 				return;
 			}
-			getNewerModificationDate( file );
+			getNewerModificationDate( _file );
 			_timer.addEventListener( TimerEvent.TIMER, threadSafe( onTimer ) );
 			_timer.start();
 		}
@@ -133,8 +138,8 @@ package org.astoolkit.workflow.task.io
 
 		private function onTimer( inEvent : TimerEvent ) : void
 		{
-			if( ( file.modificationDate.getTime() > _originalTimestamp.getTime() ) ||
-				( recursive && file.isDirectory && isDescendantChanged( file ) ) )
+			if( ( _file.modificationDate.getTime() > _originalTimestamp.getTime() ) ||
+				( recursive && _file.isDirectory && isDescendantChanged( _file ) ) )
 			{
 				_timer.stop();
 				complete();

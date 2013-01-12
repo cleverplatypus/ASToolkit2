@@ -39,9 +39,20 @@ package org.astoolkit.workflow.task.events
 	public class WatchCollection extends BaseTask
 	{
 
-		[Bindable]
+		private var _target : IList;
+
+		[Inspectable( enumeration="auto,collection" )]
+		override public function set outputKind( inValue : String ) : void
+		{
+			super.outputKind = inValue;
+		}
+
 		[InjectPipeline]
-		public var target : IList;
+		public function set target( inValue :IList) : void
+		{
+			_onPropertySet( "target" );
+			_target = inValue;
+		}
 
 		public var watchAdd : Boolean;
 
@@ -64,20 +75,14 @@ package org.astoolkit.workflow.task.events
 		{
 			super.begin();
 
-			if( !target )
+			if( !_target )
 			{
 				fail( "No collection provided" );
 				return;
 			}
-			target.addEventListener(
+			_target.addEventListener(
 				CollectionEvent.COLLECTION_CHANGE,
 				threadSafe( onCollectionChange ) );
-		}
-
-		[Inspectable( enumeration="auto,collection" )]
-		override public function set outputKind( inValue : String ) : void
-		{
-			super.outputKind = inValue;
 		}
 
 		/**
@@ -99,7 +104,7 @@ package org.astoolkit.workflow.task.events
 				( inEvent.kind == CollectionEventKind.REPLACE && watchReplace ) ||
 				( inEvent.kind == CollectionEventKind.RESET && watchReset ) ||
 				( inEvent.kind == CollectionEventKind.UPDATE && watchUpdate ) )
-				complete( _outputKind == "collection" ? target : UNDEFINED );
+				complete( _outputKind == "collection" ? _target : UNDEFINED );
 		}
 	}
 }

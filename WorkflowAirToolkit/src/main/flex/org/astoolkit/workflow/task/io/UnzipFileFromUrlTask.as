@@ -38,14 +38,19 @@ package org.astoolkit.workflow.task.io
 
 	public class UnzipFileFromUrlTask extends BaseTask
 	{
+
+		private var _sourceUrl : String;
+
+		private var destinationFile : File;
+
 		public var destinationUrl : String;
 
-		[Bindable]
 		[InjectPipeline]
-		public var sourceUrl : String;
-
-		[Bindable]
-		private var destinationFile : File;
+		public function set sourceUrl( inValue :String) : void
+		{
+			_onPropertySet( "sourceUrl" );
+			_sourceUrl = inValue;
+		}
 
 		override public function begin() : void
 		{
@@ -68,7 +73,7 @@ package org.astoolkit.workflow.task.io
 			zip.addEventListener( FZipEvent.FILE_LOADED, onZFileLoaded );
 			zip.addEventListener( Event.COMPLETE, onDownloadComplete );
 			zip.addEventListener( ProgressEvent.PROGRESS, onDownloadProgress );
-			zip.load( new URLRequest( sourceUrl ) );
+			zip.load( new URLRequest( _sourceUrl ) );
 			setProgress( 0 );
 		}
 

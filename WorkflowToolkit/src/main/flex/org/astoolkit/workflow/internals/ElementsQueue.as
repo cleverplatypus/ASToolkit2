@@ -21,7 +21,7 @@ package org.astoolkit.workflow.internals
 {
 
 	import mx.utils.ArrayUtil;
-	import org.astoolkit.workflow.api.IDeferrableProcess;
+	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.workflow.api.ITaskLiveCycleWatcher;
 	import org.astoolkit.workflow.api.IWorkflowElement;
 	import org.astoolkit.workflow.api.IWorkflowTask;

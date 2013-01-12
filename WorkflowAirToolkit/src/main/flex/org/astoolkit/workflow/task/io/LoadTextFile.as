@@ -41,7 +41,7 @@ package org.astoolkit.workflow.task.io
 	 * <li>a <code>flash.filesystem.File</code> object</li>
 	 * </ul>
    * <b>Output</b><br><br>
-			  * either a <code>String</code> or a <code>XML</code> object
+						  * either a <code>String</code> or a <code>XML</code> object
 	 * depending on the value of <code>contentType</code>
 	 * </p>
 	 * <p>
@@ -56,55 +56,62 @@ package org.astoolkit.workflow.task.io
 	public class LoadTextFile extends BaseTask
 	{
 
+		private var _file : File;
+
+		private var _url : String;
+
 		[Inspectable( enumeration="text,e4x", defaultValue="text" )]
 		public var contentType : String = "text";
 
-		[Bindable]
 		[InjectPipeline]
-		public var file : File;
+		public function set file( inValue :File) : void
+		{
+			_onPropertySet( "file" );
+			_file = inValue;
+		}
 
-		[Bindable]
-		public var loadedContent : Object;
-
-		[Bindable]
 		[InjectPipeline]
-		public var url : String;
+		public function set url( inValue :String) : void
+		{
+			_onPropertySet( "url" );
+			_url = inValue;
+		}
 
 		override public function begin() : void
 		{
 			super.begin();
 
-			if( !url && !file )
+			if( !_url && !_file )
 			{
 				fail( "File or url not provided" );
 				return;
 			}
 
-			if( url && url.match( /^http(s)?:\/\// ) != null )
+			if( _url && _url.match( /^http(s)?:\/\// ) != null )
 			{
 				var request : URLLoader = new URLLoader();
 				request.addEventListener( Event.COMPLETE, threadSafe( onFileDownloaded ) );
 				request.addEventListener( IOErrorEvent.IO_ERROR, threadSafe( onFileDownloadError ) );
 				request.addEventListener( ProgressEvent.PROGRESS, threadSafe( onDownloadProgress ) );
 				request.dataFormat = URLLoaderDataFormat.TEXT;
-				request.load( new URLRequest( url ) );
+				request.load( new URLRequest( _url ) );
 				setProgress( 0 );
 			}
 			else
 			{
-				if( url )
+				if( _url )
 				{
-					file = new File();
-					file.url = url;
+					_file = new File();
+					_file.url = _url;
 				}
 
-				if( !file.exists )
+				if( !_file.exists )
 				{
-					fail( "Local file not found: " + file.nativePath );
+					fail( "Local file not found: " + _file.nativePath );
 					return;
 				}
 				var stream : FileStream = new FileStream();
-				stream.open( file, FileMode.READ );
+				stream.open( _file, FileMode.READ );
 				var fileText : String;
 
 				try
@@ -113,7 +120,7 @@ package org.astoolkit.workflow.task.io
 				}
 				catch( e : Error )
 				{
-					fail( "Failed to read local file: " + file.nativePath );
+					fail( "Failed to read local file: " + _file.nativePath );
 					return;
 				}
 				textLoaded( fileText );
@@ -123,7 +130,6 @@ package org.astoolkit.workflow.task.io
 		override public function prepare() : void
 		{
 			super.prepare();
-			loadedContent = null;
 		}
 
 		private function onDownloadProgress( inEvent : ProgressEvent ) : void
@@ -144,6 +150,8 @@ package org.astoolkit.workflow.task.io
 
 		private function textLoaded( inText : String ) : void
 		{
+			var loadedContent : Object;
+
 			if( contentType == "text" )
 			{
 				loadedContent = inText;

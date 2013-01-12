@@ -11,32 +11,42 @@ package org.astoolkit.workflow.task.io.filestream
 	public class ReadFileToByteArray extends BaseTask
 	{
 
+		private var _file : File;
+
+		private var _uri : String;
+
 		[Inspectable( enumeration="big,little", defaultValue="big" )]
 		public var endian : String
 
-		[Bindable]
 		[InjectPipeline]
-		public var file : File;
+		public function set file( inValue :File) : void
+		{
+			_onPropertySet( "file" );
+			_file = inValue;
+		}
 
-		[Bindable]
 		[InjectPipeline]
-		public var uri : String;
+		public function set uri( inValue :String) : void
+		{
+			_onPropertySet( "uri" );
+			_uri = inValue;
+		}
 
 		override public function begin() : void
 		{
 			super.begin();
 			var aFile : File;
 
-			if( !file && !uri )
+			if( !_file && !_uri )
 			{
-				fail( "No file or uri parameter set" );
+				fail( "No _file or _uri parameter set" );
 				return;
 			}
 
-			if( file )
-				aFile = file;
+			if( _file )
+				aFile = _file;
 			else
-				aFile = new File( uri );
+				aFile = new File( _uri );
 
 			if( !aFile.exists )
 			{

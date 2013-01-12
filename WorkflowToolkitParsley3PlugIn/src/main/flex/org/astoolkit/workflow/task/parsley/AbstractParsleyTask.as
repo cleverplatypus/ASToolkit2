@@ -22,7 +22,6 @@ package org.astoolkit.workflow.task.parsley
 
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
-	
 	import org.astoolkit.workflow.api.IContextPlugIn;
 	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.plugin.parsley.ParsleyPlugIn;
@@ -31,9 +30,32 @@ package org.astoolkit.workflow.task.parsley
 	import org.spicefactory.parsley.core.messaging.MessageReceiverKind;
 	import org.spicefactory.parsley.core.messaging.receiver.CommandObserver;
 
-	[Bindable]
+	[ManagedObject]
 	public class AbstractParsleyTask extends BaseTask
 	{
+
+		private var _scope : Object = "global";
+
+		protected var _parsleyContext : Context;
+
+		protected var _parsleyHelper : ParsleyPlugIn;
+
+		[Inject]
+		public function set parsleyContext(value:Context) : void
+		{
+			_parsleyContext = value;
+		}
+
+		public function get scope() : Object
+		{
+			return _scope;
+		}
+
+		public function set scope(value:Object) : void
+		{
+			_scope = value;
+		}
+
 		public function AbstractParsleyTask()
 		{
 			super();
@@ -42,17 +64,12 @@ package org.astoolkit.workflow.task.parsley
 				throw new Error( getQualifiedClassName( this ) + " is an abstract class." );
 		}
 
-		public var scope : Object = "global";
-
-		protected var _parsleyHelper : ParsleyPlugIn;
-
-		private var _parsleyContext : Context;
-
 		override public function initialize() : void
 		{
 			super.initialize();
+			_context.configureObjects( [ this ] );
 
-			if( !parsleyContext )
+			if( !_parsleyContext )
 			{
 				fail( getQualifiedClassName( this ) + " cannot be ran because the provided " +
 					"implementation of IWorkflowContext doesn't provide access to an instance of " +
@@ -76,25 +93,9 @@ package org.astoolkit.workflow.task.parsley
 				threadSafe( inHandler ) )
 		}
 
-		protected function get parsleyContext() : Context
-		{
-			if( !_parsleyContext )
-			{
-				for each( var plugIn : IContextPlugIn in _context.plugIns )
-				{
-					if( plugIn is ParsleyPlugIn )
-					{
-						_parsleyContext = ParsleyPlugIn( plugIn ).context;
-						break;
-					}
-				}
-			}
-			return _parsleyContext;
-		}
-
 		protected function registerCommandObserver( inObserver : * ) : void
 		{
-			parsleyContext
+			_parsleyContext
 				.scopeManager
 				.getScope( scope as String )
 				.messageReceivers
@@ -103,7 +104,7 @@ package org.astoolkit.workflow.task.parsley
 
 		protected function unregisterCommandObserver( inObserver : CommandObserver ) : void
 		{
-			parsleyContext
+			_parsleyContext
 				.scopeManager
 				.getScope( scope as String )
 				.messageReceivers
@@ -116,7 +117,6 @@ import mx.rpc.AsyncToken;
 import mx.rpc.events.FaultEvent;
 import mx.rpc.events.ResultEvent;
 import mx.utils.ObjectUtil;
-
 import org.spicefactory.parsley.core.command.CommandObserverProcessor;
 import org.spicefactory.parsley.core.command.CommandStatus;
 import org.spicefactory.parsley.core.messaging.MessageReceiverKind;
@@ -124,6 +124,37 @@ import org.spicefactory.parsley.core.messaging.receiver.CommandObserver;
 
 class Observer implements CommandObserver
 {
+
+	private var _handler : Function;
+
+	private var _kind : MessageReceiverKind;
+
+	private var _messageType : Class;
+
+	private var _order : int;
+
+	private var _selector : *;
+
+	public function get kind() : MessageReceiverKind
+	{
+		return _kind;
+	}
+
+	public function get order() : int
+	{
+		return _order;
+	}
+
+	public function get selector() : *
+	{
+		return _selector;
+	}
+
+	public function get type() : Class
+	{
+		return _messageType;
+	}
+
 	public function Observer(
 		inKind : MessageReceiverKind,
 		inSelector : *,
@@ -137,16 +168,6 @@ class Observer implements CommandObserver
 		_handler = inHandler;
 		_order = inOrder
 	}
-
-	private var _handler : Function;
-
-	private var _messageType : Class;
-
-	private var _order : int;
-
-	private var _selector : *;
-
-	private var _kind : MessageReceiverKind;
 
 	public function observeCommand(
 		inProcessor : CommandObserverProcessor ) : void
@@ -163,6 +184,7 @@ class Observer implements CommandObserver
 		else if( _kind.key == MessageReceiverKind.COMMAND_ERROR_BY_TRIGGER.key )
 		{
 			var text : String = "Unknown Error";
+
 			if( returnValue is AsyncToken && AsyncToken( returnValue ).result is FaultEvent )
 				text = returnValue.result.fault.getStackTrace();
 			_handler( text, inProcessor.message );
@@ -170,25 +192,4 @@ class Observer implements CommandObserver
 		else
 			_handler( inProcessor.message );
 	}
-
-	public function get order() : int
-	{
-		return _order;
-	}
-
-	public function get selector() : *
-	{
-		return _selector;
-	}
-
-
-		public function get type():Class
-		{
-			return _messageType;
-		}
-
-		public function get kind() : MessageReceiverKind
-		{
-			return _kind;
-		}
 }

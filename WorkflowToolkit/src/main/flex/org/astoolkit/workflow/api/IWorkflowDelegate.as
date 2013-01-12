@@ -5,7 +5,7 @@ package org.astoolkit.workflow.api
 
 	public interface IWorkflowDelegate
 	{
-		function onAbort( inTask : IWorkflowTask, inMessage : String ) : void;
+		function onAbort( inTask : IWorkflowTask ) : void;
 		function onBegin( inTask : IWorkflowTask ) : void;
 		function onComplete( inTask : IWorkflowTask ) : void;
 		function onFault( inTask : IWorkflowTask, inMessage : String ) : void;

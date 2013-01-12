@@ -31,6 +31,10 @@ package org.astoolkit.workflow.task.io
 
 		private static const REGEXP_METHOD : String = "regexp";
 
+		private var _location : String;
+
+		private var regexps : Vector.<RegExp>;
+
 		public var fileFilter : Array;
 
 		[Inspectable( enumeration="extension,regexp", defaultValue="extension" )]
@@ -39,18 +43,20 @@ package org.astoolkit.workflow.task.io
 		public var ignoreCase : Boolean = true;
 
 		[InjectPipeline]
-		public var location : String;
+		public function set location( inValue :String) : void
+		{
+			_onPropertySet( "location" );
+			_location = inValue;
+		}
 
 		public var recursive : Boolean;
 
 		public var simpleArrayOutput : Boolean;
 
-		private var regexps : Vector.<RegExp>;
-
 		override public function begin() : void
 		{
 			super.begin();
-			var aLocation : String = location;
+			var aLocation : String = _location;
 
 			if( !aLocation )
 			{

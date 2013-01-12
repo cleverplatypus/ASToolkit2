@@ -64,17 +64,24 @@ package org.astoolkit.workflow.task.misc
 	 */
 	public class ConvertList extends BaseTask
 	{
+
+		private var _source : Object;
+
 		/**
 		 * the list output class, either <code>Array, Vector.&lt;&#42;&gt;, IList</code>
 		 */
 		public var outputClass : * = Array;
 
-		[Bindable]
 		[InjectPipeline]
+		[AutoConfig(type="Array")]
 		/**
 		 * a <code>Array, Vector.&lt;&#42;&gt;, IList</code> object
 		 */
-		public var source : Object;
+		public function set source( inValue :Object) : void
+		{
+			_onPropertySet( "source" );
+			_source = inValue;
+		}
 
 		/**
 		 * @private
@@ -85,7 +92,7 @@ package org.astoolkit.workflow.task.misc
 
 			try
 			{
-				complete( ListUtil.convert( source, outputClass ) );
+				complete( ListUtil.convert( _source, outputClass ) );
 			}
 			catch( e : Error )
 			{

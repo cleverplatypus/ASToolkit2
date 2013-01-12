@@ -32,6 +32,7 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.ns.astoolkit_private;
 	import org.astoolkit.commons.reflection.AnnotationUtil;
 	import org.astoolkit.commons.reflection.AutoConfig;
+	import org.astoolkit.commons.reflection.ManagedObject;
 	import org.astoolkit.commons.reflection.Type;
 	import org.astoolkit.workflow.annotation.*;
 	import org.astoolkit.workflow.api.*;
@@ -100,7 +101,7 @@ package org.astoolkit.workflow.core
 			AnnotationUtil.registerAnnotation( new ClassFactory( IteratorSource ) );
 			AnnotationUtil.registerAnnotation( new ClassFactory( TaskDescriptor ) );
 			AnnotationUtil.registerAnnotation( new ClassFactory( InjectPipeline ) );
-			AnnotationUtil.registerAnnotation( new ClassFactory( OverrideChildrenProperty ) );
+			AnnotationUtil.registerAnnotation( new ClassFactory( ManagedObject ) );
 			Type.clearCache();
 			return true;
 		})();
@@ -146,6 +147,17 @@ package org.astoolkit.workflow.core
 			_contextFactory = inValue;
 		}
 
+		public function set dataTransformerRegistry(inRegistry:IIODataTransformerRegistry) : void
+		{
+			// TODO Auto Generated method stub
+
+		}
+
+		public function set inputFilter(inValue:Object) : void
+		{
+			_inputFilter = inValue;
+		}
+
 		public function get rootTask() : IWorkflowTask
 		{
 			return _rootTask;
@@ -171,7 +183,7 @@ package org.astoolkit.workflow.core
 			if( _context && _context.status != TaskStatus.STOPPED )
 				throw new Error( "Attempt to run an already running workflow" );
 
-			_delegate = new PrivateWorkflowDelegate( this );
+			_delegate = createRootTaskDelegate();
 			var w : ITaskLiveCycleWatcher;
 
 			if( !_contextFactory )
@@ -225,7 +237,24 @@ package org.astoolkit.workflow.core
 			delete _retainedWorkflows[ this ];
 			_rootTask.cleanUp();
 			_context.status = TaskStatus.STOPPED;
+			_context.suspendableFunctions.cleanUp();
+
 			_context = null;
+		}
+
+		protected function createRootTaskDelegate() : IWorkflowDelegate
+		{
+			var out : DynamicWorkflowDelegate = new DynamicWorkflowDelegate();
+			out.onAbortHandler = onRootTaskAbort;
+			out.onBeginHandler = onRootTaskBegin;
+			out.onCompleteHandler = onRootTaskComplete;
+			out.onFaultHandler = onRootTaskFault;
+			out.onInitializeHandler = onRootTaskInitialize;
+			out.onPrepareHandler = onRootTaskPrepare;
+			out.onProgressHandler = onRootTaskProgress;
+			out.onResumeHandler = onRootTaskResume;
+			out.onSuspendHandler = onRootTaskSuspend;
+			return out;
 		}
 
 		protected function initialize() : void
@@ -246,18 +275,18 @@ package org.astoolkit.workflow.core
 
 		//--------------------------------- ROOT TASK DELEGATE ------------------------------------
 
-		astoolkit_private function onRootTaskAbort() : void
+		private function onRootTaskAbort( inTask : IWorkflowTask ) : void
 		{
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
 				w.onTaskAbort( _rootTask );
 			cleanup();
 		}
 
-		astoolkit_private function onRootTaskBegin() : void
+		private function onRootTaskBegin( inTask : IWorkflowTask ) : void
 		{
 		}
 
-		astoolkit_private function onRootTaskComplete() : void
+		private function onRootTaskComplete( inTask : IWorkflowTask ) : void
 		{
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
 				w.onTaskComplete( _rootTask );
@@ -265,111 +294,35 @@ package org.astoolkit.workflow.core
 			cleanup();
 		}
 
-		astoolkit_private function onRootTaskFault() : void
+		private function onRootTaskFault( inTask : IWorkflowTask, inMessage : String ) : void
 		{
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
 				w.onTaskFail( _rootTask );
 			cleanup();
 		}
 
-		astoolkit_private function onRootTaskInitialize() : void
+		private function onRootTaskInitialize( inTask : IWorkflowTask ) : void
 		{
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
 				w.onTaskInitialize( _rootTask );
 		}
 
-		astoolkit_private function onRootTaskPrepare() : void
+		private function onRootTaskPrepare( inTask : IWorkflowTask ) : void
 		{
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
 				w.onTaskPrepared( _rootTask );
 		}
 
-		astoolkit_private function onRootTaskProgress() : void
+		private function onRootTaskProgress( inTask : IWorkflowTask ) : void
 		{
 		}
 
-		astoolkit_private function onRootTaskResume() : void
+		private function onRootTaskResume( inTask : IWorkflowTask ) : void
 		{
 		}
 
-		astoolkit_private function onRootTaskSuspend() : void
+		private function onRootTaskSuspend( inTask : IWorkflowTask ) : void
 		{
 		}
-		//------------------------------ END OF ROOT TASK DELEGATE --------------------------------
-		
-		public function set dataTransformerRegistry(inRegistry:IIODataTransformerRegistry):void
-		{
-			// TODO Auto Generated method stub
-			
-		}
-		
-		public function set inputFilter(inValue:Object):void
-		{
-			_inputFilter = inValue;
-		}
-		
-	}
-}
-
-import org.astoolkit.commons.ns.astoolkit_private;
-import org.astoolkit.workflow.api.IWorkflowDelegate;
-import org.astoolkit.workflow.api.IWorkflowTask;
-import org.astoolkit.workflow.core.Workflow;
-
-use namespace astoolkit_private;
-
-class PrivateWorkflowDelegate implements IWorkflowDelegate
-{
-
-	private var _workflow : Workflow;
-
-	public function PrivateWorkflowDelegate( inWorkflow : Workflow )
-	{
-		_workflow = inWorkflow;
-	}
-
-	public function onAbort( inTask : IWorkflowTask, inMessage : String ) : void
-	{
-		_workflow.onRootTaskAbort();
-	}
-
-	public function onBegin( inTask : IWorkflowTask ) : void
-	{
-		_workflow.onRootTaskBegin();
-	}
-
-	public function onComplete( inTask : IWorkflowTask ) : void
-	{
-		_workflow.onRootTaskComplete();
-	}
-
-	public function onFault(inTask:IWorkflowTask, inMessage:String) : void
-	{
-		_workflow.onRootTaskFault();
-	}
-
-	public function onInitialize(inTask:IWorkflowTask) : void
-	{
-		_workflow.onRootTaskInitialize();
-	}
-
-	public function onPrepare(inTask:IWorkflowTask) : void
-	{
-		_workflow.onRootTaskPrepare();
-	}
-
-	public function onProgress(inTask:IWorkflowTask) : void
-	{
-		_workflow.onRootTaskProgress();
-	}
-
-	public function onResume(inTask:IWorkflowTask) : void
-	{
-		_workflow.onRootTaskResume();
-	}
-
-	public function onSuspend(inTask:IWorkflowTask) : void
-	{
-		_workflow.onRootTaskSuspend();
 	}
 }

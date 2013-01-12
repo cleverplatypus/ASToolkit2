@@ -21,20 +21,21 @@ package org.astoolkit.commons.conditional.api
 {
 
 	import mx.core.IMXMLObject;
-	
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
+	import org.astoolkit.commons.wfml.IComponent;
 
-	public interface IConditionalExpression extends IMXMLObject, IIODataTransformerClient
+	public interface IConditionalExpression extends IMXMLObject, IIODataTransformerClient, IComponent
 	{
 		function get async() : Boolean;
-		function clearResult() : void;
 		function set delegate( inValue : Function ) : void;
-		function evaluate( inComparisonValue : * = undefined ) : Object;
-		function invalidate() : void;
 		function get lastResult() : *;
+		function set negate( inValue : Boolean ) : void;
 		function get parent() : IConditionalExpressionGroup;
 		function set parent( inValue : IConditionalExpressionGroup ) : void;
 		function set resolver( inValue : IExpressionResolver ) : void;
-		function set negate( inValue : Boolean ) : void;
+
+		function clearResult() : void;
+		function evaluate( inComparisonValue : * = undefined ) : Object;
+		function invalidate() : void;
 	}
 }

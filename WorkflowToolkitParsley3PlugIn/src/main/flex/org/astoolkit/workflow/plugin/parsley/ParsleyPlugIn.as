@@ -22,7 +22,8 @@ package org.astoolkit.workflow.plugin.parsley
 
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
-	
+	import org.astoolkit.commons.reflection.ManagedObject;
+	import org.astoolkit.commons.reflection.Type;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.internals.DynamicTaskLiveCycleWatcher;
 	import org.astoolkit.workflow.task.parsley.SendParsleyMessage;
@@ -77,8 +78,12 @@ package org.astoolkit.workflow.plugin.parsley
 	 * @see org.astoolkit.workflow.api.IWorkflowContext
 	 * @see org.astoolkit.workflow.api.IContextPlugIn
 	 */
-	public class ParsleyPlugIn implements IContextPlugIn
+	public class ParsleyPlugIn implements IContextPlugIn, IObjectConfigurer
 	{
+
+		private var _contextWatcher : DynamicTaskLiveCycleWatcher;
+
+		private var _disabledExtensions : Array;
 
 		[Inject]
 		/**
@@ -86,10 +91,6 @@ package org.astoolkit.workflow.plugin.parsley
 		 */
 		public var context : Context;
 
-		private var _disabledExtensions : Array;
-
-		private var _contextWatcher : DynamicTaskLiveCycleWatcher;
-		
 		public function get disabledExtensions() : Array
 		{
 			return _disabledExtensions;
@@ -110,6 +111,15 @@ package org.astoolkit.workflow.plugin.parsley
 			return [ SendParsleyMessage, _contextWatcher ];
 		}
 
+		public function configureObjects( inObjects : Array ) : void
+		{
+			if( inObjects && inObjects.length > 0 )
+			{
+				for each( var object : Object in inObjects )
+					configureManagedObject( object );
+			}
+		}
+
 		/**
 		 * @private
 		 */
@@ -117,16 +127,25 @@ package org.astoolkit.workflow.plugin.parsley
 		{
 		}
 
+		private function configureManagedObject( inObject : Object ) : void
+		{
+			if( Type.forType( inObject ).hasAnnotation( ManagedObject ) )
+			{
+				try
+				{
+					context.addDynamicObject( inObject );
+				}
+				finally
+				{
+					return;
+				}
+			}
+
+		}
+
 		private function onTaskContextBond( inTask : IWorkflowTask ) : void
 		{
-			if( inTask is IIocContainerManaged )
-			{
-				if( context.findDefinitionByType( 
-					getDefinitionByName( 
-						getQualifiedClassName( inTask ) ) as Class ) == null )
-				context.addDynamicObject( inTask );
-			}
+			configureManagedObject( inTask );
 		}
-		
 	}
 }

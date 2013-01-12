@@ -13,9 +13,9 @@ package org.astoolkit.commons.io.transform
 			return inData;
 		}
 
-		public function set transformers( value : Vector.<IIODataTransformer> ) : void
+		public function set transformers( inValue : Vector.<IIODataTransformer> ) : void
 		{
-			_transformers = value;
+			_transformers = inValue;
 
 			if( _transformers )
 			{

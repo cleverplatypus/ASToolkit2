@@ -38,9 +38,9 @@ package org.astoolkit.workflow.internals
 			return _priority;
 		}
 		
-		public function set priority( value : int ) : void
+		public function set priority( inValue : int ) : void
 		{
-			_priority = value;
+			_priority = inValue;
 		}
 		
 		public function set runtimeExpression( inValue : String ) : void

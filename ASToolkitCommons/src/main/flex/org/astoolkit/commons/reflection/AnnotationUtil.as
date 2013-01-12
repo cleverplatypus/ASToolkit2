@@ -21,12 +21,9 @@ package org.astoolkit.commons.reflection
 {
 
 	import flash.utils.describeType;
-	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
+	import mx.core.ClassFactory;
 	import mx.core.IFactory;
-	import org.astoolkit.commons.factory.api.IPooledFactory;
-	import org.astoolkit.commons.reflection.Type;
-	import org.astoolkit.commons.reflection.IAnnotation;
 
 	public final class AnnotationUtil
 	{

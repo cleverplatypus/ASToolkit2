@@ -48,28 +48,7 @@ package org.astoolkit.workflow.task.log
 	 */
 	public class WriteLog extends BaseTask
 	{
-		private static const LOGGER : ILogger =
-			Log.getLogger( getQualifiedClassName( WriteLog ).replace( /:+/g, "." ) );
-
-		[Inspectable( defaultValue="debug", enumeration="debug,info,warn,error,fatal" )]
-		/**
-		 * debug level.
-		 * <p>Either debug,info,warn,error or fatal</p>
-		 */
-		public var level : String = "debug";
-
-		/**
-		 * parameters for text substitution in the message
-		 */
-		public var parameters : Array = [];
-
-		[Bindable]
-		[InjectPipeline]
-		/**
-		 * the message to log.
-		 * <p>{<em>n</em>} placeholders can be used for text substitution.</p>
-		 */
-		public var text : String = null;
+		private static const LOGGER : ILogger = getLogger( WriteLog );
 
 		/**
 		 * @private
@@ -83,6 +62,31 @@ package org.astoolkit.workflow.task.log
 				fatal: LogEventLevel.FATAL
 			};
 
+		private var _text : String;
+
+		[Inspectable( defaultValue="debug", enumeration="debug,info,warn,error,fatal" )]
+		/**
+		 * debug level.
+		 * <p>Either debug,info,warn,error or fatal</p>
+		 */
+		public var level : String = "debug";
+
+		/**
+		 * parameters for text substitution in the message
+		 */
+		public var parameters : Array = [];
+
+		[InjectPipeline]
+		/**
+		 * the message to log.
+		 * <p>{<em>n</em>} placeholders can be used for text substitution.</p>
+		 */
+		public function set text( inValue : String ) : void
+		{
+			_onPropertySet( "text" );
+			_text = inValue;
+		}
+
 		/**
 		 * @private
 		 */
@@ -92,7 +96,7 @@ package org.astoolkit.workflow.task.log
 
 			try
 			{
-				var outMessage : String = text;
+				var outMessage : String = _text;
 
 				if( !outMessage )
 				{

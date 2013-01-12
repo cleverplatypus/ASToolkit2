@@ -21,7 +21,6 @@ package org.astoolkit.workflow.task.parsley
 {
 
 	import mx.core.IFactory;
-	
 	import org.spicefactory.lib.reflect.ClassInfo;
 	import org.spicefactory.parsley.core.context.provider.Provider;
 	import org.spicefactory.parsley.core.messaging.receiver.MessageTarget;
@@ -30,12 +29,12 @@ package org.astoolkit.workflow.task.parsley
 
 	public class WaitForMessage extends AbstractParsleyTask
 	{
+
+		private var _messageTarget : MessageTarget;
+
 		public var messageType : IFactory;
 
 		public var selector : String;
-
-		
-		private var _messageTarget : MessageTarget;
 
 		override public function begin() : void
 		{
@@ -47,12 +46,12 @@ package org.astoolkit.workflow.task.parsley
 			info.order = int.MAX_VALUE;
 			var handler : DefaultMessageHandler = new DefaultMessageHandler( info );
 			handler.init( Provider.forInstance( this ), ClassInfo.forInstance( listener ).getMethod( "handler" ) );
-			parsleyContext.scopeManager.getScope( ( scope as String ) ).messageReceivers.addTarget( handler );
+			_parsleyContext.scopeManager.getScope( ( scope as String ) ).messageReceivers.addTarget( handler );
 		}
 
 		private function onMessage() : void
 		{
-			parsleyContext
+			_parsleyContext
 				.scopeManager
 				.getScope( scope as String )
 				.messageReceivers
@@ -65,12 +64,13 @@ package org.astoolkit.workflow.task.parsley
 
 class Listener
 {
+
+	private var _callback : Function;
+
 	public function Listener( inCallback : Function )
 	{
 		_callback = inCallback;
 	}
-
-	private var _callback : Function;
 
 	public function handler( inMessage : Object ) : void
 	{

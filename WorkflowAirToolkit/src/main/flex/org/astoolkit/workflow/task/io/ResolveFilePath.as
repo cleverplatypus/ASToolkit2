@@ -7,11 +7,16 @@ package org.astoolkit.workflow.task.io
 	public class ResolveFilePath extends BaseTask
 	{
 
+		private var _sourceFile : File;
+
 		public var path : String;
 
-		[Bindable]
 		[InjectPipeline]
-		public var sourceFile : File;
+		public function set sourceFile( inValue :File) : void
+		{
+			_onPropertySet( "sourceFile" );
+			_sourceFile = inValue;
+		}
 
 		/**
 		 * @private
@@ -20,12 +25,12 @@ package org.astoolkit.workflow.task.io
 		{
 			super.begin();
 
-			if( !sourceFile )
+			if( !_sourceFile )
 			{
 				fail( "sourceFile is not set" );
 				return;
 			}
-			complete( sourceFile.resolvePath( path ) );
+			complete( _sourceFile.resolvePath( path ) );
 		}
 	}
 }

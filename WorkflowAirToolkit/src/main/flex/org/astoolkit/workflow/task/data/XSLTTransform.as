@@ -32,34 +32,44 @@ package org.astoolkit.workflow.task.data
 	public class XSLTTransform extends BaseTask
 	{
 
-		[Inspectable( enumeration="xml,text" )]
-		public var outputFormat : String = xml;
-
-		public var server : ServerSocket;
-
-		[Bindable]
-		[InjectPipeline]
-		public var xml : XML;
-
-		[Bindable]
-		[InjectPipeline]
-		public var xslt : XML;
-
 		private var _htmlBridge : HTMLLoader;
 
 		private var _port : int = 1024;
+
+		private var _xml : XML;
+
+		private var _xslt : XML;
+
+		[Inspectable( enumeration="xml,text" )]
+		public var outputFormat : String = "xml";
+
+		public var server : ServerSocket;
+
+		[InjectPipeline]
+		public function set xml( inValue :XML) : void
+		{
+			_onPropertySet( "xml" );
+			_xml = inValue;
+		}
+
+		[InjectPipeline]
+		public function set xslt( inValue :XML) : void
+		{
+			_onPropertySet( "xslt" );
+			_xslt = inValue;
+		}
 
 		override public function begin() : void
 		{
 			super.begin()
 
-			if( !xml && !xslt )
+			if( !_xml && !_xslt )
 			{
 				fail( "Either or both xml/xslt not set" );
 				return;
 			}
 
-			if( !xml )
+			if( !_xml )
 			{
 				if( filteredInput is XML )
 					xml = filteredInput as XML;
@@ -70,7 +80,7 @@ package org.astoolkit.workflow.task.data
 				}
 			}
 
-			if( !xslt )
+			if( !_xslt )
 			{
 				if( filteredInput is XML )
 					xslt = filteredInput as XML;
@@ -168,7 +178,7 @@ package org.astoolkit.workflow.task.data
 		{
 			try
 			{
-				var result : String = _htmlBridge.window.transformXML( xml, xslt );
+				var result : String = _htmlBridge.window.transformXML( _xml, _xslt );
 				var out : *;
 
 				if( outputFormat == "xml" )

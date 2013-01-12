@@ -21,17 +21,20 @@ package org.astoolkit.workflow.api
 {
 
 	import mx.core.IFactory;
-	
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
 	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluatorRegistry;
+	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 
 	/**
 	 * Contract for an IWorkflowContext configuration object.
-	 * It provides the per-context-factory non-changing configuration. 
+	 * It provides the per-context-factory non-changing configuration.
 	 */
-	public interface IContextConfig
+	public interface IContextConfig extends IFactoryResolver
 	{
+
+		[ArrayItemType("org.astoolkit.commons.factory.ClassFactoryMapping")]
+		function set classFactoryMappings( inValue : Array ) : void;
 		/**
 		 * an instance of <code>IIODataTransformerRegistry</code> providing
 		 * access to all the registered IIODataTransformer implementations
@@ -40,17 +43,16 @@ package org.astoolkit.workflow.api
 		function get dataTransformerRegistry() : IIODataTransformerRegistry;
 		function set dataTransformerRegistry( inValue : IIODataTransformerRegistry ) : void;
 		/**
-		 * called by the owner <code>IWorkflowContext</code> after
-		 * setting the config's properties.
-		 */
-		function init() : void;
-		/**
 		 * an instance of <code>IIteratorFactory</code> providing
 		 * access to all the registered <code>IIterator</code> implementations
 		 * made available to the <code>IWorkflowContext</code>
 		 */
 		function get iteratorFactory() : IIteratorFactory;
 		function set iteratorFactory( inValue : IIteratorFactory ) : void;
+
+		function get objectConfigurers() : Vector.<IObjectConfigurer>;
+		function set objectConfigurers( inValue : Vector.<IObjectConfigurer> ) : void;
+
 		/**
 		 * an instance of <code>IPropertyOverrideRule</code> providing
 		 * the rule for properties override.
@@ -69,11 +71,11 @@ package org.astoolkit.workflow.api
 		 */
 		function get templateRegistry() : ITaskTemplateRegistry;
 		function set templateRegistry( inValue : ITaskTemplateRegistry ) : void;
-		
-		function getFactoryForType( inType : Class ) : IFactory;
-		
-		[ArrayItemType("org.astoolkit.commons.factory.ClassFactoryMapping")]
-		function set classFactoryMappings( inValue : Array ) : void;
 
+		/**
+		 * called by the owner <code>IWorkflowContext</code> after
+		 * setting the config's properties.
+		 */
+		function init() : void;
 	}
 }

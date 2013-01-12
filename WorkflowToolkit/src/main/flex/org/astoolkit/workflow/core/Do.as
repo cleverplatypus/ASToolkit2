@@ -20,12 +20,9 @@ Version 2.x
 package org.astoolkit.workflow.core
 {
 
-	import flash.events.IEventDispatcher;
 	import flash.utils.getQualifiedClassName;
 	import mx.core.IFactory;
 	import mx.logging.ILogger;
-	import mx.logging.Log;
-	import org.astoolkit.commons.collection.CountIterator;
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.collection.api.IRepeater;
 	import org.astoolkit.commons.databinding.BindingUtility;
@@ -33,6 +30,7 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.mapping.SimplePropertiesMapper;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 	import org.astoolkit.commons.mapping.api.IPropertyMappingDescriptor;
+	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.utils.Range;
 	import org.astoolkit.workflow.annotation.*;
 	import org.astoolkit.workflow.api.*;
@@ -60,7 +58,6 @@ package org.astoolkit.workflow.core
 	[Event(
 		name = "subtaskAborted",
 		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Bindable]
 	/**
 	 * This is the core Workflow Toolkit class.
 	 * <p>A <code>Workflow</code> instance represents a group of tasks
@@ -75,10 +72,7 @@ package org.astoolkit.workflow.core
 	public class Do extends BaseTask implements ITasksGroup, IRepeater
 	{
 
-		protected static const LOGGER : ILogger =
-			Log.getLogger( getQualifiedClassName( Do ).replace( /:+/g, "." ) );
-
-		private static var _metadataInitialized : Boolean;
+		protected static const LOGGER : ILogger = getLogger( Do );
 
 		private var _elementsQueue:ElementsQueue;
 
@@ -194,6 +188,8 @@ package org.astoolkit.workflow.core
 		[InjectPipeline]
 		public function set dataProvider( inValue : Object ) : void
 		{
+			_onPropertySet( "dataProvider" );
+
 			if( status == TaskStatus.RUNNING )
 				return;
 			_dataProvider = inValue;
@@ -243,6 +239,8 @@ package org.astoolkit.workflow.core
 		[AutoConfig( type="org.astoolkit.commons.collection.api.IIterator")]
 		public function set iterator( inValue : IIterator ) : void
 		{
+			_onPropertySet( "iterator" );
+
 			if( status != TaskStatus.RUNNING && status != TaskStatus.IDLE )
 			{
 				if( _iterator )
@@ -253,6 +251,7 @@ package org.astoolkit.workflow.core
 
 		public function set iteratorConfig( inValue : Object ) : void
 		{
+			_onPropertySet( "iteratorConfig" );
 			_iteratorConfig = inValue;
 		}
 
@@ -281,7 +280,8 @@ package org.astoolkit.workflow.core
 			try
 			{
 				//setting iterate to Iterate.DATA automatically if dataProvider wasn't injected
-				if( _dataProvider && propertyWasSetExplicitly( "dataProvider" ) )
+				if( _dataProvider && propertyWasSetExplicitly( "dataProvider" ) ||
+					_iterator && propertyWasSetExplicitly( "iterator" ) )
 				{
 					_iterate = Iterate.DATA;
 					LOGGER.info( "Setting iterate=\"data\" as dataProvider has been" +
@@ -333,9 +333,15 @@ package org.astoolkit.workflow.core
 		{
 			super.cleanUp();
 
-			if( _actuallyInjectableProperties.indexOf( "dataProvider" ) > -1 )
+			if( !propertyWasSetExplicitly( "dataProvider" ) )
 			{
 				_dataProvider = null;
+			}
+
+			if( !propertyWasSetExplicitly( "iterator" ) )
+			{
+				_context.config.iteratorFactory.release( _iterator );
+				_iterator = null;
 			}
 
 			for each( var child : IWorkflowElement in _children )
@@ -396,14 +402,15 @@ package org.astoolkit.workflow.core
 
 			if( _iterate == Iterate.DATA && _dataProvider != null )
 			{
-				if( _actuallyInjectableProperties.indexOf( "dataProvider" ) > -1 )
-				{
+				if( !propertyWasSetExplicitly( "dataProvider" ) )
 					_dataProvider = null;
-				}
 			}
 
-			if( _iterator )
+			if( !propertyWasSetExplicitly( "iterator" ) )
+			{
 				_context.config.iteratorFactory.release( _iterator );
+				_iterator = null;
+			}
 			complete( _pipelineData );
 		}
 
@@ -464,7 +471,6 @@ package org.astoolkit.workflow.core
 
 		protected function onSubtaskCompleted( inTask : IWorkflowTask ) : void
 		{
-			trace( "onSubtaskCompleted : " + inTask.description );
 
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
 				w.onTaskExitStatus( inTask, inTask.exitStatus );
@@ -492,12 +498,12 @@ package org.astoolkit.workflow.core
 							//TODO: reimplement using IExpressionResolver
 							if( sOutlet.match( /^\$?\w+$/ ) )
 								context.variables[ inTask.outlet ] = inTask.output;
-							else if( sOutlet.match( /^\|?\w+$/ ) )
+							else if( sOutlet.match( /^\.?\w+$/ ) )
 							{
 								//TODO: change this to use an outputFilter ???
 								try
 								{
-									if( sOutlet.charAt( 0 ) == "|" )
+									if( sOutlet.charAt( 0 ) == "." )
 										//output is set as a property of the unmodified pipelineData passed
 										//to this task. The property name is the outlet text after "|"
 										_subPipelineData[ sOutlet.substr( 1 ) ] = inTask.output;
@@ -510,8 +516,8 @@ package org.astoolkit.workflow.core
 									fail( "Injecting task {0} output failed. {1} class doesn't have " +
 										"the \"{2}\" property.",
 										inTask.description,
-										( sOutlet.charAt( 0 ) == "|" ? _subPipelineData : inTask.filteredInput ),
-										sOutlet.replace( /^|/, "" ) );
+										( sOutlet.charAt( 0 ) == "." ? _subPipelineData : inTask.filteredInput ),
+										sOutlet.replace( /^\./, "" ) );
 									return;
 								}
 							}
@@ -686,6 +692,11 @@ package org.astoolkit.workflow.core
 			}
 		}
 
+		/**
+		 * @private
+		 *
+		 * returns true if children were processed synchronously
+		 */
 		protected function processChildren() : Boolean
 		{
 			if( _status == TaskStatus.SUSPENDED )
@@ -791,11 +802,6 @@ package org.astoolkit.workflow.core
 			completeGroup();
 		}
 
-		protected function propertyWasSetExplicitly( inProperty : String ) : Boolean
-		{
-			return _actuallyInjectableProperties.indexOf( inProperty ) == -1
-		}
-
 		protected function resumeProcessIteration() : void
 		{
 			processIteration( true );
@@ -831,7 +837,7 @@ package org.astoolkit.workflow.core
 			if( _subPipelineData == UNDEFINED )
 			{
 				if( _feed == Feed.PIPELINE ||
-					( _feed == Feed.AUTO && ( _iterator == null || _iterate == Iterate.ONCE ) ) )
+					( _feed == Feed.AUTO && _iterator == null ) || _iterate == Iterate.ONCE )
 				{
 					_subPipelineData = filteredInput;
 				}

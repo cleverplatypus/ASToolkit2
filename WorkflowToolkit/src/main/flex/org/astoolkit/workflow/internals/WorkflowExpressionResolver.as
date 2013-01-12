@@ -2,17 +2,37 @@ package org.astoolkit.workflow.internals
 {
 
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
+	import org.astoolkit.commons.eval.ExpressionResolverToken;
 	import org.astoolkit.workflow.api.IWorkflowContext;
 
+	[Deprecated(message="WorkflowExpressionResolver is deprecated, use new IExpressionResolver architecture")]
 	public class WorkflowExpressionResolver implements IExpressionResolver
 	{
+
+		private var _context : IWorkflowContext;
+
+		public function set delegate(inDelegate:IExpressionResolver) : void
+		{
+			// TODO Auto Generated method stub
+
+		}
+
+		public function set key(inValue:*) : void
+		{
+			// TODO Auto Generated method stub
+
+		}
+
+		public function set expression(inValue:Object) : void
+		{
+			// TODO Auto Generated method stub
+
+		}
 
 		public function WorkflowExpressionResolver( inContext : IWorkflowContext )
 		{
 			_context = inContext;
 		}
-
-		private var _context : IWorkflowContext;
 
 		public function bindToEnvironment( inEnv : Object, inExpression : Object ) : Object
 		{
@@ -44,9 +64,9 @@ package org.astoolkit.workflow.internals
 			return null;
 		}*/
 
-		public function resolve( inValue : Object, inSource : Object = null ) : Object
+		public function resolve( inValue : Object = null, inSource : Object = null ) : ExpressionResolverToken
 		{
-			if( inValue is String )
+			/*if( inValue is String )
 			{
 				var exp : String = inValue as String;
 
@@ -69,7 +89,7 @@ package org.astoolkit.workflow.internals
 			}
 
 			if( inValue is Number || inValue is int || inValue is uint || inValue is Boolean )
-				return inValue;
+				return inValue;*/
 			return null;
 		}
 

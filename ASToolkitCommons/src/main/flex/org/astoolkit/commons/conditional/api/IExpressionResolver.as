@@ -20,9 +20,19 @@ Version 2.x
 package org.astoolkit.commons.conditional.api
 {
 
+	import org.astoolkit.commons.eval.ExpressionResolverToken;
+
 	public interface IExpressionResolver
 	{
+		function set delegate( inDelegate : IExpressionResolver ) : void;
+
+		function set expression( inValue : Object ) : void;
+
+		function set key( inValue : * ) : void;
+
+		[Deprecated]
 		function bindToEnvironment( inEnv : Object, inExpression : Object ) : Object;
-		function resolve( inExpression : Object, inSource : Object = null ) : Object;
+
+		function resolve( inExpression : Object = null, inSource : Object = null ) : ExpressionResolverToken;
 	}
 }

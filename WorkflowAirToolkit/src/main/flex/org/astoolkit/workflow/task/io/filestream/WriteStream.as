@@ -5,7 +5,7 @@ package org.astoolkit.workflow.task.io.filestream
 	import org.astoolkit.workflow.core.BaseTask;
 
 	/**
-	 * Writes data to a <code>flash.filesystem.FileStream</code>.<br><br>
+	 * Writes _data to a <code>flash.filesystem.FileStream</code>.<br><br>
 	 * The value is written using the stream's appropriate <code>writeBLA</code>
 	 * depending on the type passed.
 	 *
@@ -18,17 +18,23 @@ package org.astoolkit.workflow.task.io.filestream
 	 * <b>Params</b>
 	 * <ul>
 	 * <li><code>stream</code>: a destination FileStream</li>
-	 * <li><code>data</code> (injectable): the value to write</li>
+	 * <li><code>_data</code> (injectable): the value to write</li>
 	 * </ul>
 	 * </p>
 	 */
 	public class WriteStream extends BaseTask
 	{
+
+		private var _data : Object;
+
 		public var closeAfterWrite : Boolean;
 
-		[Bindable]
 		[InjectPipeline]
-		public var data : Object;
+		public function set data( inValue :Object) : void
+		{
+			_onPropertySet( "data" );
+			_data = inValue;
+		}
 
 		public var stream : FileStream;
 
@@ -42,22 +48,22 @@ package org.astoolkit.workflow.task.io.filestream
 				return;
 			}
 
-			if( !data )
+			if( !_data )
 			{
-				fail( "data property not defined" );
+				fail( "_data property not defined" );
 				return;
 			}
 
-			if( data is String )
-				stream.writeUTFBytes( data as String );
-			else if( data is Boolean )
-				stream.writeBoolean( data as Boolean );
-			else if( data is int )
-				stream.writeInt( data as int );
-			else if( data is Number )
-				stream.writeDouble( data as Number );
+			if( _data is String )
+				stream.writeUTFBytes( _data as String );
+			else if( _data is Boolean )
+				stream.writeBoolean( _data as Boolean );
+			else if( _data is int )
+				stream.writeInt( _data as int );
+			else if( _data is Number )
+				stream.writeDouble( _data as Number );
 			else
-				stream.writeObject( data );
+				stream.writeObject( _data );
 
 			if( closeAfterWrite )
 				stream.close();

@@ -36,6 +36,8 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
+	import org.astoolkit.commons.process.api.IDeferrableProcess;
+	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
 	import org.astoolkit.commons.reflection.Field;
 	import org.astoolkit.commons.reflection.Type;
 	import org.astoolkit.workflow.annotation.InjectPipeline;
@@ -43,7 +45,6 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.workflow.constant.*;
 	import org.astoolkit.workflow.internals.ContextVariablesProvider;
 	import org.astoolkit.workflow.internals.GroupUtil;
-	import org.astoolkit.workflow.internals.HeldTaskInfo;
 
 	[Exclude( name="ENV", kind="property" )]
 	[Exclude( name="delegate", kind="property" )]
@@ -130,10 +131,9 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		private static const LOGGER : ILogger =
-			Log.getLogger( getQualifiedClassName( BaseTask ).replace( /:+/g, "." ) );
+		private static const LOGGER : ILogger = getLogger( BaseElement );
 
-		private var _blocker : HeldTaskInfo;
+		private var _configDeferred : Boolean;
 
 		private var _deferredExecutionWatchers:Vector.<Function>;
 
@@ -155,11 +155,6 @@ package org.astoolkit.workflow.core
 		 * @private
 		 */
 		protected var __status : String;
-
-		/**
-		 * @private
-		 */
-		protected var _actuallyInjectableProperties : Vector.<String>;
 
 		/**
 		 * @private
@@ -196,16 +191,6 @@ package org.astoolkit.workflow.core
 		 * @private
 		 */
 		protected var _ignoreOutput : Boolean;
-
-		/**
-		 * @private
-		 */
-		protected var _injectableProperties : Object;
-
-		/**
-		 * @private
-		 */
-		protected var _injectablePropertiesWatchers : Object;
 
 		/**
 		 * @private
@@ -313,11 +298,6 @@ package org.astoolkit.workflow.core
 		*/
 		}
 
-		public function get blocker() : HeldTaskInfo
-		{
-			return _blocker;
-		}
-
 		override public function set context( inContext : IWorkflowContext ) : void
 		{
 			super.context = inContext;
@@ -393,7 +373,7 @@ package org.astoolkit.workflow.core
 		 *
 		 * @see org.astoolkit.workflow.core.ExitStatus
 	 * @inheritDoc
-																										  */
+																																*/
 		public function set exitStatus( inStatus : ExitStatus ) : void
 		{
 			_exitStatus = inStatus;
@@ -481,9 +461,9 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		public function set forceAsync( value : Boolean ) : void
+		public function set forceAsync( inValue : Boolean ) : void
 		{
-			_forceAsync = value;
+			_forceAsync = inValue;
 		}
 
 		public function get ignoreOutput() : Boolean
@@ -743,7 +723,10 @@ package org.astoolkit.workflow.core
 			dispatchTaskEvent( WorkflowEvent.ABORTED, this );
 
 			if( _delegate )
-				_delegate.onAbort( this, "Aborted: " + description );
+				_delegate.onAbort( this );
+
+			if( !_parent )
+				cleanUp();
 		}
 
 		public function addDeferredProcessWatcher( inWatcher : Function ) : void
@@ -800,30 +783,12 @@ package org.astoolkit.workflow.core
 		{
 			_status = TaskStatus.STOPPED;
 
-			if( _context )
-			{
-				_context.removeEventListener( WorkflowEvent.SUSPENDED, onContextSuspended );
-				_context.removeEventListener( WorkflowEvent.RESUMED, onContextResumed );
-				_context.suspendableFunctions.cleanUp();
+			_context.removeEventListener( WorkflowEvent.SUSPENDED, onContextSuspended );
+			_context.removeEventListener( WorkflowEvent.RESUMED, onContextResumed );
 
-				for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-					w.onBeforeContextUnbond( this );
-				_context = null;
-			}
-		}
+			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+				w.onBeforeContextUnbond( this );
 
-		public function hold() : HeldTaskInfo
-		{
-			if( _status != TaskStatus.IDLE )
-				throw new Error( "hold() can only be called with status == TaskStatus.IDLE" );
-
-			if( !_blocker )
-			{
-				_blocker = new HeldTaskInfo( this );
-				blocker.addEventListener( Event.COMPLETE, onRelease );
-				blocker.addEventListener( ErrorEvent.ERROR, onRelease );
-			}
-			return blocker;
 		}
 
 		/**
@@ -839,19 +804,6 @@ package org.astoolkit.workflow.core
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
 				w.onTaskInitialize( this );
 
-			if( !_injectableProperties )
-			{
-				var ci : Type = Type.forType( this );
-				var fields : Vector.<Field> = ci.getFieldsWithAnnotation( InjectPipeline );
-				_injectableProperties = {};
-
-				for each( var field : Field in fields )
-				{
-					_injectableProperties[ field.name ] = new InjectablePropertyInfo( field.name );
-				}
-				initializePropertyInjection()
-			}
-
 			if( _parent )
 				_status = TaskStatus.IDLE;
 
@@ -864,7 +816,7 @@ package org.astoolkit.workflow.core
 
 		public function isProcessDeferred() : Boolean
 		{
-			return _delay > 0 && !_delayHasElapsed;
+			return ( _delay > 0 && !_delayHasElapsed ) || _configDeferred;
 		}
 
 		/**
@@ -927,6 +879,31 @@ package org.astoolkit.workflow.core
 		override public function wakeup() : void
 		{
 			super.wakeup();
+
+			if( _propertiesDataProviderInfo )
+			{
+				var value : *;
+
+				for each( var prop : PropertyDataProviderInfo in _propertiesDataProviderInfo )
+				{
+					value = prop.dataProvider.getData();
+
+					if( value  === undefined )
+					{
+						if( prop.dataProvider is IDeferrableProcess && IDeferrableProcess( prop.dataProvider ).isProcessDeferred() )
+						{
+							_configDeferred  = true;
+							IDeferrableProcess( prop.dataProvider ).addDeferredProcessWatcher( onDeferredConfigPropertyComplete );
+							return;
+						}
+					}
+					else
+					{
+						this[ prop.name ] = value;
+					}
+
+				}
+			}
 
 			if( _delay > 0 && !_delayHasElapsed )
 			{
@@ -1100,26 +1077,9 @@ package org.astoolkit.workflow.core
 			_deferredFail( message, _thread );
 		}
 
-		/**
-		 * @private
-		 */
-		protected function initializePropertyInjection() : void
-		{
-			_injectablePropertiesWatchers = {};
-			_actuallyInjectableProperties = new Vector.<String>();
-
-			for each( var prop : InjectablePropertyInfo in _injectableProperties )
-			{
-				if( !prop.hasExplicitValue )
-				{
-					_injectablePropertiesWatchers[ prop.name ] = ChangeWatcher.watch( this, prop.name, onInjectablePropertyChange );
-					_actuallyInjectableProperties.push( prop.name );
-				}
-			}
-		}
-
 		protected function injectPipeline() : void
 		{
+			//TODO: move this away from here
 			var ci : Type = Type.forType( this );
 			var fields : Vector.<Field> = ci.getFieldsWithAnnotation( InjectPipeline );
 			var data : Object = filteredInput;
@@ -1128,13 +1088,9 @@ package org.astoolkit.workflow.core
 
 			for each( var field : Field in fields )
 			{
-				if( _actuallyInjectableProperties.indexOf( field.name ) > -1 )
+				if( !propertyWasSetExplicitly( field.name ) )
 				{
 					annotation = field.getAnnotationsOfType( InjectPipeline )[ 0 ] as InjectPipeline;
-					var watchInfo : ChangeWatcher = _injectablePropertiesWatchers[ field.name ];
-
-					if( watchInfo )
-						watchInfo.unwatch();
 
 					if( !defaultPropSet && annotation.filterText == null &&
 						( field.type == null || data is field.type ) )
@@ -1146,11 +1102,6 @@ package org.astoolkit.workflow.core
 					{
 						this[ field.name ] = _context.config.dataTransformerRegistry.getTransformer( data, annotation.filterText ).transform(
 							data, annotation.filterText, this );
-					}
-
-					if( watchInfo )
-					{
-						_injectablePropertiesWatchers[ field.name ] = ChangeWatcher.watch( this, field.name, onInjectablePropertyChange );
 					}
 				}
 			}
@@ -1187,33 +1138,10 @@ package org.astoolkit.workflow.core
 			}
 		}
 
-		/**
-		 * @private
-		 */
-		protected function onInjectablePropertyChange( inEvent : PropertyChangeEvent ) : void
+		protected function onDeferredConfigPropertyComplete( ... rest ) : void
 		{
-			var index : int = _actuallyInjectableProperties.indexOf( inEvent.property );
-
-			if( index > -1 )
-			{
-				_actuallyInjectableProperties.splice( index, 1 );
-				var cw : ChangeWatcher = _injectablePropertiesWatchers[ inEvent.property ];
-				cw.unwatch();
-				delete _injectablePropertiesWatchers[ inEvent.property ];
-
-				if( !_document )
-				{
-					LOGGER.debug( "Property {0} set explicitly in MXML. Disabling injection", inEvent.property );
-					//this will ensure that only properties set explicityly in the MXML
-					//won't be ever considered for injection.
-					//This allows properties set by bindings to be injectable if bindings don't happen
-					InjectablePropertyInfo( _injectableProperties[ inEvent.property ] ).hasExplicitValue = true;
-				}
-				else
-				{
-					LOGGER.debug( "Property {0} set via data binding. Disabling injection", inEvent.property );
-				}
-			}
+			_configDeferred = false;
+			notifyDeferredProcessWatchers();
 		}
 
 		/**
@@ -1301,25 +1229,6 @@ package org.astoolkit.workflow.core
 			if( !isProcessDeferred() )
 				notifyDeferredProcessWatchers();
 		}
-
-		private function onRelease( inEvent : Event ) : void
-		{
-			_blocker = null;
-		}
 	}
 }
 
-import mx.binding.utils.ChangeWatcher;
-
-class InjectablePropertyInfo
-{
-
-	public var hasExplicitValue : Boolean;
-
-	public var name : String;
-
-	public function InjectablePropertyInfo( inName : String )
-	{
-		name = inName;
-	}
-}

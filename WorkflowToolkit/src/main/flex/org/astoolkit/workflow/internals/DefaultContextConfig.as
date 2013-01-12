@@ -21,34 +21,48 @@ package org.astoolkit.workflow.internals
 {
 
 	import flash.utils.getQualifiedClassName;
-	
 	import mx.core.IFactory;
-	
 	import org.astoolkit.commons.collection.DefaultIteratorFactory;
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
 	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluatorRegistry;
 	import org.astoolkit.commons.factory.ClassFactoryMapping;
-	import org.astoolkit.commons.factory.api.IExtendedFactory;
 	import org.astoolkit.commons.factory.PooledFactory;
+	import org.astoolkit.commons.factory.api.IExtendedFactory;
 	import org.astoolkit.commons.io.transform.DefaultDataTransformRegistry;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 	import org.astoolkit.workflow.api.IContextConfig;
+	import org.astoolkit.workflow.api.IObjectConfigurer;
 	import org.astoolkit.workflow.api.IPropertyOverrideRule;
 	import org.astoolkit.workflow.api.ITaskTemplateRegistry;
 
 	public class DefaultContextConfig implements IContextConfig
 	{
+
 		private var _classFactoryMappings : Array;
 
 		private var _inputFilterFactory : IIODataTransformerRegistry;
 
 		private var _iteratorFactory : IIteratorFactory;
 
+		private var _objectConfigurers : Vector.<IObjectConfigurer>;
+
 		private var _propertyOverrideRule : IPropertyOverrideRule;
 
 		private var _runtimeExpressionEvalutators : IRuntimeExpressionEvaluatorRegistry;
 
 		private var _templateRegistry : ITaskTemplateRegistry;
+
+		public function get classFactoryMappings() : Array
+		{
+			return _classFactoryMappings;
+		}
+
+		[ArrayItemType("org.astoolkit.commons.factory.ClassFactoryMapping")]
+		public function set classFactoryMappings(inValue:Array) : void
+		{
+			_classFactoryMappings = inValue;
+
+		}
 
 		public function get dataTransformerRegistry() : IIODataTransformerRegistry
 		{
@@ -60,24 +74,6 @@ package org.astoolkit.workflow.internals
 			_inputFilterFactory = inValue;
 		}
 
-		public function init() : void
-		{
-			if( !_inputFilterFactory )
-				_inputFilterFactory = new DefaultDataTransformRegistry();
-
-			if( !_iteratorFactory )
-				_iteratorFactory = new DefaultIteratorFactory();
-
-			if( !_propertyOverrideRule )
-				_propertyOverrideRule = new DefaultPropertyOverrideRule();
-
-			if( !_templateRegistry )
-				_templateRegistry = new DefaultTaskTemplateRegistry();
-
-			if( !_runtimeExpressionEvalutators )
-				_runtimeExpressionEvalutators = new DefaultRuntimeExpressionEvaluatorRegistry();
-		}
-
 		public function get iteratorFactory() : IIteratorFactory
 		{
 			return _iteratorFactory;
@@ -86,6 +82,16 @@ package org.astoolkit.workflow.internals
 		public function set iteratorFactory( inValue : IIteratorFactory ) : void
 		{
 			_iteratorFactory = inValue;
+		}
+
+		public function get objectConfigurers() : Vector.<IObjectConfigurer>
+		{
+			return _objectConfigurers;
+		}
+
+		public function set objectConfigurers(value:Vector.<IObjectConfigurer>) : void
+		{
+			_objectConfigurers = value;
 		}
 
 		public function get propertyOverrideRule() : IPropertyOverrideRule
@@ -117,14 +123,13 @@ package org.astoolkit.workflow.internals
 		{
 			_templateRegistry = inValue;
 		}
-		
-		
-						
+
 		public function getFactoryForType( inType : Class ) : IFactory
 		{
 			if( _classFactoryMappings )
 			{
 				var fac : IFactory;
+
 				for each( var mapping : ClassFactoryMapping in _classFactoryMappings )
 				{
 					var re : RegExp = new RegExp( 
@@ -132,32 +137,38 @@ package org.astoolkit.workflow.internals
 						.replace( /\*/g, "`" )
 						.replace( /\./g, "\\." )
 						.replace( /`/g, ".*" ) );
+
 					if( getQualifiedClassName( inType ).replace( "::", "." ).match( re ) )
 					{
 						fac = mapping.factory;
+
 						if( fac is IExtendedFactory )
 							IExtendedFactory( fac ).type = inType;
 						return fac;
 					}
-					
+
 				}
-				
+
 			}
 			return PooledFactory.create( inType, null );
 		}
-		
-		[ArrayItemType("org.astoolkit.commons.factory.ClassFactoryMapping")]
-		public function set classFactoryMappings(inValue:Array):void
-		{
-			_classFactoryMappings = inValue;
-			
-		}
-		
-		public function get classFactoryMappings():Array
-		{
-			return _classFactoryMappings;
-		}
 
-		
+		public function init() : void
+		{
+			if( !_inputFilterFactory )
+				_inputFilterFactory = new DefaultDataTransformRegistry();
+
+			if( !_iteratorFactory )
+				_iteratorFactory = new DefaultIteratorFactory();
+
+			if( !_propertyOverrideRule )
+				_propertyOverrideRule = new DefaultPropertyOverrideRule();
+
+			if( !_templateRegistry )
+				_templateRegistry = new DefaultTaskTemplateRegistry();
+
+			if( !_runtimeExpressionEvalutators )
+				_runtimeExpressionEvalutators = new DefaultRuntimeExpressionEvaluatorRegistry();
+		}
 	}
 }

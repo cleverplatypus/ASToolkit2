@@ -50,6 +50,9 @@ package org.astoolkit.workflow.task.text
 	 */
 	public class ConcatString extends BaseTask
 	{
+
+		private var _text : String;
+
 		/**
 		 * whether to concat the text at the beginning
 		 * of the <code>source</code> string
@@ -61,17 +64,20 @@ package org.astoolkit.workflow.task.text
 		 */
 		public var source : String;
 
-		[Bindable]
 		[InjectPipeline]
 		/**
-		 * (injectable) the text to concat
+		 * @private
 		 */
-		public var text : String;
+		public function set text( inValue :String) : void
+		{
+			_onPropertySet( "text" );
+			_text = inValue;
+		}
 
 		override public function begin() : void
 		{
 			super.begin();
-			var theText : String = !text ? "" : text;
+			var theText : String = !_text ? "" : _text;
 			var theSource : String = !source ? "" : source;
 			complete( leading ? theText + theSource : theSource + theText );
 		}

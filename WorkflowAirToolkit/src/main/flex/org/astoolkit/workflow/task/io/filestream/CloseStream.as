@@ -22,16 +22,21 @@ package org.astoolkit.workflow.task.io.filestream
 	public class CloseStream extends BaseTask
 	{
 
-		[Bindable]
+		private var _stream : FileStream;
+
 		[InjectPipeline]
-		public var stream : FileStream;
+		public function set stream( inValue :FileStream) : void
+		{
+			_onPropertySet( "stream" );
+			_stream = inValue;
+		}
 
 		override public function begin() : void
 		{
 			super.begin();
 
-			if( stream )
-				stream.close();
+			if( _stream )
+				_stream.close();
 			complete();
 		}
 	}

@@ -22,12 +22,11 @@ package org.astoolkit.workflow.task.parsley
 
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
-	
 	import mx.core.IFactory;
 	import mx.logging.ILogger;
 	import mx.logging.Log;
 	import mx.utils.StringUtil;
-	
+	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.mapping.MappingError;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
@@ -43,21 +42,33 @@ package org.astoolkit.workflow.task.parsley
 	 * wait for either a command result or a fault to complete.
 	 * Otherwise it will complete straight after sending the message.
 	 */
-	[Bindable]
 	public class SendParsleyMessage extends AbstractParsleyTask implements ISendMessage
 	{
-		private static const LOGGER : ILogger =
-			Log.getLogger( getQualifiedClassName( SendParsleyMessage ).replace( /:+/g, "." ) );
+		private static const LOGGER : ILogger = getLogger( SendParsleyMessage );
 
 		private var _completeObserver : CommandObserver;
 
 		private var _errorObserver : CommandObserver;
 
+		private var _factoryResolver:IFactoryResolver;
+
+		private var _hasAsyncResult:Boolean;
+
 		private var _mapper : IPropertiesMapper;
 
 		private var _mappingInfo : Object;
 
+		private var _message:Object;
+
+		private var _messageClass:Class;
+
+		private var _messageFactory:IFactory;
+
+		private var _messageMappingFailurePolicy:String;
+
 		private var _processor : CommandObserverProcessor;
+
+		private var _selector:*;
 
 		protected function get mapper() : IPropertiesMapper
 		{
@@ -66,6 +77,11 @@ package org.astoolkit.workflow.task.parsley
 				_mapper = ENV.mapTo.object( null, _mappingInfo );
 			}
 			return _mapper;
+		}
+
+		public function set factoryResolver( inValue : IFactoryResolver ) : void
+		{
+			_factoryResolver = inValue;
 		}
 
 		/**
@@ -78,16 +94,25 @@ package org.astoolkit.workflow.task.parsley
 		 * Otherwise, for a <code>[MessageHandler]</code> tagged function we set
 		 *  <code>isCommand="false"</code>.
 		 */
-		public var hasAsyncResult : Boolean = false;
+		public function set hasAsyncResult(value:Boolean) : void
+		{
+			_hasAsyncResult = value;
+		}
 
 		/**
 		 * the message instance to be sent. Ignored if <code>messageFactory</code> is set.
 		 *
 		 * @see messageFactory
 		 */
-		public var message : Object;
+		public function set message(value:Object) : void
+		{
+			_message = value;
+		}
 
-		public var messageClass : Class;
+		public function set messageClass(value:Class) : void
+		{
+			_messageClass = value;
+		}
 
 		/**
 		 * a factory to create messages. If set, the <code>message</code> property is ignored.
@@ -96,10 +121,16 @@ package org.astoolkit.workflow.task.parsley
 		 * the task input for either <code>IFactory</code> instances or other types of object
 		 * that will be use as message .</p>
 		 */
-		public var messageFactory : IFactory;
+		public function set messageFactory(value:IFactory) : void
+		{
+			_messageFactory = value;
+		}
 
 		[Inspectable( enumeration="abort,ignore,log-error,log-warn,log-info,log-debug", defaultValue="abort" )]
-		public var messageMappingFailurePolicy : String = FailurePolicy.ABORT;
+		public function set messageMappingFailurePolicy(value:String) : void
+		{
+			_messageMappingFailurePolicy = value;
+		}
 
 		/**
 		 * an optional object which name-value pairs represents the
@@ -130,15 +161,18 @@ package org.astoolkit.workflow.task.parsley
 		/**
 		 * the message handler selector value
 		 */
-		public var selector : *;
+		public function set selector(value:*) : void
+		{
+			_selector = value;
+		}
 
 		override public function begin() : void
 		{
 			super.begin();
 
-			var aFactory : IFactory = messageClass != null ? context.getPooledFactory( messageClass ) : messageFactory;
+			var aFactory : IFactory = _messageClass != null ? _context.getPooledFactory( _messageClass ) : _messageFactory;
 
-			var aMessage : Object = aFactory != null ? aFactory.newInstance() : message;
+			var aMessage : Object = aFactory != null ? aFactory.newInstance() : _message;
 
 			var pData : Object = filteredInput;
 
@@ -157,11 +191,11 @@ package org.astoolkit.workflow.task.parsley
 				{
 					try
 					{
-						mapper.strict = messageMappingFailurePolicy == FailurePolicy.ABORT;
+						mapper.strict = _messageMappingFailurePolicy == FailurePolicy.ABORT;
 						mapper.mapFailDelegate = function( inProperty : String ) : void
 						{
-							if( messageMappingFailurePolicy.match( /^log\-/ ) )
-								LOGGER[ messageMappingFailurePolicy.replace( /^log\-/, "" ) ](
+							if( _messageMappingFailurePolicy.match( /^log\-/ ) )
+								LOGGER[ _messageMappingFailurePolicy.replace( /^log\-/, "" ) ](
 									getMappingErrorMessage( aMessage, pData, inProperty )
 									);
 						};
@@ -170,7 +204,7 @@ package org.astoolkit.workflow.task.parsley
 					}
 					catch( e : MappingError )
 					{
-						if( messageMappingFailurePolicy == FailurePolicy.ABORT )
+						if( _messageMappingFailurePolicy == FailurePolicy.ABORT )
 						{
 							fail( e.message );
 							return;
@@ -179,30 +213,30 @@ package org.astoolkit.workflow.task.parsley
 				}
 			}
 
-			if( hasAsyncResult )
+			if( _hasAsyncResult )
 			{
 				var clazz : Class = getDefinitionByName( getQualifiedClassName( aMessage ) ) as Class;
 				_completeObserver = createThreadSafeObserver(
 					CommandStatus.COMPLETE,
-					selector,
+					_selector,
 					clazz,
 					1,
 					onObserverCommandComplete );
 				_errorObserver = createThreadSafeObserver(
 					CommandStatus.ERROR,
-					selector,
+					_selector,
 					clazz,
 					1,
 					onObserverCommandFault );
 				registerCommandObserver( _completeObserver );
 				registerCommandObserver( _errorObserver );
 			}
-			parsleyContext.scopeManager.getScope( scope as String ).dispatchMessage( aMessage, selector );
+			parsleyContext.scopeManager.getScope( scope as String ).dispatchMessage( aMessage, _selector );
 
 			if( aFactory is IPooledFactory )
 				IPooledFactory( aFactory ).release( aMessage );
 
-			if( !hasAsyncResult )
+			if( !_hasAsyncResult )
 				complete();
 		}
 
@@ -210,7 +244,7 @@ package org.astoolkit.workflow.task.parsley
 		{
 			super.cleanUp();
 
-			if( hasAsyncResult )
+			if( _hasAsyncResult )
 			{
 				if( _completeObserver )
 					unregisterCommandObserver( _completeObserver );

@@ -1,4 +1,4 @@
-package org.astoolkit.commons.mxml
+package org.astoolkit.commons.wfml
 {
 	import mx.core.IMXMLObject;
 

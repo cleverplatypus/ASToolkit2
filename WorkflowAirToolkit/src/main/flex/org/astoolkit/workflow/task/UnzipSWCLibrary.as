@@ -14,11 +14,22 @@ package org.astoolkit.workflow.task
 	public class UnzipSWCLibrary extends BaseTask
 	{
 
-		[Bindable]
-		[InjectPipeline]
-		public var swcFile : File;
-
 		private var _extractor : SWCLibraryExtractor;
+
+		private var _swcFile : File;
+
+		[Inspectable( enumeration="bytearray,tempfile" )]
+		override public function set outputKind( inValue : String ) : void
+		{
+			super.outputKind = inValue;
+		}
+
+		[InjectPipeline]
+		public function set swcFile( inValue :File) : void
+		{
+			_onPropertySet( "swcFile" );
+			_swcFile = inValue;
+		}
 
 		/**
 		 * @private
@@ -26,14 +37,8 @@ package org.astoolkit.workflow.task
 		override public function begin() : void
 		{
 			super.begin();
-			_extractor = new SWCLibraryExtractor( swcFile );
+			_extractor = new SWCLibraryExtractor( _swcFile );
 			_extractor.extractSWFLibrary( new Responder( onExtractorSuccess, onExtractorFault ) );
-		}
-
-		[Inspectable( enumeration="bytearray,tempfile" )]
-		override public function set outputKind( inValue : String ) : void
-		{
-			super.outputKind = inValue;
 		}
 
 		private function onExtractorFault( inErr : Error ) : void

@@ -7,16 +7,23 @@ package org.astoolkit.commons.reflection
 	import mx.logging.ILogger;
 	import mx.logging.Log;
 	import mx.utils.object_proxy;
-	import org.astoolkit.commons.mxml.IAutoConfigContainerObject;
+	import org.astoolkit.commons.io.data.api.IDataProvider;
 	import org.astoolkit.commons.utils.ObjectCompare;
+	import org.astoolkit.commons.wfml.IAutoConfigContainerObject;
 
 	public final class AutoConfigUtil
 	{
 		private static const LOGGER : ILogger = getLogger( AutoConfigUtil );
 
 		//TODO: implement inheritance-tree-safe auto-config fields assignment to best match target fields
-		public static function autoConfig( inTarget : IAutoConfigContainerObject, inChildren : Array ) : Array
+		//TODO: implement support for IComponent.pid
+		public static function autoConfig( 
+			inTarget : IAutoConfigContainerObject, 
+			inChildren : Array ) : Vector.<PropertyDataProviderInfo>
 		{
+			if( inChildren == null || inChildren.length == 0 )
+				return null;
+			var deferredConfigs : Vector.<PropertyDataProviderInfo> = new Vector.<PropertyDataProviderInfo>();
 			var autoConfigFields : Vector.<Field> = 
 				Type.forType( inTarget )
 				.getFieldsWithAnnotation( AutoConfig );
@@ -51,8 +58,6 @@ package org.astoolkit.commons.reflection
 			{
 				for each( child in childrenInfo )
 				{
-					child.name = f.name;
-
 					if( child.assigned )
 						continue;
 
@@ -64,19 +69,37 @@ package org.astoolkit.commons.reflection
 							inTarget[ f.name ] = collectionsInfo[ f.name ];
 						}
 						collectionsInfo[ f.name ].push( child.object );
+						child.name = f.name;
 						child.assigned = true;
 						continue;
 					}
+					var annotations : Vector.<IAnnotation> = f.getAnnotationsOfType( AutoConfig );
+					var annotation : AutoConfig = annotations != null && annotations.length > 0 ?
+						annotations[0] as AutoConfig : null;
+					var type : Class = annotation.type ? annotation.type : f.type;
 
-					if( child.object is f.type )
+					if( child.object is type )
 					{
 						inTarget[ f.name ] = child.object;
+						child.name = f.name;
+						child.assigned = true;
+						break;
+					}
+
+					if( child.object is IDataProvider && 
+						IDataProvider( child.object ).providedType == type )
+					{
+						deferredConfigs.push( 
+							PropertyDataProviderInfo.create( 
+							f.name, 
+							child.object as IDataProvider ) );
+						child.name = f.name;
 						child.assigned = true;
 						break;
 					}
 				}
 			}
-			return childrenInfo;
+			return deferredConfigs;
 		}
 	}
 }

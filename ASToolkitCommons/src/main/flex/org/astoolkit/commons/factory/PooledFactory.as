@@ -22,20 +22,18 @@ package org.astoolkit.commons.factory
 
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
-	
 	import mx.core.ClassFactory;
 	import mx.logging.ILogger;
-	import mx.logging.Log;
 	import mx.utils.ArrayUtil;
 	import mx.utils.UIDUtil;
 	import org.astoolkit.commons.factory.api.IExtendedFactory;
 	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.factory.api.IPooledFactoryDelegate;
 
-	public class PooledFactory implements IPooledFactory
+	//TODO: this should extend ExtendedFactory
+	public class PooledFactory extends ExtendedClassFactory implements IPooledFactory
 	{
-		private static const LOGGER : ILogger =
-			Log.getLogger( getQualifiedClassName( PooledFactory ).replace( /:+/g, "." ) );
+		private static const LOGGER : ILogger = getLogger( PooledFactory );
 
 		public static function create(
 			intype : Class,
@@ -47,17 +45,9 @@ package org.astoolkit.commons.factory
 			return out;
 		}
 
-		public var defaultProperties : Object;
-
-		public var minimumStock : int = 1;
-
-		public var poolCleanupDelay : int = 5000;
-
 		private var _backupProperties : Array;
 
 		private var _busyObjects : Array = [];
-
-		private var _type : Class;
 
 		private var _delegate : IPooledFactoryDelegate;
 
@@ -67,13 +57,25 @@ package org.astoolkit.commons.factory
 
 		private var _propertiesBackup : Object = {};
 
-		private var _factoryMethod : String;
-		
-		private var _factoryMethodArguments : Array;
-		
 		public function set backupProperties( inProperties : Array ) : void
 		{
 			_backupProperties = inProperties;
+		}
+
+		public var defaultProperties : Object;
+
+		public function set delegate( inDelegate : IPooledFactoryDelegate ) : void
+		{
+			_delegate = inDelegate;
+		}
+
+		public var minimumStock : int = 1;
+
+		public var poolCleanupDelay : int = 5000;
+
+		public function get type() : Class
+		{
+			return _type;
 		}
 
 		public function cleanup() : void
@@ -92,26 +94,11 @@ package org.astoolkit.commons.factory
 			_pool = [];
 		}
 
-		public function get type() : Class
-		{
-			return _type;
-		}
-
-		public function set type( inValue : Class ) : void
-		{
-			_type = inValue;
-		}
-
-		public function set delegate( inDelegate : IPooledFactoryDelegate ) : void
-		{
-			_delegate = inDelegate;
-		}
-
 		/**
 		 * creates a new instance of the give type or of <code>type</code> class
 		 * or returns a pooled instance
 		 */
-		public function getInstance( 
+		override public function getInstance( 
 			inType : Class, 
 			inProperties : Object = null, 
 			inFactoryMethodArguments : Array = null, 
@@ -173,7 +160,7 @@ package org.astoolkit.commons.factory
 			return false;
 		}
 
-		public function newInstance() : *
+		override public function newInstance() : *
 		{
 			if( type )
 				return getInstance( type, defaultProperties );
@@ -228,21 +215,5 @@ package org.astoolkit.commons.factory
 				}
 			}
 		}
-		
-		public function set factoryMethod(inValue:String):void
-		{
-			_factoryMethod = inValue
-		}
-		
-		public function set factoryMethodArguments(inValue:Array):void
-		{
-			_factoryMethodArguments = inValue;
-		}
-				
-		public function set properties(inValue:Object):void
-		{
-			defaultProperties = inValue;
-		}
-		
 	}
 }

@@ -24,7 +24,7 @@ package org.astoolkit.commons.collection
 	import org.astoolkit.commons.utils.Range;
 
 	[IteratorSource( "org.astoolkit.commons.utils.Range,Number,int,uint" )]
-	public class CountIterator implements IIterator
+	public class CountIterator extends BaseIterator
 	{
 
 		private var _currentCount : int;
@@ -37,22 +37,22 @@ package org.astoolkit.commons.collection
 
 		public var countTo : int;
 
-		public function set cycle(value:Boolean) : void
+		override public function set cycle( inValue :Boolean) : void
 		{
-			_cycle = value;
+			_cycle = inValue;
 		}
 
-		public function get isAborted() : Boolean
+		override public function get isAborted() : Boolean
 		{
 			return _isAborted;
 		}
 
-		public function get progress() : Number
+		override public function get progress() : Number
 		{
 			return countFrom / countTo;
 		}
 
-		public function set source( inValue : * ) : void
+		override public function set source( inValue : * ) : void
 		{
 			if( inValue is Range )
 			{
@@ -69,44 +69,44 @@ package org.astoolkit.commons.collection
 			countTo = int.MIN_VALUE;
 		}
 
-		public function abort() : void
+		override public function abort() : void
 		{
 			_isAborted = true;
 		}
 
-		public function current() : Object
+		override public function current() : Object
 		{
 			return _currentCount;
 		}
 
-		public function currentIndex() : Number
+		override public function currentIndex() : Number
 		{
 			return _currentCount;
 		}
 
-		public function hasNext() : Boolean
+		override public function hasNext() : Boolean
 		{
 			return countTo != int.MIN_VALUE && _currentCount < countTo;
 		}
 
-		public function next() : Object
+		override public function next() : Object
 		{
 			_currentCount++;
 			return _currentCount;
 		}
 
-		public function pushBack() : void
+		override public function pushBack() : void
 		{
 			_currentCount --;
 		}
 
-		public function reset() : void
+		override public function reset() : void
 		{
 			_currentCount = countFrom - 1;
 			_isAborted = false;
 		}
 
-		public function supportsSource( inObject : * ) : Boolean
+		override public function supportsSource( inObject : * ) : Boolean
 		{
 			return ( inObject is Range && !isNaN( Range( inObject ).from ) )
 				|| !isNaN( inObject );

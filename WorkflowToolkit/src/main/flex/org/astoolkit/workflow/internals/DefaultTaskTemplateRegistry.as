@@ -23,8 +23,8 @@ package org.astoolkit.workflow.internals
 	import flash.utils.getQualifiedClassName;
 	import mx.logging.ILogger;
 	import mx.logging.Log;
-	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.factory.PooledFactory;
+	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.reflection.Type;
 	import org.astoolkit.workflow.annotation.Template;
 	import org.astoolkit.workflow.api.ITaskTemplate;
@@ -33,8 +33,7 @@ package org.astoolkit.workflow.internals
 
 	public class DefaultTaskTemplateRegistry implements ITaskTemplateRegistry
 	{
-		private static const LOGGER : ILogger =
-			Log.getLogger( getQualifiedClassName( DefaultTaskTemplateRegistry ).replace( /:+/g, "." ) );
+		private static const LOGGER : ILogger = getLogger( DefaultTaskTemplateRegistry );
 
 		private var _implementationsByContract : Object = {};
 

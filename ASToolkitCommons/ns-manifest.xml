@@ -1,15 +1,83 @@
 <?xml version="1.0"?>
 <componentPackage>
-    <component id="Eq" class="org.astoolkit.commons.conditional.Eq"/>
-    <component id="Gt" class="org.astoolkit.commons.conditional.Gt"/>
-    <component id="Is" class="org.astoolkit.commons.conditional.Is"/>
-    <component id="None" class="org.astoolkit.commons.conditional.None"/>
-    <component id="All" class="org.astoolkit.commons.conditional.All"/>
-    <component id="Any" class="org.astoolkit.commons.conditional.Any"/>
-    <component id="MatchRegExp" class="org.astoolkit.commons.conditional.MatchRegExp"/>
-    <component id="Watch" class="org.astoolkit.commons.databinding.Watch"/>
-    <component id="ClassFactory" class="org.astoolkit.commons.factory.ExtendedClassFactory"/>
-    <component id="ChainTransformers" class="org.astoolkit.commons.io.transform.Chain"/>
-    <component id="FunctionReferenceDataTransform" class="org.astoolkit.commons.io.transform.FunctionReferenceDataTransform"/>
-    <component id="RegExpDataTransform" class="org.astoolkit.commons.io.transform.RegExpDataTransform"/>
+	<component 
+		id="Eq"
+		class="org.astoolkit.commons.conditional.Eq"
+		/>
+	<component 
+		id="Gt"
+		class="org.astoolkit.commons.conditional.Gt"
+		/>
+	<component 
+		id="Is"
+		class="org.astoolkit.commons.conditional.Is"
+		/>
+	<component 
+		id="None"
+		class="org.astoolkit.commons.conditional.None"
+		/>
+	<component 
+		id="All"
+		class="org.astoolkit.commons.conditional.All"
+		/>
+	<component 
+		id="Any"
+		class="org.astoolkit.commons.conditional.Any"
+		/>
+	<component 
+		id="MatchRegExp"
+		class="org.astoolkit.commons.conditional.MatchRegExp"
+		/>
+	<component 
+		id="Watch"
+		class="org.astoolkit.commons.databinding.Watch"
+		/>
+	<component 
+		id="ArrayBuilder"
+		class="org.astoolkit.commons.io.data.ArrayBuilder"
+		/>
+	<component 
+		id="DateFormatter"
+		class="org.astoolkit.commons.io.data.DateFormatter"
+		/>
+	<component 
+		id="SetParam"
+		class="org.astoolkit.commons.io.data.SetParam"
+		/>
+	<component 
+		id="Map"
+		class="org.astoolkit.commons.mapping.Map"
+		/>
+	<component 
+		id="StringBuilder"
+		class="org.astoolkit.commons.io.data.StringBuilder"
+		/>
+	<component 
+		id="ObjectBuilder"
+		class="org.astoolkit.commons.io.data.ObjectBuilder"
+		/>
+	<component 
+		id="MethodBuilder"
+		class="org.astoolkit.commons.io.data.MethodBuilder"
+		/>
+	<component 
+		id="Resolve"
+		class="org.astoolkit.commons.eval.Resolve"
+		/>
+	<component 
+		id="ClassFactory"
+		class="org.astoolkit.commons.factory.ExtendedClassFactory"
+		/>
+	<component 
+		id="ChainTransformers"
+		class="org.astoolkit.commons.io.transform.Chain"
+		/>
+	<component 
+		id="FunctionReferenceDataTransform"
+		class="org.astoolkit.commons.io.transform.FunctionReferenceDataTransform"
+		/>
+	<component 
+		id="RegExpDataTransform"
+		class="org.astoolkit.commons.io.transform.RegExpDataTransform"
+		/>
 </componentPackage>

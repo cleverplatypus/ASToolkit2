@@ -20,8 +20,35 @@ Version 2.x
 package org.astoolkit.commons.io.transform.api
 {
 
-	public interface IIODataTransformer
+	import org.astoolkit.commons.wfml.IComponent;
+
+	public interface IIODataTransformer extends IComponent
 	{
+		/**
+		 * next transformer to invoke
+		 */
+		function get next() : IIODataTransformer;
+		function set next( inValue : IIODataTransformer ) : void;
+		/**
+		 * the parent transformer, if any in the chain
+		 */
+		function get parent() : IIODataTransformer;
+
+		function set parent( inValue : IIODataTransformer ) : void;
+		/**
+		 * an int for ordering transformers priorities.
+		 */
+		function get priority() : int;
+		/**
+		 * the list of types that can be used as sources (inData) for
+		 * the <code>transform()</code> method
+		 */
+		function get supportedDataTypes() : Vector.<Class>;
+		/**
+		 * the list of types that can be used as transform descriptor (inExpression) for
+		 * the <code>transform()</code> method
+		 */
+		function get supportedExpressionTypes() : Vector.<Class>;
 
 		/**
 		 * sets and returns <code>next</code>. Use this to chain this transformer
@@ -39,36 +66,11 @@ package org.astoolkit.commons.io.transform.api
 		 * validated (e.g. expression syntax checks)
 		 */
 		function isValidExpression( inExpression : Object ) : Boolean;
-		/**
-		 * next transformer to invoke
-		 */
-		function get next() : IIODataTransformer;
-		function set next( inValue : IIODataTransformer ) : void;
-		/**
-		 * the parent transformer, if any in the chain
-		 */
-		function get parent() : IIODataTransformer;
-
-		function set parent( inValue : IIODataTransformer ) : void;
-		/**
-		 * an int for ordering transformers priorities.
-		 */
-		function get priority() : int;
 
 		/**
 		 * the root transformer in the chain
 		 */
 		function root() : IIODataTransformer;
-		/**
-		 * the list of types that can be used as sources (inData) for
-		 * the <code>transform()</code> method
-		 */
-		function get supportedDataTypes() : Vector.<Class>;
-		/**
-		 * the list of types that can be used as transform descriptor (inExpression) for
-		 * the <code>transform()</code> method
-		 */
-		function get supportedExpressionTypes() : Vector.<Class>;
 		/**
 		 * evaluates the inExpression content and transforms the inDataObject.
 		 *

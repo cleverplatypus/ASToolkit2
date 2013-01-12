@@ -25,8 +25,17 @@ package org.astoolkit.commons.factory
 	[DefaultProperty( "factory" )]
 	public class ClassFactoryMapping
 	{
+
+		private var _pooled : String;
+
 		public var factory : IFactory;
 
 		public var pattern : String;
+
+		[Inspectable(enumeration="annotationDriven,true,false", defaultValue="annotationDriven")]
+		public function set pooled( inValue : String ) : void
+		{
+			_pooled = inValue;
+		}
 	}
 }

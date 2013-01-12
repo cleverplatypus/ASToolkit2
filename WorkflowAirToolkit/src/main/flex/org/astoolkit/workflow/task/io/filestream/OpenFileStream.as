@@ -28,38 +28,48 @@ package org.astoolkit.workflow.task.io.filestream
 	public class OpenFileStream extends BaseTask
 	{
 
-		[Bindable]
+		private var _file : File;
+
+		private var _path : String;
+
 		[InjectPipeline]
-		public var file : File;
+		public function set file( inValue :File) : void
+		{
+			_onPropertySet( "file" );
+			_file = inValue;
+		}
 
 		[Inspectable( enumeration="write,append,read,update", defaultValue="write" )]
 		public var mode : String;
 
-		[Bindable]
 		[InjectPipeline]
-		public var path : String;
+		public function set path( inValue :String) : void
+		{
+			_onPropertySet( "path" );
+			_path = inValue;
+		}
 
 		override public function begin() : void
 		{
 			super.begin();
 
-			if( !file && !path )
+			if( !_file && !_path )
 			{
 				fail( "No file or path property set" );
 				return;
 			}
 			var aFile : File;
 
-			if( file )
-				aFile = file;
+			if( _file )
+				aFile = _file;
 			else
 			{
 				aFile = new File();
 
-				if( path.match( /^\w+:\// ) )
-					aFile.url = path;
+				if( _path.match( /^\w+:\// ) )
+					aFile.url = _path;
 				else
-					aFile.nativePath = path;
+					aFile.nativePath = _path;
 			}
 
 			if( mode == "read" && !aFile.exists )

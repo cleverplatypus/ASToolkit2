@@ -35,9 +35,9 @@ package org.astoolkit.workflow.internals
 			return _taskWatcherPriority;
 		}
 
-		public function set taskWatcherPriority(value:int) : void
+		public function set taskWatcherPriority( inValue :int) : void
 		{
-			_taskWatcherPriority = value;
+			_taskWatcherPriority = inValue;
 		}
 
 		public function afterTaskBegin( inTask : IWorkflowTask ) : void

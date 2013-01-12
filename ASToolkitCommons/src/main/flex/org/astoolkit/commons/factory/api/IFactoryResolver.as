@@ -19,11 +19,11 @@ Version 2.x
 */
 package org.astoolkit.commons.factory.api
 {
-	
+
 	import mx.core.IFactory;
-	
+
 	public interface IFactoryResolver
 	{
-		function getFactory( inType : Class ) : IFactory;
+		function getFactoryForType( inType : Class ) : IFactory;
 	}
 }

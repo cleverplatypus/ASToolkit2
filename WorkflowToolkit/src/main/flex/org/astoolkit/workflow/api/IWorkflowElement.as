@@ -22,9 +22,13 @@ package org.astoolkit.workflow.api
 
 	import flash.events.IEventDispatcher;
 	import org.astoolkit.commons.collection.api.IIterator;
-	import org.astoolkit.commons.mxml.IAutoConfigContainerObject;
+	import org.astoolkit.commons.wfml.IAutoConfigContainerObject;
+	import org.astoolkit.commons.wfml.IComponent;
 
-	public interface IWorkflowElement extends IEventDispatcher, IContextAwareElement, IAutoConfigContainerObject
+	public interface IWorkflowElement extends IEventDispatcher, 
+		IContextAwareElement, 
+		IAutoConfigContainerObject, 
+		IComponent
 	{
 		/**
 		 * @private
@@ -59,14 +63,6 @@ package org.astoolkit.workflow.api
 		 */
 		function get parent() : ITasksGroup;
 		function set parent( inParent : ITasksGroup ) : void;
-		function get pid() : String;
-
-		/**
-		 * the destination property id.
-		 * Used by the framework to determine the destination proprty of a child element
-		 * inside its parent.
-		 */
-		function set pid( inValue : String ) : void;
 
 		/**
 		 * called when the root workflow completes.

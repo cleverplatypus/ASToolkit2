@@ -2,13 +2,15 @@ package org.astoolkit.workflow.task.parsley
 {
 
 	import flash.utils.getQualifiedClassName;
-	
 	import org.spicefactory.parsley.core.command.CommandStatus;
 	import org.spicefactory.parsley.core.messaging.MessageReceiverKind;
 	import org.spicefactory.parsley.core.messaging.receiver.CommandObserver;
 
 	public class ObserveCommand extends AbstractParsleyTask
 	{
+
+		private var _observer : CommandObserver;
+
 		[Inspectable( enumeration="complete,fail", defaultValue="complete" )]
 		public var behaviour : String;
 
@@ -19,12 +21,11 @@ package org.astoolkit.workflow.task.parsley
 
 		public var selector : *;
 
-		private var _observer : CommandObserver;
-
 		override public function begin() : void
 		{
 			super.begin();
 			var status : CommandStatus;
+
 			switch( phase )
 			{
 				case "execute":
@@ -41,7 +42,7 @@ package org.astoolkit.workflow.task.parsley
 					break;
 			}
 			_observer = this.createThreadSafeObserver( status, selector, messageType, 1, onMessage );
-			parsleyContext
+			_parsleyContext
 				.scopeManager
 				.getScope( scope as String )
 				.messageReceivers

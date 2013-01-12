@@ -32,6 +32,29 @@ package org.astoolkit.workflow.task.parsley
 	[Bindable]
 	public class AbstractParsleyTask extends BaseTask
 	{
+
+		private var _parsleyContext : Context;
+
+		protected var _parsleyHelper : ParsleyPlugIn;
+
+		protected function get parsleyContext() : Context
+		{
+			if( !_parsleyContext )
+			{
+				for each( var plugIn : IContextPlugIn in _context.plugIns )
+				{
+					if( plugIn is ParsleyPlugIn )
+					{
+						_parsleyContext = ParsleyPlugIn( plugIn ).context;
+						break;
+					}
+				}
+			}
+			return _parsleyContext;
+		}
+
+		public var scope : Object;
+
 		public function AbstractParsleyTask()
 		{
 			super();
@@ -39,12 +62,6 @@ package org.astoolkit.workflow.task.parsley
 			if( getQualifiedClassName( this ) == getQualifiedClassName( AbstractParsleyTask ) )
 				throw new Error( getQualifiedClassName( this ) + " is an abstract class." );
 		}
-
-		public var scope : Object;
-
-		protected var _parsleyHelper : ParsleyPlugIn;
-
-		private var _parsleyContext : Context;
 
 		override public function initialize() : void
 		{
@@ -74,22 +91,6 @@ package org.astoolkit.workflow.task.parsley
 				threadSafe( inHandler ) )
 		}
 
-		protected function get parsleyContext() : Context
-		{
-			if( !_parsleyContext )
-			{
-				for each( var plugIn : IContextPlugIn in _context.plugIns )
-				{
-					if( plugIn is ParsleyPlugIn )
-					{
-						_parsleyContext = ParsleyPlugIn( plugIn ).context;
-						break;
-					}
-				}
-			}
-			return _parsleyContext;
-		}
-
 		protected function registerCommandObserver( inObserver : CommandObserver ) : void
 		{
 			parsleyContext
@@ -114,26 +115,12 @@ import mx.rpc.AsyncToken;
 import mx.rpc.events.FaultEvent;
 import mx.rpc.events.ResultEvent;
 import mx.utils.ObjectUtil;
-
 import org.spicefactory.parsley.core.messaging.command.CommandObserverProcessor;
 import org.spicefactory.parsley.core.messaging.command.CommandStatus;
 import org.spicefactory.parsley.core.messaging.receiver.CommandObserver;
 
 class Observer implements CommandObserver
 {
-	public function Observer(
-		inStatus : CommandStatus,
-		inSelector : *,
-		inMessageType : Class,
-		inOrder : int,
-		inHandler : Function )
-	{
-		_status = inStatus;
-		_selector = inSelector;
-		_messageType = inMessageType;
-		_handler = inHandler;
-		_order = inOrder
-	}
 
 	private var _handler : Function;
 
@@ -148,6 +135,35 @@ class Observer implements CommandObserver
 	public function get messageType() : Class
 	{
 		return _messageType;
+	}
+
+	public function get order() : int
+	{
+		return _order;
+	}
+
+	public function get selector() : *
+	{
+		return _selector;
+	}
+
+	public function get status() : CommandStatus
+	{
+		return _status;
+	}
+
+	public function Observer(
+		inStatus : CommandStatus,
+		inSelector : *,
+		inMessageType : Class,
+		inOrder : int,
+		inHandler : Function )
+	{
+		_status = inStatus;
+		_selector = inSelector;
+		_messageType = inMessageType;
+		_handler = inHandler;
+		_order = inOrder
 	}
 
 	public function observeCommand(
@@ -165,26 +181,12 @@ class Observer implements CommandObserver
 		else if( status.key == CommandStatus.ERROR.key )
 		{
 			var text : String = "Unknown Error";
+
 			if( returnValue is AsyncToken && AsyncToken( returnValue ).result is FaultEvent )
 				text = returnValue.result.fault.getStackTrace();
 			_handler( text, inProcessor.message );
 		}
 		else
 			_handler( inProcessor.message );
-	}
-
-	public function get order() : int
-	{
-		return _order;
-	}
-
-	public function get selector() : *
-	{
-		return _selector;
-	}
-
-	public function get status() : CommandStatus
-	{
-		return _status;
 	}
 }

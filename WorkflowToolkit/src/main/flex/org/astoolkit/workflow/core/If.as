@@ -26,7 +26,8 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.conditional.api.IConditionalExpression;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
-	import org.astoolkit.commons.mxml.IAutoConfigContainerObject;
+	import org.astoolkit.commons.process.api.IDeferrableProcess;
+	import org.astoolkit.commons.wfml.IAutoConfigContainerObject;
 	import org.astoolkit.workflow.api.*;
 
 	public class If extends BaseElement implements ITaskProxy,
@@ -205,12 +206,10 @@ package org.astoolkit.workflow.core
 			var result : Object;
 
 			if( _expression )
-			{
 				result = _expression.async && 
 					_expression.lastResult !== undefined ?
 					_expression.lastResult :
 					_expression.evaluate();
-			}
 			else
 				result = _condition;
 

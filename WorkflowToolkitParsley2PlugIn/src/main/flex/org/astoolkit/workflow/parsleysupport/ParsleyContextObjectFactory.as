@@ -28,6 +28,19 @@ package org.astoolkit.workflow.parsleysupport
 	//TODO: Finish implementation
 	public class ParsleyContextObjectFactory implements IExtendedFactory
 	{
+		private var _pid : String;
+
+		public function get pid():String
+		{
+			return _pid;
+		}
+
+		public function set pid(value:String):void
+		{
+			_pid = value;
+		}
+
+		
 		private var _context : Context;
 
 		private var _singletonInstance : Boolean;

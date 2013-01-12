@@ -22,10 +22,11 @@ package org.astoolkit.commons.collection
 
 	import flash.filesystem.FileStream;
 	import flash.utils.ByteArray;
+	
 	import org.astoolkit.commons.collection.api.IIterator;
 
 	[IteratorSource( "flash.filesystem.FileStream" )]
-	public class FileStreamIterator implements IIterator
+	public class FileStreamIterator extends BaseIterator
 	{
 
 		private var _current : ByteArray;
@@ -38,17 +39,17 @@ package org.astoolkit.commons.collection
 
 		private var _totalLength : uint;
 
-		public function set cycle(value:Boolean) : void
+		override public function set cycle( inValue :Boolean) : void
 		{
-			_cycle = value;
+			_cycle = inValue;
 		}
 
-		public function get isAborted() : Boolean
+		override public function get isAborted() : Boolean
 		{
 			return _isAborted;
 		}
 
-		public function get progress() : Number
+		override public function get progress() : Number
 		{
 			if( _source )
 				return ( _source.position / readChunk ) /
@@ -58,7 +59,7 @@ package org.astoolkit.commons.collection
 
 		public var readChunk : uint = 1024;
 
-		public function set source( inValue : * ) : void
+		override public function set source( inValue : * ) : void
 		{
 			_source = inValue as FileStream;
 
@@ -71,29 +72,29 @@ package org.astoolkit.commons.collection
 			}
 		}
 
-		public function abort() : void
+		override public function abort() : void
 		{
 			_isAborted = true;
 		}
 
-		public function current() : Object
+		override public function current() : Object
 		{
 			return _current;
 		}
 
-		public function currentIndex() : Number
+		override public function currentIndex() : Number
 		{
 			if( _source )
 				return Math.ceil( ( _source.position - readChunk ) / readChunk );
 			return -1;
 		}
 
-		public function hasNext() : Boolean
+		override public function hasNext() : Boolean
 		{
 			return _source && _source.bytesAvailable > 0;
 		}
 
-		public function next() : Object
+		override public function next() : Object
 		{
 			if( _source )
 			{
@@ -106,13 +107,13 @@ package org.astoolkit.commons.collection
 			return null;
 		}
 
-		public function pushBack() : void
+		override public function pushBack() : void
 		{
 			// TODO Auto Generated method stub
 
 		}
 
-		public function reset() : void
+		override public function reset() : void
 		{
 			if( _source )
 				_source.position = 0;
@@ -120,7 +121,7 @@ package org.astoolkit.commons.collection
 			_isAborted = false;
 		}
 
-		public function supportsSource( inObject : * ) : Boolean
+		override public function supportsSource( inObject : * ) : Boolean
 		{
 			return inObject is FileStream;
 		}

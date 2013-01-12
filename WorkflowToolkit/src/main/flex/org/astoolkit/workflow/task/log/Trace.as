@@ -37,10 +37,19 @@ package org.astoolkit.workflow.task.log
 	public class Trace extends BaseTask
 	{
 
+		private var _text : *;
+
 		[Inspectable( enumeration="pipeline,parent,parentWorkflow,context,config", defaultValue="pipeline" )]
 		public var source : String = "pipeline";
 
-		private var _text : *;
+		[AutoConfig]
+		/**
+		 * the text to output to console. If omitted, the pipeline data is used.
+		 */
+		public function set text( inText : String ) : void
+		{
+			_text = inText;
+		}
 
 		override public function begin() : void
 		{
@@ -74,19 +83,10 @@ package org.astoolkit.workflow.task.log
 			if( _text !== undefined )
 				outText = _text as String;
 
-
 			if( outText == null )
 				outText = ObjectUtil.toString( filteredInput );
 			printOut( outText );
 			complete();
-		}
-
-		/**
-		 * the text to output to console. If omitted, the pipeline data is used.
-		 */
-		public function set text( inText : String ) : void
-		{
-			_text = inText;
 		}
 
 		protected function printOut( inText : String ) : void

@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.commons.io.transform
 {
-	
+
 	import flash.utils.getQualifiedClassName;
 	import mx.core.ClassFactory;
 	import mx.core.IFactory;
@@ -28,29 +28,26 @@ package org.astoolkit.commons.io.transform
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
 	import org.astoolkit.commons.factory.api.IPooledFactory;
-	
+
 	public class FactoryTransformer extends BaseDataTransformer implements IFactoryResolverClient
 	{
-		private static const LOGGER : ILogger =
-			Log.getLogger( getQualifiedClassName( FactoryTransformer ).replace( /:+/g, "." ) );
-		
-		public var factory : IFactory;
-		
-		public var factoryMethod : String;
-		
-		public var factoryMethodArguments : Array;
-		
-		public var properties : Object;
-		
-		public var type : Class;
-		
+		private static const LOGGER : ILogger = getLogger( FactoryTransformer );
+
 		private var _factoryDelegate : IFactoryResolver;
-		
+
+		public var factory : IFactory;
+
+		public var factoryMethod : String;
+
+		public var factoryMethodArguments : Array;
+
 		public function set factoryResolver( inValue: IFactoryResolver ) : void
 		{
 			_factoryDelegate = inValue
 		}
-		
+
+		public var properties : Object;
+
 		/**
 		 * @private
 		 */
@@ -58,24 +55,26 @@ package org.astoolkit.commons.io.transform
 		{
 			return Vector.<Class>([ Object ]);
 		}
-		
+
+		public var type : Class;
+
 		override public function transform(inData : Object, inExpression:Object, inTarget:Object=null) : Object
 		{
 			var usedFactory : IFactory = factory ? factory : null;
-			
-			if ( !usedFactory && _factoryDelegate )
+
+			if( !usedFactory && _factoryDelegate )
 			{
-				usedFactory = _factoryDelegate.getFactory( type );
+				usedFactory = _factoryDelegate.getFactoryForType( type );
 			}
-			
-			if ( !usedFactory )
+
+			if( !usedFactory )
 				usedFactory = new ClassFactory();
-			
-			if ( usedFactory is IPooledFactory )
+
+			if( usedFactory is IPooledFactory )
 			{
 				return IPooledFactory( usedFactory ).getInstance( type, properties );
 			}
-			else if ( usedFactory is ClassFactory )
+			else if( usedFactory is ClassFactory )
 			{
 				ClassFactory( usedFactory ).properties = properties;
 				ClassFactory( usedFactory ).generator = type;
@@ -83,7 +82,7 @@ package org.astoolkit.commons.io.transform
 			}
 			else
 			{
-				if ( properties )
+				if( properties )
 					LOGGER.warn( 
 						"Ignore factory properties. \n" +
 						"Unknown properties set method for factory class: {0}", 

@@ -23,17 +23,46 @@ package org.astoolkit.commons.reflection
 	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
-	
 	import mx.logging.ILogger;
 	import mx.logging.Log;
 	import mx.utils.StringUtil;
-	
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 
 	public class Metadata implements IAnnotation
 	{
-		private static const LOGGER : ILogger =
-			Log.getLogger( getQualifiedClassName( Metadata ).replace( /:+/g, "." ) );
+		private static const LOGGER : ILogger = getLogger( Metadata );
+
+		protected var _metadata : XML;
+
+		protected var _ownerType : Class = Object;
+
+		protected var _tagName : String;
+
+		protected var _tagRepeatable : Boolean;
+
+		protected var _target : Array;
+
+		protected var _targetType : Class = Object;
+
+		public function get ownerType() : Class
+		{
+			return _ownerType;
+		}
+
+		public function get tagName() : String
+		{
+			return _tagName;
+		}
+
+		public function get tagRepeatable() : Boolean
+		{
+			return _tagRepeatable;
+		}
+
+		public function get targetType() : Class
+		{
+			return _targetType;
+		}
 
 		public function Metadata()
 		{
@@ -45,10 +74,11 @@ package org.astoolkit.commons.reflection
 			if( !meta )
 				return;
 
-			if( meta.arg.( @key == "repeatable" ).length() > 0)
+			if( meta.arg.( @key == "repeatable" ).length() > 0 )
 			{
 				_tagRepeatable = StringUtil.trim( meta.arg.( @key == "repeatable" ).@value.toString() ).toLowerCase() == "true";
 			}
+
 			if( meta.arg.( @key == "name" ).length() > 0 )
 				_tagName = meta.arg.( @key == "name" ).@value.toString();
 			else
@@ -82,19 +112,6 @@ package org.astoolkit.commons.reflection
 			}
 		}
 
-		protected var _metadata : XML;
-
-		protected var _tagName : String;
-
-		protected var _target : Array;
-		
-		protected var _tagRepeatable : Boolean;
-
-		protected var _targetType : Class = Object;
-		
-		protected var _ownerType : Class = Object;
-		
-		
 		public function getArray( inArgName : String = "", inOrDefault : Boolean = false ) : Array
 		{
 			var s : String = getString( inArgName, inOrDefault );
@@ -160,27 +177,5 @@ package org.astoolkit.commons.reflection
 		{
 			_metadata = inMetadata;
 		}
-
-		public function get tagName() : String
-		{
-			return _tagName;
-		}
-		
-		public function get tagRepeatable() : Boolean
-		{
-			return _tagRepeatable;
-		}
-
-		public function get targetType() : Class
-		{
-			return _targetType;
-		}
-
-		public function get ownerType():Class
-		{
-			return _ownerType;
-		}
-
-
 	}
 }

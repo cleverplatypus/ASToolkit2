@@ -31,22 +31,6 @@ package org.astoolkit.workflow.task.io
 	public class CreateZipArchive extends BaseTask
 	{
 
-		[Bindable]
-		[InjectPipeline]
-		public var destinationFile : File;
-
-		public var readSize : uint = 51200;
-
-		[Bindable]
-		[InjectPipeline]
-		public var sourceFile : File;
-
-		[Bindable]
-		[InjectPipeline]
-		public var sourceFiles : Vector.<File>;
-
-		public var wrappingDirName : String;
-
 		private var _baseDir : File;
 
 		private var _currentByteArray : ByteArray;
@@ -55,20 +39,51 @@ package org.astoolkit.workflow.task.io
 
 		private var _currentInStream : FileStream;
 
+		private var _destinationFile : File;
+
+		private var _sourceFile : File;
+
+		private var _sourceFiles : Vector.<File>;
+
 		private var _zip : FZip;
+
+		[InjectPipeline]
+		public function set destinationFile( inValue :File) : void
+		{
+			_onPropertySet( "destinationFile" );
+			_destinationFile = inValue;
+		}
+
+		public var readSize : uint = 51200;
+
+		[InjectPipeline]
+		public function set sourceFile( inValue:File) : void
+		{
+			_onPropertySet( "sourceFile" );
+			_sourceFile = inValue;
+		}
+
+		[InjectPipeline]
+		public function set sourceFiles( inValue :Vector.<File>) : void
+		{
+			_onPropertySet( "sourceFiles" );
+			_sourceFiles = inValue;
+		}
+
+		public var wrappingDirName : String;
 
 		override public function begin() : void
 		{
 			super.begin();
 
-			if( !sourceFile && !sourceFiles )
+			if( !_sourceFile && !_sourceFiles )
 			{
 				fail( "No source file(s) provided.\nIf providing multiple files " +
 					"make sure the list passed is of type Vector.<flash.filesystem.File>" );
 				return;
 			}
 
-			if( !destinationFile )
+			if( !_destinationFile )
 			{
 				fail( "No destination archive file provided" );
 				return;
@@ -76,15 +91,15 @@ package org.astoolkit.workflow.task.io
 			_currentFileQueue = [];
 			_zip = new FZip();
 
-			if( sourceFile )
+			if( _sourceFile )
 			{
-				_baseDir = sourceFile.parent;
-				_currentFileQueue.push( [ sourceFile ] )
+				_baseDir = _sourceFile.parent;
+				_currentFileQueue.push( [ _sourceFile ] )
 			}
-			else if( sourceFiles && sourceFiles.length > 0 )
+			else if( _sourceFiles && _sourceFiles.length > 0 )
 			{
-				_baseDir = sourceFiles[ 0 ].parent;
-				_currentFileQueue.push( sourceFiles );
+				_baseDir = _sourceFiles[ 0 ].parent;
+				_currentFileQueue.push( _sourceFiles );
 			}
 
 			if( _currentFileQueue.length > 0 )
@@ -151,7 +166,7 @@ package org.astoolkit.workflow.task.io
 		private function queueComplete() : void
 		{
 			var outStream : FileStream = new FileStream();
-			outStream.open( destinationFile, FileMode.WRITE );
+			outStream.open( _destinationFile, FileMode.WRITE );
 			_zip.serialize( outStream );
 			_zip.close();
 			complete();

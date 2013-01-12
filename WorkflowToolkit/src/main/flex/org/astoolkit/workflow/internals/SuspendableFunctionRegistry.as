@@ -35,8 +35,7 @@ package org.astoolkit.workflow.internals
 
 	public class SuspendableFunctionRegistry
 	{
-		private static const LOGGER : ILogger =
-			Log.getLogger( getQualifiedClassName( SuspendableFunctionRegistry ).replace( /:+/g, "." ) );
+		private static const LOGGER : ILogger = getLogger( SuspendableFunctionRegistry );
 
 		/**
 		 * @private

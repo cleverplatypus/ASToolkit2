@@ -23,67 +23,66 @@ Version 2.x
  */
 package org.astoolkit.workflow.task.pipeline
 {
-	
+
 	import flash.utils.getQualifiedClassName;
 	import mx.logging.ILogger;
 	import mx.logging.Log;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 	import org.astoolkit.workflow.core.BaseTask;
-	
+
 	[DefaultProperty( "transformer" )]
 	public class TransformOnInputType extends BaseTask
 	{
 		/**
 		 * @private
 		 */
-		private static const LOGGER : ILogger =
-			Log.getLogger( getQualifiedClassName( TransformOnInputType ).replace( /:+/g, "." ) );
-		
+		private static const LOGGER : ILogger = getLogger( TransformOnInputType );
+
 		/**
 		 * the transformer to be applied to the (already filtered) task input
 		 */
 		[Featured]
 		public var transformer : Object;
-		
+
 		public var transformerPropertiesMapping : Object;
-		
+
 		/**
 		 * the type to compare the (filtered) input data's class to
 		 */
 		public var type : Class;
-		
+
 		/**
 		 * @private
 		 */
 		override public function begin() : void
 		{
 			super.begin();
-			
-			if ( !transformer )
+
+			if( !transformer )
 			{
 				LOGGER.warn( "No trasformer declared. Completing." );
 				complete();
 				return;
 			}
-			
-			if ( !type )
+
+			if( !type )
 			{
 				fail("No type declared for comparison");
 				return;
 			}
-			
-			if ( filteredInput is type )
+
+			if( filteredInput is type )
 			{
 				var usedTransformer : IIODataTransformer =
 					transformer is IIODataTransformer ?
-						transformer as IIODataTransformer :
-						_dataTransformerRegistry.getTransformer( 
-							filteredInput, 
-							transformer );
-				
-				if ( usedTransformer )
+					transformer as IIODataTransformer :
+					_dataTransformerRegistry.getTransformer( 
+					filteredInput, 
+					transformer );
+
+				if( usedTransformer )
 				{
-					if ( transformerPropertiesMapping )
+					if( transformerPropertiesMapping )
 					{
 						ENV.mapTo.object( 
 							usedTransformer, 

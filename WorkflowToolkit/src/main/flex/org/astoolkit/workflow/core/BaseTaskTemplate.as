@@ -26,15 +26,14 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.databinding.BindingUtility;
 	import org.astoolkit.commons.databinding.Watch;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
-	import org.astoolkit.commons.mxml.IAutoConfigContainerObject;
+	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.reflection.Type;
+	import org.astoolkit.commons.wfml.IAutoConfigContainerObject;
 	import org.astoolkit.workflow.api.IContextAwareElement;
-	import org.astoolkit.workflow.api.IDeferrableProcess;
 	import org.astoolkit.workflow.api.ITaskTemplate;
 	import org.astoolkit.workflow.api.IWorkflowElement;
 	import org.astoolkit.workflow.api.IWorkflowTask;
 	import org.astoolkit.workflow.internals.DynamicTaskLiveCycleWatcher;
-	import org.astoolkit.workflow.internals.HeldTaskInfo;
 	import org.astoolkit.workflow.task.api.ISendMessage;
 
 	use namespace flash_proxy;
@@ -54,11 +53,6 @@ package org.astoolkit.workflow.core
 		public function set bindings( inValue : Vector.<Watch> ) : void
 		{
 			_bindings = inValue;
-		}
-
-		public function get blocker() : HeldTaskInfo
-		{
-			return null;
 		}
 
 		public function get currentProgress() : Number
@@ -261,11 +255,6 @@ package org.astoolkit.workflow.core
 			return _templateImplementation;
 		}
 
-		public function hold() : HeldTaskInfo
-		{
-			return null;
-		}
-
 		override public function initialize() : void
 		{
 			super.initialize();
@@ -294,6 +283,7 @@ package org.astoolkit.workflow.core
 				if( _templateImplementation is IAutoConfigContainerObject )
 					IAutoConfigContainerObject( _templateImplementation )
 						.autoConfigChildren = _autoConfigChildren;
+				_templateImplementation.initialize();
 			}
 			else
 			{

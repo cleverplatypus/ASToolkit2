@@ -23,11 +23,12 @@ package org.astoolkit.workflow.plugin.parsley
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	
+	import org.astoolkit.commons.reflection.ManagedObject;
+	import org.astoolkit.commons.reflection.Type;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.internals.DynamicTaskLiveCycleWatcher;
 	import org.astoolkit.workflow.task.parsley.SendParsleyMessage;
 	import org.spicefactory.parsley.core.context.Context;
-	import org.spicefactory.parsley.dsl.context.ContextBuilder;
 
 	/**
 	 * Plugin for Spicefactory Parsley aware tasks.
@@ -120,7 +121,7 @@ package org.astoolkit.workflow.plugin.parsley
 		
 		private function onTaskContextBond( inTask : IWorkflowTask ) : void
 		{
-			if( inTask is IIocContainerManaged )
+			if( Type.forType( inTask ).hasAnnotation( ManagedObject ) )
 			{
 				if( context.findDefinitionByType( 
 					getDefinitionByName( 

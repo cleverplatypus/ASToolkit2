@@ -2,7 +2,6 @@ package org.astoolkit.commons.io.transform
 {
 
 	import flash.utils.getQualifiedClassName;
-	
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 
 	public class BaseDataTransformer implements IIODataTransformer
@@ -12,15 +11,57 @@ package org.astoolkit.commons.io.transform
 
 		protected var _parent : IIODataTransformer;
 
+		protected var _pid : String;
+
+		public function get next() : IIODataTransformer
+		{
+			return _next;
+		}
+
+		public function set next( inValue :IIODataTransformer) : void
+		{
+			_next = inValue;
+		}
+
+		public function get parent() : IIODataTransformer
+		{
+			return _parent;
+		}
+
+		public function set parent( inValue : IIODataTransformer ) : void
+		{
+			_parent = inValue;
+		}
+
+		public function get pid() : String
+		{
+			return _pid;
+		}
+
+		public function set pid(value:String) : void
+		{
+			_pid = value;
+		}
+
+		public function get priority() : int
+		{
+			return -1;
+		}
+
+		public function get supportedDataTypes() : Vector.<Class>
+		{
+			return null;
+		}
+
+		public function get supportedExpressionTypes() : Vector.<Class>
+		{
+			return null;
+		}
+
 		public function BaseDataTransformer()
 		{
 			if( getQualifiedClassName( this ) == getQualifiedClassName( BaseDataTransformer ) )
 				throw new Error( "BaseDataTransformer is abstract" );
-		}
-
-		public function set next(value:IIODataTransformer):void
-		{
-			_next = value;
 		}
 
 		public function chain( inNext : IIODataTransformer ) : IIODataTransformer
@@ -34,26 +75,6 @@ package org.astoolkit.commons.io.transform
 			return false;
 		}
 
-		public function get next() : IIODataTransformer
-		{
-			return _next;
-		}
-
-		public function get parent() : IIODataTransformer
-		{
-			return _parent;
-		}
-
-		public function set parent( value : IIODataTransformer ) : void
-		{
-			_parent = value;
-		}
-
-		public function get priority() : int
-		{
-			return -1;
-		}
-
 		public function root() : IIODataTransformer
 		{
 			var trans : IIODataTransformer = this;
@@ -63,21 +84,10 @@ package org.astoolkit.commons.io.transform
 			return parent;
 		}
 
-		public function get supportedDataTypes() : Vector.<Class>
-		{
-			return null;
-		}
-
-		public function get supportedExpressionTypes() : Vector.<Class>
-		{
-			return null;
-		}
-
 		public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
 		{
 			throw new Error( "BaseDataTransformer is abstract" );
 			return null;
 		}
-		
 	}
 }

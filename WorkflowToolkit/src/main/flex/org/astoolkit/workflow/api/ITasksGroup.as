@@ -54,10 +54,13 @@ package org.astoolkit.workflow.api
 
 		function get contextFactory() : IFactory;
 		function set contextFactory( inFactory : IFactory ) : void;
+
 		function get feed() : String;
 		function set feed( inPolicy : String ) : void;
+
 		function get flow() : String;
 		function set flow( inFlow : String ) : void;
+
 		[Inspectable( defaultValue="false", type="String", enumeration="true,false,data" )]
 		/**
 		 * determines whether to repeat execution of children tasks.

@@ -26,11 +26,13 @@ package org.astoolkit.workflow.internals
 	import mx.core.IFactory;
 	import mx.logging.ILogger;
 	import org.astoolkit.commons.collection.api.IIterator;
+	import org.astoolkit.commons.conditional.api.IExpressionResolver;
 	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluator;
 	import org.astoolkit.commons.factory.*;
 	import org.astoolkit.commons.factory.api.*;
 	import org.astoolkit.commons.io.transform.api.*;
 	import org.astoolkit.commons.reflection.Field;
+	import org.astoolkit.commons.reflection.ManagedObject;
 	import org.astoolkit.commons.reflection.Type;
 	import org.astoolkit.commons.utils.ObjectCompare;
 	import org.astoolkit.workflow.annotation.Featured;
@@ -215,10 +217,17 @@ package org.astoolkit.workflow.internals
 
 		public function configureObjects( inObjects : Array ) : void
 		{
-			if( inObjects )
+			if( inObjects && inObjects.length > 0 )
 			{
 				for each( var object : Object in inObjects )
 					configureObject( object );
+
+				if( _config.objectConfigurers )
+				{
+					for each( var configurer : IObjectConfigurer in _config.objectConfigurers )
+						configurer.configureObjects( inObjects )
+				}
+
 			}
 		}
 
@@ -242,7 +251,6 @@ package org.astoolkit.workflow.internals
 		public function init( inOwner : IWorkflow ) : void
 		{
 			_owner = inOwner;
-			_factoryResolver = new FactoryResolver( this );
 			LOGGER.info( "Initializing context" );
 			_variables = new ContextVariablesProvider( this );
 			_dataSourceResolverDelegate = new WorkflowDataSourceResolverDelegate( this );
@@ -255,6 +263,7 @@ package org.astoolkit.workflow.internals
 				_config = new DefaultContextConfig();
 			LOGGER.info( "Initializing context configuration" );
 			_config.init();
+			_factoryResolver = _config;
 			_plugIns = new Vector.<IContextPlugIn>();
 
 			for each( var dropIn : Object in _dropIns )
@@ -308,6 +317,13 @@ package org.astoolkit.workflow.internals
 			if( inObject is IContextAwareElement )
 				inObject.context = this;
 
+			if( inObject is IExpressionResolver )
+			{
+				var delegate : ContextAwareExpressionResolver = new ContextAwareExpressionResolver();
+				delegate.context = this;
+				IExpressionResolver( inObject ).delegate = delegate;
+			}
+
 			if( inObject is IIODataTransformerClient )
 				IIODataTransformerClient( inObject ).dataTransformerRegistry = 
 					config.dataTransformerRegistry;
@@ -330,6 +346,7 @@ package org.astoolkit.workflow.internals
 				if( !fi.writeOnly && inObject[ fi.name ] != null )
 					configureObject( inObject[ fi.name ] )
 			}
+
 		}
 
 		private function inspectExtension( inObject : Object ) : void
@@ -346,11 +363,11 @@ package org.astoolkit.workflow.internals
 			}
 
 			if( inObject is IObjectConfigurer &&
-				disabledExtensionsLUT.hasOwnProperty( IObjectConfigurer ) )
+				!disabledExtensionsLUT.hasOwnProperty( getClass( inObject ) ) )
 			{
-				if( !_objectsConfigurers )
-					_objectsConfigurers = [];
-				_objectsConfigurers.push( inObject );
+				if( !_config.objectConfigurers )
+					_config.objectConfigurers = new Vector.<IObjectConfigurer>();
+				_config.objectConfigurers.push( inObject );
 			}
 
 			if( inObject is IContextPlugIn )
@@ -400,25 +417,5 @@ package org.astoolkit.workflow.internals
 					getQualifiedClassName( inObject ) );
 			}
 		}
-	}
-}
-
-import mx.core.IFactory;
-import org.astoolkit.commons.factory.api.IFactoryResolver;
-import org.astoolkit.workflow.api.IWorkflowContext;
-
-class FactoryResolver implements IFactoryResolver
-{
-
-	private var _context : IWorkflowContext;
-
-	function FactoryResolver( inContext : IWorkflowContext )
-	{
-		_context = inContext;
-	}
-
-	public function getFactory( inType : Class ) : IFactory
-	{
-		return _context.config.getFactoryForType( inType );
 	}
 }

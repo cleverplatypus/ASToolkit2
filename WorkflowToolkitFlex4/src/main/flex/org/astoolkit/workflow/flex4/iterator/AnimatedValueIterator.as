@@ -20,10 +20,7 @@ Version 2.x
 package org.astoolkit.workflow.flex4.iterator
 {
 
-	import org.astoolkit.commons.collection.api.IIterator;
-	import org.astoolkit.workflow.core.BaseTask;
-	import spark.effects.Animate;
-	import spark.effects.animation.SimpleMotionPath;
+	import org.astoolkit.commons.collection.BaseIterator;
 	import spark.effects.easing.IEaser;
 	import spark.effects.easing.Linear;
 
@@ -32,7 +29,7 @@ package org.astoolkit.workflow.flex4.iterator
 	 * values from <code>startValue</code> to <code>endValue</code>.
 	 * <p>The default easer is <code>spark.effects.easing.Linear</code></p>
 	 */
-	public class AnimatedValueIterator implements IIterator
+	public class AnimatedValueIterator extends BaseIterator
 	{
 
 		private var _currentFraction : Number;
@@ -43,26 +40,26 @@ package org.astoolkit.workflow.flex4.iterator
 
 		private var _linearEaser : Linear = new Linear();
 
-		public function set cycle(value:Boolean) : void
+		override public function set cycle( inValue :Boolean) : void
 		{
-			_cycle = value;
+			_cycle = inValue;
 		}
 
 		public var easer : IEaser = _linearEaser;
 
 		public var endValue : Number = 1;
 
-		public function get isAborted() : Boolean
+		override public function get isAborted() : Boolean
 		{
 			return _isAborted;
 		}
 
-		public function get progress() : Number
+		override public function get progress() : Number
 		{
 			return _currentFraction;
 		}
 
-		public function set source( inValue : * ) : void
+		override public function set source( inValue : * ) : void
 		{
 			//Ignored. Source is generated internally
 		}
@@ -71,42 +68,42 @@ package org.astoolkit.workflow.flex4.iterator
 
 		public var steps : int = -1;
 
-		public function abort() : void
+		override public function abort() : void
 		{
 			_isAborted = true;
 		}
 
-		public function current() : Object
+		override public function current() : Object
 		{
 			return ( endValue - startValue ) * easer.ease( _currentFraction );
 		}
 
-		public function currentIndex() : Number
+		override public function currentIndex() : Number
 		{
 			return getActualSteps() * _currentFraction;
 		}
 
-		public function hasNext() : Boolean
+		override public function hasNext() : Boolean
 		{
 			return _currentFraction < 1;
 		}
 
-		public function next() : Object
+		override public function next() : Object
 		{
 			_currentFraction += ( 1 / getActualSteps() );
 			return current();
 		}
 
-		public function pushBack() : void
+		override public function pushBack() : void
 		{
 		}
 
-		public function reset() : void
+		override public function reset() : void
 		{
 			_currentFraction = 0;
 		}
 
-		public function supportsSource( inObject : * ) : Boolean
+		override public function supportsSource( inObject : * ) : Boolean
 		{
 			//This iterator can only be declared explicitly
 			return false;

@@ -21,6 +21,7 @@ package org.astoolkit.workflow.flex4.iterator
 {
 
 	import flash.geom.Point;
+	import org.astoolkit.commons.collection.BaseIterator;
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.workflow.core.BaseTask;
 	import spark.effects.Animate;
@@ -28,15 +29,21 @@ package org.astoolkit.workflow.flex4.iterator
 	import spark.effects.easing.IEaser;
 	import spark.effects.easing.Linear;
 
-	public class AnimatedPointIterator implements IIterator
+	public class AnimatedPointIterator extends BaseIterator
 	{
+
+		private var _currentFraction : Number;
+
 		private var _cycle : Boolean;
 
-		public function set cycle(value:Boolean):void
-		{
-			_cycle = value;
-		}
+		private var _isAborted : Boolean;
 
+		private var _linearEaser : Linear = new Linear();
+
+		override public function set cycle( inValue :Boolean) : void
+		{
+			_cycle = inValue;
+		}
 
 		public var easerX : IEaser = _linearEaser;
 
@@ -46,70 +53,64 @@ package org.astoolkit.workflow.flex4.iterator
 
 		public var endY : Number = 1;
 
+		override public function get isAborted() : Boolean
+		{
+			return _isAborted;
+		}
+
+		override public function get progress() : Number
+		{
+			return _currentFraction;
+		}
+
+		override public function set source( inValue : * ) : void
+		{
+			//Ignored. Source is generated internally
+		}
+
 		public var startX : Number = 0;
 
 		public var startY : Number = 0;
 
 		public var steps : int = -1;
 
-		private var _currentFraction : Number;
-
-		private var _isAborted : Boolean;
-
-		private var _linearEaser : Linear = new Linear();
-
-		public function abort() : void
+		override public function abort() : void
 		{
 			_isAborted = true;
 		}
 
-		public function current() : Object
+		override public function current() : Object
 		{
 			return new Point( ( endX - startX ) * easerX.ease( _currentFraction ), ( endY - startY ) * easerY.ease( _currentFraction ) );
 		}
 
-		public function currentIndex() : Number
+		override public function currentIndex() : Number
 		{
 			return getActualSteps() * _currentFraction;
 		}
 
-		public function hasNext() : Boolean
+		override public function hasNext() : Boolean
 		{
 			return _currentFraction < 1;
 		}
 
-		public function get isAborted() : Boolean
-		{
-			return _isAborted;
-		}
-
-		public function next() : Object
+		override public function next() : Object
 		{
 			_currentFraction += ( 1 / getActualSteps() );
 			return current();
 		}
 
-		public function get progress() : Number
-		{
-			return _currentFraction;
-		}
-
-		public function pushBack() : void
+		override public function pushBack() : void
 		{
 
 		}
 
-		public function reset() : void
+		override public function reset() : void
 		{
 			_currentFraction = 0;
 		}
 
-		public function set source( inValue : * ) : void
-		{
-			//Ignored. Source is generated internally
-		}
-
-		public function supportsSource( inObject : * ) : Boolean
+		override public function supportsSource( inObject : * ) : Boolean
 		{
 			return false;
 		}

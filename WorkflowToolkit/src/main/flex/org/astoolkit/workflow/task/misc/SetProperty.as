@@ -59,23 +59,30 @@ package org.astoolkit.workflow.task.misc
 	 */
 	public class SetProperty extends BaseTask
 	{
+
+		private var _value : *;
+
 		/**
 		 * the target's property name
 		 */
 		public var property : String;
 
 		/**
-		 * the object to which to set the <code>property</code>.
-	   * Defaults to the current document
-				  */
+		  * the object to which to set the <code>property</code>.
+		  * Defaults to the current document
+		*/
 		public var target : Object;
 
-		[Bindable]
 		[InjectPipeline]
+		[AutoConfig]
 		/**
 		 * any value to be set to <code>target[ property ]</code>
 		 */
-		public var value : *;
+		public function set value( inValue :*) : void
+		{
+			_onPropertySet( "value" );
+			_value = inValue;
+		}
 
 		/**
 		 * @private
@@ -93,8 +100,8 @@ package org.astoolkit.workflow.task.misc
 				return;
 			}
 
-			if( value != undefined )
-				target[ property ] = value;
+			if( _value != undefined )
+				target[ property ] = _value;
 			else
 				target[ property ] = filteredInput;
 			complete();

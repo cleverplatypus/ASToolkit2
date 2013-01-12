@@ -23,73 +23,72 @@ package org.astoolkit.commons.collection
 	import org.astoolkit.commons.collection.api.IIterator;
 
 	[IteratorSource( "null" )]
-	public class InfiniteIterator implements IIterator
+	public class InfiniteIterator extends BaseIterator
 	{
 		private var _cycle : Boolean;
-
-		public function set cycle(value:Boolean):void
-		{
-			_cycle = value;
-		}
-
 
 		private var _index : int;
 
 		private var _isAborted : Boolean;
 
-		public function abort() : void
+		override public function set cycle( inValue :Boolean) : void
 		{
-			_isAborted = true;
+			_cycle = inValue;
 		}
 
-		public function current() : Object
-		{
-			return null;
-		}
-
-		public function currentIndex() : Number
-		{
-			return -1;
-		}
-
-		public function hasNext() : Boolean
-		{
-			return true;
-		}
-
-		public function get isAborted() : Boolean
+		override public function get isAborted() : Boolean
 		{
 			return _isAborted;
 		}
 
-		public function next() : Object
+		override public function get progress() : Number
+		{
+			return -1;
+		}
+
+		override public function set source( inValue : * ) : void
+		{
+		}
+
+		override public function abort() : void
+		{
+			_isAborted = true;
+		}
+
+		override public function current() : Object
+		{
+			return null;
+		}
+
+		override public function currentIndex() : Number
+		{
+			return -1;
+		}
+
+		override public function hasNext() : Boolean
+		{
+			return true;
+		}
+
+		override public function next() : Object
 		{
 			_index++;
 			return null;
 		}
 
-		public function get progress() : Number
-		{
-			return -1;
-		}
-
-		public function pushBack() : void
+		override public function pushBack() : void
 		{
 			// TODO Auto Generated method stub
 
 		}
 
-		public function reset() : void
+		override public function reset() : void
 		{
 			_isAborted = false;
 			_index = -1;
 		}
 
-		public function set source( inValue : * ) : void
-		{
-		}
-
-		public function supportsSource( inObject : * ) : Boolean
+		override public function supportsSource( inObject : * ) : Boolean
 		{
 			return inObject == null;
 		}

@@ -6,13 +6,18 @@ package org.astoolkit.workflow.task.text
 	public class ReplaceText extends BaseTask
 	{
 
+		private var _text : String;
+
 		public var regexp : RegExp;
 
 		public var replacement : String = "";
 
-		[Bindable]
 		[InjectPipeline]
-		public var text : String;
+		public function set text( inValue :String) : void
+		{
+			_onPropertySet( "text" );
+			_text = inValue;
+		}
 
 		/**
 		 * @private
@@ -21,7 +26,7 @@ package org.astoolkit.workflow.task.text
 		{
 			super.begin();
 
-			if( !text )
+			if( !_text )
 			{
 				fail( "Text not provided" );
 				return;
@@ -33,7 +38,7 @@ package org.astoolkit.workflow.task.text
 				return;
 			}
 
-			complete( text.replace( regexp, replacement ) );
+			complete( _text.replace( regexp, replacement ) );
 		}
 	}
 }

@@ -25,7 +25,7 @@ package org.astoolkit.commons.collection
 	import org.astoolkit.commons.collection.api.IIterator;
 
 	[IteratorSource( "Array,Vector,mx.collections.IList,XMLList" )]
-	public class ListIterator implements IIterator
+	public class ListIterator extends BaseIterator
 	{
 		private var _cycle : Boolean;
 
@@ -35,24 +35,24 @@ package org.astoolkit.commons.collection
 
 		protected var _isAborted : Boolean;
 
-		public function set cycle(value:Boolean) : void
+		override public function set cycle( inValue :Boolean) : void
 		{
-			_cycle = value;
+			_cycle = inValue;
 		}
 
-		public function get isAborted() : Boolean
+		override public function get isAborted() : Boolean
 		{
 			return _isAborted;
 		}
 
-		public function get progress() : Number
+		override public function get progress() : Number
 		{
 			if( _list && _currentDataIndex > -1 )
 				return _currentDataIndex / getListLength();
 			return -1;
 		}
 
-		public function set source( inValue : * ) : void
+		override public function set source( inValue : * ) : void
 		{
 			if( inValue &&
 				!( inValue is IList || inValue is Array || inValue is Vector || inValue is XMLList ) )
@@ -61,12 +61,12 @@ package org.astoolkit.commons.collection
 			reset();
 		}
 
-		public function abort() : void
+		override public function abort() : void
 		{
 			_isAborted = true;
 		}
 
-		public function current() : Object
+		override public function current() : Object
 		{
 			if( currentIndex() == -1 )
 				return null;
@@ -76,19 +76,19 @@ package org.astoolkit.commons.collection
 			return _list[ _currentDataIndex ];
 		}
 
-		public function currentIndex() : Number
+		override public function currentIndex() : Number
 		{
 			return _currentDataIndex;
 		}
 
-		public function hasNext() : Boolean
+		override public function hasNext() : Boolean
 		{
 			return _cycle || ( _list != null &&
 				getListLength() > 0 &&
 				_currentDataIndex + 1 < getListLength() );
 		}
 
-		public function next() : Object
+		override public function next() : Object
 		{
 			if( _cycle && !_list &&  
 				_currentDataIndex + 1 >= getListLength() )
@@ -100,19 +100,19 @@ package org.astoolkit.commons.collection
 			return _list[ _currentDataIndex ];
 		}
 
-		public function pushBack() : void
+		override public function pushBack() : void
 		{
 			if( _currentDataIndex > -1 )
 				_currentDataIndex--;
 		}
 
-		public function reset() : void
+		override public function reset() : void
 		{
 			_currentDataIndex = -1;
 			_isAborted = false;
 		}
 
-		public function supportsSource( inValue : * ) : Boolean
+		override public function supportsSource( inValue : * ) : Boolean
 		{
 			return inValue is IList || inValue is Array || inValue is Vector || inValue is XMLList;
 		}

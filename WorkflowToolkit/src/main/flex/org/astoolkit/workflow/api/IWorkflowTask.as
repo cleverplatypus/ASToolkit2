@@ -21,14 +21,9 @@ package org.astoolkit.workflow.api
 {
 
 	import flash.events.IEventDispatcher;
-	import mx.core.IFactory;
-	import mx.rpc.Fault;
-	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
-	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
-	import org.astoolkit.commons.mapping.DataMap;
 	import org.astoolkit.workflow.core.ExitStatus;
-	import org.astoolkit.workflow.internals.HeldTaskInfo;
+	import org.astoolkit.commons.process.api.IDeferrableProcess;
 
 	[Event(
 		name = "started",
@@ -58,8 +53,6 @@ package org.astoolkit.workflow.api
 		IDeferrableProcess
 	{
 
-		//TODO: replace with IExecutionDeferrable functionality
-		function get blocker() : HeldTaskInfo;
 		/**
 		 * read only. returns the 0 to 1 progress of this task.
 		 * A value of -1 means that this task won't provide progress information.
@@ -184,7 +177,6 @@ package org.astoolkit.workflow.api
 		 */
 		function begin() : void;
 
-		function hold() : HeldTaskInfo;
 		/**
 		 * resumes the whole workflow from the point where
 		 * suspend() was called. Not necessarily this task.

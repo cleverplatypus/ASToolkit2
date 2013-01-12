@@ -19,7 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.delegate
 {
-	
+
 	import flash.utils.getQualifiedClassName;
 	import mx.core.IFactory;
 	import mx.rpc.AsyncToken;
@@ -27,9 +27,12 @@ package org.astoolkit.workflow.task.delegate
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	import mx.utils.StringUtil;
+	import org.astoolkit.commons.factory.api.IFactoryResolver;
+	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
+	import org.astoolkit.commons.io.data.MethodBuilder;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 	import org.astoolkit.workflow.core.BaseTask;
-	
+
 	/**
 	 * Calls <code>method</code> on the specified target.
 	 * The target object can be specified as:
@@ -72,61 +75,59 @@ package org.astoolkit.workflow.task.delegate
 	 * </ul>
 	 * </p>
 	 */
-	public class Invoke extends BaseTask
+	public class Invoke extends BaseTask implements IFactoryResolverClient
 	{
+		private var _factoryResolver:IFactoryResolver;
+
+		private var _methodBuilder : MethodBuilder;
+
+		private var _usedFactory : IFactory;
+
+		public function set factoryResolver( inValue : IFactoryResolver ) : void
+		{
+			_factoryResolver = inValue;
+		}
+
+		public var liveArguments : Array;
+
+		public var method : String;
+
+		[AutoConfig]
+		public function set methodBuilder(value:MethodBuilder) : void
+		{
+			_methodBuilder = value;
+		}
+
 		[AutoConfig]
 		public var target : Object;
-		
-		public var targetType : Class;
-		
-		public var method : String;
-		
-		public var liveArguments : Array;
-		
+
 		[AutoConfig]
 		public var targetFactory : IFactory
-		
-		private var _usedFactory : IFactory;
-		
-		/**
-		 * @private
-		 */
-		override public function prepare() : void
-		{
-			super.prepare();
-			_usedFactory = null;
-			
-			if ( targetType && !targetFactory )
-			{
-				_usedFactory = context.config.getFactoryForType( targetType );
-			}
-			else if ( targetFactory )
-			{
-				_usedFactory = targetFactory;
-			}
-		}
-		
+
+		public var targetType : Class;
+
 		/**
 		 * @private
 		 */
 		override public function begin() : void
 		{
+			//TODO: use IExpressionResolver for method
 			super.begin();
 			var localTarget : Object;
-			
-			if ( _usedFactory )
+
+			if( _usedFactory )
 			{
 				localTarget = _usedFactory.newInstance();
 			}
-			else if ( target )
+			else if( target )
 			{
 				localTarget = target;
 			}
 			var methodName : String = method.match( /\(.*\)$/ ) ?
 				method.replace( /\(.*$/, "" ) :
 				method;
-			
-			if ( localTarget && localTarget.hasOwnProperty( methodName ) && localTarget[ methodName ] is Function )
+
+			if( localTarget && localTarget.hasOwnProperty( methodName ) && localTarget[ methodName ] is Function )
 			{
 				var args : Array = method.match( /\(.+\)$/ ) ?
 					StringUtil.trimArrayElements( method.match( /\((.+?)\)/ )[1], "," ).split(",") :
@@ -144,12 +145,12 @@ package org.astoolkit.workflow.task.delegate
 						}
 						return undefined;
 					} );
-				
+
 				try
 				{
 					var result : * = localTarget[ methodName ].apply( localTarget, args );
-					
-					if ( result is AsyncToken )
+
+					if( result is AsyncToken )
 					{
 						AsyncToken( result ).addResponder( 
 							new Responder( threadSafe( onResult ), threadSafe( onFault ) ) );
@@ -157,7 +158,7 @@ package org.astoolkit.workflow.task.delegate
 					else
 						complete( result );
 				}
-				catch ( e : Error )
+				catch( e : Error )
 				{
 					fail( "Error calling method \"{0}\" on target \"{1}\"\nRoot cause:\n{2} ", 
 						method, 
@@ -170,15 +171,33 @@ package org.astoolkit.workflow.task.delegate
 				fail( "Cannot invoke method {0} on target {1}", method, getQualifiedClassName( localTarget ) );
 			}
 		}
-		
-		private function onResult( inEvent : ResultEvent ) : void
+
+		/**
+		 * @private
+		 */
+		override public function prepare() : void
 		{
-			complete( inEvent.result );
+			super.prepare();
+			_usedFactory = null;
+
+			if( targetType && !targetFactory )
+			{
+				_usedFactory = _factoryResolver.getFactoryForType( targetType );
+			}
+			else if( targetFactory )
+			{
+				_usedFactory = targetFactory;
+			}
 		}
-		
+
 		private function onFault( inEvent : FaultEvent ) : void
 		{
 			fail( inEvent.fault.getStackTrace() );
+		}
+
+		private function onResult( inEvent : ResultEvent ) : void
+		{
+			complete( inEvent.result );
 		}
 	}
 }

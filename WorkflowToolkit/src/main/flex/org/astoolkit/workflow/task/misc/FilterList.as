@@ -28,17 +28,23 @@ package org.astoolkit.workflow.task.misc
 	import org.astoolkit.workflow.core.BaseTask;
 
 	[TaskInput( "Vector,Array,mx.collections.ICollectionView" )]
-	[DefaultProperty( "includeCondition" )]
 	public class FilterList extends BaseTask
 	{
+
+		private var _source : Object;
+
+		[AutoConfig]
 		public var includeCondition : IConditionalExpression;
 
-		[Bindable]
 		[InjectPipeline]
 		/**
 		 * a <code>Array, Vector.&lt;&#42;&gt;, IList</code> object
 		 */
-		public var source : Object;
+		public function set source( inValue :Object) : void
+		{
+			_onPropertySet( "source" );
+			_source = inValue;
+		}
 
 		/**
 		 * @private
@@ -49,14 +55,14 @@ package org.astoolkit.workflow.task.misc
 
 			try
 			{
-				if( source is Array || source is Vector )
+				if( _source is Array || _source is Vector )
 				{
-					complete( source.filter( filterFunction ) );
+					complete( _source.filter( filterFunction ) );
 				}
 				else
 				{
-					ICollectionView( source ).filterFunction = filterFunction;
-					ICollectionView( source ).refresh();
+					ICollectionView( _source ).filterFunction = filterFunction;
+					ICollectionView( _source ).refresh();
 				}
 			}
 			catch( e : Error )

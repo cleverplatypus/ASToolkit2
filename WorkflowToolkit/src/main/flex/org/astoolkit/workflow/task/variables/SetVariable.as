@@ -19,6 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.variables
 {
+
 	import org.astoolkit.workflow.core.BaseTask;
 
 	/**
@@ -53,6 +54,20 @@ package org.astoolkit.workflow.task.variables
 		 */
 		private var _value : *;
 
+		public function set name( inValue : String ) : void
+		{
+			if( inValue )
+				_name = inValue.match( /^\$/ ) ? inValue : "$" + inValue;
+			else
+				_name = null;
+		}
+
+		[AutoConfig]
+		public function set value( inValue : * ) : void
+		{
+			_value = inValue;
+		}
+
 		/**
 		 * @private
 		 */
@@ -71,19 +86,6 @@ package org.astoolkit.workflow.task.variables
 			else
 				context.variables[ aName ] = filteredInput;
 			complete();
-		}
-
-		public function set name( inValue : String ) : void
-		{
-			if( inValue )
-				_name = inValue.match( /^\$/ ) ? inValue : "$" + inValue;
-			else
-				_name = null;
-		}
-
-		public function set value( inValue : * ) : void
-		{
-			_value = inValue;
 		}
 	}
 }

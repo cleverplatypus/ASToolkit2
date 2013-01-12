@@ -6,12 +6,13 @@ package org.astoolkit.workflow.task.data
 	import flash.data.SQLStatement;
 	import flash.errors.SQLError;
 	import flash.net.Responder;
-	
 	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.core.Switch;
 
 	public class ExecuteSQLSelect extends BaseTask
 	{
+
+		private var _sql : String;
 
 		[Bindable]
 		[InjectVariable]
@@ -19,13 +20,17 @@ package org.astoolkit.workflow.task.data
 
 		public var itemClass : Class;
 
-		[Bindable]
 		[InjectPipeline]
-		public var sql : String;
+		[AutoConfig]
+		public function set sql( inValue :String) : void
+		{
+			_onPropertySet( "sql" );
+			_sql = inValue;
+		}
 
 		[Inspectable(enumeration="all,first,last", defaultValue="all")]
 		public var subsetOutput : String;
-		
+
 		override public function begin() : void
 		{
 			super.begin();
@@ -44,7 +49,7 @@ package org.astoolkit.workflow.task.data
 			}
 			var statement : SQLStatement = new SQLStatement();
 			statement.sqlConnection = connection;
-			statement.text = sql;
+			statement.text = _sql;
 			statement.itemClass = itemClass;
 			statement.execute( -1, new Responder( threadSafe( onStatementResult ), threadSafe( onStatementFault ) ) );
 		}
@@ -56,7 +61,7 @@ package org.astoolkit.workflow.task.data
 
 		private function onStatementResult( inResult : SQLResult ) : void
 		{
-			if( inResult.data && inResult.data.length > 0)
+			if( inResult.data && inResult.data.length > 0 )
 			{
 				switch( subsetOutput )
 				{

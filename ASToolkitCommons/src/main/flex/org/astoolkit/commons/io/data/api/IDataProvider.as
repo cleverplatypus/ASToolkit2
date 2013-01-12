@@ -17,12 +17,13 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.api
+package org.astoolkit.commons.io.data.api
 {
 
-	public interface IDeferrableProcess
+	public interface IDataProvider
 	{
-		function addDeferredProcessWatcher( inWatcher : Function ) : void;
-		function isProcessDeferred() : Boolean;
+		function get providedType() : Class;
+
+		function getData() : *;
 	}
 }
