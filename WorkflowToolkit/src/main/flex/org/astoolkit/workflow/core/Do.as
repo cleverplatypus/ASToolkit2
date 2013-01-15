@@ -30,6 +30,7 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.mapping.SimplePropertiesMapper;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 	import org.astoolkit.commons.mapping.api.IPropertyMappingDescriptor;
+	import org.astoolkit.commons.ns.astoolkit_private;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.utils.Range;
 	import org.astoolkit.workflow.annotation.*;
@@ -71,6 +72,7 @@ package org.astoolkit.workflow.core
 	 */
 	public class Do extends BaseTask implements ITasksGroup, IRepeater
 	{
+		use namespace astoolkit_private;
 
 		protected static const LOGGER : ILogger = getLogger( Do );
 
@@ -455,9 +457,9 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		protected function onSubtaskAbort( inTask : IWorkflowTask, inMessage : String ) : void
+		protected function onSubtaskAbort( inTask : IWorkflowTask ) : void
 		{
-			dispatchTaskEvent( WorkflowEvent.ABORTED, inTask, inMessage );
+			dispatchTaskEvent( WorkflowEvent.ABORTED, inTask );
 			onSubtaskCompleted( inTask );
 		}
 
@@ -680,6 +682,22 @@ package org.astoolkit.workflow.core
 				context.dispatchEvent( new WorkflowEvent( WorkflowEvent.SUSPENDED, _context ) );
 			}
 			dispatchTaskEvent( WorkflowEvent.SUSPENDED, inTask );
+		}
+
+		/**
+		 * @private
+		 */
+		override protected function onTimeout( inOriginalThread : int ) : void
+		{
+			if( currentThread != inOriginalThread )
+				return;
+			_exitStatus = new ExitStatus( ExitStatus.TIME_OUT );
+
+			ENV.astoolkit_private::runningTask = this;
+			LOGGER.debug( "Task {0} failed because a {1}s timeout occourred",
+				description,
+				Number( _timeout ) / 1000 );
+			abort();
 		}
 
 		protected function prepareChildren() : void

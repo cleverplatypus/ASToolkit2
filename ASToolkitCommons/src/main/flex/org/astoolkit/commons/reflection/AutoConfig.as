@@ -19,18 +19,25 @@ Version 2.x
 */
 package org.astoolkit.commons.reflection
 {
-	
-	[Metadata( name="AutoConfig", target="setter,property", ownerType="org.astoolkit.commons.mxml.IAutoConfigObject" )]
+
+	[Metadata( 
+		name="AutoConfig", 
+		target="setter,property", 
+		ownerType="org.astoolkit.commons.mxml.IAutoConfigObject", 
+		repeatable="true" )]
+	[MetaArg( name="match", type="Class", mandatory="false" )]
+	[MetaArg( name="order", type="int", mandatory="false" )]
 	public class AutoConfig extends Metadata
-	{		
+	{
+
+		public function get match() : Class
+		{
+			return getClass( "type", true );
+		}
+
 		public function get order() : int
 		{
 			return getNumber( "order", false );
-		}
-		
-		public function get type() : Class
-		{
-			return getClass( "type", true );
 		}
 	}
 }

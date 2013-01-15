@@ -37,8 +37,8 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
 	import org.astoolkit.commons.reflection.Field;
+	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
 	import org.astoolkit.commons.reflection.Type;
 	import org.astoolkit.workflow.annotation.InjectPipeline;
 	import org.astoolkit.workflow.api.*;
@@ -373,7 +373,7 @@ package org.astoolkit.workflow.core
 		 *
 		 * @see org.astoolkit.workflow.core.ExitStatus
 	 * @inheritDoc
-																																*/
+																																 */
 		public function set exitStatus( inStatus : ExitStatus ) : void
 		{
 			_exitStatus = inStatus;
@@ -598,6 +598,8 @@ package org.astoolkit.workflow.core
 			return _outlet;
 		}
 
+		[AutoConfig(match="org.astoolkit.commons.mapping.api.IPropertiesMapper")]
+		[AutoConfig(match="org.astoolkit.commons.mapping.api.IPropertiesMapperFactory")]
 		/**
 		 * the destination of the task's output data.
 		 * <p>Possible values:
@@ -718,7 +720,8 @@ package org.astoolkit.workflow.core
 		{
 			LOGGER.debug( "abort() '{0}' ({1})", description, getQualifiedClassName( this ) );
 			_status = TaskStatus.ABORTED;
-			exitStatus = new ExitStatus( ExitStatus.ABORTED );
+			if( !_exitStatus )
+				exitStatus = new ExitStatus( ExitStatus.ABORTED );
 			_thread++;
 			dispatchTaskEvent( WorkflowEvent.ABORTED, this );
 
@@ -1152,6 +1155,7 @@ package org.astoolkit.workflow.core
 			if( inEvent.newValue == TaskStatus.ABORTED )
 			{
 				_status = TaskStatus.ABORTED;
+				_thread++;
 			}
 		}
 

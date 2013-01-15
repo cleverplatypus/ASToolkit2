@@ -24,7 +24,6 @@ package org.astoolkit.workflow.task.parsley
 	import flash.utils.getQualifiedClassName;
 	import mx.core.IFactory;
 	import mx.logging.ILogger;
-	import mx.logging.Log;
 	import mx.utils.StringUtil;
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.factory.api.IPooledFactory;

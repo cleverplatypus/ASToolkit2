@@ -3,7 +3,7 @@ package org.astoolkit.workflow.internals
 
 	import flash.utils.getQualifiedClassName;
 	import mx.logging.ILogger;
-	import org.astoolkit.commons.eval.ExpressionResolverToken;
+	import org.astoolkit.commons.eval.ExpressionResolverResult;
 	import org.astoolkit.commons.eval.Resolve;
 	import org.astoolkit.workflow.api.IContextAwareElement;
 	import org.astoolkit.workflow.api.IWorkflowContext;
@@ -24,16 +24,16 @@ package org.astoolkit.workflow.internals
 			_context = inValue;
 		}
 
-		override public function resolve( inExpression : Object = null, inSource : Object = null ) : ExpressionResolverToken
+		override public function resolve( inExpression : Object = null, inSource : Object = null ) : ExpressionResolverResult
 		{
 			var expr : Object = _expression ? _expression : inExpression;
 
-			var out : ExpressionResolverToken;
+			var out : ExpressionResolverResult;
 
 			if( expr is String && String( expr ).match( /^\$\w+(\.w+)*$/ ) )
 			{
 				var dest : * = _context.variables;
-				out = new ExpressionResolverToken();
+				out = new ExpressionResolverResult();
 
 				for each( var segment : String in String( expr ).split( "." ) )
 				{

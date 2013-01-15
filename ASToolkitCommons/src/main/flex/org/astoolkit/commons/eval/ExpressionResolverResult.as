@@ -17,15 +17,17 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.api
+package org.astoolkit.commons.eval
 {
 
-	[Deprecated(message="IIocContainerManaged is deprecated: use the class-level ManagedObject metadata instead")]
-	/**
-	 * Marker class to select which object should
-	 * be autowired with the chosen IoC container.
-	 */
-	public interface IIocContainerManaged
+	public final class ExpressionResolverResult
 	{
+		public var expression : Object;
+
+		public var resolvedSymbols : Object;
+
+		public var result : *;
+
+		public var source : Object;
 	}
 }

@@ -20,12 +20,30 @@ Version 2.x
 package org.astoolkit.commons.mapping
 {
 
+	import mx.core.IMXMLObject;
 	import org.astoolkit.commons.mapping.api.*;
 	import org.astoolkit.commons.wfml.IComponent;
 
-	public dynamic class Map implements IPropertiesMapperFactory, IComponent
+	/**
+	 * Dynamic class to define a <code>IPropertiesMapperFactory</code>
+	 * and mapping at the same time.
+	 * The dynamic properties are used to create the mapping object used
+	 * by the mapper returned by this factory.
+	 */
+	public dynamic class Map implements IPropertiesMapperFactory, IComponent, IMXMLObject
 	{
+		private var _document:Object;
+
+		private var _id:String;
+
 		private var _pid : String;
+
+		private var _target : *;
+
+		public function set mappingTarget( inValue : * ) : void
+		{
+			_target = inValue;
+		}
 
 		public function get pid() : String
 		{
@@ -37,6 +55,12 @@ package org.astoolkit.commons.mapping
 			_pid = inValue;
 		}
 
+		public function initialized( inDocument : Object, inId : String ) : void
+		{
+			_document = inDocument;
+			_id = inId;
+		}
+
 		public function object( 
 			inTarget : Object, 
 			inMapping : Object, 
@@ -44,7 +68,7 @@ package org.astoolkit.commons.mapping
 		{
 			var mapper:SimplePropertiesMapper = new SimplePropertiesMapper();
 			mapper.mapping = this;
-			mapper.target = inTarget;
+			mapper.target = resolveTarget( inTarget );
 			mapper.strict = inStrict;
 			return mapper;
 		}
@@ -54,6 +78,16 @@ package org.astoolkit.commons.mapping
 			inPropertyName : String ) : IPropertiesMapper
 		{
 			return null;
+		}
+
+		protected function resolveTarget( inExplicitTarget : Object ) : *
+		{
+			if( inExplicitTarget )
+				return inExplicitTarget;
+
+			if( _target is String && _document.hasOwnProperty( _target ) )
+				return _document[ _target ];
+			return _target;
 		}
 	}
 }

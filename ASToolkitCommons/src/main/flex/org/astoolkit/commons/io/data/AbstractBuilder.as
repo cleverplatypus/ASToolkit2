@@ -21,6 +21,7 @@ package org.astoolkit.commons.io.data
 {
 
 	import mx.logging.ILogger;
+	
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
@@ -28,6 +29,7 @@ package org.astoolkit.commons.io.data
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.reflection.AutoConfigUtil;
 	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
+	import org.astoolkit.commons.utils.IChildrenAwareDocument;
 	import org.astoolkit.commons.wfml.IAutoConfigContainerObject;
 	import org.astoolkit.commons.wfml.IComponent;
 
@@ -99,9 +101,14 @@ package org.astoolkit.commons.io.data
 
 		public final function initialized( inDocument : Object, inId : String) : void
 		{
+			if( _document )
+				return;
 			_document = inDocument;
 			_id = inId;
 			initAutoConfigContainer();
+
+			if( _document is IChildrenAwareDocument )
+				IChildrenAwareDocument( _document ).childNodeAdded( this );
 			postInitialized();
 		}
 

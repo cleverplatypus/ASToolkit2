@@ -43,14 +43,14 @@ package org.astoolkit.commons.eval
 			_delegate  = inValue;
 		}
 
-		public function set key( inValue : * ) : void
-		{
-			_destination = inValue;
-		}
-
 		public function set expression( inValue : Object ) : void
 		{
 			_expression = inValue;
+		}
+
+		public function set key( inValue : * ) : void
+		{
+			_destination = inValue;
 		}
 
 		public function get pid() : String
@@ -70,6 +70,8 @@ package org.astoolkit.commons.eval
 
 		public function initialized( inDocument : Object, inId : String ) : void
 		{
+			if( _document )
+				return;
 			_document = inDocument;
 
 			if( _document is IChildrenAwareDocument )
@@ -77,27 +79,36 @@ package org.astoolkit.commons.eval
 
 		}
 
-		public function resolve( inExpression : Object = null, inSource : Object = null ) : ExpressionResolverToken
+		public function resolve( inExpression : Object = null, inSource : Object = null ) : ExpressionResolverResult
 		{
 
 			var expr : Object = _expression ? _expression : inExpression;
+			var src : Object = inSource ? inSource : _document;
 
 			if( _document && expr is String )
 			{
-				var out : ExpressionResolverToken;
+				var out : ExpressionResolverResult;
+
+				if( expr == "." )
+				{
+					out = new ExpressionResolverResult();
+					out.result = src;
+					out.source = src;
+					return out;
+				}
 
 				if( _delegate )
 				{
-					out = _delegate .resolve( expr, inSource );
+					out = _delegate.resolve( expr, src );
 
 					if( out != null && out.result !== undefined )
 						return out;
 				}
 
 				if( out == null )
-					out = new ExpressionResolverToken();
+					out = new ExpressionResolverResult();
 
-				var dest : * = _document;
+				var dest : * = src;
 
 				for each( var segment : String in String( expr ).split( "." ) )
 				{

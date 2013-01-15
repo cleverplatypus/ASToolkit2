@@ -93,9 +93,9 @@ package org.astoolkit.workflow.task.delegate
 		public var method : String;
 
 		[AutoConfig]
-		public function set methodBuilder(value:MethodBuilder) : void
+		public function set methodBuilder( inValue : MethodBuilder ) : void
 		{
-			_methodBuilder = value;
+			_methodBuilder = inValue;
 		}
 
 		[AutoConfig]
@@ -123,52 +123,51 @@ package org.astoolkit.workflow.task.delegate
 			{
 				localTarget = target;
 			}
-			var methodName : String = method.match( /\(.*\)$/ ) ?
-				method.replace( /\(.*$/, "" ) :
-				method;
+			var builder : MethodBuilder;
+			var methodName : String;
 
-			if( localTarget && localTarget.hasOwnProperty( methodName ) && localTarget[ methodName ] is Function )
+			if( method && method.length > 0 )
 			{
-				var args : Array = method.match( /\(.+\)$/ ) ?
-					StringUtil.trimArrayElements( method.match( /\((.+?)\)/ )[1], "," ).split(",") :
-					[];
-				args = args.map( 
-					function( inValue : String, inIndex : int, inArray : Array ) : Object
-					{
-						if( inValue == "." )
-							return filteredInput;
-						else if( inValue.match( /^\$\w+$/ ) )
-							return ENV[ inValue ];
-						else if( inValue.match( /^\:\d+$/ ) )
-						{
-							return liveArguments[ int( inValue.match( /^\:(\d+)$/ )[1] ) ];
-						}
-						return undefined;
-					} );
-
-				try
+				if( _methodBuilder )
 				{
-					var result : * = localTarget[ methodName ].apply( localTarget, args );
-
-					if( result is AsyncToken )
-					{
-						AsyncToken( result ).addResponder( 
-							new Responder( threadSafe( onResult ), threadSafe( onFault ) ) );
-					}
-					else
-						complete( result );
+					fail( "Conflict: method and methodBuilder both defined" );
+					return;
 				}
-				catch( e : Error )
-				{
-					fail( "Error calling method \"{0}\" on target \"{1}\"\nRoot cause:\n{2} ", 
-						method, 
-						getQualifiedClassName( localTarget ), 
-						e.getStackTrace() );
-				}
+				builder = MethodBuilder.parse( method );
+				builder.initialized( _document, null );
+				_context.configureObjects( [ builder ] );
+				methodName = method.match( /^(\w+)/g )[1];
+			}
+			else if( _methodBuilder )
+			{
+				builder = _methodBuilder;
+				methodName = _methodBuilder.name;
 			}
 			else
 			{
-				fail( "Cannot invoke method {0} on target {1}", method, getQualifiedClassName( localTarget ) );
+				fail( "No method or methodBuilder defined" );
+				return;
+			}
+
+			try
+			{
+				builder.target = localTarget;
+				var result : * = ( builder.getData() as Function )();
+
+				if( result is AsyncToken )
+				{
+					AsyncToken( result ).addResponder( 
+						new Responder( threadSafe( onResult ), threadSafe( onFault ) ) );
+				}
+				else
+					complete( result );
+			}
+			catch( e : Error )
+			{
+				fail( "Error calling method \"{0}\" on target \"{1}\"\nRoot cause:\n{2} ", 
+					methodName, 
+					getQualifiedClassName( localTarget ), 
+					e.getStackTrace() );
 			}
 		}
 

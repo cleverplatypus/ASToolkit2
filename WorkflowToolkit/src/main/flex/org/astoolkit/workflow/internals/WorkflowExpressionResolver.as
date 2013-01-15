@@ -2,7 +2,7 @@ package org.astoolkit.workflow.internals
 {
 
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
-	import org.astoolkit.commons.eval.ExpressionResolverToken;
+	import org.astoolkit.commons.eval.ExpressionResolverResult;
 	import org.astoolkit.workflow.api.IWorkflowContext;
 
 	[Deprecated(message="WorkflowExpressionResolver is deprecated, use new IExpressionResolver architecture")]
@@ -64,7 +64,7 @@ package org.astoolkit.workflow.internals
 			return null;
 		}*/
 
-		public function resolve( inValue : Object = null, inSource : Object = null ) : ExpressionResolverToken
+		public function resolve( inValue : Object = null, inSource : Object = null ) : ExpressionResolverResult
 		{
 			/*if( inValue is String )
 			{

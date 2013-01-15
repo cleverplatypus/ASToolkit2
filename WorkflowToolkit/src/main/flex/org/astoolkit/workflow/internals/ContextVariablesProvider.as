@@ -276,6 +276,7 @@ package org.astoolkit.workflow.internals
 			throw new Error( "\"self\" is a read-only reserved word." )
 		}
 
+		[Deprecated]
 		public function get mapTo() : ContextAwareDataMap
 		{
 			if( !_dataMap )
@@ -334,6 +335,7 @@ package org.astoolkit.workflow.internals
 			astoolkit_private::nextTaskProperties = {};
 		}
 
+		[Deprecated]
 		/**
 		 * Utility method to bind non-binding expressions in workflows
 		 * properties.
@@ -422,11 +424,9 @@ package org.astoolkit.workflow.internals
 		 */
 		public function onTaskExitStatus( inTask : IWorkflowTask, inStatus : ExitStatus ) : void
 		{
-			var parent : ITasksGroup = GroupUtil.getParentWorkflow( inTask );
-
-			if( !parent )
-				parent = astoolkit_private::runningTask as ITasksGroup;
-			var n : String = UIDUtil.getUID( parent );
+			if( !inTask.parent )
+				inTask.parent = astoolkit_private::runningTask as ITasksGroup;
+			var n : String = UIDUtil.getUID( inTask.parent );
 
 			if( !_namespaces.hasOwnProperty( n ) )
 				_namespaces[ n ] = {};

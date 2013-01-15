@@ -20,7 +20,10 @@ Version 2.x
 package org.astoolkit.commons.io.data
 {
 
+	import flash.utils.getQualifiedClassName;
+	import mx.utils.StringUtil;
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
+	import org.astoolkit.commons.eval.Resolve;
 
 	[DefaultProperty("autoConfigChildren")]
 	public class MethodBuilder extends AbstractBuilder
@@ -29,6 +32,23 @@ package org.astoolkit.commons.io.data
 		public static function parse( inString : String ) : MethodBuilder
 		{
 			var out : MethodBuilder = new MethodBuilder();
+
+			var methodName : String = inString.match( /\(.*\)$/ ) ?
+				inString.replace( /\(.*$/, "" ) :
+				inString;
+			out.name = methodName;
+			var args : Array = inString.match( /\(.+\)$/ ) ?
+				StringUtil.trimArrayElements( inString.match( /\((.+?)\)/ )[1], "," ).split(",") : [];
+			var resolvers : Vector.<IExpressionResolver> = new Vector.<IExpressionResolver>();
+			var resolver : Resolve;
+
+			for each( var arg : String in arg )
+			{
+				resolver = new Resolve();
+				resolver.expression = arg;
+				resolvers.push( resolver );
+			}
+			out.arguments = resolvers;
 			return out;
 		}
 
@@ -36,12 +56,23 @@ package org.astoolkit.commons.io.data
 
 		private var _target : Object;
 
+		[Featured]
 		/**
 		 * alias setter for _expressionResolvers property. For declaration clarity.
 		 */
+		public function get arguments() : Vector.<IExpressionResolver>
+		{
+			return _expressionResolvers;
+		}
+
 		public function set arguments( inValue : Vector.<IExpressionResolver> ) : void
 		{
 			_expressionResolvers = inValue;
+		}
+
+		public function get name() : String
+		{
+			return _name;
 		}
 
 		public function set name( inValue : String ) : void
@@ -56,9 +87,29 @@ package org.astoolkit.commons.io.data
 
 		override public function getData() : *
 		{
-			var out : Function;
-			//TODO: implement
-			return out as Function; //casting to prevent compiler warning
+
+			if( !_target || !_name )
+				throw new Error( "Either or both _target and _name are not set" );
+
+			if( !_target.hasOwnProperty( _name ) || !( _target[ _name ] is Function ) )
+			{
+				throw new Error( "\"" + _name + "\" is not a method of class " + 
+					getQualifiedClassName( _target ) );
+			}
+
+			return function() : *
+			{
+				( _target[ _name ] as Function ).apply( _target, resolveArguments() ); 
+			}as Function; //casting to prevent compiler warning
+		}
+
+		private function resolveArguments() : Array
+		{
+			var out : Array = [];
+
+			for each( var resolver : IExpressionResolver in _expressionResolvers )
+				out.push( resolver.resolve() );
+			return out;
 		}
 	}
 }

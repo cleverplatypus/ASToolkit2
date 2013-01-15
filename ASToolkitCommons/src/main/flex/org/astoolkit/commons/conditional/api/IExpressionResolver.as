@@ -20,7 +20,7 @@ Version 2.x
 package org.astoolkit.commons.conditional.api
 {
 
-	import org.astoolkit.commons.eval.ExpressionResolverToken;
+	import org.astoolkit.commons.eval.ExpressionResolverResult;
 
 	public interface IExpressionResolver
 	{
@@ -33,6 +33,6 @@ package org.astoolkit.commons.conditional.api
 		[Deprecated]
 		function bindToEnvironment( inEnv : Object, inExpression : Object ) : Object;
 
-		function resolve( inExpression : Object = null, inSource : Object = null ) : ExpressionResolverToken;
+		function resolve( inExpression : Object = null, inSource : Object = null ) : ExpressionResolverResult;
 	}
 }

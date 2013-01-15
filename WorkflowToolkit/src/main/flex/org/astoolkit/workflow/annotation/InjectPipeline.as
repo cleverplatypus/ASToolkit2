@@ -19,11 +19,9 @@ Version 2.x
 */
 package org.astoolkit.workflow.annotation
 {
-	
-	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
-	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
+
 	import org.astoolkit.commons.reflection.Metadata;
-	
+
 	[Metadata( name="InjectPipeline", target="field,setter" )]
 	[MetaArg( name="filter", type="String", mandatory="false" )]
 	public class InjectPipeline extends Metadata

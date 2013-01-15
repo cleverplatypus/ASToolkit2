@@ -54,17 +54,9 @@ package org.astoolkit.workflow.core
 
 		public static const FAILED : String = "failed";
 
-		public static const TIME_OUT : String = "timeOut";
+		public static const TIME_OUT : String = "timeout";
 
 		public static const USER_CANCELED : String = "userCanceled";
-
-		public function ExitStatus( inCode : String, inMessage : String = null, inData : Object = null, inInterrupted : Boolean = false )
-		{
-			_code = inCode;
-			_message = inMessage;
-			_data = inData;
-			_interrupted = inInterrupted || _code == FAILED || _code == TIME_OUT || _code == USER_CANCELED;
-		}
 
 		private var _code : String;
 
@@ -104,6 +96,14 @@ package org.astoolkit.workflow.core
 		public function get message() : String
 		{
 			return _message;
+		}
+
+		public function ExitStatus( inCode : String, inMessage : String = null, inData : Object = null, inInterrupted : Boolean = false )
+		{
+			_code = inCode;
+			_message = inMessage;
+			_data = inData;
+			_interrupted = inInterrupted || _code == FAILED || _code == TIME_OUT || _code == USER_CANCELED;
 		}
 	}
 }

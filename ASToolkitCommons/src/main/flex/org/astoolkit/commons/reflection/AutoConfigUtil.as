@@ -1,12 +1,8 @@
 package org.astoolkit.commons.reflection
 {
 
-	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
-	import flash.utils.getQualifiedSuperclassName;
 	import mx.logging.ILogger;
-	import mx.logging.Log;
-	import mx.utils.object_proxy;
 	import org.astoolkit.commons.io.data.api.IDataProvider;
 	import org.astoolkit.commons.utils.ObjectCompare;
 	import org.astoolkit.commons.wfml.IAutoConfigContainerObject;
@@ -16,7 +12,8 @@ package org.astoolkit.commons.reflection
 		private static const LOGGER : ILogger = getLogger( AutoConfigUtil );
 
 		//TODO: implement inheritance-tree-safe auto-config fields assignment to best match target fields
-		//TODO: implement support for IComponent.pid
+		// 		implement support for IComponent.pid (pid marked children can be assigned even to 
+		//		fields with no [AutoConfig] annotation)
 		public static function autoConfig( 
 			inTarget : IAutoConfigContainerObject, 
 			inChildren : Array ) : Vector.<PropertyDataProviderInfo>
@@ -27,13 +24,18 @@ package org.astoolkit.commons.reflection
 			var autoConfigFields : Vector.<Field> = 
 				Type.forType( inTarget )
 				.getFieldsWithAnnotation( AutoConfig );
-			autoConfigFields.sort( 
+			autoConfigFields = autoConfigFields.sort( 
 				function( inA : Field, inB : Field ) : int
 				{
+					//TODO: handle multiple [AutoConfig] annotations
 					var aAnnotation : AutoConfig = AutoConfig( inA.getAnnotationsOfType( AutoConfig )[0] );
 					var bAnnotation : AutoConfig = AutoConfig( inB.getAnnotationsOfType( AutoConfig )[0] );
-					var aType : Class = aAnnotation.type != null ? aAnnotation.type : inA.type;
-					var bType : Class = bAnnotation.type != null ? bAnnotation.type : inB.type;
+					var aType : Class = aAnnotation.match != null ? aAnnotation.match : inA.type;
+					var bType : Class = bAnnotation.match != null ? bAnnotation.match : inB.type;
+					if( aType === Object )
+						return 1;
+					if( bType === Object )
+						return -1
 					if( aType != bType )
 						return ObjectCompare.compare(
 							getQualifiedClassName( aType ),
@@ -76,7 +78,7 @@ package org.astoolkit.commons.reflection
 					var annotations : Vector.<IAnnotation> = f.getAnnotationsOfType( AutoConfig );
 					var annotation : AutoConfig = annotations != null && annotations.length > 0 ?
 						annotations[0] as AutoConfig : null;
-					var type : Class = annotation.type ? annotation.type : f.type;
+					var type : Class = annotation.match ? annotation.match : f.type;
 
 					if( child.object is type )
 					{
