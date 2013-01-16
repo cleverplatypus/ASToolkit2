@@ -34,14 +34,14 @@ package org.astoolkit.commons.reflection
 
 		public static function clearCache( inDefer : Boolean = false ) : void
 		{
-			if ( !inDefer )
+			if( !inDefer )
 			{
 				_classes = {};
 				_willClearCache = false;
 			}
 			else
 			{
-				if ( !_willClearCache )
+				if( !_willClearCache )
 					setTimeout( clearCache, 1, false );
 			}
 		}
@@ -50,7 +50,7 @@ package org.astoolkit.commons.reflection
 		{
 			var n : String = getQualifiedClassName( inClass );
 
-			if ( !_classes.hasOwnProperty( n ) )
+			if( !_classes.hasOwnProperty( n ) )
 			{
 				_classes[ n ] = Type.create( inClass );
 				Type( _classes[ n ] ).init();
@@ -62,53 +62,24 @@ package org.astoolkit.commons.reflection
 		{
 			var info : Type = new Type();
 
-			if ( inClass is Class )
+			if( inClass is Class )
 				info._type = inClass as Class;
 			else
 				info._type = getDefinitionByName( getQualifiedClassName( inClass ) ) as Class;
 			return info;
 		}
 
-		private var _fullName : String;
-
-		public function get fullName() : String
-		{
-			return _fullName;
-		}
-
-		private var _interfaces : Vector.<Type> = new Vector.<Type>();
-
-		public function get interfaces() : Vector.<Type>
-		{
-			return _interfaces;
-		}
-
-		private var _methods : Object = {};
-
-		public function get methods() : Object
-		{
-			return _methods;
-		}
-
-		private var _superClass : Type;
-
-		public function get superClass() : Type
-		{
-			return _superClass;
-		}
-
-		private var _type : Class;
-
-		public function get type() : Class
-		{
-			return _type;
-		}
-
 		private var _fields : Object = {};
+
+		private var _fullName : String;
 
 		private var _implementors : Vector.<Type> = new Vector.<Type>();
 
+		private var _interfaces : Vector.<Type> = new Vector.<Type>();
+
 		private var _interfacesByName : Object = {};
+
+		private var _methods : Object = {};
 
 		private var _subClasses : Vector.<Type> = new Vector.<Type>();
 
@@ -116,9 +87,38 @@ package org.astoolkit.commons.reflection
 
 		private var _subtypeInfo : Type;
 
+		private var _superClass : Type;
+
+		private var _type : Class;
+
+		public function get fullName() : String
+		{
+			return _fullName;
+		}
+
+		public function get interfaces() : Vector.<Type>
+		{
+			return _interfaces;
+		}
+
+		public function get methods() : Object
+		{
+			return _methods;
+		}
+
+		public function get superClass() : Type
+		{
+			return _superClass;
+		}
+
+		public function get type() : Class
+		{
+			return _type;
+		}
+
 		public function getField( inName : String ) : Field
 		{
-			if ( !_fields.hasOwnProperty( inName ) )
+			if( !_fields.hasOwnProperty( inName ) )
 				return null;
 			return _fields[ inName ] as Field;
 		}
@@ -127,7 +127,7 @@ package org.astoolkit.commons.reflection
 		{
 			var out : Vector.<Field> = new Vector.<Field>();
 
-			for each ( var f : Field in _fields )
+			for each( var f : Field in _fields )
 				out.push( f );
 			return out;
 		}
@@ -136,9 +136,9 @@ package org.astoolkit.commons.reflection
 		{
 			var out : Vector.<Field> = new Vector.<Field>();
 
-			for each ( var field : Field in _fields )
+			for each( var field : Field in _fields )
 			{
-				if ( field.hasAnnotation( inValue ) )
+				if( field.hasAnnotation( inValue ) )
 					out.push( field );
 			}
 			return out;
@@ -146,7 +146,7 @@ package org.astoolkit.commons.reflection
 
 		public function getInterfaceByName( inName : String ) : Type
 		{
-			if ( _interfacesByName.hasOwnProperty( inName ) )
+			if( _interfacesByName.hasOwnProperty( inName ) )
 				return _interfacesByName[ inName ];
 			return null;
 		}
@@ -156,9 +156,9 @@ package org.astoolkit.commons.reflection
 			var superInfo : Type = Type.forType( inSuper );
 			var out : Vector.<Type> = new Vector.<Type>();
 
-			for each ( var contract : Type in _interfaces )
+			for each( var contract : Type in _interfaces )
 			{
-				if ( contract.fullName == superInfo.fullName ||
+				if( contract.fullName == superInfo.fullName ||
 					contract.getInterfaceByName( superInfo.fullName ) )
 					out.push( contract );
 			}
@@ -169,9 +169,9 @@ package org.astoolkit.commons.reflection
 		{
 			var out : Vector.<Type> = new Vector.<Type>();
 
-			for each ( var contract : Type in _interfaces )
+			for each( var contract : Type in _interfaces )
 			{
-				if ( contract.hasAnnotation( inAnnotationClass ) )
+				if( contract.hasAnnotation( inAnnotationClass ) )
 					out.push( contract );
 			}
 			return out;
@@ -179,9 +179,9 @@ package org.astoolkit.commons.reflection
 
 		public function implementsInterface( inInterface : Class ) : Boolean
 		{
-			for each ( var i : Type in _interfaces )
+			for each( var i : Type in _interfaces )
 			{
-				if ( i.type == inInterface )
+				if( i.type == inInterface )
 					return true;
 			}
 			return false;
@@ -191,7 +191,7 @@ package org.astoolkit.commons.reflection
 		{
 			var aTypeText : String = getQualifiedClassName( _type );
 
-			if ( aTypeText.match( /Vector\.</ ) )
+			if( aTypeText.match( /Vector\.</ ) )
 			{
 				_subtype = getDefinitionByName( aTypeText.match( /<(.+?)>/ )[1] ) as Class;
 				_subtypeInfo = Type.forType( _subtype );
@@ -207,16 +207,23 @@ package org.astoolkit.commons.reflection
 				xml.factory.metadata :
 				xml.metadata );
 
-			if ( xml.factory.length() > 0 )
+			if( xml.factory.length() > 0 )
 			{
 				try
 				{
-					if ( xml.factory.extendsClass.length() > 0 )
+					if( xml.factory.extendsClass.length() > 0 )
 					{
-						_superClass = Type.forType( getDefinitionByName( String( xml.factory.extendsClass[ 0 ].@type.toXMLString() ).replace( /&lt;/, '<' ) ) );
+						var superType : String =  
+							String( xml.factory.extendsClass[ 0 ].@type.toXMLString() )
+							.replace( /&lt;/, '<' );
+
+						if( superType == "__AS3__.vec::Vector.<*>" )
+							_superClass = Type.forType( Vector );
+						else
+							_superClass = Type.forType( getDefinitionByName( superType ) );
 					}
 				}
-				catch ( e : Error )
+				catch( e : Error )
 				{
 					trace( e.getStackTrace() );
 				}
@@ -224,13 +231,13 @@ package org.astoolkit.commons.reflection
 			else
 				_superClass = Type.forType( getDefinitionByName( xml.extendsClass[ 0 ].@type.toString() ) );
 
-			if ( _superClass )
+			if( _superClass )
 			{
 				_superClass._subClasses.push( this );
 			}
 			var contracts : XMLList = xml..implementsInterface;
 
-			for each ( var contractNode : XML in contracts )
+			for each( var contractNode : XML in contracts )
 			{
 				var contract : Type = Type.forType( getDefinitionByName( contractNode.@type.toString() ) );
 				_interfacesByName[ contract.fullName ] = contract;
@@ -238,20 +245,20 @@ package org.astoolkit.commons.reflection
 				contract._implementors.push( this );
 			}
 
-			for each ( var annotation : IAnnotation in _annotations )
+			for each( var annotation : IAnnotation in _annotations )
 			{
-				if ( !_annotationsForName.hasOwnProperty( annotation.tagName ) )
+				if( !_annotationsForName.hasOwnProperty( annotation.tagName ) )
 					_annotationsForName[ annotation.tagName ] =
 						new Vector.<IAnnotation>();
 				_annotationsForName[ annotation.tagName ].push( annotation );
 
-				if ( !_annotationsForType.hasOwnProperty( getQualifiedClassName( annotation ) ) )
+				if( !_annotationsForType.hasOwnProperty( getQualifiedClassName( annotation ) ) )
 					_annotationsForType[ getQualifiedClassName( annotation ) ] =
 						new Vector.<IAnnotation>();
 				_annotationsForType[ getQualifiedClassName( annotation ) ].push( annotation );
 			}
 
-			for each ( var accessor : XML in xml.descendants().( name().toString() == "accessor" || name().toString() == "variable" ) )
+			for each( var accessor : XML in xml.descendants().( name().toString() == "accessor" || name().toString() == "variable" ) )
 			{
 				var declarer : Type =
 					accessor.@declaredBy == fullName ?
@@ -260,7 +267,7 @@ package org.astoolkit.commons.reflection
 				var aType : Class;
 				var aSubtype : Class;
 
-				if ( aTypeText == "*" )
+				if( aTypeText == "*" )
 				{
 					aType = null;
 				}
@@ -268,7 +275,7 @@ package org.astoolkit.commons.reflection
 				{
 					aType = getDefinitionByName( aTypeText ) as Class;
 
-					if ( aTypeText.match( /Vector\.</ ) )
+					if( aTypeText.match( /Vector\.</ ) )
 					{
 						aSubtype = getDefinitionByName( aTypeText.match( /<(.+?)>/ )[1] ) as Class;
 					}

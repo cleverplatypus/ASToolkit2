@@ -80,8 +80,6 @@ package org.astoolkit.workflow.core
 		 */
 		protected var _currentIterator : IIterator;
 
-		protected var _propertiesDataProviderInfo:Vector.<PropertyDataProviderInfo>;
-
 		/**
 		 * @private
 		 */
@@ -122,6 +120,8 @@ package org.astoolkit.workflow.core
 		 * @private
 		 */
 		protected var _pid : String;
+
+		protected var _propertiesDataProviderInfo:Vector.<PropertyDataProviderInfo>;
 
 		/**
 		 * @private
@@ -295,6 +295,8 @@ package org.astoolkit.workflow.core
 		 */
 		public function initialized( inDocument : Object, inId : String ) : void
 		{
+			if( _document )
+				return;
 			_document = inDocument;
 			_id = inId;
 			_onPropertySet = function( inName : String ) : void {};

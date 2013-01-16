@@ -329,6 +329,10 @@ package org.astoolkit.workflow.core
 			if( !_childNodes )
 				_childNodes = [];
 			_childNodes.push( inNode );
+
+			if( _context )
+				_context.configureObjects( [ inNode ], this );
+
 		}
 
 		override public function cleanUp() : void
@@ -360,7 +364,7 @@ package org.astoolkit.workflow.core
 
 			if( _childNodes )
 			{
-				_context.configureObjects( _childNodes );
+				_context.configureObjects( _childNodes, _document );
 			}
 
 			if( _children )

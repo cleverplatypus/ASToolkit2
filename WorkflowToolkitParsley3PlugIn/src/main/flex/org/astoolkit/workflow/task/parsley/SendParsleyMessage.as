@@ -232,7 +232,7 @@ package org.astoolkit.workflow.task.parsley
 				registerCommandObserver( _completeObserver );
 				registerCommandObserver( _errorObserver );
 			}
-			_context.configureObjects( [ aMessage ] );
+			_context.configureObjects( [ aMessage ], _document );
 			_parsleyContext.scopeManager.getScope( scope as String ).dispatchMessage( aMessage, _selector );
 
 			if( aFactory is IPooledFactory )

@@ -20,8 +20,8 @@ Version 2.x
 package org.astoolkit.commons.io.data
 {
 
+	import mx.core.IMXMLObject;
 	import mx.logging.ILogger;
-	
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.factory.api.IFactoryResolverClient;

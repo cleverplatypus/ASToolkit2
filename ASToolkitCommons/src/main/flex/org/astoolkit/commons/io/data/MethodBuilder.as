@@ -42,7 +42,7 @@ package org.astoolkit.commons.io.data
 			var resolvers : Vector.<IExpressionResolver> = new Vector.<IExpressionResolver>();
 			var resolver : Resolve;
 
-			for each( var arg : String in arg )
+			for each( var arg : String in args )
 			{
 				resolver = new Resolve();
 				resolver.expression = arg;
@@ -100,7 +100,7 @@ package org.astoolkit.commons.io.data
 			return function() : *
 			{
 				( _target[ _name ] as Function ).apply( _target, resolveArguments() ); 
-			}as Function; //casting to prevent compiler warning
+			} as Function; //casting to prevent compiler warning
 		}
 
 		private function resolveArguments() : Array
@@ -108,7 +108,7 @@ package org.astoolkit.commons.io.data
 			var out : Array = [];
 
 			for each( var resolver : IExpressionResolver in _expressionResolvers )
-				out.push( resolver.resolve() );
+				out.push( resolver.resolve().result );
 			return out;
 		}
 	}

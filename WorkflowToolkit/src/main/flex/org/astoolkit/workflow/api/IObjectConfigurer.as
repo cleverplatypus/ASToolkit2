@@ -19,9 +19,10 @@ Version 2.x
 */
 package org.astoolkit.workflow.api
 {
+
 	/**
-	 * An object able to inject features to objects passed to the 
-	 * <code>configureObjects</cod> method. 
+	 * An object able to inject features to objects passed to the
+	 * <code>configureObjects</cod> method.
 	 */
 	public interface IObjectConfigurer
 	{
@@ -30,7 +31,6 @@ package org.astoolkit.workflow.api
 		 * Implementations should descend the object graph if a property
 		 * is marked with the [Featured] tag.
 		 */
-		function configureObjects( inObjects : Array ) : void;
-
+		function configureObjects( inObjects : Array, inDocument : Object ) : void;
 	}
 }

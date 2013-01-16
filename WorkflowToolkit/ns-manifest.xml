@@ -137,6 +137,10 @@
 		class="org.astoolkit.workflow.task.misc.SetProperty"
 		/>
 	<component 
+		id="GetProperty"
+		class="org.astoolkit.workflow.task.misc.GetProperty"
+		/>
+	<component 
 		id="InvokeRemoteProcedure"
 		class="org.astoolkit.workflow.task.net.InvokeRemoteProcedure"
 		/>

@@ -67,7 +67,7 @@ package org.astoolkit.workflow.task.parsley
 		override public function initialize() : void
 		{
 			super.initialize();
-			_context.configureObjects( [ this ] );
+			_context.configureObjects( [ this ], _document );
 
 			if( !_parsleyContext )
 			{

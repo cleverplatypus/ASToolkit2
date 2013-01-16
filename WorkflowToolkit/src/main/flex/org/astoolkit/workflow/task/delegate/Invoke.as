@@ -26,11 +26,10 @@ package org.astoolkit.workflow.task.delegate
 	import mx.rpc.Responder;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
-	import mx.utils.StringUtil;
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
 	import org.astoolkit.commons.io.data.MethodBuilder;
-	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
+	import org.astoolkit.commons.utils.IChildrenAwareDocument;
 	import org.astoolkit.workflow.core.BaseTask;
 
 	/**
@@ -68,7 +67,6 @@ package org.astoolkit.workflow.task.delegate
 	 * <b>Params</b>
 	 * <ul>
 	 * <li><code>method</code> (injectable): the method name plus optional parameters</li>
-	 * <li><code>liveArguments</code> an optional array of explicit/bond parameters that can be mapped in method params using the :<i>n</i> syntax </li>
 	 * <li><code>target</code>: an instance to apply <code>method</code> to</li>
 	 * <li><code>factory</code>: a factory for instanciating the target</li>
 	 * <li><code>type</code>: a class to be instanciated using the context factory resolver</li>
@@ -87,8 +85,6 @@ package org.astoolkit.workflow.task.delegate
 		{
 			_factoryResolver = inValue;
 		}
-
-		public var liveArguments : Array;
 
 		public var method : String;
 
@@ -111,7 +107,6 @@ package org.astoolkit.workflow.task.delegate
 		 */
 		override public function begin() : void
 		{
-			//TODO: use IExpressionResolver for method
 			super.begin();
 			var localTarget : Object;
 
@@ -134,8 +129,9 @@ package org.astoolkit.workflow.task.delegate
 					return;
 				}
 				builder = MethodBuilder.parse( method );
-				builder.initialized( _document, null );
-				_context.configureObjects( [ builder ] );
+
+				if( _document is IChildrenAwareDocument )
+					IChildrenAwareDocument( _document ).childNodeAdded( builder );
 				methodName = method.match( /^(\w+)/g )[1];
 			}
 			else if( _methodBuilder )

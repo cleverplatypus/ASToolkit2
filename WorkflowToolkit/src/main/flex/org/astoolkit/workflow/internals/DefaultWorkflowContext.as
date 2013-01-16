@@ -24,7 +24,9 @@ package org.astoolkit.workflow.internals
 	import flash.events.EventDispatcher;
 	import flash.utils.getQualifiedClassName;
 	import mx.core.IFactory;
+	import mx.core.IMXMLObject;
 	import mx.logging.ILogger;
+	import mx.utils.UIDUtil;
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
 	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluator;
@@ -34,12 +36,14 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.commons.reflection.Field;
 	import org.astoolkit.commons.reflection.ManagedObject;
 	import org.astoolkit.commons.reflection.Type;
+	import org.astoolkit.commons.utils.ListUtil;
 	import org.astoolkit.commons.utils.ObjectCompare;
 	import org.astoolkit.workflow.annotation.Featured;
 	import org.astoolkit.workflow.annotation.Template;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.conditional.WorkflowDataSourceResolverDelegate;
 	import org.astoolkit.workflow.constant.TaskStatus;
+	import org.astoolkit.workflow.core.Do;
 
 	[Bindable]
 	[Event( name="initialized", type="flash.events.Event" )]
@@ -59,6 +63,8 @@ package org.astoolkit.workflow.internals
 		private static const LOGGER : ILogger = getLogger( DefaultWorkflowContext );
 
 		private var _config : IContextConfig;
+
+		private var _configuredObjects : Object = {};
 
 		private var _data : Object;
 
@@ -215,17 +221,17 @@ package org.astoolkit.workflow.internals
 				IPooledFactory( _config.iteratorFactory ).cleanup();
 		}
 
-		public function configureObjects( inObjects : Array ) : void
+		public function configureObjects( inObjects : Array, inDocument : Object ) : void
 		{
 			if( inObjects && inObjects.length > 0 )
 			{
 				for each( var object : Object in inObjects )
-					configureObject( object );
+					configureObject( object, inDocument );
 
 				if( _config.objectConfigurers )
 				{
 					for each( var configurer : IObjectConfigurer in _config.objectConfigurers )
-						configurer.configureObjects( inObjects )
+						configurer.configureObjects( inObjects, inDocument );
 				}
 
 			}
@@ -308,32 +314,46 @@ package org.astoolkit.workflow.internals
 
 		}
 
-		private function configureObject( inObject : Object ) : void
+		private function configureObject( inObject : Object, inDocument : Object ) : void
 		{
-			LOGGER.info( 
-				"Workflow context configuring object: {0}," +
-				getQualifiedClassName( inObject ) );
-
-			if( inObject is IContextAwareElement )
-				inObject.context = this;
-
-			if( inObject is IExpressionResolver )
+			if( !_configuredObjects.hasOwnProperty( UIDUtil.getUID( inObject ) ) )
 			{
-				var delegate : ContextAwareExpressionResolver = new ContextAwareExpressionResolver();
-				delegate.context = this;
-				IExpressionResolver( inObject ).delegate = delegate;
+				LOGGER.debug( 
+					"Workflow context configuring object: {0}",
+					getQualifiedClassName( inObject ) );
+
+				if( isCollection( inObject ) )
+				{
+					configureObjects( ListUtil.convert( inObject, Array ) as Array, inDocument );
+					return;
+				}
+
+				if( inObject is IMXMLObject )
+					IMXMLObject( inObject ).initialized( inDocument, null );
+
+				if( inObject is IContextAwareElement )
+					inObject.context = this;
+
+				if( inObject is IExpressionResolver )
+				{
+					var delegate : ContextAwareExpressionResolver = new ContextAwareExpressionResolver();
+					delegate.context = this;
+					IExpressionResolver( inObject ).delegate = delegate;
+				}
+
+				if( inObject is IIODataTransformerClient )
+					IIODataTransformerClient( inObject ).dataTransformerRegistry = 
+						config.dataTransformerRegistry;
+
+				if( inObject is IIODataSourceClient )
+					IIODataSourceClient( inObject ).sourceResolverDelegate = 
+						dataSourceResolverDelegate;
+
+				if( inObject is IFactoryResolverClient )
+					IFactoryResolverClient( inObject ).factoryResolver = _factoryResolver;
+				_configuredObjects[  UIDUtil.getUID( inObject ) ] = true;
 			}
 
-			if( inObject is IIODataTransformerClient )
-				IIODataTransformerClient( inObject ).dataTransformerRegistry = 
-					config.dataTransformerRegistry;
-
-			if( inObject is IIODataSourceClient )
-				IIODataSourceClient( inObject ).sourceResolverDelegate = 
-					dataSourceResolverDelegate;
-
-			if( inObject is IFactoryResolverClient )
-				IFactoryResolverClient( inObject ).factoryResolver = _factoryResolver;
 			var ci : Type = Type.forType( inObject );
 
 			for each( var fi : Field in ci.getFieldsWithAnnotation( Featured ) )
@@ -344,7 +364,7 @@ package org.astoolkit.workflow.internals
 					fi.name );
 
 				if( !fi.writeOnly && inObject[ fi.name ] != null )
-					configureObject( inObject[ fi.name ] )
+					configureObject( inObject[ fi.name ], inDocument );
 			}
 
 		}

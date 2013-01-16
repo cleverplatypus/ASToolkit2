@@ -27,6 +27,7 @@ package org.astoolkit.commons.conditional
 
 	public class BaseConditionalExpression implements IConditionalExpression, IIODataSourceClient
 	{
+		private var _document:Object;
 
 		protected var _dataTransformerRegistry : IIODataTransformerRegistry;
 
@@ -136,6 +137,10 @@ package org.astoolkit.commons.conditional
 
 		public function initialized( inDocument : Object, inId : String ) : void
 		{
+			if( _document )
+				return;
+			_document = inDocument;
+
 			if( inDocument is IChildrenAwareDocument )
 				IChildrenAwareDocument( inDocument ).childNodeAdded( this );
 		}

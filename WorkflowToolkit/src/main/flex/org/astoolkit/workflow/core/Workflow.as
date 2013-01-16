@@ -21,12 +21,10 @@ package org.astoolkit.workflow.core
 {
 
 	import flash.events.EventDispatcher;
-	
 	import mx.core.ClassFactory;
 	import mx.core.IFactory;
 	import mx.core.IMXMLObject;
 	import mx.logging.ILogger;
-	
 	import org.astoolkit.commons.collection.annotation.IteratorSource;
 	import org.astoolkit.commons.io.transform.api.*;
 	import org.astoolkit.commons.ns.astoolkit_private;
@@ -173,6 +171,9 @@ package org.astoolkit.workflow.core
 			if( !_childNodes )
 				_childNodes = [];
 			_childNodes.push( inNode );
+
+			if( _context )
+				_context.configureObjects( [ inNode ], this );
 		}
 
 		public function run( inTaskInput : * = undefined ) : *
@@ -264,7 +265,7 @@ package org.astoolkit.workflow.core
 
 			if( _childNodes )
 			{
-				_context.configureObjects( _childNodes );
+				_context.configureObjects( _childNodes, this );
 			}
 		}
 

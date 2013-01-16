@@ -111,7 +111,7 @@ package org.astoolkit.workflow.plugin.parsley
 			return [ SendParsleyMessage, _contextWatcher ];
 		}
 
-		public function configureObjects( inObjects : Array ) : void
+		public function configureObjects( inObjects : Array, inDocument : Object ) : void
 		{
 			if( inObjects && inObjects.length > 0 )
 			{

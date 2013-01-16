@@ -20,6 +20,12 @@ Version 2.x
 package org.astoolkit.workflow.task.misc
 {
 
+	import flash.utils.getQualifiedClassName;
+	import mx.core.ClassFactory;
+	import mx.core.IFactory;
+	import mx.utils.StringUtil;
+	import org.astoolkit.commons.factory.api.IFactoryResolver;
+	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
 	import org.astoolkit.workflow.core.BaseTask;
 
 	/**
@@ -37,7 +43,7 @@ package org.astoolkit.workflow.task.misc
 	 * <b>Params</b>
 	 * <ul>
 	 * <li><code>value</code> (injectable): any value</li>
-	 * <li><code>property</code>: the target's property name</li>
+	 * <li><code>path</code>: the target's property path</li>
 	 * <li><code>target</code>: the object to which to set the <code>property</code>.
 	 * Defaults to the current document</li>
 	 * </ul>
@@ -53,32 +59,68 @@ package org.astoolkit.workflow.task.misc
 	 *     message=&quot;{ GetSomeString }&quot;
 	 *     /&gt;
 	 * &lt;misc:SetProperty
-	 *     property="aString"
+	 *     path="aString"
 	 *     /&gt;
 	 * </listing>
 	 */
-	public class SetProperty extends BaseTask
+	public class SetProperty extends BaseTask implements IFactoryResolverClient
 	{
+
+		private var _factoryResolver : IFactoryResolver;
+
+		private var _path : String;
+
+		private var _target : Object;
+
+		private var _targetClass : Class;
+
+		private var _targetFactory : IFactory;
 
 		private var _value : *;
 
-		/**
-		 * the target's property name
-		 */
-		public var property : String;
+		public function set factoryResolver( inValue : IFactoryResolver ) : void
+		{
+			_factoryResolver = inValue;
+		}
 
 		/**
-		  * the object to which to set the <code>property</code>.
-		  * Defaults to the current document
-		*/
-		public var target : Object;
+		 * the target's property path
+		 */
+		public function set path( inValue : String ) : void
+		{
+			inValue = inValue ? StringUtil.trim( inValue ) : "";
+
+			if( inValue == "" || inValue == "." || !inValue.match( /^\w+(\.\w+)?$/ ) )
+				throw new Error( "Invalid property path format" );
+			_path = inValue;
+		}
+
+		/**
+		 * the object to which to set the <code>property</code>.
+		 * Defaults to the current document
+		 */
+		public function set target(value:Object) : void
+		{
+			_target = value;
+		}
+
+		public function set targetClass( inValue : Class ) : void
+		{
+			_targetClass = inValue;
+		}
+
+		[AutoConfig]
+		public function set targetFactory( inValue : IFactory ) : void
+		{
+			_targetFactory = inValue;
+		}
 
 		[InjectPipeline]
 		[AutoConfig]
 		/**
 		 * any value to be set to <code>target[ property ]</code>
 		 */
-		public function set value( inValue :*) : void
+		public function set value( inValue : * ) : void
 		{
 			_onPropertySet( "value" );
 			_value = inValue;
@@ -91,20 +133,63 @@ package org.astoolkit.workflow.task.misc
 		{
 			super.begin();
 
-			if( !target )
-				target = document;
+			var aTarget : Object;
 
-			if( !property || !target.hasOwnProperty( property ) )
+			if( _target )
+				aTarget = _target;
+			else if( _targetFactory )
+				aTarget = _targetFactory.newInstance();
+			else if( _targetClass )
 			{
-				fail( "SetProperty started without a property name or property name not found on target" );
-				return;
+				var factory : IFactory = _factoryResolver.getFactoryForType( _targetClass );
+
+				if( !factory )
+					factory = new ClassFactory( _targetClass );
+
+				aTarget = factory.newInstance();
 			}
+			else
+				aTarget = _document;
+
+			var obj : Object = aTarget;
+			var segs : Array = _path.split( "." );
+			var prop : String;
+
+			if( segs.length > 1 )
+			{
+				prop = segs.pop();
+
+				for each( var seg : String in segs )
+				{
+					if( !checkProp( obj, seg, aTarget ) )
+						return;
+					obj = obj[ seg ];
+				}
+			}
+			else
+				prop = _path;
+
+			if( !checkProp( obj, prop, aTarget ) )
+				return;
 
 			if( _value != undefined )
-				target[ property ] = _value;
+				obj[ prop ] = _value;
 			else
-				target[ property ] = filteredInput;
+				obj[ prop ] = filteredInput;
 			complete();
+
+		}
+
+		private function checkProp( inObject : Object, inProperty : String, inTarget : Object ) : Boolean
+		{
+			if( !inObject || !inObject.hasOwnProperty( inProperty ) )
+			{
+				fail( "Cannot resolve path '{0}' in object {1}",
+					_path,
+					getQualifiedClassName( inTarget ) );
+				return false
+			}
+			return true;
 		}
 	}
 }
