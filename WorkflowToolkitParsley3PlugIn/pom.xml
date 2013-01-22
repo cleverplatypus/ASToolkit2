@@ -32,7 +32,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.spicefactory</groupId>
-			<artifactId>parsley-flex4</artifactId>
+			<artifactId>parsley-flex</artifactId>
 			<version>3.0.0</version>
 			<type>swc</type>
 		</dependency>
