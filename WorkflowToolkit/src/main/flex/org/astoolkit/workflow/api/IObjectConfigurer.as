@@ -22,7 +22,7 @@ package org.astoolkit.workflow.api
 
 	/**
 	 * An object able to inject features to objects passed to the
-	 * <code>configureObjects</cod> method.
+	 * <code>configureObjects</code> method.
 	 */
 	public interface IObjectConfigurer
 	{

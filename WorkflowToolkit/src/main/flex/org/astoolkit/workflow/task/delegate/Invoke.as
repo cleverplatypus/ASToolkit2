@@ -38,7 +38,7 @@ package org.astoolkit.workflow.task.delegate
 	 * <ul>
 	 * <li>an instance: <code>target</code> property</li>
 	 * <li>an explicit factory: <code>factory</code> property</li>
-	 * <li>a class: <code>type</code> property</code>
+	 * <li>a class: <code>type</code> property</li>
 	 * </ul>
 	 *
 	 * <p>
