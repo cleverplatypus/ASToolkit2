@@ -5,7 +5,7 @@ package org.astoolkit.commons.reflection
 	import mx.logging.ILogger;
 	import org.astoolkit.commons.io.data.api.IDataProvider;
 	import org.astoolkit.commons.utils.ObjectCompare;
-	import org.astoolkit.commons.wfml.IAutoConfigContainerObject;
+	import org.astoolkit.commons.wfml.IAutoConfigurable;
 
 	public final class AutoConfigUtil
 	{
@@ -15,7 +15,7 @@ package org.astoolkit.commons.reflection
 		// 		implement support for IComponent.pid (pid marked children can be assigned even to 
 		//		fields with no [AutoConfig] annotation)
 		public static function autoConfig( 
-			inTarget : IAutoConfigContainerObject, 
+			inTarget : IAutoConfigurable, 
 			inChildren : Array ) : Vector.<PropertyDataProviderInfo>
 		{
 			if( inChildren == null || inChildren.length == 0 )

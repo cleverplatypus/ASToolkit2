@@ -25,6 +25,7 @@ package org.astoolkit.workflow.api
 	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluatorRegistry;
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
+	import org.astoolkit.workflow.config.api.IObjectPropertyDefaultValue;
 
 	/**
 	 * Contract for an IWorkflowContext configuration object.
@@ -42,6 +43,12 @@ package org.astoolkit.workflow.api
 		 */
 		function get dataTransformerRegistry() : IIODataTransformerRegistry;
 		function set dataTransformerRegistry( inValue : IIODataTransformerRegistry ) : void;
+
+		/**
+		 * a list of default values for workflow objects properties
+		 */
+		function get defaults() : Vector.<IObjectPropertyDefaultValue>;
+		function set defaults( inValue : Vector.<IObjectPropertyDefaultValue> ) : void;
 		/**
 		 * an instance of <code>IIteratorFactory</code> providing
 		 * access to all the registered <code>IIterator</code> implementations
@@ -52,15 +59,6 @@ package org.astoolkit.workflow.api
 
 		function get objectConfigurers() : Vector.<IObjectConfigurer>;
 		function set objectConfigurers( inValue : Vector.<IObjectConfigurer> ) : void;
-
-		/**
-		 * an instance of <code>IPropertyOverrideRule</code> providing
-		 * the rule for properties override.
-		 *
-		 * @see org.astoolkit.workflow.core.Group
-		 */
-		function get propertyOverrideRule() : IPropertyOverrideRule;
-		function set propertyOverrideRule( inValue : IPropertyOverrideRule ) : void;
 
 		function get runtimeExpressionEvalutators() : IRuntimeExpressionEvaluatorRegistry;
 		function set runtimeExpressionEvalutators( inValue : IRuntimeExpressionEvaluatorRegistry ) : void;

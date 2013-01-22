@@ -19,17 +19,8 @@ Version 2.x
 */
 package org.astoolkit.commons.conditional.api
 {
-
-	import org.astoolkit.commons.eval.ExpressionResolverResult;
-
-	public interface IExpressionResolver
+	public interface IConditional
 	{
-		function set delegate( inDelegate : IExpressionResolver ) : void;
-
-		function set expression( inValue : Object ) : void;
-
-		function set key( inValue : * ) : void;
-
-		function resolve( inExpression : Object = null, inSource : Object = null ) : ExpressionResolverResult;
+		function set condition( inValue : IConditionalExpression ) : void;
 	}
 }

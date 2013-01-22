@@ -26,15 +26,34 @@
 		</dependency>
 		<dependency>
 			<groupId>org.spicefactory</groupId>
+			<artifactId>parsley-core</artifactId>
+			<version>3.0.0</version>
+			<type>swc</type>
+		</dependency>
+		<dependency>
+			<groupId>org.spicefactory</groupId>
 			<artifactId>parsley-flex4</artifactId>
 			<version>3.0.0</version>
 			<type>swc</type>
 		</dependency>
 		<dependency>
 			<groupId>org.spicefactory</groupId>
-			<artifactId>spicelib-flex</artifactId>
+			<artifactId>spicelib-reflect</artifactId>
 			<type>swc</type>
 			<version>3.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.spicefactory</groupId>
+			<artifactId>spicelib-commands</artifactId>
+			<type>swc</type>
+			<version>3.1.1</version>
+		</dependency>
+				<dependency>
+			<groupId>org.spicefactory</groupId>
+			<artifactId>spicelib-util</artifactId>
+			<type>swc</type>
+			<version>3.1.0</version>
+		</dependency>
+
 	</dependencies>
 </project>

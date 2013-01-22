@@ -25,7 +25,7 @@ package org.astoolkit.commons.io.data
 	import org.astoolkit.commons.io.data.api.IDataProvider;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.reflection.AutoConfigUtil;
-	import org.astoolkit.commons.wfml.IAutoConfigContainerObject;
+	import org.astoolkit.commons.wfml.IAutoConfigurable;
 	import org.astoolkit.commons.wfml.IComponent;
 
 	[DefaultProperty("autoConfigChildren")]

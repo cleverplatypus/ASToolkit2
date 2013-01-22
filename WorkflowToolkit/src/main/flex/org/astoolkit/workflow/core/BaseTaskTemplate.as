@@ -28,7 +28,7 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.reflection.Type;
-	import org.astoolkit.commons.wfml.IAutoConfigContainerObject;
+	import org.astoolkit.commons.wfml.IAutoConfigurable;
 	import org.astoolkit.workflow.api.IContextAwareElement;
 	import org.astoolkit.workflow.api.ITaskTemplate;
 	import org.astoolkit.workflow.api.IWorkflowElement;
@@ -39,7 +39,7 @@ package org.astoolkit.workflow.core
 	use namespace flash_proxy;
 
 	[DefaultProperty("autoConfigChildren")]
-	public class BaseTaskTemplate extends BaseElement implements ITaskTemplate, IWorkflowTask, IAutoConfigContainerObject
+	public class BaseTaskTemplate extends BaseElement implements ITaskTemplate, IWorkflowTask, IAutoConfigurable
 	{
 
 		private var _bindings : Vector.<Watch>;
@@ -280,8 +280,8 @@ package org.astoolkit.workflow.core
 				_templateImplementation.parent = parent;
 				_templateImplementation.description = description;
 
-				if( _templateImplementation is IAutoConfigContainerObject )
-					IAutoConfigContainerObject( _templateImplementation )
+				if( _templateImplementation is IAutoConfigurable )
+					IAutoConfigurable( _templateImplementation )
 						.autoConfigChildren = _autoConfigChildren;
 				_templateImplementation.initialize();
 			}

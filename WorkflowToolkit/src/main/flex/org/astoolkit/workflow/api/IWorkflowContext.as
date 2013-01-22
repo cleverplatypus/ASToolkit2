@@ -59,8 +59,8 @@ package org.astoolkit.workflow.api
 		//function get data() : Object;
 		function get dataSourceResolverDelegate() : IIODataSourceResolverDelegate;
 
-		function set dropIns( inValue : Object ) : void;
-		function get initialized() : Boolean;
+		function set dropIns( inValue : Vector.<Object> ) : void;
+		function get isInitialized() : Boolean;
 		function get owner() : IWorkflow;
 		function get plugIns() : Vector.<IContextPlugIn>;
 		function get runningTask() : IWorkflowTask;

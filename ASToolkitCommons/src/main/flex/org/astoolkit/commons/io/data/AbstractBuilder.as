@@ -30,11 +30,11 @@ package org.astoolkit.commons.io.data
 	import org.astoolkit.commons.reflection.AutoConfigUtil;
 	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
 	import org.astoolkit.commons.utils.IChildrenAwareDocument;
-	import org.astoolkit.commons.wfml.IAutoConfigContainerObject;
+	import org.astoolkit.commons.wfml.IAutoConfigurable;
 	import org.astoolkit.commons.wfml.IComponent;
 
 	[DefaultProperty("autoConfigChildren")]
-	public class AbstractBuilder implements IDataProvider, IAutoConfigContainerObject, IFactoryResolverClient, IComponent, IDeferrableProcess
+	public class AbstractBuilder implements IDataProvider, IAutoConfigurable, IFactoryResolverClient, IComponent, IDeferrableProcess
 	{
 		private static const LOGGER : ILogger = getLogger( AbstractBuilder );
 

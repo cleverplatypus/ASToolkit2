@@ -21,30 +21,48 @@ package org.astoolkit.workflow.internals
 {
 
 	import flash.events.Event;
-	
 	import mx.core.ClassFactory;
 	import mx.core.IFactory;
-	import mx.core.IMXMLObject;
-	
+	import org.astoolkit.commons.process.api.IDeferrableProcess;
+	import org.astoolkit.commons.reflection.AutoConfigUtil;
+	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
+	import org.astoolkit.commons.wfml.IAutoConfigurable;
 	import org.astoolkit.workflow.api.IContextConfig;
 	import org.astoolkit.workflow.api.IWorkflowContext;
+	import org.astoolkit.workflow.config.api.IObjectPropertyDefaultValue;
 
-	public class DefaultContextFactory implements IFactory, IMXMLObject
+	public class DefaultContextFactory implements IFactory, IAutoConfigurable
 	{
-		public var config : IContextConfig;
-
-		public var dropIns : Object;
-		
 		private var _classFactoryMappings : Array;
 
-		
+		private var _factory : ClassFactory;
+
+		/**
+		 * @private
+		 */
+		protected var _autoConfigChildren : Array;
+
+		protected var _propertiesDataProviderInfo:Vector.<PropertyDataProviderInfo>;
+
+		public function set autoConfigChildren( inValue : Array ) : void
+		{
+			_autoConfigChildren = inValue;
+		}
+
 		[ArrayItemType("org.astoolkit.commons.factory.ClassFactoryMapping")]
 		public function set classFactoryMappings( inValue : Array ) : void
 		{
 			_classFactoryMappings = inValue;
 		}
-		
-		private var _factory : ClassFactory;
+
+		[AutoConfig]
+		public var config : IContextConfig;
+
+		[AutoConfig]
+		public var defaults : Vector.<IObjectPropertyDefaultValue>;
+
+		[AutoConfig]
+		public var dropIns : Vector.<Object>;
 
 		public function initialized( document : Object, id : String ) : void
 		{
@@ -53,8 +71,36 @@ package org.astoolkit.workflow.internals
 		public function newInstance() : *
 		{
 			if( !_factory )
+			{
 				_factory = new ClassFactory( DefaultWorkflowContext );
-			
+
+				if( _autoConfigChildren && _autoConfigChildren.length > 0 )
+					_propertiesDataProviderInfo = 
+						AutoConfigUtil.autoConfig( this, _autoConfigChildren );
+			}
+
+			if( _propertiesDataProviderInfo )
+			{
+				var value : *;
+
+				for each( var prop : PropertyDataProviderInfo in _propertiesDataProviderInfo )
+				{
+					value = prop.dataProvider.getData();
+
+					if( value  === undefined )
+					{
+						if( prop.dataProvider is IDeferrableProcess && IDeferrableProcess( prop.dataProvider ).isProcessDeferred() )
+						{
+							throw new Error( "Context data providers cannot be asynchronous" );
+						}
+					}
+					else
+					{
+						this[ prop.name ] = value;
+					}
+
+				}
+			}
 			_factory.properties = {
 					config: config,
 					dropIns: dropIns
@@ -65,9 +111,10 @@ package org.astoolkit.workflow.internals
 				function( inEvent : Event ) : void
 				{
 					context.removeEventListener( "initialized", arguments.callee );
+					context.config.defaults = defaults;
 					context.config.classFactoryMappings = _classFactoryMappings;					
 				},false, int.MAX_VALUE );
-			
+
 			return context;
 		}
 	}

@@ -25,7 +25,7 @@ package org.astoolkit.workflow.task.misc
 	import mx.core.IFactory;
 	import mx.utils.StringUtil;
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
-	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
+	import org.astoolkit.workflow.api.IFactoryResolverClientTask;
 	import org.astoolkit.workflow.core.BaseTask;
 
 	/**
@@ -63,8 +63,9 @@ package org.astoolkit.workflow.task.misc
 	 *     /&gt;
 	 * </listing>
 	 */
-	public class SetProperty extends BaseTask implements IFactoryResolverClient
+	public class SetProperty extends BaseTask implements IFactoryResolverClientTask
 	{
+		private var _allowDefaultFactory : Boolean;
 
 		private var _factoryResolver : IFactoryResolver;
 
@@ -77,6 +78,11 @@ package org.astoolkit.workflow.task.misc
 		private var _targetFactory : IFactory;
 
 		private var _value : *;
+
+		public function set allowDefaultFactory( inValue : Boolean ) : void
+		{
+			_allowDefaultFactory = inValue;
+		}
 
 		public function set factoryResolver( inValue : IFactoryResolver ) : void
 		{
@@ -144,7 +150,16 @@ package org.astoolkit.workflow.task.misc
 				var factory : IFactory = _factoryResolver.getFactoryForType( _targetClass );
 
 				if( !factory )
-					factory = new ClassFactory( _targetClass );
+				{
+					if( _allowDefaultFactory )
+						factory = new ClassFactory( _targetClass );
+					else
+					{
+						fail( "No factories found for '{0}'", 
+							getQualifiedClassName( _targetClass ) );
+						return;
+					}
+				}
 
 				aTarget = factory.newInstance();
 			}

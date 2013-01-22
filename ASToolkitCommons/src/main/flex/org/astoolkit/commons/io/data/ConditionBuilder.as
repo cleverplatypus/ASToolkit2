@@ -17,19 +17,27 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.conditional.api
+package org.astoolkit.commons.io.data
 {
+	import org.astoolkit.commons.conditional.api.IExpressionResolver;
 
-	import org.astoolkit.commons.eval.ExpressionResolverResult;
-
-	public interface IExpressionResolver
+	public class ConditionBuilder extends AbstractBuilder
 	{
-		function set delegate( inDelegate : IExpressionResolver ) : void;
-
-		function set expression( inValue : Object ) : void;
-
-		function set key( inValue : * ) : void;
-
-		function resolve( inExpression : Object = null, inSource : Object = null ) : ExpressionResolverResult;
+		private var _expression : Object;
+		
+		public function set expression( inValue : Object ) : void
+		{
+			_expression  = inValue;
+		}
+		
+		override public function getData():*
+		{
+			return null;
+		}
+		
+		override public function get providedType() : Class
+		{
+			return Boolean;
+		}
 	}
 }

@@ -17,19 +17,14 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.conditional.api
+package org.astoolkit.workflow.api
 {
 
-	import org.astoolkit.commons.eval.ExpressionResolverResult;
+	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
 
-	public interface IExpressionResolver
+	public interface IFactoryResolverClientTask extends IFactoryResolverClient
 	{
-		function set delegate( inDelegate : IExpressionResolver ) : void;
-
-		function set expression( inValue : Object ) : void;
-
-		function set key( inValue : * ) : void;
-
-		function resolve( inExpression : Object = null, inSource : Object = null ) : ExpressionResolverResult;
+		[InjectDefault]
+		function set allowDefaultFactory( inValue : Boolean ) : void;
 	}
 }

@@ -44,7 +44,7 @@ package org.astoolkit.workflow.api
 		name="prepare",
 		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Bindable]
-	public interface ITasksGroup extends IWorkflowTask, IRepeater,  IChildrenAwareDocument
+	public interface ITasksGroup extends IWorkflowTask,  IChildrenAwareDocument
 	{
 		/**
 		 * the declared elements

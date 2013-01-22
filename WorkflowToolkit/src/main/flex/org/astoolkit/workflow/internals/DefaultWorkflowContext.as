@@ -23,7 +23,6 @@ package org.astoolkit.workflow.internals
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.utils.getQualifiedClassName;
-	import mx.core.IFactory;
 	import mx.core.IMXMLObject;
 	import mx.logging.ILogger;
 	import mx.utils.UIDUtil;
@@ -34,7 +33,6 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.commons.factory.api.*;
 	import org.astoolkit.commons.io.transform.api.*;
 	import org.astoolkit.commons.reflection.Field;
-	import org.astoolkit.commons.reflection.ManagedObject;
 	import org.astoolkit.commons.reflection.Type;
 	import org.astoolkit.commons.utils.ListUtil;
 	import org.astoolkit.commons.utils.ObjectCompare;
@@ -43,7 +41,6 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.conditional.WorkflowDataSourceResolverDelegate;
 	import org.astoolkit.workflow.constant.TaskStatus;
-	import org.astoolkit.workflow.core.Do;
 
 	[Bindable]
 	[Event( name="initialized", type="flash.events.Event" )]
@@ -70,7 +67,7 @@ package org.astoolkit.workflow.internals
 
 		private var _dataSourceResolverDelegate : IIODataSourceResolverDelegate;
 
-		private var _dropIns : Object;
+		private var _dropIns : Vector.<Object>;
 
 		private var _factoryResolver : IFactoryResolver;
 
@@ -119,7 +116,7 @@ package org.astoolkit.workflow.internals
 			return _dataSourceResolverDelegate;
 		}
 
-		public function set dropIns( inValue : Object ) : void
+		public function set dropIns( inValue : Vector.<Object> ) : void
 		{
 			_dropIns = inValue;
 		}
@@ -134,7 +131,7 @@ package org.astoolkit.workflow.internals
 			_failedTask = inFailedTask;
 		}
 
-		public function get initialized() : Boolean
+		public function get isInitialized() : Boolean
 		{
 			return _initialized;
 		}
@@ -354,6 +351,7 @@ package org.astoolkit.workflow.internals
 				_configuredObjects[  UIDUtil.getUID( inObject ) ] = true;
 			}
 
+			//TODO: implement set-defaults 
 			var ci : Type = Type.forType( inObject );
 
 			for each( var fi : Field in ci.getFieldsWithAnnotation( Featured ) )

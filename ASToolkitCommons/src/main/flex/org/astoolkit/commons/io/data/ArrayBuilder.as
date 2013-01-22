@@ -23,11 +23,11 @@ package org.astoolkit.commons.io.data
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
 	import org.astoolkit.commons.io.data.api.IDataProvider;
 	import org.astoolkit.commons.reflection.AutoConfigUtil;
-	import org.astoolkit.commons.wfml.IAutoConfigContainerObject;
+	import org.astoolkit.commons.wfml.IAutoConfigurable;
 	import org.astoolkit.commons.wfml.IComponent;
 
 	[DefaultProperty("autoConfigChildren")]
-	public class ArrayBuilder implements IDataProvider, IComponent, IAutoConfigContainerObject
+	public class ArrayBuilder implements IDataProvider, IComponent, IAutoConfigurable
 	{
 		private var _autoConfigChildren : Array;
 

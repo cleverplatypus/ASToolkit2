@@ -40,12 +40,6 @@ package org.astoolkit.workflow.plugin.eval
 
 		private static var _esc : CompiledESC = new CompiledESC();
 
-		public function Eval()
-		{
-			_id = "Eval_" + ( new Date() ).time;
-			_instanceName = "Eval.instances." + _id;
-		}
-
 		private var _handler : Function;
 
 		private var _id : String;
@@ -63,6 +57,35 @@ package org.astoolkit.workflow.plugin.eval
 		override public function get async() : Boolean
 		{
 			return true;
+		}
+
+		public function get priority() : int
+		{
+			return _priority;
+		}
+
+		public function set priority( inValue : int ) : void
+		{
+			_priority = inValue;
+		}
+
+		public function set runtimeExpression( inValue : String ) : void
+		{
+			_text = inValue;
+		}
+
+		public function set text( value : String ) : void
+		{
+			_text = value;
+
+			if( _instanceData )
+				_instanceData.handler = null;
+		}
+
+		public function Eval()
+		{
+			_id = "Eval_" + ( new Date() ).time;
+			_instanceName = "Eval.instances." + _id;
 		}
 
 		public function eval() : Object
@@ -94,8 +117,9 @@ package org.astoolkit.workflow.plugin.eval
 					"}\n" +
 					"return false;\n" +
 					"}\n";
-				exp = _resolver.bindToEnvironment( _instanceData.env, exp ) as String;
-				exp = exp.replace( /\$ENV\{\s*?[\$\w]+(\.[\$\w]+)*\s*?\}/g, replaceEnvPlaceHolders );
+					//TODO: refactor to use ExpressionResolverResult.resolvedSymbols
+					//exp = _resolver.bindToEnvironment( _instanceData.env, exp ) as String;
+					exp = exp.replace( /\$ENV\{\s*?[\$\w]+(\.[\$\w]+)*\s*?\}/g, replaceEnvPlaceHolders );
 
 				try
 				{
@@ -125,39 +149,15 @@ package org.astoolkit.workflow.plugin.eval
 			_lastResult = undefined;
 		}
 
-		public function get priority() : int
-		{
-			return _priority;
-		}
-
-		public function set priority( inValue : int ) : void
-		{
-			_priority = inValue;
-		}
-
-		public function set runtimeExpression( inValue : String ) : void
-		{
-			_text = inValue;
-		}
-
 		public function supportsExpression( inExpression : String ) : Boolean
 		{
 			return true;
-		}
-
-		public function set text( value : String ) : void
-		{
-			_text = value;
-
-			if( _instanceData )
-				_instanceData.handler = null;
 		}
 
 		private function onEvalDone( inEvent : Event ) : void
 		{
 
 			var result : * = _instanceData.handler()
-
 
 			if( result is Boolean || result is Error )
 				_lastResult = result;

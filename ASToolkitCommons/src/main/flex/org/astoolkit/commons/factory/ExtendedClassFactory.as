@@ -21,12 +21,15 @@ package org.astoolkit.commons.factory
 {
 
 	import flash.utils.getQualifiedClassName;
+	
 	import org.astoolkit.commons.factory.api.IExtendedFactory;
+	import org.astoolkit.commons.io.data.api.IDataProvider;
+	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.reflection.AutoConfigUtil;
-	import org.astoolkit.commons.wfml.IAutoConfigContainerObject;
+	import org.astoolkit.commons.wfml.IAutoConfigurable;
 
 	[DefaultProperty("autoConfigChildren")]
-	public class ExtendedClassFactory implements IExtendedFactory, IAutoConfigContainerObject
+	public class ExtendedClassFactory implements IExtendedFactory, IAutoConfigurable
 	{
 
 		public static function create( 
@@ -108,10 +111,32 @@ package org.astoolkit.commons.factory
 
 			if( inFactoryMethod )
 			{
+				var args : Array = [];
+				if( inFactoryMethodArguments )
+				{
+					for each( var arg : Object in inFactoryMethodArguments )
+					{
+						if( arg is IDataProvider )
+						{
+							var resolved : * = IDataProvider( arg ).getData();
+							if( resolved === undefined &&
+								arg is IDeferrableProcess &&
+								IDeferrableProcess( arg ).isProcessDeferred() )
+							{
+								throw new Error( 
+									"Deferred data providers must be resolved " +
+									"before calling getInstance/newInstance" );
+							}
+							args.push( resolved );
+						}
+						else
+							args.push( arg );
+					}
+				}
 				if( inType.hasOwnProperty( inFactoryMethod ) &&
 					inType[ inFactoryMethod ] is Function )
 				{
-					out = ( inType[ inFactoryMethod ] as Function ).apply( inType, inFactoryMethodArguments );
+					out = ( inType[ inFactoryMethod ] as Function ).apply( inType, args );
 				}
 				else
 					throw new Error( "Factory method '" + inFactoryMethod + "' not defined for type " +

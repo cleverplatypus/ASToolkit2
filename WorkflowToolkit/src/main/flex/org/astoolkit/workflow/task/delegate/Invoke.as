@@ -27,9 +27,9 @@ package org.astoolkit.workflow.task.delegate
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
-	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
 	import org.astoolkit.commons.io.data.MethodBuilder;
 	import org.astoolkit.commons.utils.IChildrenAwareDocument;
+	import org.astoolkit.workflow.api.IFactoryResolverClientTask;
 	import org.astoolkit.workflow.core.BaseTask;
 
 	/**
@@ -73,13 +73,21 @@ package org.astoolkit.workflow.task.delegate
 	 * </ul>
 	 * </p>
 	 */
-	public class Invoke extends BaseTask implements IFactoryResolverClient
+	public class Invoke extends BaseTask implements IFactoryResolverClientTask
 	{
+		private var _allowDefaultFactory:Boolean;
+
+		//TODO: conform implementation to standard IFactoryResolverClientTask
 		private var _factoryResolver:IFactoryResolver;
 
 		private var _methodBuilder : MethodBuilder;
 
 		private var _usedFactory : IFactory;
+
+		public function set allowDefaultFactory( inValue : Boolean ) : void
+		{
+			_allowDefaultFactory = inValue;
+		}
 
 		public function set factoryResolver( inValue : IFactoryResolver ) : void
 		{

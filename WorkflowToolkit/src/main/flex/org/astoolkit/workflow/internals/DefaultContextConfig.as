@@ -25,20 +25,22 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.commons.collection.DefaultIteratorFactory;
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
 	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluatorRegistry;
-	import org.astoolkit.commons.factory.ClassFactoryMapping;
-	import org.astoolkit.commons.factory.PooledFactory;
+	import org.astoolkit.commons.factory.*;
 	import org.astoolkit.commons.factory.api.IExtendedFactory;
 	import org.astoolkit.commons.io.transform.DefaultDataTransformRegistry;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
-	import org.astoolkit.workflow.api.IContextConfig;
-	import org.astoolkit.workflow.api.IObjectConfigurer;
-	import org.astoolkit.workflow.api.IPropertyOverrideRule;
-	import org.astoolkit.workflow.api.ITaskTemplateRegistry;
+	import org.astoolkit.commons.reflection.AutoConfigUtil;
+	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
+	import org.astoolkit.commons.wfml.IAutoConfigurable;
+	import org.astoolkit.workflow.api.*;
+	import org.astoolkit.workflow.config.api.IObjectPropertyDefaultValue;
 
 	public class DefaultContextConfig implements IContextConfig
 	{
 
 		private var _classFactoryMappings : Array;
+
+		private var _defaults : Vector.<IObjectPropertyDefaultValue>
 
 		private var _inputFilterFactory : IIODataTransformerRegistry;
 
@@ -72,6 +74,16 @@ package org.astoolkit.workflow.internals
 		public function set dataTransformerRegistry( inValue : IIODataTransformerRegistry ) : void
 		{
 			_inputFilterFactory = inValue;
+		}
+
+		public function get defaults() : Vector.<IObjectPropertyDefaultValue>
+		{
+			return _defaults;
+		}
+
+		public function set defaults(value:Vector.<IObjectPropertyDefaultValue>) : void
+		{
+			_defaults = value;
 		}
 
 		public function get iteratorFactory() : IIteratorFactory

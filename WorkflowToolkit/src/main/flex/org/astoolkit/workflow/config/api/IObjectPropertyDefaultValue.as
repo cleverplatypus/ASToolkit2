@@ -17,19 +17,21 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.conditional.api
+package org.astoolkit.workflow.config.api
 {
 
-	import org.astoolkit.commons.eval.ExpressionResolverResult;
-
-	public interface IExpressionResolver
+	/**
+	 * contract for an object describing the default value to apply to a given class' property
+	 */
+	public interface IObjectPropertyDefaultValue
 	{
-		function set delegate( inDelegate : IExpressionResolver ) : void;
+		function get property() : String;
+		function set property( inValue : String ) : void;
 
-		function set expression( inValue : Object ) : void;
+		function get targetClass() : Class;
+		function set targetClass( inValue : Class ) : void;
 
-		function set key( inValue : * ) : void;
-
-		function resolve( inExpression : Object = null, inSource : Object = null ) : ExpressionResolverResult;
+		function get value() : *;
+		function set value( inValue : * ) : void;
 	}
 }
