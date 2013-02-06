@@ -22,8 +22,8 @@ package org.astoolkit.workflow.api
 
 	import flash.events.IEventDispatcher;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
-	import org.astoolkit.workflow.core.ExitStatus;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
+	import org.astoolkit.workflow.core.ExitStatus;
 
 	[Event(
 		name = "started",
@@ -47,12 +47,10 @@ package org.astoolkit.workflow.api
 		name = "prepare",
 		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
 	public interface IWorkflowTask extends IWorkflowElement,
-		IEventDispatcher,
 		IIODataTransformerClient,
 		IPipelineConsumer,
 		IDeferrableProcess
 	{
-
 		/**
 		 * read only. returns the 0 to 1 progress of this task.
 		 * A value of -1 means that this task won't provide progress information.

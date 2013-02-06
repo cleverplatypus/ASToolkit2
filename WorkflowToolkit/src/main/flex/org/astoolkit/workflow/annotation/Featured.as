@@ -19,10 +19,14 @@ Version 2.x
 */
 package org.astoolkit.workflow.annotation
 {
-	
+
 	import org.astoolkit.commons.reflection.Metadata;
-	
+
 	[Metadata( name="Featured", target="field" )]
+	/**
+	 * Stereotype for a property which should be inspected for features,
+	 * e.g. auto-configure sub-properties.
+	 */
 	public class Featured extends Metadata
 	{
 		override public function Featured()

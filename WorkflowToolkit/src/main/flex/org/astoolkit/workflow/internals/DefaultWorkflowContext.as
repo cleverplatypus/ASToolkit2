@@ -42,7 +42,6 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.workflow.conditional.WorkflowDataSourceResolverDelegate;
 	import org.astoolkit.workflow.constant.TaskStatus;
 
-	[Bindable]
 	[Event( name="initialized", type="flash.events.Event" )]
 	/**
 	 * @inherit
@@ -50,18 +49,19 @@ package org.astoolkit.workflow.internals
 	public class DefaultWorkflowContext extends EventDispatcher implements IWorkflowContext
 	{
 		/*
-		* TODO: at the moment the extensions resolving code is executed
+		* TODO: at the moment the config creation code is executed
 		* 		at every context instanciation. This is not necessary
-		*		as such configuration is common to every instance of
+		*		as such configuration is common to every context instance returned by
 		*		a given factory. IContextConfig were originally meant
 		*		to keep non-changing configuration.
-		*		Also, consider making this class smaller.
+		*		Context factory should create the config object once.
+		*		If config contains stateful objects, the latter might be moved
+		*		to the context class, or config objects could be pooled in the
+		*		context factory
 		*/
 		private static const LOGGER : ILogger = getLogger( DefaultWorkflowContext );
 
 		private var _config : IContextConfig;
-
-		private var _configuredObjects : Object = {};
 
 		private var _data : Object;
 
@@ -75,7 +75,7 @@ package org.astoolkit.workflow.internals
 
 		private var _initialized : Boolean;
 
-		private var _objectsConfigurers:Array;
+		private var _objectsConfigurer : ContextObjectConfigurer;
 
 		private var _owner : IWorkflow;
 
@@ -121,6 +121,7 @@ package org.astoolkit.workflow.internals
 			_dropIns = inValue;
 		}
 
+		//TODO: is this still necessary?
 		public function get failedTask() : IWorkflowTask
 		{
 			return _failedTask;
@@ -146,6 +147,7 @@ package org.astoolkit.workflow.internals
 			return _plugIns;
 		}
 
+		//TODO: is this still necessary?
 		public function get runningStack() : Vector.<IWorkflowTask>
 		{
 			return _runningStack.concat();
@@ -156,6 +158,7 @@ package org.astoolkit.workflow.internals
 			return _runninTask;
 		}
 
+		//TODO: is this still necessary?
 		public function set runningTask( inTask : IWorkflowTask ) : void
 		{
 			_runninTask = inTask;
@@ -184,6 +187,8 @@ package org.astoolkit.workflow.internals
 			return _taskLiveCycleWatchers;
 		}
 
+		//TODO: data binding to be abandoned. setter not necessary anymore
+		[Bindable]
 		public function get variables() : ContextVariablesProvider
 		{
 			return _variables;
@@ -220,18 +225,11 @@ package org.astoolkit.workflow.internals
 
 		public function configureObjects( inObjects : Array, inDocument : Object ) : void
 		{
-			if( inObjects && inObjects.length > 0 )
-			{
-				for each( var object : Object in inObjects )
-					configureObject( object, inDocument );
+			_objectsConfigurer.configureObjects( inObjects, inDocument );
 
-				if( _config.objectConfigurers )
-				{
-					for each( var configurer : IObjectConfigurer in _config.objectConfigurers )
-						configurer.configureObjects( inObjects, inDocument );
-				}
-
-			}
+			if( _config.objectConfigurers )
+				for each( var configurer : IObjectConfigurer in _config.objectConfigurers )
+					configurer.configureObjects( inObjects, inDocument );
 		}
 
 		public function fail(inSource:Object, inMessage:String) : void
@@ -255,6 +253,7 @@ package org.astoolkit.workflow.internals
 		{
 			_owner = inOwner;
 			LOGGER.info( "Initializing context" );
+			_objectsConfigurer  = new ContextObjectConfigurer( this );
 			_variables = new ContextVariablesProvider( this );
 			_dataSourceResolverDelegate = new WorkflowDataSourceResolverDelegate( this );
 			_pooledFactories = {};
@@ -308,62 +307,6 @@ package org.astoolkit.workflow.internals
 				return out;
 			}
 			return null;
-
-		}
-
-		private function configureObject( inObject : Object, inDocument : Object ) : void
-		{
-			if( !_configuredObjects.hasOwnProperty( UIDUtil.getUID( inObject ) ) )
-			{
-				LOGGER.debug( 
-					"Workflow context configuring object: {0}",
-					getQualifiedClassName( inObject ) );
-
-				if( isCollection( inObject ) )
-				{
-					configureObjects( ListUtil.convert( inObject, Array ) as Array, inDocument );
-					return;
-				}
-
-				if( inObject is IMXMLObject )
-					IMXMLObject( inObject ).initialized( inDocument, null );
-
-				if( inObject is IContextAwareElement )
-					inObject.context = this;
-
-				if( inObject is IExpressionResolver )
-				{
-					var delegate : ContextAwareExpressionResolver = new ContextAwareExpressionResolver();
-					delegate.context = this;
-					IExpressionResolver( inObject ).delegate = delegate;
-				}
-
-				if( inObject is IIODataTransformerClient )
-					IIODataTransformerClient( inObject ).dataTransformerRegistry = 
-						config.dataTransformerRegistry;
-
-				if( inObject is IIODataSourceClient )
-					IIODataSourceClient( inObject ).sourceResolverDelegate = 
-						dataSourceResolverDelegate;
-
-				if( inObject is IFactoryResolverClient )
-					IFactoryResolverClient( inObject ).factoryResolver = _factoryResolver;
-				_configuredObjects[  UIDUtil.getUID( inObject ) ] = true;
-			}
-
-			//TODO: implement set-defaults 
-			var ci : Type = Type.forType( inObject );
-
-			for each( var fi : Field in ci.getFieldsWithAnnotation( Featured ) )
-			{
-				LOGGER.debug( 
-					"{0} has featured property: {1}",
-					getQualifiedClassName( inObject ),
-					fi.name );
-
-				if( !fi.writeOnly && inObject[ fi.name ] != null )
-					configureObject( inObject[ fi.name ], inDocument );
-			}
 
 		}
 

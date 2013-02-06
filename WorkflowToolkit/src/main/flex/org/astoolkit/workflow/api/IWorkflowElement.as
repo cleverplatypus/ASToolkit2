@@ -25,6 +25,9 @@ package org.astoolkit.workflow.api
 	import org.astoolkit.commons.wfml.IAutoConfigurable;
 	import org.astoolkit.commons.wfml.IComponent;
 
+	//TODO: remove built-in event dispatching. An extension
+	//		might implement ITaskLiveCycleWatcher and dispatch
+	//		events
 	public interface IWorkflowElement extends IEventDispatcher, 
 		IContextAwareElement, 
 		IAutoConfigurable, 
@@ -36,7 +39,7 @@ package org.astoolkit.workflow.api
 		 * the wrapping workflow's iterator if any
 		 */
 		function set currentIterator( inValue : IIterator ) : void;
-		function set delegate( inValue : IWorkflowDelegate ) : void;
+		function set delegate( inValue : IWorkflowDelegate ) : void; //TODO: change name to something more meaningful (e.g. livecycleDelegate)
 		/**
 		 * an optional human readable description for this element.
 		 * <p>If not defined, a string containing the branch this element
@@ -65,7 +68,7 @@ package org.astoolkit.workflow.api
 		function set parent( inParent : ITasksGroup ) : void;
 
 		/**
-		 * called when the root workflow completes.
+		 * called when the workflow completes.
 		 * <p>Implementations should override this method to release
 		 * any allocated resource.</p>
 		 */
@@ -77,13 +80,17 @@ package org.astoolkit.workflow.api
 		 * Do not call this method directly.
 		 */
 		function initialize() : void;
+
+		/**
+		 * called by parent group before every iteration
+		 */
+		function prepare() : void; //TODO: rename to something like "prepareForIteration()"?
+
 		/**
 		 * called by parent workflow before begin.
 		 * <p>If this task has state, override this method and
 		 * reset any value for next invocation.</p>
 		 */
-		function prepare() : void;
-
 		function wakeup() : void;
 	}
 }

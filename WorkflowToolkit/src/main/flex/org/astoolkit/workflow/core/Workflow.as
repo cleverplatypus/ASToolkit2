@@ -104,9 +104,9 @@ package org.astoolkit.workflow.core
 			return true;
 		})();
 
-		private var _retainedWorkflows : Object = {};
-
 		//----------------------------------- END OF STATIC ---------------------------------------
+
+		private var _retainedWorkflows : Object = {};
 
 		protected var _childNodes : Array;
 
@@ -127,6 +127,7 @@ package org.astoolkit.workflow.core
 			return _context ? _context.variables : null;
 		}
 
+		//TODO: as databinding won't be supported, the setter won't be needed anymore
 		public function set ENV( inValue : * ) : void
 		{
 		/*
@@ -164,6 +165,30 @@ package org.astoolkit.workflow.core
 		public function set rootTask( inValue : IWorkflowTask ) : void
 		{
 			_rootTask = inValue;
+		}
+
+		/**
+		 * @inheritDoc
+		 */
+		public function abort() : void
+		{
+			LOGGER.debug( "abort() '{0}' ({1})", description, getQualifiedClassName( this ) );
+			_status = TaskStatus.ABORTED;
+
+			if( !_exitStatus )
+				exitStatus = new ExitStatus( ExitStatus.ABORTED );
+			_thread++;
+			dispatchTaskEvent( WorkflowEvent.ABORTED, this );
+
+			for each( var element : IWorkflowElement in _childNodes )
+				if( element is IWorkflowTask )
+					IWorkflowTask( element ).abort();
+
+			if( _delegate )
+				_delegate.onAbort( this );
+
+			if( !_parent )
+				cleanUp();
 		}
 
 		public function childNodeAdded( inNode : Object ) : void
