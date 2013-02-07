@@ -167,30 +167,6 @@ package org.astoolkit.workflow.core
 			_rootTask = inValue;
 		}
 
-		/**
-		 * @inheritDoc
-		 */
-		public function abort() : void
-		{
-			LOGGER.debug( "abort() '{0}' ({1})", description, getQualifiedClassName( this ) );
-			_status = TaskStatus.ABORTED;
-
-			if( !_exitStatus )
-				exitStatus = new ExitStatus( ExitStatus.ABORTED );
-			_thread++;
-			dispatchTaskEvent( WorkflowEvent.ABORTED, this );
-
-			for each( var element : IWorkflowElement in _childNodes )
-				if( element is IWorkflowTask )
-					IWorkflowTask( element ).abort();
-
-			if( _delegate )
-				_delegate.onAbort( this );
-
-			if( !_parent )
-				cleanUp();
-		}
-
 		public function childNodeAdded( inNode : Object ) : void
 		{
 			if( !_childNodes )
