@@ -1,7 +1,27 @@
+/*
+
+Copyright 2009 Nicola Dal Pont
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Version 2.x
+
+*/
 package org.astoolkit.workflow.parsleysupport
 {
+
 	import mx.utils.object_proxy;
-	
+
 	import org.spicefactory.lib.reflect.ClassInfo;
 	import org.spicefactory.lib.reflect.Method;
 	import org.spicefactory.lib.reflect.Parameter;
@@ -16,9 +36,9 @@ package org.astoolkit.workflow.parsleysupport
 	import org.spicefactory.parsley.core.processor.StatefulProcessor;
 	import org.spicefactory.parsley.messaging.receiver.MessageReceiverInfo;
 
-	public class CommandProcessor implements MethodProcessor {
+	public class CommandProcessor implements MethodProcessor
+	{
 
-		private static var _cache : Object = {};
 		private var _method : Method;
 
 		public function init( inTarget : ManagedObject ) : void
@@ -26,20 +46,19 @@ package org.astoolkit.workflow.parsleysupport
 			var meta : CommandDecorator = CommandDecorator( _method.getMetadata( CommandDecorator )[0] );
 			var builder:MappedCommandBuilder = 
 				MappedCommandBuilder.forFactory( 
-					new Factory( inTarget.instance, inTarget.instance[ _method.name ] as Function, inTarget.context ) );
-			
+				new Factory( inTarget.instance, inTarget.instance[ _method.name ] as Function, inTarget.context ) );
+
 			builder
-			.messageType( Parameter( _method.parameters[0] ).type.getClass() )
+				.messageType( Parameter( _method.parameters[0] ).type.getClass() )
 				.selector( meta.selector )
 				.order( meta.order )
 				.register( inTarget.context);
 		}
 
-		public function destroy(target:ManagedObject):void
+		public function destroy(target:ManagedObject) : void
 		{
 			// TODO Auto-generated method stub
 		}
-
 
 		public function targetMethod( inMethod : Method ) : void
 		{
@@ -58,9 +77,11 @@ import org.spicefactory.parsley.core.context.Context;
 class Factory implements ManagedCommandFactory
 {
 	private var _target : Object;
+
 	private var _method : Function;
+
 	private var _context : Context;
-	
+
 	public function Factory( inTarget : Object, inMethod : Function, inContext  : Context ) : void
 	{
 		_target = inTarget;

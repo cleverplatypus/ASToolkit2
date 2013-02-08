@@ -54,7 +54,7 @@ package org.astoolkit.workflow.plugin.eval
 
 		private var _token : AsyncExpressionToken;
 
-		override public function get async() : Boolean
+		override public function get isAsync() : Boolean
 		{
 			return true;
 		}

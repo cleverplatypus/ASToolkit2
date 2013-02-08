@@ -20,9 +20,12 @@ Version 2.x
 package org.astoolkit.workflow.core
 {
 
+	import flash.events.IEventDispatcher;
 	import flash.utils.getQualifiedClassName;
+
 	import mx.core.IFactory;
 	import mx.logging.ILogger;
+
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.collection.api.IRepeater;
 	import org.astoolkit.commons.databinding.BindingUtility;
@@ -38,38 +41,17 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.workflow.constant.*;
 	import org.astoolkit.workflow.internals.*;
 
-	[Event(
-		name = "subtaskInitialized",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Event(
-		name = "subtaskPrepared",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Event(
-		name = "subtaskStarted",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Event(
-		name = "subtaskFault",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Event(
-		name = "subtaskCompleted",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Event(
-		name = "subtaskProgress",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Event(
-		name = "subtaskAborted",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
 	/**
-	 * This is the core Workflow Toolkit class.
-	 * <p>A <code>Workflow</code> instance represents a group of tasks
-	 * executed either as a sequence or in parellel according to
-	 * <code>flow</code> property.</p>
-	 * <p>Workflows can be iterated over an <code>IIterator</code> or
-	 * in a infinite loop. The <code>dataProvider</code> property
-	 * can be set to automatically set an <code>IIterator</code>
-	 * that is instanciated if one supporting the <code>dataProvider</code>
-	 * type is registered in the current context.</p>
-	 */
+	* This is the core Workflow Toolkit class.
+	* <p>A <code>Workflow</code> instance represents a group of tasks
+	* executed either as a sequence or in parellel according to
+	* <code>flow</code> property.</p>
+	* <p>Workflows can be iterated over an <code>IIterator</code> or
+	* in a infinite loop. The <code>dataProvider</code> property
+	* can be set to automatically set an <code>IIterator</code>
+	* that is instanciated if one supporting the <code>dataProvider</code>
+	* type is registered in the current context.</p>
+	*/
 	public class Do extends BaseTask implements ITasksGroup, IRepeater
 	{
 		use namespace astoolkit_private;
@@ -98,7 +80,7 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		protected var _childrenDelegate : IWorkflowDelegate;
+		protected var _childrenDelegate : ITaskLiveCycleWatcher;
 
 		/**
 		 * @private
@@ -260,7 +242,7 @@ package org.astoolkit.workflow.core
 		public function Do()
 		{
 			super();
-			_childrenDelegate = createChildrenDelegate()
+			_childrenDelegate = new ChildTaskWatcher( this );
 			_feed = Feed.AUTO;
 		}
 
@@ -275,14 +257,15 @@ package org.astoolkit.workflow.core
 			if( !_exitStatus )
 				exitStatus = new ExitStatus( ExitStatus.ABORTED );
 			_thread++;
-			dispatchTaskEvent( WorkflowEvent.ABORTED, this );
+
+			//REMOVE: dispatchTaskEvent( WorkflowEvent.ABORTED, this );
 
 			for each( var element : IWorkflowElement in _childNodes )
 				if( element is IWorkflowTask )
 					IWorkflowTask( element ).abort();
 
 			if( _delegate )
-				_delegate.onAbort( this );
+				_delegate.onTaskAbort( this );
 
 			if( !_parent )
 				cleanUp();
@@ -301,7 +284,6 @@ package org.astoolkit.workflow.core
 			}
 			super.begin();
 			_subPipelineData = _inputData === undefined ? UNDEFINED : _inputData;
-			var w : ITaskLiveCycleWatcher;
 
 			try
 			{
@@ -396,7 +378,7 @@ package org.astoolkit.workflow.core
 				for each( var element : IWorkflowElement in _children )
 				{
 					//TODO: review this as some assignments could be redundant
-					element.delegate = _childrenDelegate;
+					element.liveCycleDelegate = _childrenDelegate;
 					element.context = _context;
 					element.parent = this;
 					element.initialize();
@@ -444,21 +426,6 @@ package org.astoolkit.workflow.core
 			complete( _pipelineData );
 		}
 
-		protected function createChildrenDelegate() : IWorkflowDelegate
-		{
-			var out : DynamicWorkflowDelegate = new DynamicWorkflowDelegate();
-			out.onAbortHandler = onSubtaskAbort;
-			out.onBeginHandler = onSubtaskBegin;
-			out.onCompleteHandler = onSubtaskCompleted;
-			out.onFaultHandler = onSubtaskFault;
-			out.onInitializeHandler = onSubtaskInitialized;
-			out.onPrepareHandler = onSubtaskPrepared;
-			out.onProgressHandler = onSubtaskProgress;
-			out.onResumeHandler = onSubtaskResumed;
-			out.onSuspendHandler = onSubtaskSuspended;
-			return out;
-		}
-
 		override protected function fail( inMessage : String, ... inRest ) : void
 		{
 			var c : IWorkflowContext = _context;
@@ -485,21 +452,21 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		protected function onSubtaskAbort( inTask : IWorkflowTask ) : void
+		INTERNAL function onSubtaskAbort( inTask : IWorkflowTask ) : void
 		{
-			dispatchTaskEvent( WorkflowEvent.ABORTED, inTask );
-			onSubtaskCompleted( inTask );
+			//REMOVE: dispatchTaskEvent( WorkflowEvent.ABORTED, inTask );
+			INTERNAL::onSubtaskCompleted( inTask );
 		}
 
 		/**
 		 * @private
 		 */
-		protected function onSubtaskBegin( inTask : IWorkflowTask ) : void
+		INTERNAL function onSubtaskBegin( inTask : IWorkflowTask ) : void
 		{
-			dispatchTaskEvent( WorkflowEvent.STARTED, inTask );
+			//REMOVE: dispatchTaskEvent( WorkflowEvent.STARTED, inTask );
 		}
 
-		protected function onSubtaskCompleted( inTask : IWorkflowTask ) : void
+		INTERNAL function onSubtaskCompleted( inTask : IWorkflowTask ) : void
 		{
 
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
@@ -513,7 +480,7 @@ package org.astoolkit.workflow.core
 
 			if( inTask.status != TaskStatus.ABORTED )
 			{
-				dispatchTaskEvent( WorkflowEvent.COMPLETED, inTask, _pipelineData );
+				//REMOVE: dispatchTaskEvent( WorkflowEvent.COMPLETED, inTask, _pipelineData );
 
 				if( !_ignoreOutput )
 				{
@@ -621,12 +588,13 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		protected function onSubtaskFault( inTask : IWorkflowTask, inMessage : String ) : void
+		INTERNAL function onSubtaskFault( inTask : IWorkflowTask, inMessage : String ) : void
 		{
 			if( inTask.status != TaskStatus.ABORTED )
 			{
 				LOGGER.debug( "Subtask fault: {0}", inMessage );
-				dispatchTaskEvent( WorkflowEvent.FAULT, inTask, inMessage );
+
+				//REMOVE: dispatchTaskEvent( WorkflowEvent.FAULT, inTask, inMessage );
 
 				if( inTask.failurePolicy == FailurePolicy.ABORT )
 				{
@@ -636,7 +604,7 @@ package org.astoolkit.workflow.core
 				else if( inTask.failurePolicy == FailurePolicy.SUSPEND )
 				{
 					inTask.suspend();
-					onSubtaskCompleted( inTask );
+					INTERNAL::onSubtaskCompleted( inTask );
 				}
 				else if( inTask.failurePolicy == FailurePolicy.CASCADE )
 				{
@@ -647,61 +615,61 @@ package org.astoolkit.workflow.core
 				{
 					nextData();
 					prepareChildren();
-					onSubtaskCompleted( inTask );
+					INTERNAL::onSubtaskCompleted( inTask );
 				}
 				else if( inTask.failurePolicy.match( /^log\-/ ) )
 				{
 					//TODO: Log
-					onSubtaskCompleted( inTask );
+					INTERNAL::onSubtaskCompleted( inTask );
 				}
 				else
-					onSubtaskCompleted( inTask );
+					INTERNAL::onSubtaskCompleted( inTask );
 			}
 		}
 
 		/**
 		 * @private
 		 */
-		protected function onSubtaskInitialized( inTask : IWorkflowTask ) : void
+		INTERNAL function onSubtaskInitialized( inTask : IWorkflowTask ) : void
 		{
-			dispatchTaskEvent( WorkflowEvent.INITIALIZED, inTask );
+			//REMOVE: dispatchTaskEvent( WorkflowEvent.INITIALIZED, inTask );
 		}
 
 		/**
 		 * @private
 		 */
-		protected function onSubtaskPrepared( inTask : IWorkflowTask ) : void
+		INTERNAL function onSubtaskPrepared( inTask : IWorkflowTask ) : void
 		{
-			dispatchTaskEvent( WorkflowEvent.PREPARED, inTask );
+			//REMOVE: dispatchTaskEvent( WorkflowEvent.PREPARED, inTask );
 		}
 
 		/**
 		 * @private
 		 */
-		protected function onSubtaskProgress( inTask : IWorkflowTask ) : void
+		INTERNAL function onSubtaskProgress( inTask : IWorkflowTask ) : void
 		{
 			if( inTask.status == TaskStatus.SUSPENDED )
 				return;
-			dispatchTaskEvent( WorkflowEvent.PROGRESS, inTask );
+			//REMOVE: dispatchTaskEvent( WorkflowEvent.PROGRESS, inTask );
 		}
 
 		/**
 		 * @private
 		 */
-		protected function onSubtaskResumed( inTask : IWorkflowTask ) : void
+		INTERNAL function onSubtaskResumed( inTask : IWorkflowTask ) : void
 		{
 			if( context.status == TaskStatus.SUSPENDED )
 			{
 				context.status = TaskStatus.RUNNING;
 				context.dispatchEvent( new WorkflowEvent( WorkflowEvent.RESUMED, _context ) );
 			}
-			dispatchTaskEvent( WorkflowEvent.RESUMED, inTask );
+			//REMOVE: dispatchTaskEvent( WorkflowEvent.RESUMED, inTask );
 		}
 
 		/**
 		 * @private
 		 */
-		protected function onSubtaskSuspended( inTask : IWorkflowTask ) : void
+		INTERNAL function onSubtaskSuspended( inTask : IWorkflowTask ) : void
 		{
 			//TODO: this should be managed at workflow/context level
 			if( root.context.status != TaskStatus.SUSPENDED )
@@ -709,7 +677,7 @@ package org.astoolkit.workflow.core
 				context.status = TaskStatus.SUSPENDED;
 				context.dispatchEvent( new WorkflowEvent( WorkflowEvent.SUSPENDED, _context ) );
 			}
-			dispatchTaskEvent( WorkflowEvent.SUSPENDED, inTask );
+			//REMOVE: dispatchTaskEvent( WorkflowEvent.SUSPENDED, inTask );
 		}
 
 		/**
@@ -732,7 +700,7 @@ package org.astoolkit.workflow.core
 		{
 			for each( var element : IWorkflowElement in _children )
 			{
-				element.delegate = _childrenDelegate;
+				element.liveCycleDelegate = _childrenDelegate;
 				element.currentIterator = _iterator;
 				element.prepare();
 			}
@@ -785,7 +753,7 @@ package org.astoolkit.workflow.core
 				if( element is IPipelineConsumer )
 				{
 					setSubtaskPipelineData( IPipelineConsumer( element ) );
-					dispatchTaskEvent( WorkflowEvent.DATA_SET, task );
+						//REMOVE: dispatchTaskEvent( WorkflowEvent.DATA_SET, task );
 				}
 
 				if( element is ITaskProxy )
@@ -866,7 +834,7 @@ package org.astoolkit.workflow.core
 			}
 			catch( taskError : Error )
 			{
-				onSubtaskFault(
+				INTERNAL::onSubtaskFault(
 					inTask,
 					taskError.getStackTrace()
 					);
@@ -899,7 +867,9 @@ package org.astoolkit.workflow.core
 			{
 				var task : IWorkflowTask = inElement as IWorkflowTask;
 
-				if( task.hasEventListener( WorkflowEvent.TRANSFORM_INPUT ) )
+				//TODO: consider whether to remove this feature for the sake of removing
+				//		IEventDispatcher contract from tasks
+				if( IEventDispatcher( task ).hasEventListener( WorkflowEvent.TRANSFORM_INPUT ) )
 				{
 					var transformEvent : WorkflowEvent =
 						new WorkflowEvent(
@@ -907,7 +877,8 @@ package org.astoolkit.workflow.core
 						context,
 						task,
 						taskData );
-					task.dispatchEvent( transformEvent );
+
+					IEventDispatcher( task ).dispatchEvent( transformEvent );
 					taskData = transformEvent.data;
 				}
 
@@ -992,4 +963,111 @@ package org.astoolkit.workflow.core
 			}
 		}
 	}
+}
+
+import org.astoolkit.workflow.api.*;
+import org.astoolkit.workflow.core.Do;
+import org.astoolkit.workflow.core.ExitStatus;
+
+namespace INTERNAL = "org.astoolkit.workflow.core.do::INTERNAL";
+
+class ChildTaskWatcher implements ITaskLiveCycleWatcher
+{
+	private var _group : Do;
+
+	public function ChildTaskWatcher( inGroup : Do )
+	{
+		_group  = inGroup;
+	}
+
+	public function afterTaskBegin( inTask : IWorkflowTask ) : void
+	{
+	}
+
+	public function afterTaskDataSet( inTask : IWorkflowTask ) : void
+	{
+	}
+
+	public function beforeTaskBegin( inTask : IWorkflowTask ) : void
+	{
+	}
+
+	public function onBeforeContextUnbond( inTask : IWorkflowElement ) : void
+	{
+	}
+
+	public function onContextBond( inElement : IWorkflowElement ) : void
+	{
+	}
+
+	public function onDeferredTaskResume( inTask : IWorkflowTask ) : void
+	{
+	}
+
+	public function onTaskAbort( inTask : IWorkflowTask ) : void
+	{
+		_group.INTERNAL::onSubtaskAbort( inTask );
+	}
+
+	public function onTaskBegin( inTask : IWorkflowTask ) : void
+	{
+		_group.INTERNAL::onSubtaskBegin( inTask );
+	}
+
+	public function onTaskComplete( inTask : IWorkflowTask ) : void
+	{
+		_group.INTERNAL::onSubtaskCompleted( inTask );
+	}
+
+	public function onTaskDeferExecution( inTask : IWorkflowTask ) : void
+	{
+	}
+
+	public function onTaskExitStatus( inTask : IWorkflowTask, inStatus : ExitStatus ) : void
+	{
+	}
+
+	public function onTaskFail( inTask : IWorkflowTask, inMessage : String ) : void
+	{
+		_group.INTERNAL::onSubtaskFault( inTask, inMessage );
+	}
+
+	public function onTaskInitialize( inTask : IWorkflowTask ) : void
+	{
+		_group.INTERNAL::onSubtaskInitialized( inTask );
+	}
+
+	public function onTaskPrepare( inTask : IWorkflowTask ) : void
+	{
+		_group.INTERNAL::onSubtaskPrepared( inTask );
+	}
+
+	public function onTaskSuspend(inTask:IWorkflowTask ) : void
+	{
+		_group.INTERNAL::onSubtaskSuspended( inTask );
+	}
+
+	public function onWorkflowCheckingNextTask( inWorkflow : ITasksGroup, inPipelineData:Object) : void
+	{
+	}
+
+	public function get taskWatcherPriority() : int
+	{
+		return 0;
+	}
+
+	public function set taskWatcherPriority( inValue : int ) : void
+	{
+	}
+
+	public function onTaskProgress(inTask:IWorkflowTask) : void
+	{
+		_group.INTERNAL::onSubtaskProgress( inTask );
+	}
+
+	public function onTaskResume(inTask:IWorkflowTask) : void
+	{
+		_group.INTERNAL::onSubtaskResumed( inTask );
+	}
+
 }

@@ -40,32 +40,32 @@ package org.astoolkit.commons.reflection
 			inOwner : Type,
 			inDeclarer : Type ) : Field
 		{
-			var i : Field = new Field();
-			i._name = inName;
-			i._readOnly = inReadOnly;
-			i._writeOnly = inWriteOnly;
-			i._scope = inScope;
-			i._type = inType;
-			i._subtype = inSubtype;
-			i._annotationsForName = {};
-			i._annotations = inAnnotations.concat();
-			i._owner = inOwner;
-			i._local = inOwner == inDeclarer;
-			i._declarer = inDeclarer;
+			var outField : Field = new Field();
+			outField._name = inName;
+			outField._readOnly = inReadOnly;
+			outField._writeOnly = inWriteOnly;
+			outField._scope = inScope;
+			outField._type = inType;
+			outField._subtype = inSubtype;
+			outField._annotationsForName = {};
+			outField._annotations = inAnnotations.concat();
+			outField._owner = inOwner;
+			outField._local = inOwner == inDeclarer;
+			outField._declarer = inDeclarer;
 
 			for each( var annotation : IAnnotation in inAnnotations )
 			{
-				if( !i._annotationsForName.hasOwnProperty( annotation.tagName ) )
-					i._annotationsForName[ annotation.tagName ] =
+				if( !outField._annotationsForName.hasOwnProperty( annotation.tagName ) )
+					outField._annotationsForName[ annotation.tagName ] =
 						new Vector.<IAnnotation>();
-				i._annotationsForName[ annotation.tagName ].push( annotation );
+				outField._annotationsForName[ annotation.tagName ].push( annotation );
 
-				if( !i._annotationsForType.hasOwnProperty( getQualifiedClassName( annotation ) ) )
-					i._annotationsForType[ getQualifiedClassName( annotation ) ] =
+				if( !outField._annotationsForType.hasOwnProperty( getQualifiedClassName( annotation ) ) )
+					outField._annotationsForType[ getQualifiedClassName( annotation ) ] =
 						new Vector.<IAnnotation>();
-				i._annotationsForType[ getQualifiedClassName( annotation ) ].push( annotation );
+				outField._annotationsForType[ getQualifiedClassName( annotation ) ].push( annotation );
 			}
-			return i;
+			return outField;
 		}
 
 		private var _declarer : Type;

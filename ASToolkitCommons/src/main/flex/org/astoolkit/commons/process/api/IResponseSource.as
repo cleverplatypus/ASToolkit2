@@ -17,11 +17,20 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.api
+package org.astoolkit.commons.process.api
 {
 
-	public interface ITaskProxy extends IWorkflowElement
+	import mx.rpc.IResponder;
+
+	/**
+	 * Contract for an object (typically a process) invoking <code>IResponder</code> methods
+	 * on async operation completion.
+	 *
+	 * This interface is meant to provide a missing API for methods returning a hook to
+	 * an async completion operation, e.g. an <code>AsyncToken</code>.
+	 */
+	public interface IResponseSource
 	{
-		function getTask() : IWorkflowTask;
+		function addResponder( inResponder : IResponder ) : void;
 	}
 }

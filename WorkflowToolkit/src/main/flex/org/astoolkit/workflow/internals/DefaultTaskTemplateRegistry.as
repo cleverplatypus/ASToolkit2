@@ -62,11 +62,13 @@ package org.astoolkit.workflow.internals
 			var interfaces : Vector.<Type> =
 				ci.getInterfacesWithAnnotationsOfType( Template );
 
+			var factory : PooledFactory;
+
 			for each( var contract : Type in interfaces )
 			{
 				if( !_implementationsByContract.hasOwnProperty( contract.fullName ) )
 				{
-					var factory : PooledFactory = new PooledFactory();
+					factory = new PooledFactory();
 					factory.type =
 						inImplementation is Class ?
 						inImplementation as Class :

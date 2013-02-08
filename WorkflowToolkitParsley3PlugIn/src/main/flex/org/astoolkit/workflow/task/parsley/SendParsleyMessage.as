@@ -20,19 +20,16 @@ Version 2.x
 package org.astoolkit.workflow.task.parsley
 {
 
-	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
+
 	import mx.core.IFactory;
 	import mx.logging.ILogger;
-	import mx.logging.Log;
-	import mx.utils.ObjectUtil;
 	import mx.utils.StringUtil;
+
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.mapping.MappingError;
-	import org.astoolkit.commons.mapping.SimplePropertiesMapper;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
-	import org.astoolkit.commons.ns.astoolkit_private;
 	import org.astoolkit.workflow.constant.FailurePolicy;
 	import org.astoolkit.workflow.task.api.ISendMessage;
 	import org.spicefactory.parsley.core.command.CommandStatus;

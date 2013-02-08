@@ -32,11 +32,6 @@ package org.astoolkit.workflow.task.events
 
 		public var target : IEventDispatcher;
 
-		override public function begin() : void
-		{
-			super.begin();
-		}
-
 		override public function prepare() : void
 		{
 			super.prepare();

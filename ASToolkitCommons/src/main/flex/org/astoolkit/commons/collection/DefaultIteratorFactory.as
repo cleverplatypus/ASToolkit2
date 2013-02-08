@@ -37,7 +37,6 @@ package org.astoolkit.commons.collection
 
 		private static function getIteratorSourceTypes( inObject : Object ) : Vector.<Class>
 		{
-			var z : String = getQualifiedClassName( Array );
 			var cName : String = getQualifiedClassName( inObject )
 
 			if( !_iteratorsMetaCache.hasOwnProperty( cName ) )

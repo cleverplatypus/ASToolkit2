@@ -21,15 +21,12 @@ package org.astoolkit.workflow.api
 {
 
 	import flash.events.IEventDispatcher;
+
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.wfml.IAutoConfigurable;
 	import org.astoolkit.commons.wfml.IComponent;
 
-	//TODO: remove built-in event dispatching. An extension
-	//		might implement ITaskLiveCycleWatcher and dispatch
-	//		events
-	public interface IWorkflowElement extends IEventDispatcher, 
-		IContextAwareElement, 
+	public interface IWorkflowElement extends IContextAwareElement, 
 		IAutoConfigurable, 
 		IComponent
 	{
@@ -39,7 +36,8 @@ package org.astoolkit.workflow.api
 		 * the wrapping workflow's iterator if any
 		 */
 		function set currentIterator( inValue : IIterator ) : void;
-		function set delegate( inValue : IWorkflowDelegate ) : void; //TODO: change name to something more meaningful (e.g. livecycleDelegate)
+
+		function set liveCycleDelegate( inValue : ITaskLiveCycleWatcher ) : void; //TODO: change name to something more meaningful (e.g. livecycleDelegate)
 		/**
 		 * an optional human readable description for this element.
 		 * <p>If not defined, a string containing the branch this element

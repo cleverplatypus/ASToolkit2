@@ -85,39 +85,38 @@ package org.astoolkit.commons.eval
 			var expr : Object = _expression ? _expression : inExpression;
 			var src : Object = inSource ? inSource : _document;
 
-			if( _document && expr is String )
+			if( !_document || !( expr is String ) )
+				return null;
+
+			var out : ExpressionResolverResult;
+
+			if( expr == "." )
 			{
-				var out : ExpressionResolverResult;
-
-				if( expr == "." )
-				{
-					out = new ExpressionResolverResult();
-					out.result = src;
-					out.source = src;
-					return out;
-				}
-
-				if( _delegate )
-				{
-					out = _delegate.resolve( expr, src );
-
-					if( out != null && out.result !== undefined )
-						return out;
-				}
-
-				if( out == null )
-					out = new ExpressionResolverResult();
-
-				var dest : * = src;
-
-				for each( var segment : String in String( expr ).split( "." ) )
-				{
-					dest = dest[ segment ];
-				}
-				out.result = dest;
+				out = new ExpressionResolverResult();
+				out.result = src;
+				out.source = src;
 				return out;
 			}
-			return null;
+
+			if( _delegate )
+			{
+				out = _delegate.resolve( expr, src );
+
+				if( out != null && out.result !== undefined )
+					return out;
+			}
+
+			if( out == null )
+				out = new ExpressionResolverResult();
+
+			var dest : * = src;
+
+			for each( var segment : String in String( expr ).split( "." ) )
+			{
+				dest = dest[ segment ];
+			}
+			out.result = dest;
+			return out;
 		}
 	}
 }

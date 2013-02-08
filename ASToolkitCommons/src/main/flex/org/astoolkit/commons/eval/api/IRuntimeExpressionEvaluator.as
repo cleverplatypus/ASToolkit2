@@ -22,7 +22,7 @@ package org.astoolkit.commons.eval.api
 
 	public interface IRuntimeExpressionEvaluator
 	{
-		function get async() : Boolean;
+		function get isAsync() : Boolean;
 		function get priority() : int;
 		function set priority( inValue : int ) : void;
 		function set runtimeExpression( inValue : String ) : void;

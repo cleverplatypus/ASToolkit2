@@ -20,17 +20,13 @@ Version 2.x
 package org.astoolkit.workflow.core
 {
 
-	import flash.events.ErrorEvent;
-	import flash.events.Event;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
-	import mx.binding.utils.ChangeWatcher;
 	import mx.events.PropertyChangeEvent;
 	import mx.events.PropertyChangeEventKind;
 	import mx.logging.ILogger;
-	import mx.logging.Log;
 	import mx.utils.StringUtil;
 	import org.astoolkit.commons.databinding.BindingUtility;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
@@ -44,7 +40,6 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.*;
 	import org.astoolkit.workflow.internals.ContextVariablesProvider;
-	import org.astoolkit.workflow.internals.GroupUtil;
 
 	[Exclude( name="ENV", kind="property" )]
 	[Exclude( name="delegate", kind="property" )]
@@ -56,48 +51,6 @@ package org.astoolkit.workflow.core
 	 *
 	 * @eventType org.astoolkit.workflow.WorkflowEvent
 	*/
-	[Event(
-		name="initialized",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Event(
-		name="prepared",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
-	/**
-	 * dispatched once the task's pipeline is set
-	 *
-	 * @eventType org.astoolkit.workflow.WorkflowEvent
-	 */
-	[Event(
-		name="dataSet",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
-	/**
-	 * dispatched before setting the task's pipeline data
-	 *
-	 * @eventType org.astoolkit.workflow.WorkflowEvent
-	 */
-	[Event(
-		name="transformInput",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
-	/**
-	 * sent when begin() is invoked
-	 *
-	 * @eventType org.astoolkit.workflow.WorkflowEvent
-	 */
-	[Event(
-		name="started",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Event(
-		name="fault",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Event(
-		name="completed",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Event(
-		name="progress",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Event(
-		name="aborted",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Bindable]
 	/**
 	 * Base implementation of <code>IWorkflowTask</code>; Every task implementation must extend this class.
@@ -373,7 +326,7 @@ package org.astoolkit.workflow.core
 		 *
 		 * @see org.astoolkit.workflow.core.ExitStatus
 	 * @inheritDoc
-																																 */
+																																					*/
 		public function set exitStatus( inStatus : ExitStatus ) : void
 		{
 			_exitStatus = inStatus;
@@ -695,7 +648,7 @@ package org.astoolkit.workflow.core
 
 		/**
 		 * an optional timeout expressed in milliseconds after which
-		 * if the task hasn't completed it will fail with
+		 * if the task hasn't completed it will abort with
 		 * <code>exitStatus.code = ExitStatus.TIME_OUT</code>.
 		 */
 		public function set timeout( inMillisecs : int ) : void
@@ -720,13 +673,15 @@ package org.astoolkit.workflow.core
 		{
 			LOGGER.debug( "abort() '{0}' ({1})", description, getQualifiedClassName( this ) );
 			_status = TaskStatus.ABORTED;
+
 			if( !_exitStatus )
 				exitStatus = new ExitStatus( ExitStatus.ABORTED );
 			_thread++;
-			dispatchTaskEvent( WorkflowEvent.ABORTED, this );
+
+			//REMOVE: dispatchTaskEvent( WorkflowEvent.ABORTED, this );
 
 			if( _delegate )
-				_delegate.onAbort( this );
+				_delegate.onTaskAbort( this );
 
 			if( !_parent )
 				cleanUp();
@@ -743,8 +698,8 @@ package org.astoolkit.workflow.core
 		{
 			if( _timeout > 0 )
 			{
-				var t : int = currentThread;
-				setTimeout( onTimeout, _timeout, t );
+				var threadNo : int = currentThread;
+				setTimeout( onTimeout, _timeout, threadNo );
 			}
 			_taskCompleted = false;
 
@@ -779,7 +734,7 @@ package org.astoolkit.workflow.core
 			}
 
 			if( _delegate )
-				_delegate.onBegin( this );
+				_delegate.onTaskBegin( this );
 		}
 
 		override public function cleanUp() : void
@@ -811,7 +766,7 @@ package org.astoolkit.workflow.core
 				_status = TaskStatus.IDLE;
 
 			if( _delegate )
-				_delegate.onInitialize( this );
+				_delegate.onTaskInitialize( this );
 
 			if( _document == null )
 				_document = this;
@@ -829,7 +784,7 @@ package org.astoolkit.workflow.core
 		{
 			if( parent )
 			{
-				parent.addEventListener(
+				IEventDispatcher( parent ).addEventListener(
 					"status_change",
 					onParentStatusChange );
 				_pipelineData = UNDEFINED;
@@ -839,7 +794,7 @@ package org.astoolkit.workflow.core
 			_exitStatus = null;
 
 			if( _delegate )
-				_delegate.onPrepare( this );
+				_delegate.onTaskPrepare( this );
 		}
 
 		/**
@@ -852,7 +807,7 @@ package org.astoolkit.workflow.core
 				_status = TaskStatus.RUNNING;
 
 				if( _delegate )
-					_delegate.onResume( this );
+					_delegate.onTaskResume( this );
 				_context.suspendableFunctions.invokeResumeCallBacks();
 			}
 		}
@@ -867,7 +822,7 @@ package org.astoolkit.workflow.core
 				_status = TaskStatus.SUSPENDED;
 
 				if( _delegate )
-					_delegate.onSuspend( this );
+					_delegate.onTaskSuspend( this );
 			}
 		}
 
@@ -891,12 +846,14 @@ package org.astoolkit.workflow.core
 				{
 					value = prop.dataProvider.getData();
 
-					if( value  === undefined )
+					if( value === undefined )
 					{
-						if( prop.dataProvider is IDeferrableProcess && IDeferrableProcess( prop.dataProvider ).isProcessDeferred() )
+						if( prop.dataProvider is IDeferrableProcess && 
+							IDeferrableProcess( prop.dataProvider ).isProcessDeferred() )
 						{
 							_configDeferred  = true;
-							IDeferrableProcess( prop.dataProvider ).addDeferredProcessWatcher( onDeferredConfigPropertyComplete );
+							IDeferrableProcess( prop.dataProvider )
+								.addDeferredProcessWatcher( onDeferredConfigPropertyComplete );
 							return;
 						}
 					}
@@ -948,7 +905,7 @@ package org.astoolkit.workflow.core
 			_status = TaskStatus.IDLE;
 
 			if( _delegate )
-				_delegate.onComplete( this );
+				_delegate.onTaskComplete( this );
 		}
 
 		/**
@@ -990,7 +947,7 @@ package org.astoolkit.workflow.core
 			_status = TaskStatus.IDLE;
 
 			if( _delegate )
-				_delegate.onFault( this, inMessage );
+				_delegate.onTaskFail( this, inMessage );
 		}
 
 		/**
@@ -1008,43 +965,6 @@ package org.astoolkit.workflow.core
 				_pipelineData = inOutputData;
 			_taskCompleted = true;
 			_deferredComplete( _thread );
-		}
-
-		/**
-		 * @private
-		 */
-		protected function dispatchTaskEvent(
-			inEventType : String,
-			inTask : IWorkflowTask,
-			inData : Object = null ) : void
-		{
-			var task : IWorkflowElement = inTask;
-			var subEventType : String = "subtask" + inEventType.substr( 0, 1 ).toUpperCase() + inEventType.substr( 1 );
-
-			if( _context.owner.hasEventListener( subEventType ) )
-				_context.owner.dispatchEvent( 
-					new WorkflowEvent( subEventType, _context, inTask, inData ) )
-
-			while( task )
-			{
-				if( inTask == task )
-				{
-					if( task.hasEventListener( inEventType ) )
-					{
-						var event : WorkflowEvent = new WorkflowEvent( inEventType, _context, inTask, inData )
-						task.dispatchEvent( event );
-					}
-				}
-				else
-				{
-					if( task.hasEventListener( subEventType ) )
-					{
-						var subEvent : WorkflowEvent = new WorkflowEvent( subEventType, _context, inTask, inData );
-						task.dispatchEvent( subEvent );
-					}
-				}
-				task = task.parent;
-			}
 		}
 
 		/**
@@ -1103,8 +1023,17 @@ package org.astoolkit.workflow.core
 					}
 					else if( annotation.filterText != null )
 					{
-						this[ field.name ] = _context.config.dataTransformerRegistry.getTransformer( data, annotation.filterText ).transform(
-							data, annotation.filterText, this );
+						this[ field.name ] = 
+							_context
+							.config
+							.dataTransformerRegistry
+							.getTransformer( 
+							data, 
+							annotation.filterText )
+							.transform(
+							data, 
+							annotation.filterText, 
+							this );
 					}
 				}
 			}
@@ -1183,21 +1112,20 @@ package org.astoolkit.workflow.core
 			if( _currentProgress >= 0 && _currentProgress <= 1 )
 			{
 				if( _delegate )
-					_delegate.onProgress( this );
-				dispatchEvent(
-					new PropertyChangeEvent(
-					PropertyChangeEvent.PROPERTY_CHANGE,
-					false,
-					true,
-					PropertyChangeEventKind.UPDATE,
-					"progress",
-					oldVal,
-					_currentProgress,
-					this ) );
+					_delegate.onTaskProgress( this );
+				/*				dispatchEvent(
+									new PropertyChangeEvent(
+									PropertyChangeEvent.PROPERTY_CHANGE,
+									false,
+									true,
+									PropertyChangeEventKind.UPDATE,
+									"progress",
+									oldVal,
+									_currentProgress,
+									this ) );
+				*/
 			}
 
-			if( _delegate )
-				_delegate.onProgress( this );
 		}
 
 		/**

@@ -49,7 +49,7 @@ package org.astoolkit.commons.conditional
 
 		protected var _sourceResolverDelegate : IIODataSourceResolverDelegate;
 
-		public function get async() : Boolean
+		public function get isAsync() : Boolean
 		{
 			return false;
 		}

@@ -38,14 +38,14 @@ package org.astoolkit.commons.conditional
 			{
 				var result : Object;
 
-				if( child.async )
+				if( child.isAsync )
 					result = child.lastResult !== undefined ?
 						child.lastResult :
 						child.evaluate( compared );
 				else
 					result = child.evaluate( compared );
 
-				if( result is Boolean && result == false )
+				if( result == false )
 					return false  && !_negate;
 
 				if( result is AsyncExpressionToken )

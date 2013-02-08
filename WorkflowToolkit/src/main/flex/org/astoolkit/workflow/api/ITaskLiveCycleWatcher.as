@@ -39,12 +39,12 @@ package org.astoolkit.workflow.api
 		function onTaskComplete( inTask : IWorkflowTask ) : void;
 		function onTaskDeferExecution( inTask : IWorkflowTask ) : void;
 		function onTaskExitStatus( inTask : IWorkflowTask, inStatus : ExitStatus ) : void;
-		function onTaskFail( inTask : IWorkflowTask ) : void;
+		function onTaskFail( inTask : IWorkflowTask, inMessage : String ) : void;
 		function onTaskInitialize( inTask : IWorkflowTask ) : void;
-		function onTaskPrepared( inTask : IWorkflowTask ) : void;
+		function onTaskPrepare( inTask : IWorkflowTask ) : void;
 		function onTaskSuspend( inTask : IWorkflowTask ) : void;
-		function onWorkflowCheckingNextTask(
-		inWorkflow : ITasksGroup,
-			inPipelineData : Object ) : void;
+		function onTaskResume( inTask : IWorkflowTask ) : void;
+		function onTaskProgress( inTask : IWorkflowTask ) : void;
+		function onWorkflowCheckingNextTask( inWorkflow : ITasksGroup,inPipelineData : Object ) : void;
 	}
 }

@@ -21,11 +21,11 @@ package org.astoolkit.commons.mapping
 {
 
 	import flash.utils.getQualifiedClassName;
-	
+
 	import mx.core.IFactory;
 	import mx.core.IMXMLObject;
 	import mx.utils.ObjectUtil;
-	
+
 	import org.astoolkit.commons.io.transform.DefaultDataTransformRegistry;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
@@ -36,8 +36,9 @@ package org.astoolkit.commons.mapping
 	public class SimplePropertiesMapper implements IPropertiesMapper, IMXMLObject
 	{
 		protected var _id : String;
+
 		protected var _document : Object;
-		
+
 		public var mapping : Object;
 
 		private var _classFactory : IFactory;
@@ -78,27 +79,27 @@ package org.astoolkit.commons.mapping
 
 			if( !localTarget )
 				localTarget = _target;
-			
+
 			if( localTarget is String && 
 				_document && 
 				_document.hasOwnProperty( _target ) )
 				localTarget = _document[ localTarget ];
-			
+
 			if( !localTarget )
 				localTarget = _classFactory ? _classFactory.newInstance() : {};
-			
-			var isDynamicTarget : Boolean = Type.forType( localTarget ).isDynamic;
+
 			var transformer : IIODataTransformer;
 			var value : *;
 			var mapping : Object;
-			var k : String;
-			
+			var mapKey : String;
+
 			if( inMapping is Array )
 			{
 				mapping = {};
-				for each( k in inMapping )
+
+				for each( mapKey in inMapping )
 				{
-					mapping[ k ] = k;
+					mapping[ mapKey ] = mapKey;
 				}
 			}
 			else if( inMapping is String )
@@ -108,27 +109,28 @@ package org.astoolkit.commons.mapping
 			}
 			else
 				mapping = inMapping;
-			for( k in mapping )
+
+			for( mapKey in mapping )
 			{
 				try
 				{
-					transformer = _transformerRegistry.getTransformer( inSource, mapping[ k ] );
-					value = transformer.transform( inSource, mapping[ k ] )
-					localTarget[ k ] = value;
+					transformer = _transformerRegistry.getTransformer( inSource, mapping[ mapKey ] );
+					value = transformer.transform( inSource, mapping[ mapKey ] )
+					localTarget[ mapKey ] = value;
 				}
 				catch( e : Error )
 				{
 					if( _strict )
 					{
 						//TODO : error message is wrong. if the destination hasn't the property  the "source doesn't have property" error is thrown 
-						var className : String = getQualifiedClassName( !inSource.hasOwnProperty( mapping[ k ] ) ? inSource : localTarget );
-						var propName : String = !inSource.hasOwnProperty( mapping[ k ] ) ? mapping[ k ] : k;
+						var className : String = getQualifiedClassName( !inSource.hasOwnProperty( mapping[ mapKey ] ) ? inSource : localTarget );
+						var propName : String = !inSource.hasOwnProperty( mapping[ mapKey ] ) ? mapping[ mapKey ] : mapKey;
 						throw new MappingError( className + " has no \"" + propName + "\" property" );
 					}
 					else
 					{
 						if( _failDelegate is Function )
-							_failDelegate( k );
+							_failDelegate( mapKey );
 						continue;
 					}
 				}
@@ -157,12 +159,12 @@ package org.astoolkit.commons.mapping
 		{
 			_transformerRegistry = inValue;
 		}
-		
+
 		public function initialized( inDocument : Object, inId : String ) : void
 		{
 			_document = inDocument;
 			_id = inId;
 		}
-		
+
 	}
 }

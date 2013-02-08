@@ -114,31 +114,31 @@ package org.astoolkit.commons.reflection
 
 		public function getArray( inArgName : String = "", inOrDefault : Boolean = false ) : Array
 		{
-			var s : String = getString( inArgName, inOrDefault );
+			var stringValue : String = getString( inArgName, inOrDefault );
 
-			if( s )
-				return StringUtil.trimArrayElements( s, "," ).split( "," );
+			if( stringValue )
+				return StringUtil.trimArrayElements( stringValue, "," ).split( "," );
 			return null;
 		}
 
 		public function getBoolean( inArgName : String = "", inOrDefault : Boolean = false ) : Boolean
 		{
-			var s : String = getString( inArgName, inOrDefault );
+			var stringValue : String = getString( inArgName, inOrDefault );
 
-			if( s )
-				return Boolean( s );
+			if( stringValue )
+				return Boolean( stringValue );
 			return false;
 		}
 
 		public function getClass( inArgName : String = "", inOrDefault : Boolean = false ) : Class
 		{
-			var s : String = getString( inArgName, inOrDefault );
+			var stringValue : String = getString( inArgName, inOrDefault );
 
-			if( s )
+			if( stringValue )
 			{
 				try
 				{
-					return getDefinitionByName( s ) as Class;
+					return getDefinitionByName( stringValue ) as Class;
 				}
 				catch( e : Error )
 				{
@@ -150,10 +150,10 @@ package org.astoolkit.commons.reflection
 
 		public function getNumber( inArgName : String = "", inOrDefault : Boolean = false ) : Number
 		{
-			var s : String = getString( inArgName, inOrDefault );
+			var stringValue : String = getString( inArgName, inOrDefault );
 
-			if( s )
-				return Number( s );
+			if( stringValue )
+				return Number( stringValue );
 			return NaN;
 		}
 

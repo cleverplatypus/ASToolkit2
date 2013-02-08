@@ -25,24 +25,6 @@ package org.astoolkit.workflow.api
 	import org.astoolkit.commons.utils.IChildrenAwareDocument;
 	import org.astoolkit.workflow.core.Insert;
 
-	[Event(
-		name="started",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Event(
-		name="warning",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Event(
-		name="fault",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Event(
-		name="completed",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Event(
-		name="progress",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
-	[Event(
-		name="prepare",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Bindable]
 	public interface ITasksGroup extends IWorkflowTask,  IChildrenAwareDocument
 	{

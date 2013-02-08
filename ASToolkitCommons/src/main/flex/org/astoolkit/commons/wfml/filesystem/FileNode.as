@@ -17,11 +17,30 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.api
+package org.astoolkit.commons.wfml.filesystem
 {
 
-	public interface ITaskProxy extends IWorkflowElement
+	import flash.filesystem.File;
+	
+	import org.astoolkit.commons.wfml.IComponent;
+
+	public final class FileNode extends File implements IComponent
 	{
-		function getTask() : IWorkflowTask;
+		private var _pid : String;
+
+		public function get pid() : String
+		{
+			return _pid;
+		}
+
+		public function set pid(value:String) : void
+		{
+			_pid = value;
+		}
+
+		public function FileNode()
+		{
+			super( null );
+		}
 	}
 }

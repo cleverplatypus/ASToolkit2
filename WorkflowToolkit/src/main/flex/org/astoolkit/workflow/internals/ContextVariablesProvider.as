@@ -21,8 +21,10 @@ package org.astoolkit.workflow.internals
 {
 
 	import flash.utils.flash_proxy;
+
 	import mx.utils.ObjectProxy;
 	import mx.utils.UIDUtil;
+
 	import org.astoolkit.commons.collection.api.IRepeater;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 	import org.astoolkit.commons.ns.astoolkit_private;
@@ -351,18 +353,18 @@ package org.astoolkit.workflow.internals
 		public function byType( inType : Class, inGetDescriptor : Boolean = false ) : *
 		{
 			var parent : ITasksGroup = GroupUtil.getParentWorkflow( astoolkit_private::runningTask );
-			var n : String;
+			var nsName : String;
 
 			do
 			{
-				n = UIDUtil.getUID( parent );
+				nsName = UIDUtil.getUID( parent );
 
-				if( _namespaces.hasOwnProperty( n ) )
+				if( _namespaces.hasOwnProperty( nsName ) )
 				{
-					for each( var val : * in _namespaces[ n ] )
+					for each( var val : * in _namespaces[ nsName ] )
 					{
 						if( val is inType )
-							return inGetDescriptor ? { name: n, value: val } : val;
+							return inGetDescriptor ? { name: nsName, value: val } : val;
 					}
 				}
 				parent = GroupUtil.getParentWorkflow( parent );
@@ -436,7 +438,7 @@ package org.astoolkit.workflow.internals
 		/**
 		 * @private
 		 */
-		public function onTaskFail( inTask : IWorkflowTask ) : void
+		public function onTaskFail( inTask : IWorkflowTask, inMessage : String ) : void
 		{
 			if( inTask is ITasksGroup && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
 				delete _namespaces[ UIDUtil.getUID( inTask ) ];
@@ -450,7 +452,7 @@ package org.astoolkit.workflow.internals
 			// TODO Auto Generated method stub
 		}
 
-		public function onTaskPrepared(inTask:IWorkflowTask) : void
+		public function onTaskPrepare(inTask:IWorkflowTask) : void
 		{
 		}
 
@@ -599,5 +601,18 @@ package org.astoolkit.workflow.internals
 			}
 			return false;
 		}
+
+		public function onTaskProgress(inTask:IWorkflowTask) : void
+		{
+			// TODO Auto Generated method stub
+
+		}
+
+		public function onTaskResume(inTask:IWorkflowTask) : void
+		{
+			// TODO Auto Generated method stub
+
+		}
+
 	}
 }

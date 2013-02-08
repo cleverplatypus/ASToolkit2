@@ -21,10 +21,29 @@ package org.astoolkit.workflow.config
 {
 
 	import flash.events.EventDispatcher;
+
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.core.ExitStatus;
 
-	public class EventDispatchingTaskLiveCycleWatcher extends EventDispatcher implements ITaskLiveCycleWatcher
+	[Event(
+		name="started",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+	[Event(
+		name="warning",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+	[Event(
+		name="fault",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+	[Event(
+		name="completed",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+	[Event(
+		name="progress",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+	[Event(
+		name="prepare",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+	public class EventsAdaptor extends EventDispatcher implements ITaskLiveCycleWatcher
 	{
 
 		public function get taskWatcherPriority() : int
@@ -36,7 +55,7 @@ package org.astoolkit.workflow.config
 		{
 		}
 
-		public function EventDispatchingTaskLiveCycleWatcher()
+		public function EventsAdaptor()
 		{
 			super(this);
 		}
@@ -85,7 +104,7 @@ package org.astoolkit.workflow.config
 		{
 		}
 
-		public function onTaskFail(inTask:IWorkflowTask) : void
+		public function onTaskFail(inTask:IWorkflowTask, inMessage : String ) : void
 		{
 		}
 
@@ -93,7 +112,7 @@ package org.astoolkit.workflow.config
 		{
 		}
 
-		public function onTaskPrepared(inTask:IWorkflowTask) : void
+		public function onTaskPrepare(inTask:IWorkflowTask) : void
 		{
 		}
 
@@ -104,5 +123,18 @@ package org.astoolkit.workflow.config
 		public function onWorkflowCheckingNextTask(inWorkflow:ITasksGroup, inPipelineData:Object) : void
 		{
 		}
+
+		public function onTaskProgress(inTask:IWorkflowTask) : void
+		{
+			// TODO Auto Generated method stub
+
+		}
+
+		public function onTaskResume(inTask:IWorkflowTask) : void
+		{
+			// TODO Auto Generated method stub
+
+		}
+
 	}
 }

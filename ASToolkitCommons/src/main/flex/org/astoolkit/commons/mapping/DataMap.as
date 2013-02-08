@@ -51,7 +51,7 @@ package org.astoolkit.commons.mapping
 		{
 			return new MapperWrapper( factory, inMapping, inTarget, inStrict );
 		}
-		
+
 		public function newObject( inTargetClass : Class, inMapping : Object, inStrict : Boolean = true ) : IPropertiesMapper
 		{
 			return new MapperWrapper( factory, inMapping, inTargetClass, inStrict );
@@ -90,11 +90,6 @@ package org.astoolkit.commons.mapping
 			inInstance.target = null;
 			inInstance.mapping = null;
 		}
-		
-		private function onMapperRelease( inInstance : SimplePropertiesMapper ) : void
-		{
-			
-		}
 	}
 }
 
@@ -129,9 +124,9 @@ class MapperWrapper implements IPropertiesMapper
 	private var _strict : Boolean;
 
 	private var _target : Object;
-	
+
 	private var _targetClass : Class;
-	
+
 	private var _transformerRegistry : IIODataTransformerRegistry;
 
 	public function hasTarget() : Boolean
@@ -143,6 +138,7 @@ class MapperWrapper implements IPropertiesMapper
 	{
 		var mapper : IPropertiesMapper = create();
 		var out : *;
+
 		if( _targetClass )
 		{
 			mapper.targetClass = new ClassFactory( _targetClass );
@@ -165,7 +161,7 @@ class MapperWrapper implements IPropertiesMapper
 			inSource, 
 			inMapping, 
 			inTarget != null ? inTarget : _target 
-		);
+			);
 		_factory.release( mapper );
 		return out;
 	}

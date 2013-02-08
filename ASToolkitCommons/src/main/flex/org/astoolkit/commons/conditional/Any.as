@@ -37,7 +37,7 @@ package org.astoolkit.commons.conditional
 			{
 				var result : Object = child.evaluate( compared );
 
-				if( result is Boolean && result == true )
+				if( result == true )
 					return true && !_negate;
 
 				if( result is AsyncExpressionToken )

@@ -23,12 +23,12 @@ package org.astoolkit.commons.databinding
 	import flash.events.IEventDispatcher;
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
-	
+
 	import mx.binding.IBindingClient;
 	import mx.core.mx_internal;
 	import mx.events.PropertyChangeEvent;
 	import mx.events.PropertyChangeEventKind;
-	
+
 	import org.astoolkit.commons.reflection.Type;
 	import org.astoolkit.commons.reflection.Field;
 
@@ -67,15 +67,16 @@ package org.astoolkit.commons.databinding
 				return;
 			IEventDispatcher( inTarget ).dispatchEvent(
 				new PropertyChangeEvent(
-					PropertyChangeEvent.PROPERTY_CHANGE,
-					false,
-					false,
-					PropertyChangeEventKind.UPDATE,
-					inProperty,
-					Math.random(),
-					inNewValue
+				PropertyChangeEvent.PROPERTY_CHANGE,
+				false,
+				false,
+				PropertyChangeEventKind.UPDATE,
+				inProperty,
+				Math.random(),
+				inNewValue
 				) );
 		}
+
 		public static function firePropertyBinding( inOwner : Object, inTarget : Object, inProperty : String ) : void
 		{
 			var theId : String = getId( inOwner, inTarget );
@@ -130,23 +131,22 @@ package org.astoolkit.commons.databinding
 			var bindingManager : Object = getDefinitionByName( "mx.binding.BindingManager" );
 			var theId : String = getId( inOwner, inTarget );
 
-			if( theId )
+			if( !theId )
+				return;
+			var targetInfo : Type = Type.forType( inTarget );
+			var fields : Vector.<Field> =
+				inProperty != null ?
+				Vector.<Field>( [ targetInfo.getField( inProperty ) ] ) :
+				targetInfo.getFields();
+
+			for each( var field : Field in fields )
 			{
-				var targetInfo : Type = Type.forType( inTarget );
-				var fields : Vector.<Field> =
-					inProperty != null ?
-					Vector.<Field>( [ targetInfo.getField( inProperty ) ] ) :
-					targetInfo.getFields();
-
-				for each( var field : Field in fields )
+				if( ( field.writeOnly || field.fullAccess ) && field.scope == Field.SCOPE_PUBLIC )
 				{
-					if( ( field.writeOnly || field.fullAccess ) && field.scope == Field.SCOPE_PUBLIC )
-					{
-						bindingManager.enableBindings( inOwner, theId + "." + field.name, inEnable );
+					bindingManager.enableBindings( inOwner, theId + "." + field.name, inEnable );
 
-						if( inEnable )
-							bindingManager.executeBindings( inOwner, theId + "." + field.name, inTarget );
-					}
+					if( inEnable )
+						bindingManager.executeBindings( inOwner, theId + "." + field.name, inTarget );
 				}
 			}
 		}

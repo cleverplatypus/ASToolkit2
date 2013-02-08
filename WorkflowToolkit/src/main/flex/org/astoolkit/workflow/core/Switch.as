@@ -92,11 +92,6 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		private var _joinedChildren : Vector.<IWorkflowElement>;
-
-		/**
-		 * @private
-		 */
 		private var _source : *;
 
 		/**
@@ -192,7 +187,7 @@ package org.astoolkit.workflow.core
 			{
 				for each( var caze : ISwitchCase in _cases )
 				{
-					caze.task.delegate = _delegate;
+					caze.task.liveCycleDelegate = _delegate;
 					caze.task.context = _context;
 					caze.task.parent = _parent;
 					caze.task.initialize();

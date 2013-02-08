@@ -274,7 +274,7 @@ package org.astoolkit.workflow.core
 					for each( var binding : Watch in _bindings )
 						binding.target = _templateImplementation;
 				}
-				_templateImplementation.delegate = _delegate;
+				_templateImplementation.liveCycleDelegate = _delegate;
 				IContextAwareElement( _templateImplementation ).context = context;
 				_templateImplementation.initialized( _document, id + "_impl" );
 				_templateImplementation.parent = parent;

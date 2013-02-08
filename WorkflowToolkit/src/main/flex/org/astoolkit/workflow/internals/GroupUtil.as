@@ -25,10 +25,6 @@ package org.astoolkit.workflow.internals
 
 	public final class GroupUtil
 	{
-		private static var __injectPipelineMetaTags : Object = {};
-
-		private static var __overrideChildrenPropertyMetaTags : Object = {};
-
 		public static function getParentRepeater( inElement : IWorkflowElement, inParentCount : int = 0 ) : IRepeater
 		{
 			while( inElement.parent != null && inParentCount > -1 )

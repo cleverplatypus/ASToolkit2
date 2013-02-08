@@ -103,13 +103,13 @@ package org.astoolkit.workflow.task.log
 					outMessage = ObjectUtil.toString( filteredInput );
 				}
 				var varName : String;
-				var re : RegExp;
+				var regexp : RegExp;
 
 				while( outMessage.match( /\$\w+/ ) )
 				{
 					varName = outMessage.match( /\$\w+/ )[ 0 ];
-					re = new RegExp( "\\\u0024" + varName + "", "g" );
-					outMessage = outMessage.replace( re, context.variables[ varName ] );
+					regexp = new RegExp( "\\\u0024" + varName + "", "g" );
+					outMessage = outMessage.replace( regexp, context.variables[ varName ] );
 				}
 				var args : Array = [ _levels[ level ], outMessage ];
 				args = args.concat( parameters );

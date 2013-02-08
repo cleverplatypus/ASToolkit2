@@ -206,7 +206,7 @@ package org.astoolkit.workflow.core
 			var result : Object;
 
 			if( _expression )
-				result = _expression.async && 
+				result = _expression.isAsync && 
 					_expression.lastResult !== undefined ?
 					_expression.lastResult :
 					_expression.evaluate();

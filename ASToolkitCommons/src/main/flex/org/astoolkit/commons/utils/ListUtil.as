@@ -21,6 +21,7 @@ package org.astoolkit.commons.utils
 {
 
 	import flash.utils.getQualifiedClassName;
+
 	import mx.collections.IList;
 
 	/**
@@ -35,35 +36,29 @@ package org.astoolkit.commons.utils
 		 * @param inSource the source list
 		 * @param inDestinationClass (optional) the destination list type
 		 */
-		public static function convert( inSource : Object, inDestinationClass : Class = null ) : Object
+		public static function convert( inSource : Object, inDestinationClass : Class ) : Object
 		{
-			if( !inDestinationClass )
-				inDestinationClass = Array;
-
-			if( !inSource ||
-				( !( inSource is Array ) &&
-				!getQualifiedClassName( inSource ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) &&
-				!( inSource is IList ) ) )
+			if( !isCollection( inSource ) )
 			{
 				throw new Error( "No suitable inSource list provided" );
 			}
 
-			if( ( !( inDestinationClass === Array ) &&
-				!getQualifiedClassName( inDestinationClass ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) &&
-				!( inDestinationClass is IList ) ) )
+			if( !isCollection( inDestinationClass ) )
 			{
 				throw new Error( "No supported inDestinationClass provided" );
 			}
-			var out : * = new inDestinationClass();
+
+			var out : Object = new inDestinationClass();
 
 			for each( var item : * in inSource )
 			{
-				if( out is Array || getQualifiedClassName( out ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) )
+				if( out is Array || isVector( out ) )
 					out.push( item );
 				else if( out is IList )
 					out.addItem( item );
 			}
 			return out;
 		}
+
 	}
 }

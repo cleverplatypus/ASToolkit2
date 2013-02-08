@@ -25,27 +25,28 @@ Version 2.x
  */
 package org.astoolkit.workflow.conditional
 {
-	
+
 	import org.astoolkit.commons.io.transform.api.IIODataSourceResolverDelegate;
 	import org.astoolkit.workflow.api.IContextAwareElement;
 	import org.astoolkit.workflow.api.IWorkflowContext;
-	
+
 	public class WorkflowDataSourceResolverDelegate implements IIODataSourceResolverDelegate, IContextAwareElement
 	{
 		private var _context : IWorkflowContext;
-		
+
 		public function WorkflowDataSourceResolverDelegate( inContext : IWorkflowContext ) : void
 		{
 			_context = inContext;
 		}
-		
+
 		public function resolveDataSource(inSourceDescriptor:Object, inNextDelegate:IIODataSourceResolverDelegate) : *
 		{
-			if ( inSourceDescriptor is String )
+			//TODO: implement use of inNextDelegate
+			if( inSourceDescriptor is String )
 			{
 				var sourceName : String = inSourceDescriptor as String;
-				
-				switch ( sourceName )
+
+				switch( sourceName )
 				{
 					case "$exitStatus":
 					case "exitStatus":
@@ -58,29 +59,29 @@ package org.astoolkit.workflow.conditional
 					case "rawData":
 						return _context.variables.$rawData;
 				}
-				
-				if ( sourceName.match( /^\$?currentData([0-9]+)?$/ ) )
+
+				if( sourceName.match( /^\$?currentData([0-9]+)?$/ ) )
 				{
-					if ( !sourceName.match( /^\$/ ) )
+					if( !sourceName.match( /^\$/ ) )
 						sourceName = "$" + sourceName;
 					return _context.variables[ sourceName ];
 				}
-				
-				if ( sourceName.match( /^\$?i([0-9]+)?$/ ) )
+
+				if( sourceName.match( /^\$?i([0-9]+)?$/ ) )
 				{
-					if ( !sourceName.match( /^\$/ ) )
+					if( !sourceName.match( /^\$/ ) )
 						sourceName = "$" + sourceName;
 					return _context.variables[ sourceName ];
 				}
 			}
 			return null;
 		}
-		
+
 		public function set context( inValue : IWorkflowContext ) : void
 		{
 			_context = inValue;
 		}
-		
+
 		public function get context() : IWorkflowContext
 		{
 			return _context;

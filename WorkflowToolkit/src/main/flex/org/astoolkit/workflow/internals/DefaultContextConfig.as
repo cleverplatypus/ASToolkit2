@@ -140,23 +140,25 @@ package org.astoolkit.workflow.internals
 		{
 			if( _classFactoryMappings )
 			{
-				var fac : IFactory;
+				var factory : IFactory;
+
+				var regexp : RegExp;
 
 				for each( var mapping : ClassFactoryMapping in _classFactoryMappings )
 				{
-					var re : RegExp = new RegExp( 
+					regexp = new RegExp( 
 						mapping.pattern
 						.replace( /\*/g, "`" )
 						.replace( /\./g, "\\." )
 						.replace( /`/g, ".*" ) );
 
-					if( getQualifiedClassName( inType ).replace( "::", "." ).match( re ) )
+					if( getQualifiedClassName( inType ).replace( "::", "." ).match( regexp ) )
 					{
-						fac = mapping.factory;
+						factory = mapping.factory;
 
-						if( fac is IExtendedFactory )
-							IExtendedFactory( fac ).type = inType;
-						return fac;
+						if( factory is IExtendedFactory )
+							IExtendedFactory( factory ).type = inType;
+						return factory;
 					}
 
 				}

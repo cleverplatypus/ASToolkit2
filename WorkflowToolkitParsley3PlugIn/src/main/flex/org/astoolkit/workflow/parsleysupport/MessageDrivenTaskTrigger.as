@@ -20,14 +20,15 @@ Version 2.x
 package org.astoolkit.workflow.parsleysupport
 {
 
-	import flash.utils.getDefinitionByName;
-	import flash.utils.getQualifiedClassName;
+	import flash.events.IEventDispatcher;
 	import flash.utils.setTimeout;
+
 	import mx.core.IMXMLObject;
 	import mx.core.mx_internal;
 	import mx.rpc.AsyncToken;
 	import mx.rpc.events.ResultEvent;
 	import mx.utils.UIDUtil;
+
 	import org.astoolkit.commons.factory.*;
 	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
@@ -190,7 +191,7 @@ package org.astoolkit.workflow.parsleysupport
 		private function onTaskComplete( inEvent : WorkflowEvent ) : void
 		{
 			var workflow : ITasksGroup = ITasksGroup( inEvent.target );
-			workflow.removeEventListener(
+			IEventDispatcher( workflow ).removeEventListener(
 				WorkflowEvent.COMPLETED,
 				onTaskComplete );
 			var processor : CommandObserverProcessor;

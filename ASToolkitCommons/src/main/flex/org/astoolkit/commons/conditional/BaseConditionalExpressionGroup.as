@@ -28,7 +28,7 @@ package org.astoolkit.commons.conditional
 	{
 		protected var _children : Vector.<IConditionalExpression>;
 
-		override public function get async() : Boolean
+		override public function get isAsync() : Boolean
 		{
 			return hasAsyncChild( children );
 		}
@@ -75,7 +75,7 @@ package org.astoolkit.commons.conditional
 
 			for each( child in inChildren )
 			{
-				if( !( child is IConditionalExpressionGroup ) && child.async )
+				if( !( child is IConditionalExpressionGroup ) && child.isAsync )
 					return true
 			}
 
@@ -83,7 +83,7 @@ package org.astoolkit.commons.conditional
 			{
 				if( child is IConditionalExpressionGroup )
 				{
-					if( child.async )
+					if( child.isAsync )
 						return true;
 				}
 			}

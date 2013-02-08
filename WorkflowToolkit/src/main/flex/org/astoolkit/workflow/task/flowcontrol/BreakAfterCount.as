@@ -41,11 +41,11 @@ package org.astoolkit.workflow.task.flowcontrol
 
 			if( count == _currentCount )
 			{
-				var p : IWorkflowElement = parent;
+				var aParent : IWorkflowElement = parent;
 
-				while( !( p is ITasksGroup ) )
-					p = p.parent;
-				ITasksGroup( p ).abort();
+				while( !( aParent is ITasksGroup ) )
+					aParent = aParent.parent;
+				ITasksGroup( aParent ).abort();
 				return;
 			}
 			complete();

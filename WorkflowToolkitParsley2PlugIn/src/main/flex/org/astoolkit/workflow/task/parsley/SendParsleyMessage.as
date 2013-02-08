@@ -65,8 +65,6 @@ package org.astoolkit.workflow.task.parsley
 
 		private var _messageMappingFailurePolicy:String;
 
-		private var _processor : CommandObserverProcessor;
-
 		private var _selector:*;
 
 		protected function get mapper() : IPropertiesMapper

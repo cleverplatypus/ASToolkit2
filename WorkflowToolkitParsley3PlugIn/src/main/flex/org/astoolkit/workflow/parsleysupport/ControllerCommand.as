@@ -19,8 +19,9 @@ Version 2.x
 */
 package org.astoolkit.workflow.parsleysupport
 {
+
 	import flash.events.ErrorEvent;
-	
+
 	import mx.rpc.AsyncToken;
 	import mx.rpc.Responder;
 	import mx.rpc.events.FaultEvent;
@@ -32,34 +33,35 @@ package org.astoolkit.workflow.parsleysupport
 	public class ControllerCommand
 	{
 		private var _destination : Object;
+
 		private var _destinationFunction : Function;
-		
+
 		public var callback : Function;
-		
+
 		public static function create( inDestination : Object, inDestinationFunction : Function ) : ControllerCommand
 		{
 			var out : ControllerCommand = new ControllerCommand();
-		
+
 			out._destinationFunction = inDestinationFunction;
 			out._destination = inDestination;
-			
+
 			return out;
 		}
-		
+
 		public function execute( inMessage : Object ) : void
 		{
 			var out : AsyncToken =  _destinationFunction.apply( _destination, [ inMessage ] );
-			out.addResponder( new Responder( result, error ) );
+			out.addResponder( new Responder( onResult, onError ) );
 		}
-		
-		private function result( inEvent : ResultEvent ) : ResultEvent
+
+		private function onResult( inEvent : ResultEvent ) : ResultEvent
 		{
 			trace( "resulto" );
 			callback( inEvent );
 			return inEvent;
 		}
 
-		private function error( inEvent : FaultEvent ) : FaultEvent
+		private function onError( inEvent : FaultEvent ) : FaultEvent
 		{
 			trace( "erroro" );
 			callback( inEvent );

@@ -24,7 +24,6 @@ package org.astoolkit.commons.collection.api
 	import mx.collections.IList;
 	import mx.core.IFactory;
 
-	[Bindable]
 	/**
 	 * A contract for a data based loop provider.
 	 */

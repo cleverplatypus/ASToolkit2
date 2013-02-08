@@ -21,18 +21,14 @@ package org.astoolkit.workflow.core
 {
 
 	import flash.utils.getQualifiedClassName;
-	import flash.utils.setTimeout;
-	import mx.binding.utils.ChangeWatcher;
-	import mx.events.PropertyChangeEvent;
+
 	import mx.logging.ILogger;
-	import mx.logging.Log;
 	import mx.utils.ObjectProxy;
+
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.databinding.BindingUtility;
-	import org.astoolkit.commons.ns.astoolkit_private;
 	import org.astoolkit.commons.reflection.*;
 	import org.astoolkit.commons.utils.IChildrenAwareDocument;
-	import org.astoolkit.workflow.annotation.InjectPipeline;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.NO_DESCRIPTION;
 
@@ -52,11 +48,6 @@ package org.astoolkit.workflow.core
 		 * @private
 		 */
 		private static const LOGGER : ILogger = getLogger( BaseElement );
-
-		/**
-		 * @private
-		 */
-		private var _initialWatchers : Object;
 
 		private var _propertiesSetAtInitTime:Object = {};
 
@@ -83,7 +74,7 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		protected var _delegate : IWorkflowDelegate;
+		protected var _delegate : ITaskLiveCycleWatcher;
 
 		/**
 		 * @private
@@ -160,7 +151,7 @@ package org.astoolkit.workflow.core
 			_currentIterator = inValue;
 		}
 
-		public function set delegate( inDelegate : IWorkflowDelegate ) : void
+		public function set liveCycleDelegate( inDelegate : ITaskLiveCycleWatcher ) : void
 		{
 			_delegate = inDelegate;
 		}

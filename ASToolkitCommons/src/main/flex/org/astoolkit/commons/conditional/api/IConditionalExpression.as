@@ -26,7 +26,7 @@ package org.astoolkit.commons.conditional.api
 
 	public interface IConditionalExpression extends IMXMLObject, IIODataTransformerClient, IComponent
 	{
-		function get async() : Boolean;
+		function get isAsync() : Boolean;
 		function set delegate( inValue : Function ) : void;
 		function get lastResult() : *;
 		function set negate( inValue : Boolean ) : void;
