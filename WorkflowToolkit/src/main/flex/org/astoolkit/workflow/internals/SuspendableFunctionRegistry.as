@@ -23,6 +23,7 @@ package org.astoolkit.workflow.internals
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
 	import flash.utils.getQualifiedClassName;
+
 	import mx.logging.ILogger;
 	import mx.logging.Log;
 	import mx.rpc.AsyncToken;
@@ -30,6 +31,8 @@ package org.astoolkit.workflow.internals
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	import mx.utils.UIDUtil;
+
+	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.TaskStatus;
 

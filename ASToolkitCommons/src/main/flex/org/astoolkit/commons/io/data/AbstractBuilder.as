@@ -22,6 +22,7 @@ package org.astoolkit.commons.io.data
 
 	import mx.core.IMXMLObject;
 	import mx.logging.ILogger;
+
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
@@ -29,8 +30,9 @@ package org.astoolkit.commons.io.data
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.reflection.AutoConfigUtil;
 	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
-	import org.astoolkit.commons.utils.IChildrenAwareDocument;
+	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.commons.wfml.IAutoConfigurable;
+	import org.astoolkit.commons.wfml.IChildrenAwareDocument;
 	import org.astoolkit.commons.wfml.IComponent;
 
 	[DefaultProperty("autoConfigChildren")]

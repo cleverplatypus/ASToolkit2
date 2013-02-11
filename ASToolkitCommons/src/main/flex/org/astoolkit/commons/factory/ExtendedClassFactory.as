@@ -21,11 +21,12 @@ package org.astoolkit.commons.factory
 {
 
 	import flash.utils.getQualifiedClassName;
-	
+
 	import org.astoolkit.commons.factory.api.IExtendedFactory;
 	import org.astoolkit.commons.io.data.api.IDataProvider;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.reflection.AutoConfigUtil;
+	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
 	import org.astoolkit.commons.wfml.IAutoConfigurable;
 
 	[DefaultProperty("autoConfigChildren")]
@@ -61,6 +62,8 @@ package org.astoolkit.commons.factory
 		protected var _pid : String;
 
 		protected var _type : Class;
+
+		private var _autoConfigDataProviders : Vector.<PropertyDataProviderInfo>;
 
 		public function set autoConfigChildren( inValue : Array ) : void
 		{
@@ -112,6 +115,7 @@ package org.astoolkit.commons.factory
 			if( inFactoryMethod )
 			{
 				var args : Array = [];
+
 				if( inFactoryMethodArguments )
 				{
 					for each( var arg : Object in inFactoryMethodArguments )
@@ -119,6 +123,7 @@ package org.astoolkit.commons.factory
 						if( arg is IDataProvider )
 						{
 							var resolved : * = IDataProvider( arg ).getData();
+
 							if( resolved === undefined &&
 								arg is IDeferrableProcess &&
 								IDeferrableProcess( arg ).isProcessDeferred() )
@@ -133,6 +138,7 @@ package org.astoolkit.commons.factory
 							args.push( arg );
 					}
 				}
+
 				if( inType.hasOwnProperty( inFactoryMethod ) &&
 					inType[ inFactoryMethod ] is Function )
 				{
@@ -157,11 +163,14 @@ package org.astoolkit.commons.factory
 		{
 			_document = inDocument;
 			_id = inId;
-			AutoConfigUtil.autoConfig( this, _autoConfigChildren );
+			_autoConfigDataProviders  = AutoConfigUtil.autoConfig( this, _autoConfigChildren );
 		}
 
 		public function newInstance() : *
 		{
+			if( _autoConfigDataProviders )
+				AutoConfigUtil.processDataProviders( this, _autoConfigDataProviders );
+
 			return getInstance( _type, _defaultProperties, _factoryMethodArguments, _factoryMethod );
 		}
 	}

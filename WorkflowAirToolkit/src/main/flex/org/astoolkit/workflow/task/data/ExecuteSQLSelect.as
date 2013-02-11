@@ -41,7 +41,7 @@ package org.astoolkit.workflow.task.data
 
 		[InjectPipeline]
 		[AutoConfig]
-		public function set sql( inValue :String) : void
+		public function set sql( inValue : String ) : void
 		{
 			_onPropertySet( "sql" );
 			_sql = inValue;
@@ -90,6 +90,8 @@ package org.astoolkit.workflow.task.data
 					case "last":
 						complete( inResult.data[inResult.data.length -1] );
 						return;
+					default:
+						complete( inResult.data );
 				}
 			}
 			complete( inResult.data );

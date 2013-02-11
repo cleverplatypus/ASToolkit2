@@ -22,10 +22,10 @@ package org.astoolkit.workflow.core
 
 	import flash.events.IEventDispatcher;
 	import flash.utils.getQualifiedClassName;
-
+	
 	import mx.core.IFactory;
 	import mx.logging.ILogger;
-
+	
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.collection.api.IRepeater;
 	import org.astoolkit.commons.databinding.BindingUtility;
@@ -36,21 +36,22 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.ns.astoolkit_private;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.utils.Range;
+	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.workflow.annotation.*;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.*;
 	import org.astoolkit.workflow.internals.*;
 
 	/**
-	* This is the core Workflow Toolkit class.
-	* <p>A <code>Workflow</code> instance represents a group of tasks
-	* executed either as a sequence or in parellel according to
-	* <code>flow</code> property.</p>
-	* <p>Workflows can be iterated over an <code>IIterator</code> or
-	* in a infinite loop. The <code>dataProvider</code> property
-	* can be set to automatically set an <code>IIterator</code>
-	* that is instanciated if one supporting the <code>dataProvider</code>
-	* type is registered in the current context.</p>
+	 * This is one of the core Workflow Toolkit's classes.
+	 * <p>A <code>Do</code> node represents a group of tasks executed either as a sequence or in
+	 * parellel according to <code>flow</code> property.</p>
+	 * <p>They can iterate over an <code>IIterator</code> or in a infinite loop.
+	 * The <code>dataProvider</code> property can be set to any value for which a
+	 * <code>IIterator</code> is registered in the context. Built-in iterators are available
+	 * for Flex SDK's list classes, i.e. <code>Array, Vector, IList, ByteArray, FileStream,
+	 * XMLList</code>.</p>
+	 *
 	*/
 	public class Do extends BaseTask implements ITasksGroup, IRepeater
 	{
@@ -964,110 +965,5 @@ package org.astoolkit.workflow.core
 		}
 	}
 }
+include "includes/DoChildTaskWatcherInclude.as";
 
-import org.astoolkit.workflow.api.*;
-import org.astoolkit.workflow.core.Do;
-import org.astoolkit.workflow.core.ExitStatus;
-
-namespace INTERNAL = "org.astoolkit.workflow.core.do::INTERNAL";
-
-class ChildTaskWatcher implements ITaskLiveCycleWatcher
-{
-	private var _group : Do;
-
-	public function ChildTaskWatcher( inGroup : Do )
-	{
-		_group  = inGroup;
-	}
-
-	public function afterTaskBegin( inTask : IWorkflowTask ) : void
-	{
-	}
-
-	public function afterTaskDataSet( inTask : IWorkflowTask ) : void
-	{
-	}
-
-	public function beforeTaskBegin( inTask : IWorkflowTask ) : void
-	{
-	}
-
-	public function onBeforeContextUnbond( inTask : IWorkflowElement ) : void
-	{
-	}
-
-	public function onContextBond( inElement : IWorkflowElement ) : void
-	{
-	}
-
-	public function onDeferredTaskResume( inTask : IWorkflowTask ) : void
-	{
-	}
-
-	public function onTaskAbort( inTask : IWorkflowTask ) : void
-	{
-		_group.INTERNAL::onSubtaskAbort( inTask );
-	}
-
-	public function onTaskBegin( inTask : IWorkflowTask ) : void
-	{
-		_group.INTERNAL::onSubtaskBegin( inTask );
-	}
-
-	public function onTaskComplete( inTask : IWorkflowTask ) : void
-	{
-		_group.INTERNAL::onSubtaskCompleted( inTask );
-	}
-
-	public function onTaskDeferExecution( inTask : IWorkflowTask ) : void
-	{
-	}
-
-	public function onTaskExitStatus( inTask : IWorkflowTask, inStatus : ExitStatus ) : void
-	{
-	}
-
-	public function onTaskFail( inTask : IWorkflowTask, inMessage : String ) : void
-	{
-		_group.INTERNAL::onSubtaskFault( inTask, inMessage );
-	}
-
-	public function onTaskInitialize( inTask : IWorkflowTask ) : void
-	{
-		_group.INTERNAL::onSubtaskInitialized( inTask );
-	}
-
-	public function onTaskPrepare( inTask : IWorkflowTask ) : void
-	{
-		_group.INTERNAL::onSubtaskPrepared( inTask );
-	}
-
-	public function onTaskSuspend(inTask:IWorkflowTask ) : void
-	{
-		_group.INTERNAL::onSubtaskSuspended( inTask );
-	}
-
-	public function onWorkflowCheckingNextTask( inWorkflow : ITasksGroup, inPipelineData:Object) : void
-	{
-	}
-
-	public function get taskWatcherPriority() : int
-	{
-		return 0;
-	}
-
-	public function set taskWatcherPriority( inValue : int ) : void
-	{
-	}
-
-	public function onTaskProgress(inTask:IWorkflowTask) : void
-	{
-		_group.INTERNAL::onSubtaskProgress( inTask );
-	}
-
-	public function onTaskResume(inTask:IWorkflowTask) : void
-	{
-		_group.INTERNAL::onSubtaskResumed( inTask );
-	}
-
-}

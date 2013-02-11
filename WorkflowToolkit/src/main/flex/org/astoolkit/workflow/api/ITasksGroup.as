@@ -22,7 +22,7 @@ package org.astoolkit.workflow.api
 
 	import mx.core.IFactory;
 	import org.astoolkit.commons.collection.api.IRepeater;
-	import org.astoolkit.commons.utils.IChildrenAwareDocument;
+	import org.astoolkit.commons.wfml.IChildrenAwareDocument;
 	import org.astoolkit.workflow.core.Insert;
 
 	[Bindable]

@@ -24,10 +24,12 @@ package org.astoolkit.workflow.core
 	import flash.utils.Timer;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
+
 	import mx.events.PropertyChangeEvent;
 	import mx.events.PropertyChangeEventKind;
 	import mx.logging.ILogger;
 	import mx.utils.StringUtil;
+
 	import org.astoolkit.commons.databinding.BindingUtility;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
@@ -36,6 +38,7 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.reflection.Field;
 	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
 	import org.astoolkit.commons.reflection.Type;
+	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.workflow.annotation.InjectPipeline;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.*;
@@ -326,7 +329,7 @@ package org.astoolkit.workflow.core
 		 *
 		 * @see org.astoolkit.workflow.core.ExitStatus
 	 * @inheritDoc
-																																					*/
+																																					 */
 		public function set exitStatus( inStatus : ExitStatus ) : void
 		{
 			_exitStatus = inStatus;

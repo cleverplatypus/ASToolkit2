@@ -25,9 +25,12 @@ package org.astoolkit.workflow.task.pipeline
 {
 
 	import flash.utils.getQualifiedClassName;
+
 	import mx.logging.ILogger;
 	import mx.logging.Log;
+
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
+	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.workflow.core.BaseTask;
 
 	[DefaultProperty( "transformer" )]

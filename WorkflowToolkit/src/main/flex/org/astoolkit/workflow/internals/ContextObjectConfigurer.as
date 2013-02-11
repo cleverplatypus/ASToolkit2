@@ -21,15 +21,19 @@ package org.astoolkit.workflow.internals
 {
 
 	import flash.utils.getQualifiedClassName;
+
 	import mx.core.IMXMLObject;
 	import mx.logging.ILogger;
 	import mx.utils.UIDUtil;
+
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
 	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
 	import org.astoolkit.commons.io.transform.api.IIODataSourceClient;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
 	import org.astoolkit.commons.reflection.*;
 	import org.astoolkit.commons.utils.ListUtil;
+	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.commons.utils.isCollection;
 	import org.astoolkit.workflow.annotation.Featured;
 	import org.astoolkit.workflow.api.IContextAwareElement;
 	import org.astoolkit.workflow.api.IObjectConfigurer;
@@ -82,7 +86,7 @@ package org.astoolkit.workflow.internals
 					IMXMLObject( inObject ).initialized( inDocument, null );
 
 				if( inObject is IContextAwareElement )
-					inObject.context = this;
+					IContextAwareElement( inObject ).context = _context;
 
 				if( inObject is IExpressionResolver )
 				{

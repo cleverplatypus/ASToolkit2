@@ -17,14 +17,11 @@ limitations under the License.
 Version 2.x
 
 */
-package 
+package org.astoolkit.commons.wfml
 {
-	import flash.utils.getDefinitionByName;
-	import flash.utils.getQualifiedClassName;
-	
-	public function getClass( inObject : Object ) : Class
+
+	public interface IChildrenAwareDocument
 	{
-		return  getDefinitionByName( 
-			getQualifiedClassName( inObject ) ) as Class;
+		function childNodeAdded( inNode : Object ) : void;
 	}
 }

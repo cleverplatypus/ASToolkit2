@@ -71,7 +71,7 @@ package org.astoolkit.commons.io.data
 			{
 				for each( var resolver : IExpressionResolver in _expressionResolvers )
 				{
-					out.push( resolver.resolve( null, _document ) );
+					out.push( resolver.resolve( null, _document ).result );
 				}
 			}
 			return out;

@@ -20,8 +20,10 @@ Version 2.x
 package org.astoolkit.commons.utils
 {
 
-	public interface IChildrenAwareDocument
+	import mx.collections.IList;
+
+	public function isCollection( inSource : Object ) : Boolean
 	{
-		function childNodeAdded( inNode : Object ) : void;
+		return isVector( inSource ) || inSource is Array || inSource is IList || inSource is XMLList;
 	}
 }

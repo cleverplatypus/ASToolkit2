@@ -21,9 +21,13 @@ package org.astoolkit.commons.reflection
 {
 
 	import flash.utils.getQualifiedClassName;
+
 	import mx.logging.ILogger;
+
 	import org.astoolkit.commons.io.data.api.IDataProvider;
 	import org.astoolkit.commons.utils.ObjectCompare;
+	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.commons.utils.isVector;
 	import org.astoolkit.commons.wfml.IAutoConfigurable;
 
 	public final class AutoConfigUtil
@@ -121,6 +125,20 @@ package org.astoolkit.commons.reflection
 				}
 			}
 			return deferredConfigs;
+		}
+
+		/**
+		 * Processes <code>IDataProvider</code> descriptors on the target object.
+		 * This is usually called repeteadly before the target object consumes
+		 * its properties and allows changes in the data provider settings
+		 * to be reflected in the target object configuration
+		 */
+		public static function processDataProviders( inTarget : Object, inConfig : Vector.<PropertyDataProviderInfo> ) : void
+		{
+			for each( var propConfig : PropertyDataProviderInfo in inConfig )
+			{
+				inTarget[ propConfig.name ] = propConfig.dataProvider.getData();
+			}
 		}
 	}
 }

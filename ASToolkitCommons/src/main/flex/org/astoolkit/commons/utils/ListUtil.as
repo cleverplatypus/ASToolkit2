@@ -43,12 +43,19 @@ package org.astoolkit.commons.utils
 				throw new Error( "No suitable inSource list provided" );
 			}
 
-			if( !isCollection( inDestinationClass ) )
-			{
-				throw new Error( "No supported inDestinationClass provided" );
-			}
+			var out : Object;
 
-			var out : Object = new inDestinationClass();
+			try
+			{
+				out = new inDestinationClass();
+			}
+			finally
+			{
+				if( !isCollection( out ) )
+				{
+					throw new Error( "No supported inDestinationClass provided" );
+				}
+			}
 
 			for each( var item : * in inSource )
 			{

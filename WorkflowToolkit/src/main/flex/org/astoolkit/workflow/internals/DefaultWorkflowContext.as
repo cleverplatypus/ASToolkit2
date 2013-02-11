@@ -23,9 +23,11 @@ package org.astoolkit.workflow.internals
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.utils.getQualifiedClassName;
+
 	import mx.core.IMXMLObject;
 	import mx.logging.ILogger;
 	import mx.utils.UIDUtil;
+
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
 	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluator;
@@ -36,6 +38,8 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.commons.reflection.Type;
 	import org.astoolkit.commons.utils.ListUtil;
 	import org.astoolkit.commons.utils.ObjectCompare;
+	import org.astoolkit.commons.utils.getClass;
+	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.workflow.annotation.Featured;
 	import org.astoolkit.workflow.annotation.Template;
 	import org.astoolkit.workflow.api.*;

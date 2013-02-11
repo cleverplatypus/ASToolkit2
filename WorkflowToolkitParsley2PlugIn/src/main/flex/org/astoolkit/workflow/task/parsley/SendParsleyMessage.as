@@ -22,16 +22,18 @@ package org.astoolkit.workflow.task.parsley
 
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
+
 	import mx.core.IFactory;
 	import mx.logging.ILogger;
 	import mx.utils.StringUtil;
+
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.mapping.MappingError;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
+	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.workflow.constant.FailurePolicy;
 	import org.astoolkit.workflow.task.api.ISendMessage;
-	import org.spicefactory.parsley.core.messaging.command.CommandObserverProcessor;
 	import org.spicefactory.parsley.core.messaging.command.CommandStatus;
 	import org.spicefactory.parsley.core.messaging.receiver.CommandObserver;
 
@@ -49,23 +51,23 @@ package org.astoolkit.workflow.task.parsley
 
 		private var _errorObserver : CommandObserver;
 
-		private var _factoryResolver:IFactoryResolver;
+		private var _factoryResolver : IFactoryResolver;
 
-		private var _hasAsyncResult:Boolean;
+		private var _hasAsyncResult : Boolean;
 
 		private var _mapper : IPropertiesMapper;
 
 		private var _mappingInfo : Object;
 
-		private var _message:Object;
+		private var _message : Object;
 
-		private var _messageClass:Class;
+		private var _messageClass : Class;
 
-		private var _messageFactory:IFactory;
+		private var _messageFactory : IFactory;
 
-		private var _messageMappingFailurePolicy:String;
+		private var _messageMappingFailurePolicy : String;
 
-		private var _selector:*;
+		private var _selector : *;
 
 		protected function get mapper() : IPropertiesMapper
 		{
@@ -91,7 +93,7 @@ package org.astoolkit.workflow.task.parsley
 		 * Otherwise, for a <code>[MessageHandler]</code> tagged function we set
 		 *  <code>isCommand="false"</code>.
 		 */
-		public function set hasAsyncResult(value:Boolean) : void
+		public function set hasAsyncResult( value : Boolean ) : void
 		{
 			_hasAsyncResult = value;
 		}
@@ -101,12 +103,12 @@ package org.astoolkit.workflow.task.parsley
 		 *
 		 * @see messageFactory
 		 */
-		public function set message(value:Object) : void
+		public function set message( value : Object ) : void
 		{
 			_message = value;
 		}
 
-		public function set messageClass(value:Class) : void
+		public function set messageClass( value : Class ) : void
 		{
 			_messageClass = value;
 		}
@@ -118,13 +120,13 @@ package org.astoolkit.workflow.task.parsley
 		 * the task input for either <code>IFactory</code> instances or other types of object
 		 * that will be use as message .</p>
 		 */
-		public function set messageFactory(value:IFactory) : void
+		public function set messageFactory( value : IFactory ) : void
 		{
 			_messageFactory = value;
 		}
 
-		[Inspectable( enumeration="abort,ignore,log-error,log-warn,log-info,log-debug", defaultValue="abort" )]
-		public function set messageMappingFailurePolicy(value:String) : void
+		[Inspectable( enumeration = "abort,ignore,log-error,log-warn,log-info,log-debug", defaultValue = "abort" )]
+		public function set messageMappingFailurePolicy( value : String ) : void
 		{
 			_messageMappingFailurePolicy = value;
 		}
@@ -158,7 +160,7 @@ package org.astoolkit.workflow.task.parsley
 		/**
 		 * the message handler selector value
 		 */
-		public function set selector(value:*) : void
+		public function set selector( value : * ) : void
 		{
 			_selector = value;
 		}

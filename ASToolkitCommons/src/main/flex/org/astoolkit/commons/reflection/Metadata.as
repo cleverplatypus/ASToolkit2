@@ -23,10 +23,13 @@ package org.astoolkit.commons.reflection
 	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
+
 	import mx.logging.ILogger;
 	import mx.logging.Log;
 	import mx.utils.StringUtil;
+
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
+	import org.astoolkit.commons.utils.getLogger;
 
 	public class Metadata implements IAnnotation
 	{

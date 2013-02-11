@@ -17,13 +17,14 @@ limitations under the License.
 Version 2.x
 
 */
-package
+package org.astoolkit.commons.utils 
 {
-
-	import mx.collections.IList;
-
-	public function isCollection( inSource : Object ) : Boolean
+	import flash.utils.getDefinitionByName;
+	import flash.utils.getQualifiedClassName;
+	
+	public function getClass( inObject : Object ) : Class
 	{
-		return isVector( inSource ) || inSource is Array || inSource is IList || inSource is XMLList;
+		return  getDefinitionByName( 
+			getQualifiedClassName( inObject ) ) as Class;
 	}
 }

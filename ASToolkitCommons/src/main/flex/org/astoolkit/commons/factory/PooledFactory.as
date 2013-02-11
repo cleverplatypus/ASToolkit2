@@ -22,13 +22,16 @@ package org.astoolkit.commons.factory
 
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
+
 	import mx.core.ClassFactory;
 	import mx.logging.ILogger;
 	import mx.utils.ArrayUtil;
 	import mx.utils.UIDUtil;
+
 	import org.astoolkit.commons.factory.api.IExtendedFactory;
 	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.factory.api.IPooledFactoryDelegate;
+	import org.astoolkit.commons.utils.getLogger;
 
 	//TODO: this should extend ExtendedFactory
 	public class PooledFactory extends ExtendedClassFactory implements IPooledFactory

@@ -21,13 +21,16 @@ package org.astoolkit.commons.io.transform
 {
 
 	import flash.utils.getQualifiedClassName;
+
 	import mx.core.ClassFactory;
 	import mx.core.IFactory;
 	import mx.logging.ILogger;
 	import mx.logging.Log;
+
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
 	import org.astoolkit.commons.factory.api.IPooledFactory;
+	import org.astoolkit.commons.utils.getLogger;
 
 	public class FactoryTransformer extends BaseDataTransformer implements IFactoryResolverClient
 	{

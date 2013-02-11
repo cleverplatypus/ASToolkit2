@@ -28,7 +28,8 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.databinding.BindingUtility;
 	import org.astoolkit.commons.reflection.*;
-	import org.astoolkit.commons.utils.IChildrenAwareDocument;
+	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.commons.wfml.IChildrenAwareDocument;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.NO_DESCRIPTION;
 

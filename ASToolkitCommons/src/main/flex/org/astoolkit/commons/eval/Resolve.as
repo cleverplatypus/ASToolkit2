@@ -22,7 +22,7 @@ package org.astoolkit.commons.eval
 
 	import mx.core.IMXMLObject;
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
-	import org.astoolkit.commons.utils.IChildrenAwareDocument;
+	import org.astoolkit.commons.wfml.IChildrenAwareDocument;
 	import org.astoolkit.commons.wfml.IComponent;
 
 	[DefaultProperty("expression")]

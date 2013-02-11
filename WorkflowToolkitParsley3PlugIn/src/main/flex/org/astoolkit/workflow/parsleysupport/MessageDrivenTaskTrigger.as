@@ -48,6 +48,7 @@ package org.astoolkit.workflow.parsleysupport
 	import org.spicefactory.parsley.core.scope.ScopeName;
 	import org.spicefactory.parsley.messaging.receiver.DefaultMessageHandler;
 	import org.spicefactory.parsley.messaging.receiver.MessageReceiverInfo;
+	import org.astoolkit.commons.utils.getClass;
 
 	[DefaultProperty( "workflow" )]
 	/**

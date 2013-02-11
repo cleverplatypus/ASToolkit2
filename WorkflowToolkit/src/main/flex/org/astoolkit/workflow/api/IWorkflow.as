@@ -26,7 +26,7 @@ package org.astoolkit.workflow.api
 
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
 	import org.astoolkit.commons.process.api.IProcess;
-	import org.astoolkit.commons.utils.IChildrenAwareDocument;
+	import org.astoolkit.commons.wfml.IChildrenAwareDocument;
 
 	public interface IWorkflow extends IEventDispatcher, 
 		IChildrenAwareDocument, 

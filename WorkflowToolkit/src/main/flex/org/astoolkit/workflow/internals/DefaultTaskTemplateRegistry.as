@@ -21,11 +21,14 @@ package org.astoolkit.workflow.internals
 {
 
 	import flash.utils.getQualifiedClassName;
+
 	import mx.logging.ILogger;
 	import mx.logging.Log;
+
 	import org.astoolkit.commons.factory.PooledFactory;
 	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.reflection.Type;
+	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.workflow.annotation.Template;
 	import org.astoolkit.workflow.api.ITaskTemplate;
 	import org.astoolkit.workflow.api.ITaskTemplateRegistry;

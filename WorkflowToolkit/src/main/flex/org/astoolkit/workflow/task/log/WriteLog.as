@@ -21,10 +21,13 @@ package org.astoolkit.workflow.task.log
 {
 
 	import flash.utils.getQualifiedClassName;
+
 	import mx.logging.ILogger;
 	import mx.logging.Log;
 	import mx.logging.LogEventLevel;
 	import mx.utils.ObjectUtil;
+
+	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.workflow.core.BaseTask;
 
 	/**

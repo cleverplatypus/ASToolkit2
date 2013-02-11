@@ -17,16 +17,16 @@ limitations under the License.
 Version 2.x
 
 */
-package
+package org.astoolkit.commons.utils
 {
 
 	import flash.utils.getQualifiedClassName;
-	import flash.utils.getQualifiedSuperclassName;
 
-	public function isVector( inSource : Object, inSubtype : Class = null ) : Boolean
+	import mx.logging.ILogger;
+	import mx.logging.Log;
+
+	public function getLogger( inClass : Class ) : ILogger
 	{
-		var out : Boolean;
-		out = getQualifiedClassName( inSource ).match( /__AS3__\.vec\:\:Vector\.\</ ) != null;
-		return out;
+		return Log.getLogger( getQualifiedClassName( inClass ).replace( /:+/g, "." ) )
 	}
 }
