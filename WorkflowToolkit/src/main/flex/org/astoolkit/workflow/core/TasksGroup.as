@@ -22,10 +22,10 @@ package org.astoolkit.workflow.core
 
 	import flash.events.IEventDispatcher;
 	import flash.utils.getQualifiedClassName;
-	
+
 	import mx.core.IFactory;
 	import mx.logging.ILogger;
-	
+
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.collection.api.IRepeater;
 	import org.astoolkit.commons.databinding.BindingUtility;
@@ -44,6 +44,7 @@ package org.astoolkit.workflow.core
 
 	/**
 	 * This is one of the core Workflow Toolkit's classes.
+	 *
 	 * <p>A <code>Do</code> node represents a group of tasks executed either as a sequence or in
 	 * parellel according to <code>flow</code> property.</p>
 	 * <p>They can iterate over an <code>IIterator</code> or in a infinite loop.
@@ -53,13 +54,13 @@ package org.astoolkit.workflow.core
 	 * XMLList</code>.</p>
 	 *
 	*/
-	public class Do extends BaseTask implements ITasksGroup, IRepeater
+	public class TasksGroup extends BaseTask implements ITasksGroup, IRepeater
 	{
 		use namespace astoolkit_private;
 
-		protected static const LOGGER : ILogger = getLogger( Do );
+		protected static const LOGGER : ILogger = getLogger( TasksGroup );
 
-		private var _elementsQueue:ElementsQueue;
+		private var _elementsQueue : ElementsQueue;
 
 		/**
 		 * @private
@@ -146,6 +147,9 @@ package org.astoolkit.workflow.core
 		}
 
 		[AutoConfig]
+		/**
+		 * the tasks to execute
+		 */
 		public function set children( inChildren : Vector.<IWorkflowElement> ) : void
 		{
 			_children = inChildren;
@@ -221,7 +225,7 @@ package org.astoolkit.workflow.core
 			return _iterator;
 		}
 
-		[AutoConfig( type="org.astoolkit.commons.collection.api.IIterator")]
+		[AutoConfig( type = "org.astoolkit.commons.collection.api.IIterator" )]
 		public function set iterator( inValue : IIterator ) : void
 		{
 			_onPropertySet( "iterator" );
@@ -240,7 +244,7 @@ package org.astoolkit.workflow.core
 			_iteratorConfig = inValue;
 		}
 
-		public function Do()
+		public function TasksGroup()
 		{
 			super();
 			_childrenDelegate = new ChildTaskWatcher( this );
@@ -304,9 +308,9 @@ package org.astoolkit.workflow.core
 					fail( "Flow \"{0}\" failed because" +
 						" no data iterator was found for type {1}",
 						description,
-						getQualifiedClassName( 
-						_dataProvider != null ? 
-						_dataProvider : 
+						getQualifiedClassName(
+						_dataProvider != null ?
+						_dataProvider :
 						filteredInput ) );
 					return;
 				}
@@ -317,8 +321,8 @@ package org.astoolkit.workflow.core
 				}
 				else
 				{
-					LOGGER.info( 
-						"Flow \"{0}\" completes with no data", 
+					LOGGER.info(
+						"Flow \"{0}\" completes with no data",
 						description );
 					completeGroup();
 					return;
@@ -736,11 +740,11 @@ package org.astoolkit.workflow.core
 				element = _elementsQueue.next();
 				element.wakeup();
 
-				if( element is IDeferrableProcess && 
+				if( element is IDeferrableProcess &&
 					IDeferrableProcess( element ).isProcessDeferred() )
 				{
 					_elementsQueue.onElementProcessDeferred( element as IDeferrableProcess );
-					IDeferrableProcess( element ).addDeferredProcessWatcher( 
+					IDeferrableProcess( element ).addDeferredProcessWatcher(
 						onDeferredProcessResume );
 
 					if( flow == Flow.SERIAL )
@@ -954,7 +958,7 @@ package org.astoolkit.workflow.core
 			{
 				if( _iterate == Iterate.LOOP )
 				{
-					_iterator = _context.resolveIterator( 
+					_iterator = _context.resolveIterator(
 						Range.create( uint.MIN_VALUE, uint.MAX_VALUE ),
 						_iteratorConfig );
 					_iterator.cycle = true;
