@@ -24,13 +24,13 @@ package org.astoolkit.commons.process.api
 	{
 		/**
 		 * Execution entry point for the process.
-		 * <p>The optional parameter sets the process' input/p>
+		 * <p>The optional parameter sets the process' input</p>
 		 * <p>If the process completes synchronously, this method
 		 * returns the the former's output, <code>undefined</code> otherwise.</p>.
 		 *
-		 * Asynchronous completion handling depends on the implementation.
+		 * <p>Asynchronous completion handling depends on the implementation.
 		 * A process implementing <code>IResponseSource</code>, for instance, would handle
-		 * async result/failure notifying its registered <code>IResponder</code>s.
+		 * async result/failure notifying its registered <code>IResponder</code>s.</p>
 		 *
 		 *
 		 * @param inData optional input for the rpcess

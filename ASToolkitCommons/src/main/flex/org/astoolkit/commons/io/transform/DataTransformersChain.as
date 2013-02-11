@@ -23,7 +23,7 @@ package org.astoolkit.commons.io.transform
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 
 	[DefaultProperty( "transformers" )]
-	public class Chain extends BaseDataTransformer
+	public class DataTransformersChain extends BaseDataTransformer
 	{
 		private var _transformers : Vector.<IIODataTransformer>;
 

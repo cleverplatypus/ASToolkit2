@@ -33,7 +33,6 @@ package org.astoolkit.commons.factory
 	import org.astoolkit.commons.factory.api.IPooledFactoryDelegate;
 	import org.astoolkit.commons.utils.getLogger;
 
-	//TODO: this should extend ExtendedFactory
 	public class PooledFactory extends ExtendedClassFactory implements IPooledFactory
 	{
 		private static const LOGGER : ILogger = getLogger( PooledFactory );
@@ -101,10 +100,10 @@ package org.astoolkit.commons.factory
 		 * creates a new instance of the give type or of <code>type</code> class
 		 * or returns a pooled instance
 		 */
-		override public function getInstance( 
-			inType : Class, 
-			inProperties : Object = null, 
-			inFactoryMethodArguments : Array = null, 
+		override public function getInstance(
+			inType : Class,
+			inProperties : Object = null,
+			inFactoryMethodArguments : Array = null,
 			inFactoryMethod : String = null ) : *
 		{
 			if( !inType )
@@ -117,10 +116,10 @@ package org.astoolkit.commons.factory
 			if( _delegate && _delegate.factory )
 			{
 				if( _delegate.factory is IExtendedFactory )
-					out = IExtendedFactory( _delegate.factory ).getInstance( 
-						inType, 
-						inProperties, 
-						inFactoryMethodArguments, 
+					out = IExtendedFactory( _delegate.factory ).getInstance(
+						inType,
+						inProperties,
+						inFactoryMethodArguments,
 						inFactoryMethod );
 				else
 					out = _delegate.factory.newInstance();

@@ -21,7 +21,9 @@ package org.astoolkit.workflow.internals
 {
 
 	import flash.utils.getQualifiedClassName;
+
 	import mx.core.IFactory;
+
 	import org.astoolkit.commons.collection.DefaultIteratorFactory;
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
 	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluatorRegistry;
@@ -29,9 +31,6 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.commons.factory.api.IExtendedFactory;
 	import org.astoolkit.commons.io.transform.DefaultDataTransformRegistry;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
-	import org.astoolkit.commons.reflection.AutoConfigUtil;
-	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
-	import org.astoolkit.commons.wfml.IAutoConfigurable;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.config.api.IObjectPropertyDefaultValue;
 
@@ -59,8 +58,8 @@ package org.astoolkit.workflow.internals
 			return _classFactoryMappings;
 		}
 
-		[ArrayItemType("org.astoolkit.commons.factory.ClassFactoryMapping")]
-		public function set classFactoryMappings(inValue:Array) : void
+		[ArrayItemType( "org.astoolkit.commons.factory.ClassFactoryMapping" )]
+		public function set classFactoryMappings( inValue : Array ) : void
 		{
 			_classFactoryMappings = inValue;
 
@@ -81,7 +80,7 @@ package org.astoolkit.workflow.internals
 			return _defaults;
 		}
 
-		public function set defaults(value:Vector.<IObjectPropertyDefaultValue>) : void
+		public function set defaults( value : Vector.<IObjectPropertyDefaultValue> ) : void
 		{
 			_defaults = value;
 		}
@@ -101,7 +100,7 @@ package org.astoolkit.workflow.internals
 			return _objectConfigurers;
 		}
 
-		public function set objectConfigurers(value:Vector.<IObjectConfigurer>) : void
+		public function set objectConfigurers( value : Vector.<IObjectConfigurer> ) : void
 		{
 			_objectConfigurers = value;
 		}
@@ -146,7 +145,7 @@ package org.astoolkit.workflow.internals
 
 				for each( var mapping : ClassFactoryMapping in _classFactoryMappings )
 				{
-					regexp = new RegExp( 
+					regexp = new RegExp(
 						mapping.pattern
 						.replace( /\*/g, "`" )
 						.replace( /\./g, "\\." )

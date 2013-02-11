@@ -74,7 +74,7 @@
 		/>
 	<component 
 		id="ChainTransformers"
-		class="org.astoolkit.commons.io.transform.Chain"
+		class="org.astoolkit.commons.io.transform.DataTransformersChain"
 		/>
 	<component 
 		id="FunctionReferenceDataTransform"

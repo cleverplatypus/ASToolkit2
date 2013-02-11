@@ -21,10 +21,14 @@ package org.astoolkit.workflow.task.variables
 {
 
 	import flash.utils.getQualifiedClassName;
+
 	import mx.collections.IList;
+
+	import org.astoolkit.commons.utils.isCollection;
+	import org.astoolkit.commons.utils.isVector;
 	import org.astoolkit.workflow.constant.UNDEFINED;
-	import org.astoolkit.workflow.internals.GroupUtil;
 	import org.astoolkit.workflow.core.BaseTask;
+	import org.astoolkit.workflow.internals.GroupUtil;
 
 	/**
 	 * Removes and outputs the first element of the list variable <code>name</code>.
@@ -83,7 +87,7 @@ package org.astoolkit.workflow.task.variables
 	public class ShiftVariable extends BaseTask
 	{
 
-		[Inspectable( enumeration="lastIteration,fail,break,returnNull", defaultValue="fail" )]
+		[Inspectable( enumeration = "lastIteration,fail,break,returnNull", defaultValue = "fail" )]
 		public var emptyListPolicy : String = "fail";
 
 		/**
@@ -111,16 +115,15 @@ package org.astoolkit.workflow.task.variables
 			}
 			var varInstance : * = context.variables[ _name ];
 
-			if( !( varInstance is Array ||
-				getQualifiedClassName( varInstance ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) ||
-				varInstance is IList ) )
+			//TODO: use isCollection/isVector functions to simplify code below
+			if( !isCollection( varInstance ) )
 			{
 				fail( "Attempt to shift data from an unknown list type" );
 				return;
 			}
 			var out : *;
 
-			if( varInstance is Array || getQualifiedClassName( varInstance ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) )
+			if( varInstance is Array || isVector( varInstance ) )
 				out = varInstance.length > 0 ? varInstance.shift() : UNDEFINED;
 			else if( varInstance is IList )
 				out = IList( varInstance ).length > 0 ?

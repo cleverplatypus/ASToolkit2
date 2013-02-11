@@ -19,6 +19,7 @@
 							<directory>${basedir}/src/main/flex</directory>
 							<excludes>
 								<exclude>**/includes/*.as</exclude>
+								<exclude>**/*Include.as</exclude>
 	      					</excludes>
       					</sources>
 					</includeAsClasses>
