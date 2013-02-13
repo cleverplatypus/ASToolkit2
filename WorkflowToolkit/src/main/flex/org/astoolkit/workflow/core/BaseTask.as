@@ -36,7 +36,7 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.reflection.Field;
-	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
+	import org.astoolkit.commons.reflection.PropertyDataBuilderInfo;
 	import org.astoolkit.commons.reflection.Type;
 	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.workflow.annotation.InjectPipeline;
@@ -576,8 +576,8 @@ package org.astoolkit.workflow.core
 			return _outlet;
 		}
 
-		[AutoConfig( match = "org.astoolkit.commons.mapping.api.IPropertiesMapper" )]
-		[AutoConfig( match = "org.astoolkit.commons.mapping.api.IPropertiesMapperFactory" )]
+		[AutoAssign( match = "org.astoolkit.commons.mapping.api.IPropertiesMapper" )]
+		[AutoAssign( match = "org.astoolkit.commons.mapping.api.IPropertiesMapperFactory" )]
 		/**
 		 * the destination of the task's output data.
 		 * <p>Possible values:
@@ -867,7 +867,7 @@ package org.astoolkit.workflow.core
 			{
 				var value : *;
 
-				for each( var prop : PropertyDataProviderInfo in _propertiesDataProviderInfo )
+				for each( var prop : PropertyDataBuilderInfo in _propertiesDataProviderInfo )
 				{
 					value = prop.dataProvider.getData();
 

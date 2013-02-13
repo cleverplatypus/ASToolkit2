@@ -21,13 +21,13 @@ package org.astoolkit.commons.io.data
 {
 
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
-	import org.astoolkit.commons.io.data.api.IDataProvider;
-	import org.astoolkit.commons.reflection.AutoConfigUtil;
+	import org.astoolkit.commons.io.data.api.IDataBuilder;
+	import org.astoolkit.commons.reflection.SelfWireUtil;
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
-	import org.astoolkit.commons.wfml.IComponent;
+	import org.astoolkit.commons.wfml.api.IComponent;
 
 	[DefaultProperty("selfWiringChildren")]
-	public class ArrayBuilder implements IDataProvider, IComponent, ISelfWiring
+	public class ArrayBuilder implements IDataBuilder, IComponent, ISelfWiring
 	{
 		private var _selfWiringChildren : Array;
 
@@ -42,7 +42,7 @@ package org.astoolkit.commons.io.data
 			_selfWiringChildren = inValue;
 		}
 
-		[AutoConfig]
+		[AutoAssign]
 		public function set expressionResolvers( inValue : Vector.<IExpressionResolver> ) : void
 		{
 			_expressionResolvers = inValue;
@@ -58,7 +58,7 @@ package org.astoolkit.commons.io.data
 			_pid = inValue;
 		}
 
-		public function get providedType() : Class
+		public function get builtDataType() : Class
 		{
 			return Array;
 		}
@@ -80,7 +80,7 @@ package org.astoolkit.commons.io.data
 		public function initialized( inDocument : Object, inId : String ) : void
 		{
 			_document  = inDocument;
-			AutoConfigUtil.autoConfig( this, _selfWiringChildren );
+			SelfWireUtil.autoAssign( this, _selfWiringChildren );
 		}
 	}
 }

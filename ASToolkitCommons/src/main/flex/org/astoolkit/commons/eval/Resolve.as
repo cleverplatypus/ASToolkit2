@@ -22,8 +22,8 @@ package org.astoolkit.commons.eval
 
 	import mx.core.IMXMLObject;
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
-	import org.astoolkit.commons.wfml.IChildrenAwareDocument;
-	import org.astoolkit.commons.wfml.IComponent;
+	import org.astoolkit.commons.wfml.api.IChildrenAwareDocument;
+	import org.astoolkit.commons.wfml.api.IComponent;
 
 	[DefaultProperty("expression")]
 	public class Resolve implements IComponent, IExpressionResolver, IMXMLObject

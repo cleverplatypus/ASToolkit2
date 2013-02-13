@@ -62,7 +62,7 @@ package org.astoolkit.workflow.task.variables
 				_name = null;
 		}
 
-		[AutoConfig]
+		[AutoAssign]
 		public function set value( inValue : * ) : void
 		{
 			_value = inValue;

@@ -21,16 +21,16 @@ package org.astoolkit.commons.io.data
 {
 
 	import org.astoolkit.commons.eval.Resolve;
-	import org.astoolkit.commons.io.data.api.IDataProvider;
+	import org.astoolkit.commons.io.data.api.IDataBuilder;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
 
-	public class SetParam extends Resolve implements IDataProvider, IDeferrableProcess
+	public class SetParam extends Resolve implements IDataBuilder, IDeferrableProcess
 	{
 		private var _deferredExecutionWatchers:Vector.<Function>;
 
 		private var _type : Class = Object;
 
-		public function get providedType() : Class
+		public function get builtDataType() : Class
 		{
 			return _type;
 		}

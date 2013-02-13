@@ -28,7 +28,7 @@ package org.astoolkit.workflow.task.delegate
 	import mx.rpc.events.ResultEvent;
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.io.data.MethodBuilder;
-	import org.astoolkit.commons.wfml.IChildrenAwareDocument;
+	import org.astoolkit.commons.wfml.api.IChildrenAwareDocument;
 	import org.astoolkit.workflow.api.IFactoryResolverClientTask;
 	import org.astoolkit.workflow.core.BaseTask;
 
@@ -97,16 +97,16 @@ package org.astoolkit.workflow.task.delegate
 
 		public var method : String;
 
-		[AutoConfig]
+		[AutoAssign]
 		public function set methodBuilder( inValue : MethodBuilder ) : void
 		{
 			_methodBuilder = inValue;
 		}
 
-		[AutoConfig]
+		[AutoAssign]
 		public var target : Object;
 
-		[AutoConfig]
+		[AutoAssign]
 		public var targetFactory : IFactory
 
 		public var targetType : Class;

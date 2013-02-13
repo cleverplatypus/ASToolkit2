@@ -20,13 +20,13 @@ Version 2.x
 package org.astoolkit.commons.io.data
 {
 
-	import org.astoolkit.commons.io.data.api.IDataProvider;
+	import org.astoolkit.commons.io.data.api.IDataBuilder;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
-	import org.astoolkit.commons.wfml.IComponent;
+	import org.astoolkit.commons.wfml.api.IComponent;
 
 	[DefaultProperty( "selfWiringChildren" )]
-	public class DateFormatter implements IDataProvider, IComponent, ISelfWiring, IDeferrableProcess
+	public class DateFormatter implements IDataBuilder, IComponent, ISelfWiring, IDeferrableProcess
 	{
 		private var _format : String;
 
@@ -52,12 +52,12 @@ package org.astoolkit.commons.io.data
 		{
 		}
 
-		public function get providedType() : Class
+		public function get builtDataType() : Class
 		{
 			return null;
 		}
 
-		[AutoConfig]
+		[AutoAssign]
 		public function set sourceText( inValue : String ) : void
 		{
 			_sourceText = inValue;

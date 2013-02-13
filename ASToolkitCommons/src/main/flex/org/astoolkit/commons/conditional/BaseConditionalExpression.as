@@ -23,7 +23,7 @@ package org.astoolkit.commons.conditional
 	import flash.utils.getQualifiedClassName;
 	import org.astoolkit.commons.conditional.api.*;
 	import org.astoolkit.commons.io.transform.api.*;
-	import org.astoolkit.commons.wfml.IChildrenAwareDocument;
+	import org.astoolkit.commons.wfml.api.IChildrenAwareDocument;
 
 	public class BaseConditionalExpression implements IConditionalExpression, IIODataSourceClient
 	{

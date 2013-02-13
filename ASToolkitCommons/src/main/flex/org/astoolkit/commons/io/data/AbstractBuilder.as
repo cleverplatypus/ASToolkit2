@@ -26,17 +26,17 @@ package org.astoolkit.commons.io.data
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
-	import org.astoolkit.commons.io.data.api.IDataProvider;
+	import org.astoolkit.commons.io.data.api.IDataBuilder;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.reflection.AutoConfigUtil;
-	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
+	import org.astoolkit.commons.reflection.SelfWireUtil;
+	import org.astoolkit.commons.reflection.PropertyDataBuilderInfo;
 	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
-	import org.astoolkit.commons.wfml.IChildrenAwareDocument;
-	import org.astoolkit.commons.wfml.IComponent;
+	import org.astoolkit.commons.wfml.api.IChildrenAwareDocument;
+	import org.astoolkit.commons.wfml.api.IComponent;
 
-	[DefaultProperty("selfWiringChildren")]
-	public class AbstractBuilder implements IDataProvider, ISelfWiring, IFactoryResolverClient, IComponent, IDeferrableProcess
+	[DefaultProperty( "selfWiringChildren" )]
+	public class AbstractBuilder implements IDataBuilder, ISelfWiring, IFactoryResolverClient, IComponent, IDeferrableProcess
 	{
 		private static const LOGGER : ILogger = getLogger( AbstractBuilder );
 
@@ -54,16 +54,16 @@ package org.astoolkit.commons.io.data
 
 		protected var _pid : String;
 
-		protected var _propertiesDataProviderInfo:Vector.<PropertyDataProviderInfo>;
+		protected var _propertiesDataProviderInfo : Vector.<PropertyDataBuilderInfo>;
 
 		protected var _providedType : Class;
 
 		public function set selfWiringChildren( inValue : Array ) : void
 		{
-			_selfWiringChildren  = inValue;
+			_selfWiringChildren = inValue;
 		}
 
-		[AutoConfig]
+		[AutoAssign]
 		public function set expressionResolvers( value : Vector.<IExpressionResolver> ) : void
 		{
 			_expressionResolvers = value;
@@ -84,7 +84,7 @@ package org.astoolkit.commons.io.data
 			_pid = inValue;
 		}
 
-		public function get providedType() : Class
+		public function get builtDataType() : Class
 		{
 			return _providedType;
 		}
@@ -101,7 +101,7 @@ package org.astoolkit.commons.io.data
 			throw new Error( "AbstractBuilder is abstract" );
 		}
 
-		public final function initialized( inDocument : Object, inId : String) : void
+		public final function initialized( inDocument : Object, inId : String ) : void
 		{
 			if( _document )
 				return;
@@ -122,7 +122,7 @@ package org.astoolkit.commons.io.data
 
 		protected function initAutoConfigContainer() : void
 		{
-			_propertiesDataProviderInfo = AutoConfigUtil.autoConfig( this, _selfWiringChildren );
+			_propertiesDataProviderInfo = SelfWireUtil.autoAssign( this, _selfWiringChildren );
 		}
 
 		protected function notifyDeferredProcessWatchers() : void

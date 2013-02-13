@@ -115,14 +115,14 @@ package org.astoolkit.workflow.task.misc
 			_targetClass = inValue;
 		}
 
-		[AutoConfig]
+		[AutoAssign]
 		public function set targetFactory( inValue : IFactory ) : void
 		{
 			_targetFactory = inValue;
 		}
 
 		[InjectPipeline]
-		[AutoConfig]
+		[AutoAssign]
 		/**
 		 * any value to be set to <code>target[ property ]</code>
 		 */

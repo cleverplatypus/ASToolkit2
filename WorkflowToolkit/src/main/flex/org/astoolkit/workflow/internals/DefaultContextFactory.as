@@ -24,8 +24,8 @@ package org.astoolkit.workflow.internals
 	import mx.core.ClassFactory;
 	import mx.core.IFactory;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.reflection.AutoConfigUtil;
-	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
+	import org.astoolkit.commons.reflection.SelfWireUtil;
+	import org.astoolkit.commons.reflection.PropertyDataBuilderInfo;
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.workflow.api.IContextConfig;
 	import org.astoolkit.workflow.api.IWorkflowContext;
@@ -42,7 +42,7 @@ package org.astoolkit.workflow.internals
 		 */
 		protected var _selfWiringChildren : Array;
 
-		protected var _propertiesDataProviderInfo:Vector.<PropertyDataProviderInfo>;
+		protected var _propertiesDataProviderInfo:Vector.<PropertyDataBuilderInfo>;
 
 		public function set selfWiringChildren( inValue : Array ) : void
 		{
@@ -55,13 +55,13 @@ package org.astoolkit.workflow.internals
 			_classFactoryMappings = inValue;
 		}
 
-		[AutoConfig]
+		[AutoAssign]
 		public var config : IContextConfig;
 
-		[AutoConfig]
+		[AutoAssign]
 		public var defaults : Vector.<IObjectPropertyDefaultValue>;
 
-		[AutoConfig]
+		[AutoAssign]
 		public var dropIns : Vector.<Object>;
 
 		public function initialized( document : Object, id : String ) : void
@@ -76,14 +76,14 @@ package org.astoolkit.workflow.internals
 
 				if( _selfWiringChildren && _selfWiringChildren.length > 0 )
 					_propertiesDataProviderInfo = 
-						AutoConfigUtil.autoConfig( this, _selfWiringChildren );
+						SelfWireUtil.autoAssign( this, _selfWiringChildren );
 			}
 
 			if( _propertiesDataProviderInfo )
 			{
 				var value : *;
 
-				for each( var prop : PropertyDataProviderInfo in _propertiesDataProviderInfo )
+				for each( var prop : PropertyDataBuilderInfo in _propertiesDataProviderInfo )
 				{
 					value = prop.dataProvider.getData();
 

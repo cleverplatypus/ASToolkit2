@@ -42,7 +42,7 @@ package org.astoolkit.workflow.task.log
 		[Inspectable( enumeration="pipeline,parent,parentWorkflow,context,config", defaultValue="pipeline" )]
 		public var source : String = "pipeline";
 
-		[AutoConfig]
+		[AutoAssign]
 		/**
 		 * the text to output to console. If omitted, the pipeline data is used.
 		 */

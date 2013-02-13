@@ -40,7 +40,7 @@ package org.astoolkit.workflow.task.data
 		public var itemClass : Class;
 
 		[InjectPipeline]
-		[AutoConfig]
+		[AutoAssign]
 		public function set sql( inValue : String ) : void
 		{
 			_onPropertySet( "sql" );

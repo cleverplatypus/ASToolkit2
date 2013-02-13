@@ -60,7 +60,7 @@ package org.astoolkit.workflow.flex4.task.spark
 	 */
 	public class PlaySparkAnimation extends BaseTask
 	{
-		[AutoConfig]
+		[AutoAssign]
 		/**
 		 * the animation to play (default property)
 		 */

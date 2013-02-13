@@ -44,6 +44,20 @@ package org.astoolkit.commons.process.api
 		 * <listing version="3.0">
 		 * 		var output : Array = myProcess.run( myInputData );
 		 * </listing>
+		 *
+		 * @example Executing an async process.
+		 * 			<p>In this example we're running a process that could
+		 * 			call a remote procedure to get the user profile asynchronously.
+		 * 			It could however return synchronously if the requested data is cached
+		 * 			locally.</p>
+		 *
+		 * <listing version="3.0">
+		 * 		var output : Object = getUserProfile.run();
+		 * 		if( output is IResponseSource  )
+		 * 			IResponseSource( output ).addResponder( new Responder( onResult, onFault ) );
+		 * 		else if( output is UserProfile )
+		 * 			this.userProfile = UserProfile( output );
+		 * </listing>
 		 */
 		function run( inData : * = undefined ) : *;
 	}

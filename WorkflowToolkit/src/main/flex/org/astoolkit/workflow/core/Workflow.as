@@ -72,7 +72,7 @@ package org.astoolkit.workflow.core
 			AnnotationUtil.registerAnnotation( new ClassFactory( Featured ) );
 			AnnotationUtil.registerAnnotation( new ClassFactory( Template ) );
 			AnnotationUtil.registerAnnotation( new ClassFactory( TaskInput ) );
-			AnnotationUtil.registerAnnotation( new ClassFactory( AutoConfig ) );
+			AnnotationUtil.registerAnnotation( new ClassFactory( AutoAssign ) );
 			AnnotationUtil.registerAnnotation( new ClassFactory( IteratorSource ) );
 			AnnotationUtil.registerAnnotation( new ClassFactory( TaskDescriptor ) );
 			AnnotationUtil.registerAnnotation( new ClassFactory( InjectPipeline ) );

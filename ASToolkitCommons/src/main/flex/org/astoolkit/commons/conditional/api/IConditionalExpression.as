@@ -22,7 +22,7 @@ package org.astoolkit.commons.conditional.api
 
 	import mx.core.IMXMLObject;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
-	import org.astoolkit.commons.wfml.IComponent;
+	import org.astoolkit.commons.wfml.api.IComponent;
 
 	public interface IConditionalExpression extends IMXMLObject, IIODataTransformerClient, IComponent
 	{

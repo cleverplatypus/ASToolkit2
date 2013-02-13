@@ -17,16 +17,33 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.wfml
+package org.astoolkit.commons.wfml.api
 {
 
 	/**
 	 * Stereotype for an IoC component.
-	 * The pid property is the container's AutoConfig property name
+	 * The pid property is the container's self-wiring property name
 	 * to assign the component to.
 	 */
 	public interface IComponent
 	{
+		/**
+		 * the containing object's property name for declarative wiring.
+		 * The purpose of this property is to simplify MXML properties declaration.
+		 *
+		 * @example using pid or property name node
+		 * <p>In this example the <code>label</code> and <code>url</code> properties are wired
+		 * respectively using the property name's node and <code>pid</code></p>
+		 *
+		 * <listing version="3.0">
+		 * 		&lt;Link&gt;
+		 * 			&lt;label&gt;
+		 * 				&lt;StringBuilder&gt;...&lt;/StringBuilder&gt;
+		 * 			&lt;/label&gt;
+		 * 			&lt;StringBuilder pid=&quot;url&quot;&gt;&lt;/StringBuilder&gt;
+		 * 		&lt;/Link&gt;
+		 * </listing>
+		 */
 		function get pid() : String;
 		function set pid( inValue : String ) : void;
 	}

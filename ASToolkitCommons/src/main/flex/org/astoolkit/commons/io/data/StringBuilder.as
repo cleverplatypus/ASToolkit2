@@ -22,11 +22,11 @@ package org.astoolkit.commons.io.data
 
 	import mx.utils.StringUtil;
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
-	import org.astoolkit.commons.io.data.api.IDataProvider;
+	import org.astoolkit.commons.io.data.api.IDataBuilder;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.reflection.AutoConfigUtil;
+	import org.astoolkit.commons.reflection.SelfWireUtil;
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
-	import org.astoolkit.commons.wfml.IComponent;
+	import org.astoolkit.commons.wfml.api.IComponent;
 
 	[DefaultProperty("selfWiringChildren")]
 	public class StringBuilder extends AbstractBuilder

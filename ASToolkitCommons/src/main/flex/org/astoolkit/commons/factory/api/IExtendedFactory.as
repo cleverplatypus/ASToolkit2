@@ -21,7 +21,7 @@ package org.astoolkit.commons.factory.api
 {
 
 	import mx.core.IFactory;
-	import org.astoolkit.commons.wfml.IComponent;
+	import org.astoolkit.commons.wfml.api.IComponent;
 
 	public interface IExtendedFactory extends IFactory, IComponent
 	{

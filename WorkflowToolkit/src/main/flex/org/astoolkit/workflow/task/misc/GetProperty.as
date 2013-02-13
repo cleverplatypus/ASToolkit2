@@ -76,7 +76,7 @@ package org.astoolkit.workflow.task.misc
 			_targetClass = inValue;
 		}
 
-		[AutoConfig]
+		[AutoAssign]
 		public function set targetFactory( inValue : IFactory ) : void
 		{
 			_targetFactory = inValue;

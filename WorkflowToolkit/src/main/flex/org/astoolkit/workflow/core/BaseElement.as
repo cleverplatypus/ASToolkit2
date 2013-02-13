@@ -29,7 +29,7 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.databinding.BindingUtility;
 	import org.astoolkit.commons.reflection.*;
 	import org.astoolkit.commons.utils.getLogger;
-	import org.astoolkit.commons.wfml.IChildrenAwareDocument;
+	import org.astoolkit.commons.wfml.api.IChildrenAwareDocument;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.NO_DESCRIPTION;
 
@@ -113,7 +113,7 @@ package org.astoolkit.workflow.core
 		 */
 		protected var _pid : String;
 
-		protected var _propertiesDataProviderInfo : Vector.<PropertyDataProviderInfo>;
+		protected var _propertiesDataProviderInfo : Vector.<PropertyDataBuilderInfo>;
 
 		/**
 		 * @private
@@ -276,7 +276,7 @@ package org.astoolkit.workflow.core
 
 			if( _selfWiringChildren && _selfWiringChildren.length > 0 )
 			{
-				_propertiesDataProviderInfo = AutoConfigUtil.autoConfig( this, _selfWiringChildren );
+				_propertiesDataProviderInfo = SelfWireUtil.autoAssign( this, _selfWiringChildren );
 			}
 		}
 

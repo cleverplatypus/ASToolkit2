@@ -35,7 +35,7 @@ package org.astoolkit.commons.io.data
 			return null;
 		}
 		
-		override public function get providedType() : Class
+		override public function get builtDataType() : Class
 		{
 			return Boolean;
 		}

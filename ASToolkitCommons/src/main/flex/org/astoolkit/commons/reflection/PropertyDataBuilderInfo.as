@@ -20,26 +20,26 @@ Version 2.x
 package org.astoolkit.commons.reflection
 {
 
-	import org.astoolkit.commons.io.data.api.IDataProvider;
+	import org.astoolkit.commons.io.data.api.IDataBuilder;
 
-	public class PropertyDataProviderInfo
+	public class PropertyDataBuilderInfo
 	{
 
 		public static function create( 
 			inName : String, 
-			inDataProvider : IDataProvider ) : PropertyDataProviderInfo
+			inDataProvider : IDataBuilder ) : PropertyDataBuilderInfo
 		{
-			var out : PropertyDataProviderInfo = new PropertyDataProviderInfo();
+			var out : PropertyDataBuilderInfo = new PropertyDataBuilderInfo();
 			out._name = inName;
 			out._dataProvider = inDataProvider;
 			return out;
 		}
 
-		private var _dataProvider : IDataProvider;
+		private var _dataProvider : IDataBuilder;
 
 		private var _name : String;
 
-		public function get dataProvider() : IDataProvider
+		public function get dataProvider() : IDataBuilder
 		{
 			return _dataProvider;
 		}

@@ -24,7 +24,7 @@ package org.astoolkit.workflow.api
 
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
-	import org.astoolkit.commons.wfml.IComponent;
+	import org.astoolkit.commons.wfml.api.IComponent;
 
 	public interface IWorkflowElement extends IContextAwareElement,
 		ISelfWiring,

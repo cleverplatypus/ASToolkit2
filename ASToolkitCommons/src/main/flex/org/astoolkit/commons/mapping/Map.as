@@ -22,7 +22,7 @@ package org.astoolkit.commons.mapping
 
 	import mx.core.IMXMLObject;
 	import org.astoolkit.commons.mapping.api.*;
-	import org.astoolkit.commons.wfml.IComponent;
+	import org.astoolkit.commons.wfml.api.IComponent;
 
 	/**
 	 * Dynamic class to define a <code>IPropertiesMapperFactory</code>

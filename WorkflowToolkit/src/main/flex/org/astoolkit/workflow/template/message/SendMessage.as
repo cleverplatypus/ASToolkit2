@@ -43,19 +43,19 @@ package org.astoolkit.workflow.template.message
 			setImplementationProperty( "hasAsyncResult", inValue );
 		}
 
-		[AutoConfig]
+		[AutoAssign]
 		public function set message( inValue : Object ) : void
 		{
 			setImplementationProperty( "message", inValue );
 		}
 
-		[AutoConfig]
+		[AutoAssign]
 		public function set messageClass( inValue : Class ) : void
 		{
 			setImplementationProperty( "messageClass", inValue );
 		}
 
-		[AutoConfig]
+		[AutoAssign]
 		public function set messageFactory( inValue : IFactory ) : void
 		{
 			setImplementationProperty( "messageFactory", inValue );
@@ -66,7 +66,7 @@ package org.astoolkit.workflow.template.message
 			setImplementationProperty( "messageMappingFailurePolicy", inValue );
 		}
 
-		[AutoConfig]
+		[AutoAssign]
 		public function set messagePropertiesMapping( inValue : Object ) : void
 		{
 			setImplementationProperty( "messagePropertiesMapping", inValue );

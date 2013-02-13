@@ -17,11 +17,27 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.wfml
+package org.astoolkit.commons.reflection
 {
 
-	public interface IChildrenAwareDocument
+	[Metadata(
+		name = "AutoAssign",
+		target = "setter,property",
+		ownerType = "org.astoolkit.commons.configuration.api.ISelfWiring",
+		repeatable = "true" )]
+	[MetaArg( name = "match", type = "Class", mandatory = "false" )]
+	[MetaArg( name = "order", type = "int", mandatory = "false" )]
+	public class AutoAssign extends Metadata
 	{
-		function childNodeAdded( inNode : Object ) : void;
+
+		public function get match() : Class
+		{
+			return getClass( "type", true );
+		}
+
+		public function get order() : int
+		{
+			return getNumber( "order", false );
+		}
 	}
 }

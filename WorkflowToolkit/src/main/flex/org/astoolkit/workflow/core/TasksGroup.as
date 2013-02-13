@@ -146,7 +146,7 @@ package org.astoolkit.workflow.core
 			return _children;
 		}
 
-		[AutoConfig]
+		[AutoAssign]
 		/**
 		 * the tasks to execute
 		 */
@@ -225,7 +225,7 @@ package org.astoolkit.workflow.core
 			return _iterator;
 		}
 
-		[AutoConfig( type = "org.astoolkit.commons.collection.api.IIterator" )]
+		[AutoAssign( type = "org.astoolkit.commons.collection.api.IIterator" )]
 		public function set iterator( inValue : IIterator ) : void
 		{
 			_onPropertySet( "iterator" );

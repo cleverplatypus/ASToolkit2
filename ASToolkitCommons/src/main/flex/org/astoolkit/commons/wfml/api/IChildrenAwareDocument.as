@@ -17,13 +17,11 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.io.data.api
+package org.astoolkit.commons.wfml.api
 {
 
-	public interface IDataProvider
+	public interface IChildrenAwareDocument
 	{
-		function get providedType() : Class;
-
-		function getData() : *;
+		function childNodeAdded( inNode : Object ) : void;
 	}
 }

@@ -24,35 +24,35 @@ package org.astoolkit.commons.reflection
 
 	import mx.logging.ILogger;
 
-	import org.astoolkit.commons.io.data.api.IDataProvider;
+	import org.astoolkit.commons.io.data.api.IDataBuilder;
 	import org.astoolkit.commons.utils.ObjectCompare;
 	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.commons.utils.isVector;
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
 
-	public final class AutoConfigUtil
+	public final class SelfWireUtil
 	{
-		private static const LOGGER : ILogger = getLogger( AutoConfigUtil );
+		private static const LOGGER : ILogger = getLogger( SelfWireUtil );
 
 		//TODO: implement inheritance-tree-safe auto-config fields assignment to best match target fields
 		// 		implement support for IComponent.pid (pid marked children can be assigned even to 
-		//		fields with no [AutoConfig] annotation)
-		public static function autoConfig(
+		//		fields with no [AutoAssign] annotation)
+		public static function autoAssign(
 			inTarget : ISelfWiring,
-			inChildren : Array ) : Vector.<PropertyDataProviderInfo>
+			inChildren : Array ) : Vector.<PropertyDataBuilderInfo>
 		{
 			if( inChildren == null || inChildren.length == 0 )
 				return null;
-			var deferredConfigs : Vector.<PropertyDataProviderInfo> = new Vector.<PropertyDataProviderInfo>();
+			var deferredConfigs : Vector.<PropertyDataBuilderInfo> = new Vector.<PropertyDataBuilderInfo>();
 			var autoConfigFields : Vector.<Field> =
 				Type.forType( inTarget )
-				.getFieldsWithAnnotation( AutoConfig );
+				.getFieldsWithAnnotation( AutoAssign );
 			autoConfigFields = autoConfigFields.sort(
 				function( inA : Field, inB : Field ) : int
 				{
-					//TODO: handle multiple [AutoConfig] annotations
-					var aAnnotation : AutoConfig = AutoConfig( inA.getAnnotationsOfType( AutoConfig )[ 0 ] );
-					var bAnnotation : AutoConfig = AutoConfig( inB.getAnnotationsOfType( AutoConfig )[ 0 ] );
+					//TODO: handle multiple [AutoAssign] annotations
+					var aAnnotation : AutoAssign = AutoAssign( inA.getAnnotationsOfType( AutoAssign )[ 0 ] );
+					var bAnnotation : AutoAssign = AutoAssign( inB.getAnnotationsOfType( AutoAssign )[ 0 ] );
 					var aType : Class = aAnnotation.match != null ? aAnnotation.match : inA.type;
 					var bType : Class = bAnnotation.match != null ? bAnnotation.match : inB.type;
 					if( aType === Object )
@@ -98,9 +98,9 @@ package org.astoolkit.commons.reflection
 						child.assigned = true;
 						continue;
 					}
-					var annotations : Vector.<IAnnotation> = f.getAnnotationsOfType( AutoConfig );
-					var annotation : AutoConfig = annotations != null && annotations.length > 0 ?
-						annotations[ 0 ] as AutoConfig : null;
+					var annotations : Vector.<IAnnotation> = f.getAnnotationsOfType( AutoAssign );
+					var annotation : AutoAssign = annotations != null && annotations.length > 0 ?
+						annotations[ 0 ] as AutoAssign : null;
 					var type : Class = annotation.match ? annotation.match : f.type;
 
 					if( child.object is type )
@@ -111,13 +111,13 @@ package org.astoolkit.commons.reflection
 						break;
 					}
 
-					if( child.object is IDataProvider &&
-						IDataProvider( child.object ).providedType == type )
+					if( child.object is IDataBuilder &&
+						IDataBuilder( child.object ).builtDataType == type )
 					{
 						deferredConfigs.push(
-							PropertyDataProviderInfo.create(
+							PropertyDataBuilderInfo.create(
 							f.name,
-							child.object as IDataProvider ) );
+							child.object as IDataBuilder ) );
 						child.name = f.name;
 						child.assigned = true;
 						break;
@@ -128,14 +128,14 @@ package org.astoolkit.commons.reflection
 		}
 
 		/**
-		 * Processes <code>IDataProvider</code> descriptors on the target object.
+		 * Processes <code>IDataBuilder</code> descriptors on the target object.
 		 * This is usually called repeteadly before the target object consumes
 		 * its properties and allows changes in the data provider settings
 		 * to be reflected in the target object configuration
 		 */
-		public static function processDataProviders( inTarget : Object, inConfig : Vector.<PropertyDataProviderInfo> ) : void
+		public static function processDataBuilders( inTarget : Object, inConfig : Vector.<PropertyDataBuilderInfo> ) : void
 		{
-			for each( var propConfig : PropertyDataProviderInfo in inConfig )
+			for each( var propConfig : PropertyDataBuilderInfo in inConfig )
 			{
 				inTarget[ propConfig.name ] = propConfig.dataProvider.getData();
 			}

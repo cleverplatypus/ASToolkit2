@@ -33,7 +33,7 @@ package org.astoolkit.workflow.task.misc
 
 		private var _source : Object;
 
-		[AutoConfig]
+		[AutoAssign]
 		public var includeCondition : IConditionalExpression;
 
 		[InjectPipeline]

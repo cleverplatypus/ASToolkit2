@@ -72,7 +72,7 @@ package org.astoolkit.workflow.core
 		 */
 		private var _stringExpression : String;
 
-		[AutoConfig( order = "2" )]
+		[AutoAssign( order = "2" )]
 		/**
 		 * (optional) the tasks to enable with <code>condition == false</code>
 		 */
@@ -81,7 +81,7 @@ package org.astoolkit.workflow.core
 			_isFalseTask = inValue;
 		}
 
-		[AutoConfig( order = "1" )]
+		[AutoAssign( order = "1" )]
 		/**
 		 * the tasks to enable with <code>condition == true</code>
 		 */
@@ -90,7 +90,7 @@ package org.astoolkit.workflow.core
 			_isTrueTask = inValue;
 		}
 
-		[AutoConfig( type = "org.astoolkit.commons.conditional.api.IConditionalExpression" )]
+		[AutoAssign( type = "org.astoolkit.commons.conditional.api.IConditionalExpression" )]
 		public function set condition( inValue : Object ) : void
 		{
 			if( inValue is Boolean )

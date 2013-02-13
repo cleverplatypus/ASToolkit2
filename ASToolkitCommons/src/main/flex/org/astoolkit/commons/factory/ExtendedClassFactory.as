@@ -23,21 +23,21 @@ package org.astoolkit.commons.factory
 	import flash.utils.getQualifiedClassName;
 
 	import org.astoolkit.commons.factory.api.IExtendedFactory;
-	import org.astoolkit.commons.io.data.api.IDataProvider;
+	import org.astoolkit.commons.io.data.api.IDataBuilder;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.reflection.AutoConfigUtil;
-	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
+	import org.astoolkit.commons.reflection.SelfWireUtil;
+	import org.astoolkit.commons.reflection.PropertyDataBuilderInfo;
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
 
-	[DefaultProperty("selfWiringChildren")]
+	[DefaultProperty( "selfWiringChildren" )]
 	public class ExtendedClassFactory implements IExtendedFactory, ISelfWiring
 	{
 
-		public static function create( 
-			inType : Class, 
-			inProperties : Object = null, 
-			inFactoryMethodArguments:Array=null, 
-			inFactoryMethod:String=null ) : ExtendedClassFactory
+		public static function create(
+			inType : Class,
+			inProperties : Object = null,
+			inFactoryMethodArguments : Array = null,
+			inFactoryMethod : String = null ) : ExtendedClassFactory
 		{
 			var out : ExtendedClassFactory = new ExtendedClassFactory();
 			out._type = inType;
@@ -63,20 +63,20 @@ package org.astoolkit.commons.factory
 
 		protected var _type : Class;
 
-		private var _autoConfigDataProviders : Vector.<PropertyDataProviderInfo>;
+		private var _autoConfigDataProviders : Vector.<PropertyDataBuilderInfo>;
 
 		public function set selfWiringChildren( inValue : Array ) : void
 		{
-			_selfWiringChildren  = inValue;
+			_selfWiringChildren = inValue;
 		}
 
-		public function set factoryMethod(inValue:String) : void
+		public function set factoryMethod( inValue : String ) : void
 		{
 			_factoryMethod = inValue;
 		}
 
-		[AutoConfig]
-		public function set factoryMethodArguments(inValue:Array) : void
+		[AutoAssign]
+		public function set factoryMethodArguments( inValue : Array ) : void
 		{
 			_factoryMethodArguments = inValue;
 		}
@@ -86,26 +86,26 @@ package org.astoolkit.commons.factory
 			return _pid;
 		}
 
-		public function set pid(value:String) : void
+		public function set pid( value : String ) : void
 		{
 			_pid = value;
 		}
 
-		public function set properties(inValue:Object) : void
+		public function set properties( inValue : Object ) : void
 		{
 			_defaultProperties = inValue;
 		}
 
-		public function set type(inValue:Class) : void
+		public function set type( inValue : Class ) : void
 		{
 			_type = inValue;
 		}
 
-		public function getInstance( 
-			inType : Class, 
-			inProperties : Object = null, 
-			inFactoryMethodArguments:Array=null, 
-			inFactoryMethod:String=null ) : *
+		public function getInstance(
+			inType : Class,
+			inProperties : Object = null,
+			inFactoryMethodArguments : Array = null,
+			inFactoryMethod : String = null ) : *
 		{
 			var out : Object;
 
@@ -120,15 +120,15 @@ package org.astoolkit.commons.factory
 				{
 					for each( var arg : Object in inFactoryMethodArguments )
 					{
-						if( arg is IDataProvider )
+						if( arg is IDataBuilder )
 						{
-							var resolved : * = IDataProvider( arg ).getData();
+							var resolved : * = IDataBuilder( arg ).getData();
 
 							if( resolved === undefined &&
 								arg is IDeferrableProcess &&
 								IDeferrableProcess( arg ).isProcessDeferred() )
 							{
-								throw new Error( 
+								throw new Error(
 									"Deferred data providers must be resolved " +
 									"before calling getInstance/newInstance" );
 							}
@@ -163,13 +163,13 @@ package org.astoolkit.commons.factory
 		{
 			_document = inDocument;
 			_id = inId;
-			_autoConfigDataProviders  = AutoConfigUtil.autoConfig( this, _selfWiringChildren );
+			_autoConfigDataProviders = SelfWireUtil.autoAssign( this, _selfWiringChildren );
 		}
 
 		public function newInstance() : *
 		{
 			if( _autoConfigDataProviders )
-				AutoConfigUtil.processDataProviders( this, _autoConfigDataProviders );
+				SelfWireUtil.processDataBuilders( this, _autoConfigDataProviders );
 
 			return getInstance( _type, _defaultProperties, _factoryMethodArguments, _factoryMethod );
 		}

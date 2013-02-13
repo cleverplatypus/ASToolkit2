@@ -22,7 +22,7 @@ package org.astoolkit.commons.wfml.filesystem
 
 	import flash.filesystem.File;
 	
-	import org.astoolkit.commons.wfml.IComponent;
+	import org.astoolkit.commons.wfml.api.IComponent;
 
 	public final class FileNode extends File implements IComponent
 	{

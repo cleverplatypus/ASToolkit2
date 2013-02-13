@@ -20,7 +20,7 @@ Version 2.x
 package org.astoolkit.commons.io.transform.api
 {
 
-	import org.astoolkit.commons.wfml.IComponent;
+	import org.astoolkit.commons.wfml.api.IComponent;
 
 	public interface IIODataTransformer extends IComponent
 	{

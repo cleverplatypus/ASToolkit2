@@ -73,7 +73,7 @@ package org.astoolkit.workflow.task.misc
 		public var outputClass : * = Array;
 
 		[InjectPipeline]
-		[AutoConfig(type="Array")]
+		[AutoAssign(type="Array")]
 		/**
 		 * a <code>Array, Vector.&lt;&#42;&gt;, IList</code> object
 		 */
