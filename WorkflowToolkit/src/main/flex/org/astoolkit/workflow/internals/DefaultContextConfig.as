@@ -26,6 +26,7 @@ package org.astoolkit.workflow.internals
 
 	import org.astoolkit.commons.collection.DefaultIteratorFactory;
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
+	import org.astoolkit.commons.configuration.api.IObjectConfigurer;
 	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluatorRegistry;
 	import org.astoolkit.commons.factory.*;
 	import org.astoolkit.commons.factory.api.IExtendedFactory;

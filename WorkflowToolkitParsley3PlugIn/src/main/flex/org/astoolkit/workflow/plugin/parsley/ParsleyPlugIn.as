@@ -22,6 +22,8 @@ package org.astoolkit.workflow.plugin.parsley
 
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
+
+	import org.astoolkit.commons.configuration.api.IObjectConfigurer;
 	import org.astoolkit.commons.reflection.ManagedObject;
 	import org.astoolkit.commons.reflection.Type;
 	import org.astoolkit.workflow.api.*;

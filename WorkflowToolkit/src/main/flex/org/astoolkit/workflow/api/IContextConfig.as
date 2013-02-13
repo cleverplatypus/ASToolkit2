@@ -26,6 +26,7 @@ package org.astoolkit.workflow.api
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 	import org.astoolkit.workflow.config.api.IObjectPropertyDefaultValue;
+	import org.astoolkit.commons.configuration.api.IObjectConfigurer;
 
 	/**
 	 * Contract for an IWorkflowContext configuration object.

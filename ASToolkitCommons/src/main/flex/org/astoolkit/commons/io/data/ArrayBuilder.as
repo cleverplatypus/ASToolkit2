@@ -23,13 +23,13 @@ package org.astoolkit.commons.io.data
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
 	import org.astoolkit.commons.io.data.api.IDataProvider;
 	import org.astoolkit.commons.reflection.AutoConfigUtil;
-	import org.astoolkit.commons.wfml.IAutoConfigurable;
+	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.commons.wfml.IComponent;
 
-	[DefaultProperty("autoConfigChildren")]
-	public class ArrayBuilder implements IDataProvider, IComponent, IAutoConfigurable
+	[DefaultProperty("selfWiringChildren")]
+	public class ArrayBuilder implements IDataProvider, IComponent, ISelfWiring
 	{
-		private var _autoConfigChildren : Array;
+		private var _selfWiringChildren : Array;
 
 		private var _document : Object;
 
@@ -37,9 +37,9 @@ package org.astoolkit.commons.io.data
 
 		private var _pid:String;
 
-		public function set autoConfigChildren( inValue : Array ) : void
+		public function set selfWiringChildren( inValue : Array ) : void
 		{
-			_autoConfigChildren = inValue;
+			_selfWiringChildren = inValue;
 		}
 
 		[AutoConfig]
@@ -80,7 +80,7 @@ package org.astoolkit.commons.io.data
 		public function initialized( inDocument : Object, inId : String ) : void
 		{
 			_document  = inDocument;
-			AutoConfigUtil.autoConfig( this, _autoConfigChildren );
+			AutoConfigUtil.autoConfig( this, _selfWiringChildren );
 		}
 	}
 }

@@ -31,16 +31,16 @@ package org.astoolkit.commons.io.data
 	import org.astoolkit.commons.reflection.AutoConfigUtil;
 	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
 	import org.astoolkit.commons.utils.getLogger;
-	import org.astoolkit.commons.wfml.IAutoConfigurable;
+	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.commons.wfml.IChildrenAwareDocument;
 	import org.astoolkit.commons.wfml.IComponent;
 
-	[DefaultProperty("autoConfigChildren")]
-	public class AbstractBuilder implements IDataProvider, IAutoConfigurable, IFactoryResolverClient, IComponent, IDeferrableProcess
+	[DefaultProperty("selfWiringChildren")]
+	public class AbstractBuilder implements IDataProvider, ISelfWiring, IFactoryResolverClient, IComponent, IDeferrableProcess
 	{
 		private static const LOGGER : ILogger = getLogger( AbstractBuilder );
 
-		protected var _autoConfigChildren : Array;
+		protected var _selfWiringChildren : Array;
 
 		protected var _deferredExecutionWatchers : Vector.<Function>;
 
@@ -58,9 +58,9 @@ package org.astoolkit.commons.io.data
 
 		protected var _providedType : Class;
 
-		public function set autoConfigChildren( inValue : Array ) : void
+		public function set selfWiringChildren( inValue : Array ) : void
 		{
-			_autoConfigChildren  = inValue;
+			_selfWiringChildren  = inValue;
 		}
 
 		[AutoConfig]
@@ -122,7 +122,7 @@ package org.astoolkit.commons.io.data
 
 		protected function initAutoConfigContainer() : void
 		{
-			_propertiesDataProviderInfo = AutoConfigUtil.autoConfig( this, _autoConfigChildren );
+			_propertiesDataProviderInfo = AutoConfigUtil.autoConfig( this, _selfWiringChildren );
 		}
 
 		protected function notifyDeferredProcessWatchers() : void

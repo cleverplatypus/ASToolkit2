@@ -27,10 +27,10 @@ package org.astoolkit.commons.factory
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.reflection.AutoConfigUtil;
 	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
-	import org.astoolkit.commons.wfml.IAutoConfigurable;
+	import org.astoolkit.commons.configuration.api.ISelfWiring;
 
-	[DefaultProperty("autoConfigChildren")]
-	public class ExtendedClassFactory implements IExtendedFactory, IAutoConfigurable
+	[DefaultProperty("selfWiringChildren")]
+	public class ExtendedClassFactory implements IExtendedFactory, ISelfWiring
 	{
 
 		public static function create( 
@@ -47,7 +47,7 @@ package org.astoolkit.commons.factory
 			return out;
 		}
 
-		private var _autoConfigChildren : Array;
+		private var _selfWiringChildren : Array;
 
 		private var _document : Object;
 
@@ -65,9 +65,9 @@ package org.astoolkit.commons.factory
 
 		private var _autoConfigDataProviders : Vector.<PropertyDataProviderInfo>;
 
-		public function set autoConfigChildren( inValue : Array ) : void
+		public function set selfWiringChildren( inValue : Array ) : void
 		{
-			_autoConfigChildren  = inValue;
+			_selfWiringChildren  = inValue;
 		}
 
 		public function set factoryMethod(inValue:String) : void
@@ -163,7 +163,7 @@ package org.astoolkit.commons.factory
 		{
 			_document = inDocument;
 			_id = inId;
-			_autoConfigDataProviders  = AutoConfigUtil.autoConfig( this, _autoConfigChildren );
+			_autoConfigDataProviders  = AutoConfigUtil.autoConfig( this, _selfWiringChildren );
 		}
 
 		public function newInstance() : *

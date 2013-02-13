@@ -36,7 +36,7 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.commons.utils.isCollection;
 	import org.astoolkit.workflow.annotation.Featured;
 	import org.astoolkit.workflow.api.IContextAwareElement;
-	import org.astoolkit.workflow.api.IObjectConfigurer;
+	import org.astoolkit.commons.configuration.api.IObjectConfigurer;
 	import org.astoolkit.workflow.api.IWorkflowContext;
 
 	public class ContextObjectConfigurer implements IObjectConfigurer
@@ -49,10 +49,10 @@ package org.astoolkit.workflow.internals
 
 		public function ContextObjectConfigurer( inContext : IWorkflowContext )
 		{
-			_context  = inContext;
+			_context = inContext;
 		}
 
-		public function configureObjects(inObjects:Array, inDocument:Object) : void
+		public function configureObjects( inObjects : Array, inDocument : Object ) : void
 		{
 			if( inObjects && inObjects.length > 0 )
 			{
@@ -72,7 +72,7 @@ package org.astoolkit.workflow.internals
 		{
 			if( !_configuredObjects.hasOwnProperty( UIDUtil.getUID( inObject ) ) )
 			{
-				LOGGER.debug( 
+				LOGGER.debug(
 					"Workflow context configuring object: {0}",
 					getQualifiedClassName( inObject ) );
 
@@ -96,16 +96,16 @@ package org.astoolkit.workflow.internals
 				}
 
 				if( inObject is IIODataTransformerClient )
-					IIODataTransformerClient( inObject ).dataTransformerRegistry = 
+					IIODataTransformerClient( inObject ).dataTransformerRegistry =
 						_context.config.dataTransformerRegistry;
 
 				if( inObject is IIODataSourceClient )
-					IIODataSourceClient( inObject ).sourceResolverDelegate = 
+					IIODataSourceClient( inObject ).sourceResolverDelegate =
 						_context.dataSourceResolverDelegate;
 
 				if( inObject is IFactoryResolverClient )
 					IFactoryResolverClient( inObject ).factoryResolver = _context.config;
-				_configuredObjects[  UIDUtil.getUID( inObject ) ] = true;
+				_configuredObjects[ UIDUtil.getUID( inObject ) ] = true;
 			}
 
 			//TODO: implement set-defaults 
@@ -113,7 +113,7 @@ package org.astoolkit.workflow.internals
 
 			for each( var fi : Field in ci.getFieldsWithAnnotation( Featured ) )
 			{
-				LOGGER.debug( 
+				LOGGER.debug(
 					"{0} has featured property: {1}",
 					getQualifiedClassName( inObject ),
 					fi.name );

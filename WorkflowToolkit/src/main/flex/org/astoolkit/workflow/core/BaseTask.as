@@ -44,11 +44,11 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.workflow.constant.*;
 	import org.astoolkit.workflow.internals.ContextVariablesProvider;
 
-	[Exclude( name="ENV", kind="property" )]
-	[Exclude( name="delegate", kind="property" )]
-	[Exclude( name="currentProgress", kind="property" )]
-	[Exclude( name="context", kind="property" )]
-	[Exclude( name="parent", kind="property" )]
+	[Exclude( name = "ENV", kind = "property" )]
+	[Exclude( name = "delegate", kind = "property" )]
+	[Exclude( name = "currentProgress", kind = "property" )]
+	[Exclude( name = "context", kind = "property" )]
+	[Exclude( name = "parent", kind = "property" )]
 	/**
 	 * dispatched only once, when the root workflow begins.
 	 *
@@ -89,13 +89,34 @@ package org.astoolkit.workflow.core
 		 */
 		private static const LOGGER : ILogger = getLogger( BaseElement );
 
+		/**
+		 * @private
+		 *
+		 * When set to true, execution of the task is deferred. This can happen
+		 * during the wakeup phase, when a property needs to be processed asynchronously
+		 * before proceeding.
+		 */
 		private var _configDeferred : Boolean;
 
-		private var _deferredExecutionWatchers:Vector.<Function>;
+		/**
+		 * @private
+		 *
+		 * a list of objects to be notified when this task is ready to be executed after
+		 * going on hold for async configuration
+		 */
+		private var _deferredExecutionWatchers : Vector.<Function>;
 
-		private var _delayHasElapsed:Boolean;
+		/**
+		 * @private
+		 *
+		 * true if this task has a delay > 0 and such delay has elapsed
+		 */
+		private var _delayHasElapsed : Boolean;
 
-		private var _delayTimer:Timer;
+		/**
+		 * @private
+		 */
+		private var _delayTimer : Timer;
 
 		/**
 		 * @private
@@ -288,7 +309,7 @@ package org.astoolkit.workflow.core
 			return _thread;
 		}
 
-		public function set dataTransformerRegistry( inRegistry : IIODataTransformerRegistry) : void
+		public function set dataTransformerRegistry( inRegistry : IIODataTransformerRegistry ) : void
 		{
 			_dataTransformerRegistry = inRegistry;
 		}
@@ -328,8 +349,9 @@ package org.astoolkit.workflow.core
 		 * </listing>
 		 *
 		 * @see org.astoolkit.workflow.core.ExitStatus
-	 * @inheritDoc
-																																					 */
+		 * @inheritDoc
+		*/
+
 		public function set exitStatus( inStatus : ExitStatus ) : void
 		{
 			_exitStatus = inStatus;
@@ -348,9 +370,9 @@ package org.astoolkit.workflow.core
 			_failureMessage = inValue;
 		}
 
-		[Inspectable( 
-			defaultValue="cascade", 
-			enumeration="cascade,abort,suspend,ignore,continue,log-debug,log-info,log-warn,log-error" )]
+		[Inspectable(
+			defaultValue = "cascade",
+			enumeration = "cascade,abort,suspend,ignore,continue,log-debug,log-info,log-warn,log-error" )]
 		/**
 		 * @inheritDoc
 		 */
@@ -543,7 +565,7 @@ package org.astoolkit.workflow.core
 		 * <code>fail</code>: call fail()<br>
 		 * <code>skip</code>: ignore this task and go ahead<br>
 		 */
-		[Inspectable( defaultValue="ignore", enumeration="ignore,skip,fail" )]
+		[Inspectable( defaultValue = "ignore", enumeration = "ignore,skip,fail" )]
 		public function set invalidPipelinePolicy( inValue : String ) : void
 		{
 			_invalidPipelinePolicy = inValue;
@@ -554,8 +576,8 @@ package org.astoolkit.workflow.core
 			return _outlet;
 		}
 
-		[AutoConfig(match="org.astoolkit.commons.mapping.api.IPropertiesMapper")]
-		[AutoConfig(match="org.astoolkit.commons.mapping.api.IPropertiesMapperFactory")]
+		[AutoConfig( match = "org.astoolkit.commons.mapping.api.IPropertiesMapper" )]
+		[AutoConfig( match = "org.astoolkit.commons.mapping.api.IPropertiesMapperFactory" )]
 		/**
 		 * the destination of the task's output data.
 		 * <p>Possible values:
@@ -611,7 +633,7 @@ package org.astoolkit.workflow.core
 			_outputFilter = inValue;
 		}
 
-		[Inspectable( enumeration="auto", defaultValue="auto" )]
+		[Inspectable( enumeration = "auto", defaultValue = "auto" )]
 		public function set outputKind( inValue : String ) : void
 		{
 			_outputKind = inValue;
@@ -851,10 +873,10 @@ package org.astoolkit.workflow.core
 
 					if( value === undefined )
 					{
-						if( prop.dataProvider is IDeferrableProcess && 
+						if( prop.dataProvider is IDeferrableProcess &&
 							IDeferrableProcess( prop.dataProvider ).isProcessDeferred() )
 						{
-							_configDeferred  = true;
+							_configDeferred = true;
 							IDeferrableProcess( prop.dataProvider )
 								.addDeferredProcessWatcher( onDeferredConfigPropertyComplete );
 							return;
@@ -870,8 +892,8 @@ package org.astoolkit.workflow.core
 
 			if( _delay > 0 && !_delayHasElapsed )
 			{
-				_delayTimer.addEventListener( 
-					TimerEvent.TIMER, 
+				_delayTimer.addEventListener(
+					TimerEvent.TIMER,
 					threadSafe( onDelayTimeout ) );
 				_delayTimer.reset();
 				_delayTimer.start();
@@ -923,7 +945,7 @@ package org.astoolkit.workflow.core
 				failurePolicy == FailurePolicy.ABORT )
 				LOGGER.error(
 					"Task {0}:\"{1}\" failed. Reason: {2} \nData:\n{3}",
-					description, 
+					description,
 					getQualifiedClassName( this ),
 					inMessage,
 					_inputData );
@@ -1026,16 +1048,16 @@ package org.astoolkit.workflow.core
 					}
 					else if( annotation.filterText != null )
 					{
-						this[ field.name ] = 
+						this[ field.name ] =
 							_context
 							.config
 							.dataTransformerRegistry
-							.getTransformer( 
-							data, 
+							.getTransformer(
+							data,
 							annotation.filterText )
 							.transform(
-							data, 
-							annotation.filterText, 
+							data,
+							annotation.filterText,
 							this );
 					}
 				}

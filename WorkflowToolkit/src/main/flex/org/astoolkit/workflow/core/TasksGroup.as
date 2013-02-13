@@ -45,7 +45,7 @@ package org.astoolkit.workflow.core
 	/**
 	 * This is one of the core Workflow Toolkit's classes.
 	 *
-	 * <p>A <code>Do</code> node represents a group of tasks executed either as a sequence or in
+	 * <p>A <code>TasksGroup</code> (<b>Do</b> node) represents a group of tasks executed either as a sequence or in
 	 * parellel according to <code>flow</code> property.</p>
 	 * <p>They can iterate over an <code>IIterator</code> or in a infinite loop.
 	 * The <code>dataProvider</code> property can be set to any value for which a

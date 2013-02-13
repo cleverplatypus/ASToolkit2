@@ -25,7 +25,7 @@ package org.astoolkit.commons.io.data
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
 	import org.astoolkit.commons.eval.Resolve;
 
-	[DefaultProperty("autoConfigChildren")]
+	[DefaultProperty("selfWiringChildren")]
 	public class MethodBuilder extends AbstractBuilder
 	{
 

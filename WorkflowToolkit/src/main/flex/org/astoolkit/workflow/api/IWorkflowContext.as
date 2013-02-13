@@ -28,6 +28,7 @@ package org.astoolkit.workflow.api
 	import org.astoolkit.commons.io.transform.api.IIODataSourceResolverDelegate;
 	import org.astoolkit.workflow.internals.ContextVariablesProvider;
 	import org.astoolkit.workflow.internals.SuspendableFunctionRegistry;
+	import org.astoolkit.commons.configuration.api.IObjectConfigurer;
 
 	[Bindable]
 	/**

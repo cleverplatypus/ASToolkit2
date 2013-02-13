@@ -30,6 +30,7 @@ package org.astoolkit.workflow.internals
 
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
+	import org.astoolkit.commons.configuration.api.IObjectConfigurer;
 	import org.astoolkit.commons.eval.api.IRuntimeExpressionEvaluator;
 	import org.astoolkit.commons.factory.*;
 	import org.astoolkit.commons.factory.api.*;
@@ -46,7 +47,7 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.workflow.conditional.WorkflowDataSourceResolverDelegate;
 	import org.astoolkit.workflow.constant.TaskStatus;
 
-	[Event( name="initialized", type="flash.events.Event" )]
+	[Event( name = "initialized", type = "flash.events.Event" )]
 	/**
 	 * @inherit
 	 */
@@ -203,8 +204,8 @@ package org.astoolkit.workflow.internals
 			//dummy setter
 		}
 
-		public function addTaskLiveCycleWatcher( 
-			inValue : ITaskLiveCycleWatcher, 
+		public function addTaskLiveCycleWatcher(
+			inValue : ITaskLiveCycleWatcher,
 			inGroupScope : ITasksGroup = null ) : void
 		{
 			_taskLiveCycleWatchers.push( inValue );
@@ -236,14 +237,14 @@ package org.astoolkit.workflow.internals
 					configurer.configureObjects( inObjects, inDocument );
 		}
 
-		public function fail(inSource:Object, inMessage:String) : void
+		public function fail( inSource : Object, inMessage : String ) : void
 		{
 			LOGGER.fatal( "An unexpected error happened:\n{0}", inMessage );
 			owner.rootTask.abort();
 		}
 
-		public function getPooledFactory( 
-			inClass : Class, 
+		public function getPooledFactory(
+			inClass : Class,
 			inDelegate : IPooledFactoryDelegate = null ) : IPooledFactory
 		{
 			var factory : PooledFactory = _pooledFactories[ inClass ];
@@ -257,7 +258,7 @@ package org.astoolkit.workflow.internals
 		{
 			_owner = inOwner;
 			LOGGER.info( "Initializing context" );
-			_objectsConfigurer  = new ContextObjectConfigurer( this );
+			_objectsConfigurer = new ContextObjectConfigurer( this );
 			_variables = new ContextVariablesProvider( this );
 			_dataSourceResolverDelegate = new WorkflowDataSourceResolverDelegate( this );
 			_pooledFactories = {};
@@ -291,6 +292,7 @@ package org.astoolkit.workflow.internals
 				_taskLiveCycleWatchers.splice( _taskLiveCycleWatchers.indexOf( inValue ), 1 );
 		}
 
+		//TODO: move this to the config API
 		public function resolveIterator( inSource : Object, inIteratorConfig : Object = null ) : IIterator
 		{
 			var out : IIterator =
@@ -318,7 +320,7 @@ package org.astoolkit.workflow.internals
 		{
 			var disabledExtensionsLUT : Object = {};
 
-			if( inObject is IContextPlugIn && 
+			if( inObject is IContextPlugIn &&
 				IContextPlugIn( inObject ).extensions )
 			{
 				for each( var ext : Class in IContextPlugIn( inObject ).disabledExtensions )

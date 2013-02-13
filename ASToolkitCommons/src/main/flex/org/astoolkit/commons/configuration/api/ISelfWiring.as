@@ -17,13 +17,17 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.wfml
+package org.astoolkit.commons.configuration.api
 {
 
 	import mx.core.IMXMLObject;
 
-	public interface IAutoConfigurable extends IMXMLObject
+	/**
+	 * Contract for an object with children which are automatically assigned
+	 * to the former's properties according to type and other rules.
+	 */
+	public interface ISelfWiring extends IMXMLObject
 	{
-		function set autoConfigChildren( inValue : Array ) : void;
+		function set selfWiringChildren( inValue : Array ) : void;
 	}
 }

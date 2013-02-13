@@ -27,12 +27,12 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.wfml.IAutoConfigurable;
+	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.workflow.api.*;
 
 	public class If extends BaseElement implements ITaskProxy,
 		IDeferrableProcess,
-		IAutoConfigurable,
+		ISelfWiring,
 		IPipelineConsumer,
 		IIODataTransformerClient
 	{

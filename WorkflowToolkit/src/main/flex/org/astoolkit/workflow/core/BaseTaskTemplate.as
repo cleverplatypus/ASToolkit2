@@ -22,13 +22,15 @@ package org.astoolkit.workflow.core
 
 	import flash.utils.flash_proxy;
 	import flash.utils.getQualifiedClassName;
+
 	import mx.rpc.IResponder;
+
+	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.commons.databinding.BindingUtility;
 	import org.astoolkit.commons.databinding.Watch;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.reflection.Type;
-	import org.astoolkit.commons.wfml.IAutoConfigurable;
 	import org.astoolkit.workflow.api.IContextAwareElement;
 	import org.astoolkit.workflow.api.ITaskTemplate;
 	import org.astoolkit.workflow.api.IWorkflowElement;
@@ -38,8 +40,8 @@ package org.astoolkit.workflow.core
 
 	use namespace flash_proxy;
 
-	[DefaultProperty("autoConfigChildren")]
-	public class BaseTaskTemplate extends BaseElement implements ITaskTemplate, IWorkflowTask, IAutoConfigurable
+	[DefaultProperty( "selfWiringChildren" )]
+	public class BaseTaskTemplate extends BaseElement implements ITaskTemplate, IWorkflowTask, ISelfWiring
 	{
 
 		private var _bindings : Vector.<Watch>;
@@ -280,9 +282,9 @@ package org.astoolkit.workflow.core
 				_templateImplementation.parent = parent;
 				_templateImplementation.description = description;
 
-				if( _templateImplementation is IAutoConfigurable )
-					IAutoConfigurable( _templateImplementation )
-						.autoConfigChildren = _autoConfigChildren;
+				if( _templateImplementation is ISelfWiring )
+					ISelfWiring( _templateImplementation )
+						.selfWiringChildren = _selfWiringChildren;
 				_templateImplementation.initialize();
 			}
 			else

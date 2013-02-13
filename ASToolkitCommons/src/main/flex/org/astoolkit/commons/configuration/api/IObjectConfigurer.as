@@ -17,7 +17,7 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.api
+package org.astoolkit.commons.configuration.api
 {
 
 	/**

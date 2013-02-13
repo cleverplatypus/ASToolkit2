@@ -42,7 +42,7 @@ package org.astoolkit.workflow.core
 	 * @see org.astoolkit.workflow.core.BaseTask
 	 * @see org.astoolkit.workflow.core.Group
 	 */
-	[DefaultProperty( "autoConfigChildren" )]
+	[DefaultProperty( "selfWiringChildren" )]
 	public class BaseElement extends ObjectProxy implements IWorkflowElement
 	{
 		/**
@@ -50,7 +50,7 @@ package org.astoolkit.workflow.core
 		 */
 		private static const LOGGER : ILogger = getLogger( BaseElement );
 
-		private var _propertiesSetAtInitTime:Object = {};
+		private var _propertiesSetAtInitTime : Object = {};
 
 		/**
 		 * @private
@@ -60,7 +60,7 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private
 		 */
-		protected var _autoConfigChildren : Array;
+		protected var _selfWiringChildren : Array;
 
 		/**
 		 * @private
@@ -113,7 +113,7 @@ package org.astoolkit.workflow.core
 		 */
 		protected var _pid : String;
 
-		protected var _propertiesDataProviderInfo:Vector.<PropertyDataProviderInfo>;
+		protected var _propertiesDataProviderInfo : Vector.<PropertyDataProviderInfo>;
 
 		/**
 		 * @private
@@ -129,9 +129,9 @@ package org.astoolkit.workflow.core
 			return true;
 		}
 
-		public function set autoConfigChildren( inValue : Array ) : void
+		public function set selfWiringChildren( inValue : Array ) : void
 		{
-			_autoConfigChildren = inValue;
+			_selfWiringChildren = inValue;
 		}
 
 		/**
@@ -214,7 +214,7 @@ package org.astoolkit.workflow.core
 			return _pid;
 		}
 
-		public function set pid( inValue :String) : void
+		public function set pid( inValue : String ) : void
 		{
 			_pid = inValue;
 		}
@@ -274,9 +274,9 @@ package org.astoolkit.workflow.core
 			if( suspendBinding && _document != null )
 				BindingUtility.disableAllBindings( _document, this );
 
-			if( _autoConfigChildren && _autoConfigChildren.length > 0 )
+			if( _selfWiringChildren && _selfWiringChildren.length > 0 )
 			{
-				_propertiesDataProviderInfo = AutoConfigUtil.autoConfig( this, _autoConfigChildren );
+				_propertiesDataProviderInfo = AutoConfigUtil.autoConfig( this, _selfWiringChildren );
 			}
 		}
 
@@ -291,7 +291,9 @@ package org.astoolkit.workflow.core
 				return;
 			_document = inDocument;
 			_id = inId;
-			_onPropertySet = function( inName : String ) : void {};
+			_onPropertySet = function( inName : String ) : void
+			{
+			};
 
 			if( inDocument is IChildrenAwareDocument )
 				IChildrenAwareDocument( inDocument ).childNodeAdded( this );

@@ -20,11 +20,12 @@ Version 2.x
 package org.astoolkit.commons.io.transform.api
 {
 
+	//TODO: review this API. the two setters don't seem to be much correlated
 	public interface IIODataTransformerClient
 	{
 		function set dataTransformerRegistry( inRegistry : IIODataTransformerRegistry ) : void;
 		/**
-		 * a filter for this task's pipeline data.<br><br>
+		 * an object describing how to filter input data.
 		 */
 		function set inputFilter( inValue : Object ) : void;
 	}

@@ -22,23 +22,23 @@ package org.astoolkit.commons.io.data
 
 	import org.astoolkit.commons.io.data.api.IDataProvider;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.wfml.IAutoConfigurable;
+	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.commons.wfml.IComponent;
 
-	[DefaultProperty("autoConfigChildren")]
-	public class DateFormatter implements IDataProvider, IComponent, IAutoConfigurable, IDeferrableProcess
+	[DefaultProperty( "selfWiringChildren" )]
+	public class DateFormatter implements IDataProvider, IComponent, ISelfWiring, IDeferrableProcess
 	{
 		private var _format : String;
 
-		private var _sourceText:String;
+		private var _sourceText : String;
 
-		public function set autoConfigChildren(inValue:Array) : void
+		public function set selfWiringChildren( inValue : Array ) : void
 		{
 			// TODO Auto Generated method stub
 
 		}
 
-		public function set format(value:String) : void
+		public function set format( value : String ) : void
 		{
 			_format = value;
 		}
@@ -48,7 +48,7 @@ package org.astoolkit.commons.io.data
 			return null;
 		}
 
-		public function set pid(inValue:String) : void
+		public function set pid( inValue : String ) : void
 		{
 		}
 
@@ -63,7 +63,7 @@ package org.astoolkit.commons.io.data
 			_sourceText = inValue;
 		}
 
-		public function addDeferredProcessWatcher(inWatcher:Function) : void
+		public function addDeferredProcessWatcher( inWatcher : Function ) : void
 		{
 			// TODO Auto Generated method stub
 
@@ -74,7 +74,7 @@ package org.astoolkit.commons.io.data
 			return null;
 		}
 
-		public function initialized(document:Object, id:String) : void
+		public function initialized( document : Object, id : String ) : void
 		{
 			// TODO Auto Generated method stub
 

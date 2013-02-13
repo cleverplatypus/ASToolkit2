@@ -26,12 +26,12 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.reflection.AutoConfigUtil;
 	import org.astoolkit.commons.reflection.PropertyDataProviderInfo;
-	import org.astoolkit.commons.wfml.IAutoConfigurable;
+	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.workflow.api.IContextConfig;
 	import org.astoolkit.workflow.api.IWorkflowContext;
 	import org.astoolkit.workflow.config.api.IObjectPropertyDefaultValue;
 
-	public class DefaultContextFactory implements IFactory, IAutoConfigurable
+	public class DefaultContextFactory implements IFactory, ISelfWiring
 	{
 		private var _classFactoryMappings : Array;
 
@@ -40,13 +40,13 @@ package org.astoolkit.workflow.internals
 		/**
 		 * @private
 		 */
-		protected var _autoConfigChildren : Array;
+		protected var _selfWiringChildren : Array;
 
 		protected var _propertiesDataProviderInfo:Vector.<PropertyDataProviderInfo>;
 
-		public function set autoConfigChildren( inValue : Array ) : void
+		public function set selfWiringChildren( inValue : Array ) : void
 		{
-			_autoConfigChildren = inValue;
+			_selfWiringChildren = inValue;
 		}
 
 		[ArrayItemType("org.astoolkit.commons.factory.ClassFactoryMapping")]
@@ -74,9 +74,9 @@ package org.astoolkit.workflow.internals
 			{
 				_factory = new ClassFactory( DefaultWorkflowContext );
 
-				if( _autoConfigChildren && _autoConfigChildren.length > 0 )
+				if( _selfWiringChildren && _selfWiringChildren.length > 0 )
 					_propertiesDataProviderInfo = 
-						AutoConfigUtil.autoConfig( this, _autoConfigChildren );
+						AutoConfigUtil.autoConfig( this, _selfWiringChildren );
 			}
 
 			if( _propertiesDataProviderInfo )

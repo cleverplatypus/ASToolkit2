@@ -23,11 +23,11 @@ package org.astoolkit.workflow.api
 	import flash.events.IEventDispatcher;
 
 	import org.astoolkit.commons.collection.api.IIterator;
-	import org.astoolkit.commons.wfml.IAutoConfigurable;
+	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.commons.wfml.IComponent;
 
-	public interface IWorkflowElement extends IContextAwareElement, 
-		IAutoConfigurable, 
+	public interface IWorkflowElement extends IContextAwareElement,
+		ISelfWiring,
 		IComponent
 	{
 		/**

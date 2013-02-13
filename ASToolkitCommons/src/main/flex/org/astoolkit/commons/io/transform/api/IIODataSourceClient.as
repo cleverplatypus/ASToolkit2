@@ -20,6 +20,7 @@ Version 2.x
 package org.astoolkit.commons.io.transform.api
 {
 
+	//TODO: rename source to dataSource?
 	public interface IIODataSourceClient
 	{
 		function set source( inValue : Object ) : void;
