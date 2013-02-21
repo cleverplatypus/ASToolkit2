@@ -29,6 +29,7 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 	import org.astoolkit.commons.ns.astoolkit_private;
 	import org.astoolkit.workflow.api.*;
+	import org.astoolkit.workflow.constant.TaskPhase;
 	import org.astoolkit.workflow.core.ExitStatus;
 
 	use namespace flash_proxy;
@@ -294,7 +295,7 @@ package org.astoolkit.workflow.internals
 			return _taskWatcherPriority;
 		}
 
-		public function set taskWatcherPriority( inValue :int) : void
+		public function set taskWatcherPriority( inValue : int ) : void
 		{
 
 		}
@@ -309,33 +310,7 @@ package org.astoolkit.workflow.internals
 			_local = {};
 		}
 
-		/**
-		 * @private
-		 */
-		public function afterTaskBegin( inTask : IWorkflowTask ) : void
-		{
-			// TODO Auto Generated method stub
-		}
 
-		/**
-		 * @private
-		 */
-		public function afterTaskDataSet( inTask : IWorkflowTask ) : void
-		{
-			// TODO Auto Generated method stub
-		}
-
-		/**
-		 * @private
-		 */
-		public function beforeTaskBegin( inTask : IWorkflowTask ) : void
-		{
-			if( !( inTask is ITasksGroup ) )
-			{
-				astoolkit_private::runningTask = inTask;
-			}
-			astoolkit_private::nextTaskProperties = {};
-		}
 
 		[Deprecated]
 		/**
@@ -372,102 +347,10 @@ package org.astoolkit.workflow.internals
 			return undefined;
 		}
 
-		public function onBeforeContextUnbond( inTask : IWorkflowElement ) : void
-		{
-
-		}
-
 		/**
 		 * @private
 		 */
-		public function onContextBond( inElement : IWorkflowElement ) : void
-		{
-		}
-
-		public function onDeferredTaskResume(inTask:IWorkflowTask) : void
-		{
-			// TODO Auto Generated method stub
-
-		}
-
-		/**
-		 * @private
-		 */
-		public function onTaskAbort( inTask : IWorkflowTask ) : void
-		{
-			// TODO Auto Generated method stub
-		}
-
-		/**
-		 * @private
-		 */
-		public function onTaskBegin( inTask : IWorkflowTask ) : void
-		{
-			// TODO Auto Generated method stub
-		}
-
-		/**
-		 * @private
-		 */
-		public function onTaskComplete( inTask : IWorkflowTask ) : void
-		{
-			if( inTask is ITasksGroup && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
-				delete _namespaces[ UIDUtil.getUID( inTask ) ];
-		}
-
-		public function onTaskDeferExecution(inTask:IWorkflowTask) : void
-		{
-			// TODO Auto Generated method stub
-
-		}
-
-		/**
-		 * @private
-		 */
-		public function onTaskExitStatus( inTask : IWorkflowTask, inStatus : ExitStatus ) : void
-		{
-			if( !inTask.parent )
-				inTask.parent = astoolkit_private::runningTask as ITasksGroup;
-			var n : String = UIDUtil.getUID( inTask.parent );
-
-			if( !_namespaces.hasOwnProperty( n ) )
-				_namespaces[ n ] = {};
-			_namespaces[ n ][ "exitStatus" ] = inStatus;
-		}
-
-		/**
-		 * @private
-		 */
-		public function onTaskFail( inTask : IWorkflowTask, inMessage : String ) : void
-		{
-			if( inTask is ITasksGroup && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
-				delete _namespaces[ UIDUtil.getUID( inTask ) ];
-		}
-
-		/**
-		 * @private
-		 */
-		public function onTaskInitialize( inTask : IWorkflowTask ) : void
-		{
-			// TODO Auto Generated method stub
-		}
-
-		public function onTaskPrepare(inTask:IWorkflowTask) : void
-		{
-		}
-
-		/**
-		 * @private
-		 */
-		public function onTaskSuspend( inTask : IWorkflowTask ) : void
-		{
-			// TODO Auto Generated method stub
-		}
-
-		/**
-		 * @private
-		 */
-		public function onWorkflowCheckingNextTask(
+		public function onGroupCheckingNextTask(
 			inWorkflow : ITasksGroup,
 			inPipelineData : Object ) : void
 		{
@@ -475,7 +358,7 @@ package org.astoolkit.workflow.internals
 			_runningWorkflowPipelineData = inPipelineData;
 		}
 
-		public function propertyIsEnumerable(V:*=null) : Boolean
+		public function propertyIsEnumerable( V : * = null ) : Boolean
 		{
 			return true;
 		}
@@ -602,15 +485,76 @@ package org.astoolkit.workflow.internals
 			return false;
 		}
 
-		public function onTaskProgress(inTask:IWorkflowTask) : void
-		{
-			// TODO Auto Generated method stub
 
-		}
-
-		public function onTaskResume(inTask:IWorkflowTask) : void
+		public function onTaskPhase( inTask : IWorkflowTask, inPhase : String, inData : Object = null ) : void
 		{
-			// TODO Auto Generated method stub
+			if( inPhase == TaskPhase.PREPARED )
+			{
+
+			}
+			else if( inPhase == TaskPhase.RESUMED_DEFERRED_EXECUTION )
+			{
+
+			}
+			else if( inPhase == TaskPhase.AFTER_BEGIN )
+			{
+			}
+			else if( inPhase == TaskPhase.DEFERRING_EXECUTION )
+			{
+			}
+			else if( inPhase == TaskPhase.COMPLETED )
+			{
+				if( inTask is ITasksGroup && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
+					delete _namespaces[ UIDUtil.getUID( inTask ) ];
+			}
+			else if( inPhase == TaskPhase.BEGUN )
+			{
+			}
+			else if( inPhase == TaskPhase.CONTEXT_BOND )
+			{
+			}
+			else if( inPhase == TaskPhase.BEFORE_BEGIN )
+			{
+				if( !( inTask is ITasksGroup ) )
+				{
+					astoolkit_private::runningTask = inTask;
+				}
+				astoolkit_private::nextTaskProperties = {};
+			}
+			else if( inPhase == TaskPhase.DATA_SET )
+			{
+			}
+			else if( inPhase == TaskPhase.RESUMED )
+			{
+			}
+			else if( inPhase == TaskPhase.PROGRESS )
+			{
+			}
+			else if( inPhase == TaskPhase.SUSPENDED )
+			{
+			}
+			else if( inPhase == TaskPhase.INITIALISED )
+			{
+			}
+			else if( inPhase == TaskPhase.FAILED )
+			{
+				if( inTask is ITasksGroup && _namespaces.hasOwnProperty( UIDUtil.getUID( inTask ) ) )
+					delete _namespaces[ UIDUtil.getUID( inTask ) ];
+			}
+			else if( inPhase == TaskPhase.ABORTED )
+			{
+			}
+			else if( inPhase == TaskPhase.EXIT_STATUS )
+			{
+				if( !inTask.parent )
+					inTask.parent = astoolkit_private::runningTask as ITasksGroup;
+				var n : String = UIDUtil.getUID( inTask.parent );
+
+				if( !_namespaces.hasOwnProperty( n ) )
+					_namespaces[ n ] = {};
+				_namespaces[ n ][ "exitStatus" ] = inTask.exitStatus;
+			}
+
 
 		}
 

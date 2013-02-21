@@ -17,17 +17,31 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.workflow.api
+package org.astoolkit.workflow.plugin.audit
 {
 
-	//TODO: check livecycle of plug-ins. it looks like certain extensions should
-	//		have a context scope rather than context-factory scope. That is
-	//		if an extension has state, then it should be instanciated using a factory
-	//		rather than by direct instanciation. Or: 
-	//		function get statefulExtensions() : Array;
-	public interface IContextPlugIn
+	public class AuditTask
 	{
-		function get extensions() : Array;
-		function init() : void;
+		public static const auditAll : AuditTask = createAuditAll();
+
+		public var task : Object;
+
+		public var recordOutput : Boolean;
+
+		public var recordExitStatus : Boolean;
+
+		public var recordFilteredInput : Boolean;
+
+		public var recordRawInput : Boolean;
+
+		private static function createAuditAll() : AuditTask
+		{
+			var out : AuditTask = new AuditTask();
+			out.recordOutput = true;
+			out.recordExitStatus = true;
+			out.recordFilteredInput = true;
+			out.recordRawInput = true;
+			return out;
+		}
 	}
 }

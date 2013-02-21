@@ -28,8 +28,8 @@ package org.astoolkit.workflow.api
 	import org.astoolkit.commons.process.api.IProcess;
 	import org.astoolkit.commons.wfml.api.IChildrenAwareDocument;
 
-	public interface IWorkflow extends IEventDispatcher, 
-		IChildrenAwareDocument, 
+	public interface IWorkflow extends IEventDispatcher,
+		IChildrenAwareDocument,
 		IIODataTransformerClient,
 		IProcess
 	{
@@ -37,6 +37,7 @@ package org.astoolkit.workflow.api
 		function set contextFactory( inValue : IFactory ) : void;
 		function get rootTask() : IWorkflowTask;
 		function set rootTask( inValue : IWorkflowTask ) : void;
+		function set contextDropIns( inValue : Vector.<Object> ) : void;
 
 	}
 }

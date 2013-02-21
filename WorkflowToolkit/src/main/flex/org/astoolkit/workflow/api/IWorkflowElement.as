@@ -71,6 +71,8 @@ package org.astoolkit.workflow.api
 		 * any allocated resource.</p>
 		 */
 		function cleanUp() : void;
+
+		function releaseContext() : void;
 		/**
 		 * called by parent workflow when root workflow begins.
 		 * <p>Override this method in custom elements to allocate

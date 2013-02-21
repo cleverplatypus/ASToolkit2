@@ -281,7 +281,8 @@ package org.astoolkit.workflow.core
 
 			if( _context )
 				for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-					w.onContextBond( this );
+					w.onTaskPhase( this, TaskPhase.CONTEXT_BOND, _context );
+
 		}
 
 		/**
@@ -700,13 +701,18 @@ package org.astoolkit.workflow.core
 			_status = TaskStatus.ABORTED;
 
 			if( !_exitStatus )
+			{
 				exitStatus = new ExitStatus( ExitStatus.ABORTED );
+
+				for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+					w.onTaskPhase( this, TaskPhase.EXIT_STATUS, _exitStatus );
+			}
 			_thread++;
 
 			//REMOVE: dispatchTaskEvent( WorkflowEvent.ABORTED, this );
 
 			if( _delegate )
-				_delegate.onTaskAbort( this );
+				_delegate.onTaskPhase( this, TaskPhase.ABORTED );
 
 			if( !_parent )
 				cleanUp();
@@ -740,7 +746,7 @@ package org.astoolkit.workflow.core
 			LOGGER.debug( "begin() '{0}' ({1})", description, getQualifiedClassName( this ) );
 
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onTaskBegin( this );
+				w.onTaskPhase( this, TaskPhase.BEGUN );
 			_context.addEventListener( WorkflowEvent.SUSPENDED, onContextSuspended );
 			_context.addEventListener( WorkflowEvent.RESUMED, onContextResumed );
 			_context.runningTask = this;
@@ -759,7 +765,7 @@ package org.astoolkit.workflow.core
 			}
 
 			if( _delegate )
-				_delegate.onTaskBegin( this );
+				_delegate.onTaskPhase( this, TaskPhase.BEGUN );
 		}
 
 		override public function cleanUp() : void
@@ -769,8 +775,16 @@ package org.astoolkit.workflow.core
 			_context.removeEventListener( WorkflowEvent.SUSPENDED, onContextSuspended );
 			_context.removeEventListener( WorkflowEvent.RESUMED, onContextResumed );
 
-			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onBeforeContextUnbond( this );
+
+		}
+
+		override public function releaseContext() : void
+		{
+			var c : IWorkflowContext = _context;
+			super.releaseContext();
+
+			for each( var w : ITaskLiveCycleWatcher in c.taskLiveCycleWatchers )
+				w.onTaskPhase( this, TaskPhase.CONTEXT_UNBOND, c );
 
 		}
 
@@ -785,13 +799,13 @@ package org.astoolkit.workflow.core
 				return;
 
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onTaskInitialize( this );
+				w.onTaskPhase( this, TaskPhase.INITIALISED );
 
 			if( _parent )
 				_status = TaskStatus.IDLE;
 
 			if( _delegate )
-				_delegate.onTaskInitialize( this );
+				_delegate.onTaskPhase( this, TaskPhase.INITIALISED );
 
 			if( _document == null )
 				_document = this;
@@ -819,7 +833,7 @@ package org.astoolkit.workflow.core
 			_exitStatus = null;
 
 			if( _delegate )
-				_delegate.onTaskPrepare( this );
+				_delegate.onTaskPhase( this, TaskPhase.PREPARED );
 		}
 
 		/**
@@ -832,7 +846,7 @@ package org.astoolkit.workflow.core
 				_status = TaskStatus.RUNNING;
 
 				if( _delegate )
-					_delegate.onTaskResume( this );
+					_delegate.onTaskPhase( this, TaskPhase.RESUMED );
 				_context.suspendableFunctions.invokeResumeCallBacks();
 			}
 		}
@@ -847,7 +861,7 @@ package org.astoolkit.workflow.core
 				_status = TaskStatus.SUSPENDED;
 
 				if( _delegate )
-					_delegate.onTaskSuspend( this );
+					_delegate.onTaskPhase( this, TaskPhase.SUSPENDED );
 			}
 		}
 
@@ -909,7 +923,12 @@ package org.astoolkit.workflow.core
 				return;
 
 			if( !exitStatus )
+			{
 				exitStatus = new ExitStatus( ExitStatus.COMPLETE, null, _pipelineData );
+
+				for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+					w.onTaskPhase( this, TaskPhase.EXIT_STATUS, _exitStatus );
+			}
 			LOGGER.debug(
 				"Task '{0}' completed", description );
 
@@ -930,7 +949,7 @@ package org.astoolkit.workflow.core
 			_status = TaskStatus.IDLE;
 
 			if( _delegate )
-				_delegate.onTaskComplete( this );
+				_delegate.onTaskPhase( this, TaskPhase.COMPLETED );
 		}
 
 		/**
@@ -972,7 +991,7 @@ package org.astoolkit.workflow.core
 			_status = TaskStatus.IDLE;
 
 			if( _delegate )
-				_delegate.onTaskFail( this, inMessage );
+				_delegate.onTaskPhase( this, TaskPhase.FAILED, inMessage );
 		}
 
 		/**
@@ -984,7 +1003,7 @@ package org.astoolkit.workflow.core
 				return;
 
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onTaskComplete( this );
+				w.onTaskPhase( this, TaskPhase.COMPLETED );
 
 			if( inOutputData != UNDEFINED && inOutputData !== undefined )
 				_pipelineData = inOutputData;
@@ -1019,7 +1038,12 @@ package org.astoolkit.workflow.core
 				return;
 
 			if( !exitStatus )
+			{
 				exitStatus = new ExitStatus( ExitStatus.FAILED, inMessage )
+
+				for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+					w.onTaskPhase( this, TaskPhase.EXIT_STATUS, _exitStatus );
+			}
 			var args : Array = [ inMessage ].concat( inRest );
 			var message : String = StringUtil.substitute.apply( null, args );
 			_deferredFail( message, _thread );
@@ -1120,7 +1144,14 @@ package org.astoolkit.workflow.core
 		{
 			if( currentThread != inOriginalThread )
 				return;
-			_exitStatus = new ExitStatus( ExitStatus.TIME_OUT );
+
+			if( _exitStatus )
+			{
+				exitStatus = new ExitStatus( ExitStatus.TIME_OUT );
+
+				for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+					w.onTaskPhase( this, TaskPhase.EXIT_STATUS, _exitStatus );
+			}
 			fail( "Task {0} failed because a {1}s timeout occourred",
 				description,
 				Number( _timeout ) / 1000 );
@@ -1137,7 +1168,7 @@ package org.astoolkit.workflow.core
 			if( _currentProgress >= 0 && _currentProgress <= 1 )
 			{
 				if( _delegate )
-					_delegate.onTaskProgress( this );
+					_delegate.onTaskPhase( this, TaskPhase.PROGRESS );
 				/*				dispatchEvent(
 									new PropertyChangeEvent(
 									PropertyChangeEvent.PROPERTY_CHANGE,

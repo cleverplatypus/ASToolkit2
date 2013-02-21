@@ -24,6 +24,7 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.workflow.api.ITasksGroup;
 	import org.astoolkit.workflow.api.IWorkflowElement;
 	import org.astoolkit.workflow.api.IWorkflowTask;
+	import org.astoolkit.workflow.constant.TaskPhase;
 	import org.astoolkit.workflow.core.ExitStatus;
 
 	//TODO: finish implementation
@@ -54,105 +55,61 @@ package org.astoolkit.workflow.internals
 			return _taskWatcherPriority;
 		}
 
-		public function set taskWatcherPriority( inValue :int) : void
+		public function set taskWatcherPriority( inValue : int ) : void
 		{
 			_taskWatcherPriority = inValue;
 		}
 
-		public function afterTaskBegin( inTask : IWorkflowTask ) : void
+		public function onTaskPhase( inTask : IWorkflowTask, inPhase : String, inData : Object = null ) : void
 		{
-			if( afterTaskBeginWatcher != null )
-				afterTaskBeginWatcher( inTask );
-		}
+			if( inPhase == TaskPhase.PREPARED )
+			{
+				if( taskPreparedWatcher is Function )
+					taskPreparedWatcher( inTask );
+			}
+			else if( inPhase == TaskPhase.RESUMED_DEFERRED_EXECUTION )
+			{
+				if( deferredTaskResumeWatcher is Function )
+					deferredTaskResumeWatcher( inTask );
 
-		public function afterTaskDataSet( inTask : IWorkflowTask ) : void
-		{
-			if( taskDataSetWatcher != null )
-				taskDataSetWatcher( inTask );
-		}
+			}
+			else if( inPhase == TaskPhase.AFTER_BEGIN )
+			{
+				if( afterTaskBeginWatcher != null )
+					afterTaskBeginWatcher( inTask );
 
-		public function beforeTaskBegin( inTask : IWorkflowTask ) : void
-		{
-			if( beforeTaskBeginWatcher != null )
-				beforeTaskBeginWatcher( inTask );
-		}
+			}
+			else if( inPhase == TaskPhase.DEFERRING_EXECUTION )
+			{
+				if( taskDeferExecutionWatcher is Function )
+					taskDeferExecutionWatcher( inTask );
+			}
+			else if( inPhase == TaskPhase.COMPLETED )
+			{
+				if( taskCompleteWatcher is Function )
+					taskCompleteWatcher( inTask );
 
-		public function onBeforeContextUnbond( inElement : IWorkflowElement ) : void
-		{
-
-		}
-
-		public function onContextBond( inElement : IWorkflowElement ) : void
-		{
-			if( contextBoundWatcher != null )
-				contextBoundWatcher( inElement );
-		}
-
-		public function onTaskAbort( inTask : IWorkflowTask ) : void
-		{
-		}
-
-		public function onTaskBegin( inTask : IWorkflowTask ) : void
-		{
-			if( taskBeginWatcher is Function )
-				taskBeginWatcher( inTask );
-		}
-
-		public function onTaskComplete( inTask : IWorkflowTask ) : void
-		{
-			if( taskCompleteWatcher is Function )
-				taskCompleteWatcher( inTask );
-		}
-
-		public function onTaskDeferExecution( inTask : IWorkflowTask ) : void
-		{
-			if( taskDeferExecutionWatcher is Function )
-				taskDeferExecutionWatcher( inTask );
-		}
-
-		public function onDeferredTaskResume( inTask : IWorkflowTask ) : void
-		{
-			if( deferredTaskResumeWatcher is Function )
-				deferredTaskResumeWatcher( inTask );
-		}
-
-		public function onTaskExitStatus( inTask : IWorkflowTask, inStatus : ExitStatus ) : void
-		{
-		}
-
-		public function onTaskFail( inTask : IWorkflowTask, inMessage : String ) : void
-		{
-		}
-
-		public function onTaskInitialize( inTask : IWorkflowTask ) : void
-		{
-		}
-
-		public function onTaskPrepare(inTask:IWorkflowTask) : void
-		{
-			if( taskPreparedWatcher is Function )
-				taskPreparedWatcher( inTask );
-
-		}
-
-		public function onTaskSuspend( inTask : IWorkflowTask ) : void
-		{
-		}
-
-		public function onWorkflowCheckingNextTask( inWorkflow : ITasksGroup, inPipelineData : Object ) : void
-		{
-		}
-
-		public function onTaskProgress(inTask:IWorkflowTask) : void
-		{
-			// TODO Auto Generated method stub
-
-		}
-
-		public function onTaskResume(inTask:IWorkflowTask) : void
-		{
-			// TODO Auto Generated method stub
-
+			}
+			else if( inPhase == TaskPhase.BEGUN )
+			{
+				if( taskBeginWatcher is Function )
+					taskBeginWatcher( inTask );
+			}
+			else if( inPhase == TaskPhase.CONTEXT_BOND )
+			{
+				if( contextBoundWatcher != null )
+					contextBoundWatcher( inTask, inData );
+			}
+			else if( inPhase == TaskPhase.BEFORE_BEGIN )
+			{
+				if( beforeTaskBeginWatcher != null )
+					beforeTaskBeginWatcher( inTask );
+			}
+			else if( inPhase == TaskPhase.DATA_SET )
+			{
+				if( taskDataSetWatcher != null )
+					taskDataSetWatcher( inTask );
+			}
 		}
 
 	}

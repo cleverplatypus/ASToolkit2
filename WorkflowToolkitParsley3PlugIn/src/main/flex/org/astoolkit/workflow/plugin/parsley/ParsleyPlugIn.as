@@ -85,23 +85,12 @@ package org.astoolkit.workflow.plugin.parsley
 
 		private var _contextWatcher : DynamicTaskLiveCycleWatcher;
 
-		private var _disabledExtensions : Array;
-
 		[Inject]
 		/**
 		 * the injected Parsley context
 		 */
 		public var context : Context;
 
-		public function get disabledExtensions() : Array
-		{
-			return _disabledExtensions;
-		}
-
-		public function set disabledExtensions( inValue : Array ) : void
-		{
-			_disabledExtensions = inValue;
-		}
 
 		/**
 		 * @private
@@ -145,7 +134,7 @@ package org.astoolkit.workflow.plugin.parsley
 
 		}
 
-		private function onTaskContextBond( inTask : IWorkflowTask ) : void
+		private function onTaskContextBond( inTask : IWorkflowTask, inContext : IWorkflowContext ) : void
 		{
 			configureManagedObject( inTask );
 		}

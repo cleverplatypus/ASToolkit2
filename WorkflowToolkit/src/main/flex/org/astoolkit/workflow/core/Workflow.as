@@ -21,38 +21,38 @@ package org.astoolkit.workflow.core
 {
 
 	import flash.events.EventDispatcher;
-	
+
 	import mx.core.ClassFactory;
 	import mx.core.IFactory;
 	import mx.logging.ILogger;
-	
+
 	import org.astoolkit.commons.collection.annotation.IteratorSource;
 	import org.astoolkit.commons.io.transform.api.*;
 	import org.astoolkit.commons.reflection.*;
 	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.workflow.annotation.*;
 	import org.astoolkit.workflow.api.*;
-	import org.astoolkit.workflow.constant.TaskStatus;
+	import org.astoolkit.workflow.constant.*;
 	import org.astoolkit.workflow.internals.*;
 
 	[Event(
-		name="started",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+		name = "started",
+		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="warning",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+		name = "warning",
+		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="fault",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+		name = "fault",
+		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="completed",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+		name = "completed",
+		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="progress",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+		name = "progress",
+		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name="prepare",
-		type="org.astoolkit.workflow.core.WorkflowEvent" )]
+		name = "prepare",
+		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Bindable]
 	[DefaultProperty( "rootTask" )]
 	public class Workflow extends EventDispatcher implements IWorkflow
@@ -67,7 +67,7 @@ package org.astoolkit.workflow.core
 		/**
 		 * @private Static initialization of toolkit.
 		 */
-		private static const _ANNOTATIONS_INIT : Boolean = (function() : Boolean
+		private static const _ANNOTATIONS_INIT : Boolean = ( function() : Boolean
 		{
 			AnnotationUtil.registerAnnotation( new ClassFactory( Featured ) );
 			AnnotationUtil.registerAnnotation( new ClassFactory( Template ) );
@@ -79,7 +79,7 @@ package org.astoolkit.workflow.core
 			AnnotationUtil.registerAnnotation( new ClassFactory( ManagedObject ) );
 			Type.clearCache();
 			return true;
-		})();
+		} )();
 
 		//----------------------------------- END OF STATIC ---------------------------------------
 
@@ -98,6 +98,8 @@ package org.astoolkit.workflow.core
 		protected var _rootTask : IWorkflowTask;
 
 		protected var _running : Boolean;
+
+		protected var _contextDropIns : Vector.<Object>;
 
 		public function get ENV() : ContextVariablesProvider
 		{
@@ -172,7 +174,8 @@ package org.astoolkit.workflow.core
 			{
 				_context = _contextFactory.newInstance() as IWorkflowContext;
 			}
-			_context.init( this );
+
+			_context.init( this, _contextDropIns );
 
 			try
 			{
@@ -192,10 +195,10 @@ package org.astoolkit.workflow.core
 			_rootTask.input = inTaskInput;
 
 			for each( w in _context.taskLiveCycleWatchers )
-				w.afterTaskDataSet( _rootTask );
+				w.onTaskPhase( _rootTask, TaskPhase.DATA_SET );
 
 			for each( w in _context.taskLiveCycleWatchers )
-				w.beforeTaskBegin( _rootTask );
+				w.onTaskPhase( _rootTask, TaskPhase.BEFORE_BEGIN );
 			_rootTask.liveCycleDelegate = _delegate;
 			var out : * = _rootTask.begin();
 
@@ -206,10 +209,16 @@ package org.astoolkit.workflow.core
 			else
 			{
 				for each( w in _context.taskLiveCycleWatchers )
-					w.afterTaskBegin( _rootTask );
+					w.onTaskPhase( _rootTask, TaskPhase.AFTER_BEGIN );
 				_retainedWorkflows[ this ] = this;
 			}
 		}
+
+		public function set contextDropIns( inValue : Vector.<Object> ) : void
+		{
+			_contextDropIns = inValue;
+		}
+
 
 		protected function cleanup() : void
 		{
@@ -219,6 +228,7 @@ package org.astoolkit.workflow.core
 			_context.suspendableFunctions.cleanUp();
 
 			_context = null;
+			_rootTask.releaseContext();
 		}
 
 		protected function initialize() : void
@@ -239,10 +249,11 @@ package org.astoolkit.workflow.core
 
 		//--------------------------------- ROOT TASK DELEGATE ------------------------------------
 
+		//TODO: check whether the livecycle watchers are called only once for root task
 		INTERNAL function onRootTaskAbort( inTask : IWorkflowTask ) : void
 		{
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onTaskAbort( _rootTask );
+				w.onTaskPhase( _rootTask, TaskPhase.ABORTED );
 			cleanup();
 		}
 
@@ -252,16 +263,12 @@ package org.astoolkit.workflow.core
 
 		INTERNAL function onRootTaskComplete( inTask : IWorkflowTask ) : void
 		{
-			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onTaskComplete( _rootTask );
 			dispatchEvent( new WorkflowEvent( WorkflowEvent.COMPLETED, _context, null, _rootTask.output ) );
 			cleanup();
 		}
 
 		INTERNAL function onRootTaskFault( inTask : IWorkflowTask, inMessage : String ) : void
 		{
-			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onTaskFail( _rootTask, inMessage );
 			dispatchEvent( new WorkflowEvent( WorkflowEvent.FAULT, _context, null, inMessage ) );
 			cleanup();
 		}
@@ -269,13 +276,13 @@ package org.astoolkit.workflow.core
 		INTERNAL function onRootTaskInitialize( inTask : IWorkflowTask ) : void
 		{
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onTaskInitialize( _rootTask );
+				w.onTaskPhase( _rootTask, TaskPhase.INITIALISED );
 		}
 
 		INTERNAL function onRootTaskPrepare( inTask : IWorkflowTask ) : void
 		{
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onTaskPrepare( _rootTask );
+				w.onTaskPhase( _rootTask, TaskPhase.PREPARED );
 		}
 
 		INTERNAL function onRootTaskProgress( inTask : IWorkflowTask ) : void

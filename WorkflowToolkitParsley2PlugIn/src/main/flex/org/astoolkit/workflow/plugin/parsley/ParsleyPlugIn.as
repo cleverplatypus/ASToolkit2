@@ -22,7 +22,7 @@ package org.astoolkit.workflow.plugin.parsley
 
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
-	
+
 	import org.astoolkit.commons.reflection.ManagedObject;
 	import org.astoolkit.commons.reflection.Type;
 	import org.astoolkit.workflow.api.*;
@@ -88,19 +88,7 @@ package org.astoolkit.workflow.plugin.parsley
 		 */
 		public var context : Context;
 
-		private var _disabledExtensions : Array;
-
 		private var _contextWatcher : DynamicTaskLiveCycleWatcher;
-		
-		public function get disabledExtensions() : Array
-		{
-			return _disabledExtensions;
-		}
-
-		public function set disabledExtensions( inValue : Array ) : void
-		{
-			_disabledExtensions = inValue;
-		}
 
 		/**
 		 * @private
@@ -118,17 +106,17 @@ package org.astoolkit.workflow.plugin.parsley
 		public function init() : void
 		{
 		}
-		
+
 		private function onTaskContextBond( inTask : IWorkflowTask ) : void
 		{
 			if( Type.forType( inTask ).hasAnnotation( ManagedObject ) )
 			{
-				if( context.findDefinitionByType( 
-					getDefinitionByName( 
-						getQualifiedClassName( inTask ) ) as Class ) == null )
-				context.addDynamicObject( inTask );
+				if( context.findDefinitionByType(
+					getDefinitionByName(
+					getQualifiedClassName( inTask ) ) as Class ) == null )
+					context.addDynamicObject( inTask );
 			}
 		}
-		
+
 	}
 }

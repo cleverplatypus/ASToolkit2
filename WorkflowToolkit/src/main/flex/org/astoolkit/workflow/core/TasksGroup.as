@@ -53,7 +53,7 @@ package org.astoolkit.workflow.core
 	 * for Flex SDK's list classes, i.e. <code>Array, Vector, IList, ByteArray, FileStream,
 	 * XMLList</code>.</p>
 	 *
-	*/
+	 */
 	public class TasksGroup extends BaseTask implements ITasksGroup, IRepeater
 	{
 		use namespace astoolkit_private;
@@ -270,7 +270,7 @@ package org.astoolkit.workflow.core
 					IWorkflowTask( element ).abort();
 
 			if( _delegate )
-				_delegate.onTaskAbort( this );
+				_delegate.onTaskPhase( this, TaskPhase.ABORTED );
 
 			if( !_parent )
 				cleanUp();
@@ -367,6 +367,16 @@ package org.astoolkit.workflow.core
 			}
 		}
 
+		override public function releaseContext() : void
+		{
+			super.releaseContext();
+
+			for each( var child : IWorkflowElement in _children )
+			{
+				child.releaseContext();
+			}
+		}
+
 		override public function initialize() : void
 		{
 			if( _status != TaskStatus.STOPPED )
@@ -411,8 +421,8 @@ package org.astoolkit.workflow.core
 			if( _status == TaskStatus.ABORTED )
 				return;
 
-			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onTaskComplete( this );
+			/*for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+				w.onTaskComplete( this );*/
 
 			if( !_ignoreOutput )
 				_pipelineData = _subPipelineData;
@@ -473,9 +483,6 @@ package org.astoolkit.workflow.core
 
 		INTERNAL function onSubtaskCompleted( inTask : IWorkflowTask ) : void
 		{
-
-			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onTaskExitStatus( inTask, inTask.exitStatus );
 
 			if( _status == TaskStatus.ABORTED )
 			{
@@ -718,6 +725,8 @@ package org.astoolkit.workflow.core
 		 */
 		protected function processChildren() : Boolean
 		{
+			var w : ITaskLiveCycleWatcher;
+
 			if( _status == TaskStatus.SUSPENDED )
 			{
 				_context.suspendableFunctions.addResumeCallBack( resumeProcessIteration );
@@ -730,8 +739,8 @@ package org.astoolkit.workflow.core
 			if( !_elementsQueue.hasPendingElements() )
 				return true;
 
-			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onWorkflowCheckingNextTask( this, _subPipelineData );
+
+			_context.variables.onGroupCheckingNextTask( this, _subPipelineData );
 			var element : IWorkflowElement;
 
 			while( _status != TaskStatus.ABORTED && _elementsQueue.hasNext() )
@@ -768,11 +777,12 @@ package org.astoolkit.workflow.core
 				else
 					continue;
 
-				for each( w in _context.taskLiveCycleWatchers )
-					w.beforeTaskBegin( task );
 
 				if( !task || !task.enabled )
 					continue;
+
+				for each( w in _context.taskLiveCycleWatchers )
+					w.onTaskPhase( task, TaskPhase.BEFORE_BEGIN );
 
 				BindingUtility.touch( _document, "ENV", _context.variables );
 
@@ -848,7 +858,7 @@ package org.astoolkit.workflow.core
 			_executingTask = null;
 
 			for each( w in _context.taskLiveCycleWatchers )
-				w.afterTaskBegin( inTask );
+				w.onTaskPhase( inTask, TaskPhase.AFTER_BEGIN );
 		}
 
 		protected function setSubtaskPipelineData( inElement : IPipelineConsumer ) : void

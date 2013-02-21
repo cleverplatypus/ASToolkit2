@@ -254,7 +254,7 @@ package org.astoolkit.workflow.internals
 			return factory;
 		}
 
-		public function init( inOwner : IWorkflow ) : void
+		public function init( inOwner : IWorkflow, inAdditionalDropIns : Vector.<Object> = null ) : void
 		{
 			_owner = inOwner;
 			LOGGER.info( "Initializing context" );
@@ -273,7 +273,12 @@ package org.astoolkit.workflow.internals
 			_factoryResolver = _config;
 			_plugIns = new Vector.<IContextPlugIn>();
 
-			for each( var dropIn : Object in _dropIns )
+			var allDropIns : Vector.<Object> = _dropIns;
+
+			if( inAdditionalDropIns )
+				allDropIns = allDropIns.concat( inAdditionalDropIns );
+
+			for each( var dropIn : Object in allDropIns )
 			{
 				inspectExtension( dropIn );
 			}
@@ -318,19 +323,8 @@ package org.astoolkit.workflow.internals
 
 		private function inspectExtension( inObject : Object ) : void
 		{
-			var disabledExtensionsLUT : Object = {};
 
-			if( inObject is IContextPlugIn &&
-				IContextPlugIn( inObject ).extensions )
-			{
-				for each( var ext : Class in IContextPlugIn( inObject ).disabledExtensions )
-				{
-					disabledExtensionsLUT[ ext ] = ext;
-				}
-			}
-
-			if( inObject is IObjectConfigurer &&
-				!disabledExtensionsLUT.hasOwnProperty( getClass( inObject ) ) )
+			if( inObject is IObjectConfigurer )
 			{
 				if( !_config.objectConfigurers )
 					_config.objectConfigurers = new Vector.<IObjectConfigurer>();
@@ -350,15 +344,20 @@ package org.astoolkit.workflow.internals
 				}
 			}
 			var classInfo : Type = Type.forType( inObject );
-			var templateInterfaces : Vector.<Type> =
-				classInfo.getInterfacesWithAnnotationsOfType( Template );
 
-			if( templateInterfaces.length > 0
-				&& !( classInfo.implementsInterface( ITaskTemplate ) ) )
+			if( classInfo )
 			{
-				config.templateRegistry.registerImplementation( inObject );
-				LOGGER.info( "Registering template implementation for interface: " +
-					getQualifiedClassName( Type( templateInterfaces[ 0 ] ).type ) );
+				//the inspected object might be an instance of an inner class, i.e. not public
+				var templateInterfaces : Vector.<Type> =
+					classInfo.getInterfacesWithAnnotationsOfType( Template );
+
+				if( templateInterfaces.length > 0
+					&& !( classInfo.implementsInterface( ITaskTemplate ) ) )
+				{
+					config.templateRegistry.registerImplementation( inObject );
+					LOGGER.info( "Registering template implementation for interface: " +
+						getQualifiedClassName( Type( templateInterfaces[ 0 ] ).type ) );
+				}
 			}
 
 			if( inObject is ITaskLiveCycleWatcher )

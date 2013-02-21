@@ -52,7 +52,11 @@ package org.astoolkit.commons.reflection
 
 			if( !_classes.hasOwnProperty( n ) )
 			{
-				_classes[ n ] = Type.create( inClass );
+				var t : Type = Type.create( inClass );
+
+				if( !t )
+					return null;
+				_classes[ n ] = t;
 				Type( _classes[ n ] ).init();
 			}
 			return _classes[ n ] as Type;
@@ -65,7 +69,17 @@ package org.astoolkit.commons.reflection
 			if( inClass is Class )
 				info._type = inClass as Class;
 			else
-				info._type = getDefinitionByName( getQualifiedClassName( inClass ) ) as Class;
+			{
+				try
+				{
+					info._type = getDefinitionByName( getQualifiedClassName( inClass ) ) as Class;
+				}
+				catch( e : Error )
+				{
+					//this happens if inClass is a private/inner class
+					return null;
+				}
+			}
 			return info;
 		}
 
@@ -193,7 +207,7 @@ package org.astoolkit.commons.reflection
 
 			if( aTypeText.match( /Vector\.</ ) )
 			{
-				_subtype = getDefinitionByName( aTypeText.match( /<(.+?)>/ )[1] ) as Class;
+				_subtype = getDefinitionByName( aTypeText.match( /<(.+?)>/ )[ 1 ] ) as Class;
 				_subtypeInfo = Type.forType( _subtype );
 			}
 			var xml : XML = describeType( _type );
@@ -213,7 +227,7 @@ package org.astoolkit.commons.reflection
 				{
 					if( xml.factory.extendsClass.length() > 0 )
 					{
-						var superType : String =  
+						var superType : String =
 							String( xml.factory.extendsClass[ 0 ].@type.toXMLString() )
 							.replace( /&lt;/, '<' );
 
@@ -277,7 +291,7 @@ package org.astoolkit.commons.reflection
 
 					if( aTypeText.match( /Vector\.</ ) )
 					{
-						aSubtype = getDefinitionByName( aTypeText.match( /<(.+?)>/ )[1] ) as Class;
+						aSubtype = getDefinitionByName( aTypeText.match( /<(.+?)>/ )[ 1 ] ) as Class;
 					}
 				}
 				var scope : String = accessor.@uri.toString() ==

@@ -18,8 +18,9 @@ Version 2.x
 
 */
 import org.astoolkit.workflow.api.*;
-import org.astoolkit.workflow.core.TasksGroup;
+import org.astoolkit.workflow.constant.TaskPhase;
 import org.astoolkit.workflow.core.ExitStatus;
+import org.astoolkit.workflow.core.TasksGroup;
 
 namespace INTERNAL = "org.astoolkit.workflow.core.do::INTERNAL";
 
@@ -30,78 +31,7 @@ class ChildTaskWatcher implements ITaskLiveCycleWatcher
 
 	public function ChildTaskWatcher( inGroup : TasksGroup )
 	{
-		_group  = inGroup;
-	}
-
-	public function afterTaskBegin( inTask : IWorkflowTask ) : void
-	{
-	}
-
-	public function afterTaskDataSet( inTask : IWorkflowTask ) : void
-	{
-	}
-
-	public function beforeTaskBegin( inTask : IWorkflowTask ) : void
-	{
-	}
-
-	public function onBeforeContextUnbond( inTask : IWorkflowElement ) : void
-	{
-	}
-
-	public function onContextBond( inElement : IWorkflowElement ) : void
-	{
-	}
-
-	public function onDeferredTaskResume( inTask : IWorkflowTask ) : void
-	{
-	}
-
-	public function onTaskAbort( inTask : IWorkflowTask ) : void
-	{
-		_group.INTERNAL::onSubtaskAbort( inTask );
-	}
-
-	public function onTaskBegin( inTask : IWorkflowTask ) : void
-	{
-		_group.INTERNAL::onSubtaskBegin( inTask );
-	}
-
-	public function onTaskComplete( inTask : IWorkflowTask ) : void
-	{
-		_group.INTERNAL::onSubtaskCompleted( inTask );
-	}
-
-	public function onTaskDeferExecution( inTask : IWorkflowTask ) : void
-	{
-	}
-
-	public function onTaskExitStatus( inTask : IWorkflowTask, inStatus : ExitStatus ) : void
-	{
-	}
-
-	public function onTaskFail( inTask : IWorkflowTask, inMessage : String ) : void
-	{
-		_group.INTERNAL::onSubtaskFault( inTask, inMessage );
-	}
-
-	public function onTaskInitialize( inTask : IWorkflowTask ) : void
-	{
-		_group.INTERNAL::onSubtaskInitialized( inTask );
-	}
-
-	public function onTaskPrepare( inTask : IWorkflowTask ) : void
-	{
-		_group.INTERNAL::onSubtaskPrepared( inTask );
-	}
-
-	public function onTaskSuspend(inTask:IWorkflowTask ) : void
-	{
-		_group.INTERNAL::onSubtaskSuspended( inTask );
-	}
-
-	public function onWorkflowCheckingNextTask( inWorkflow : ITasksGroup, inPipelineData:Object) : void
-	{
+		_group = inGroup;
 	}
 
 	public function get taskWatcherPriority() : int
@@ -113,14 +43,70 @@ class ChildTaskWatcher implements ITaskLiveCycleWatcher
 	{
 	}
 
-	public function onTaskProgress(inTask:IWorkflowTask) : void
+
+	public function onTaskPhase( inTask : IWorkflowTask, inPhase : String, inData : Object = null ) : void
 	{
-		_group.INTERNAL::onSubtaskProgress( inTask );
+		if( inPhase == TaskPhase.PREPARED )
+		{
+			_group.INTERNAL::onSubtaskPrepared( inTask );
+		}
+		else if( inPhase == TaskPhase.RESUMED_DEFERRED_EXECUTION )
+		{
+
+		}
+		else if( inPhase == TaskPhase.AFTER_BEGIN )
+		{
+
+		}
+		else if( inPhase == TaskPhase.DEFERRING_EXECUTION )
+		{
+		}
+		else if( inPhase == TaskPhase.COMPLETED )
+		{
+			_group.INTERNAL::onSubtaskCompleted( inTask );
+		}
+		else if( inPhase == TaskPhase.BEGUN )
+		{
+			_group.INTERNAL::onSubtaskBegin( inTask );
+		}
+		else if( inPhase == TaskPhase.CONTEXT_BOND )
+		{
+		}
+		else if( inPhase == TaskPhase.BEFORE_BEGIN )
+		{
+		}
+		else if( inPhase == TaskPhase.DATA_SET )
+		{
+		}
+		else if( inPhase == TaskPhase.RESUMED )
+		{
+			_group.INTERNAL::onSubtaskResumed( inTask );
+		}
+		else if( inPhase == TaskPhase.PROGRESS )
+		{
+			_group.INTERNAL::onSubtaskProgress( inTask );
+		}
+		else if( inPhase == TaskPhase.SUSPENDED )
+		{
+			_group.INTERNAL::onSubtaskSuspended( inTask );
+		}
+		else if( inPhase == TaskPhase.INITIALISED )
+		{
+			_group.INTERNAL::onSubtaskInitialized( inTask );
+		}
+		else if( inPhase == TaskPhase.FAILED )
+		{
+			_group.INTERNAL::onSubtaskFault( inTask, inData as String );
+		}
+		else if( inPhase == TaskPhase.ABORTED )
+		{
+			_group.INTERNAL::onSubtaskAbort( inTask );
+		}
 	}
 
-	public function onTaskResume(inTask:IWorkflowTask) : void
-	{
-		_group.INTERNAL::onSubtaskResumed( inTask );
-	}
+
+
+
+
 
 }

@@ -22,7 +22,7 @@ package org.astoolkit.workflow.plugin.xpath
 
 	import memorphic.xpath.XPathQuery;
 	import memorphic.xpath.parser.XPathParser;
-	
+
 	import org.astoolkit.commons.io.transform.BaseDataTransformer;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 	import org.astoolkit.workflow.api.IContextPlugIn;
@@ -39,21 +39,10 @@ package org.astoolkit.workflow.plugin.xpath
 	 */
 	public class XPathDataTransform extends BaseDataTransformer implements IContextPlugIn
 	{
-		private var _disabledExtensions : Array;
 
 		private var _priority : int;
 
 		private var _xpathParser : XPathParser = new XPathParser();
-
-		public function get disabledExtensions() : Array
-		{
-			return _disabledExtensions;
-		}
-
-		public function set disabledExtensions( inValue : Array ) : void
-		{
-			_disabledExtensions = inValue;
-		}
 
 		/**
 		 * @private

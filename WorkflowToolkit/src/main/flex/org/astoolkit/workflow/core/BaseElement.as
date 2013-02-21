@@ -32,6 +32,7 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.wfml.api.IChildrenAwareDocument;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.NO_DESCRIPTION;
+	import org.astoolkit.workflow.constant.TaskPhase;
 
 	[Bindable]
 	/**
@@ -233,6 +234,11 @@ package org.astoolkit.workflow.core
 		 */
 		public function cleanUp() : void
 		{
+		}
+
+		public function releaseContext() : void
+		{
+			_context = null;
 		}
 
 		//TODO: move this away. really necessary?

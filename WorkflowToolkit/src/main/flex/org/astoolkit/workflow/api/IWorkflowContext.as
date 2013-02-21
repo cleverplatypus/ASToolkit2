@@ -21,14 +21,16 @@ package org.astoolkit.workflow.api
 {
 
 	import flash.events.IEventDispatcher;
+
 	import mx.core.IFactory;
+
 	import org.astoolkit.commons.collection.api.IIterator;
+	import org.astoolkit.commons.configuration.api.IObjectConfigurer;
 	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.factory.api.IPooledFactoryDelegate;
 	import org.astoolkit.commons.io.transform.api.IIODataSourceResolverDelegate;
 	import org.astoolkit.workflow.internals.ContextVariablesProvider;
 	import org.astoolkit.workflow.internals.SuspendableFunctionRegistry;
-	import org.astoolkit.commons.configuration.api.IObjectConfigurer;
 
 	[Bindable]
 	/**
@@ -83,10 +85,10 @@ package org.astoolkit.workflow.api
 		 */
 		function cleanup() : void;
 		function fail( inSource : Object, inMessage : String ) : void;
-		function getPooledFactory( 
-		inClass : Class, 
+		function getPooledFactory(
+		inClass : Class,
 			inDelegate : IPooledFactoryDelegate = null ) : IPooledFactory;
-		function init( inOwner : IWorkflow ) : void;
+		function init( inOwner : IWorkflow, inAdditionalDropIns : Vector.<Object> = null ) : void;
 
 		/**
 		 * unregister the passed implementation of ITaskLiveCycleWatcher
