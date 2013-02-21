@@ -41,5 +41,7 @@ package org.astoolkit.workflow.constant
 
 		public static const EXIT_STATUS : String = "exitStatus";
 
+		public static const OUTPUT : String = "output";
+
 	}
 }

@@ -25,7 +25,7 @@ package org.astoolkit.commons.io.data
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
 	import org.astoolkit.commons.eval.Resolve;
 
-	[DefaultProperty("selfWiringChildren")]
+	[DefaultProperty( "selfWiringChildren" )]
 	public class MethodBuilder extends AbstractBuilder
 	{
 
@@ -38,7 +38,7 @@ package org.astoolkit.commons.io.data
 				inString;
 			out.name = methodName;
 			var args : Array = inString.match( /\(.+\)$/ ) ?
-				StringUtil.trimArrayElements( inString.match( /\((.+?)\)/ )[1], "," ).split(",") : [];
+				StringUtil.trimArrayElements( inString.match( /\((.+?)\)/ )[ 1 ], "," ).split( "," ) : [];
 			var resolvers : Vector.<IExpressionResolver> = new Vector.<IExpressionResolver>();
 			var resolver : Resolve;
 
@@ -93,13 +93,13 @@ package org.astoolkit.commons.io.data
 
 			if( !_target.hasOwnProperty( _name ) || !( _target[ _name ] is Function ) )
 			{
-				throw new Error( "\"" + _name + "\" is not a method of class " + 
+				throw new Error( "\"" + _name + "\" is not a method of class " +
 					getQualifiedClassName( _target ) );
 			}
 
 			return function() : *
 			{
-				( _target[ _name ] as Function ).apply( _target, resolveArguments() ); 
+				return ( _target[ _name ] as Function ).apply( _target, resolveArguments() );
 			} as Function; //casting to prevent compiler warning
 		}
 

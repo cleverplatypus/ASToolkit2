@@ -486,7 +486,7 @@ package org.astoolkit.workflow.internals
 		}
 
 
-		public function onTaskPhase( inTask : IWorkflowTask, inPhase : String, inData : Object = null ) : void
+		public function onTaskPhase( inTask : IWorkflowTask, inPhase : String, inData : * = undefined ) : void
 		{
 			if( inPhase == TaskPhase.PREPARED )
 			{

@@ -27,7 +27,8 @@ package org.astoolkit.workflow.api
 	//		function get statefulExtensions() : Array;
 	public interface IContextPlugIn
 	{
-		function get extensions() : Array;
-		function init() : void;
+		function getConfigExtensions() : Array;
+		function getStatefulExtensions() : Array;
+		function getInitialStateData( inContext : IWorkflowContext ) : Object;
 	}
 }

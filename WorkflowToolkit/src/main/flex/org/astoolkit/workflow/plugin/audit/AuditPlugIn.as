@@ -21,41 +21,43 @@ package org.astoolkit.workflow.plugin.audit
 {
 
 	import mx.logging.ILogger;
-	
+
 	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.workflow.api.IContextAwareElement;
 	import org.astoolkit.workflow.api.IContextPlugIn;
 	import org.astoolkit.workflow.api.IWorkflowContext;
 	import org.astoolkit.workflow.api.IWorkflowTask;
 
-	[DefaultProperty("targetTasks")]
+	[DefaultProperty( "targetTasks" )]
 	/**
 	 * Context plug-in to collect information on tasks of a running workflow
 	 */
 	public class AuditPlugIn implements IContextPlugIn
 	{
-		//TODO: decide where to put audit data. Hint: should context have a plug-in data property?
-		//TODO: targetTasks should be set by id? (string)
 		private const LOGGER : ILogger = getLogger( AuditPlugIn );
 
 		public var targetTasks : Vector.<AuditTask>
 
-		INTERNAL var _tasksOutput : Object = {};
-
-		public function get extensions() : Array
+		public function getConfigExtensions() : Array
 		{
-			return [ new Watcher( this ) ];
+			return null;
 		}
 
-		public function init() : void
+		public function getStatefulExtensions() : Array
 		{
+			return [ new AuditPlugInWatcher( this ) ];
+		}
+
+
+		public function getInitialStateData( inContext : IWorkflowContext ) : Object
+		{
+			return new AuditData();
 		}
 
 
 	}
 }
 
-namespace INTERNAL = "package org.astoolkit.workflow.plugin.AuditPlugIn.INTERNAL";
 import mx.logging.ILogger;
 
 import org.astoolkit.commons.utils.getLogger;
@@ -64,10 +66,11 @@ import org.astoolkit.workflow.api.ITaskLiveCycleWatcher;
 import org.astoolkit.workflow.api.IWorkflowContext;
 import org.astoolkit.workflow.api.IWorkflowTask;
 import org.astoolkit.workflow.constant.TaskPhase;
+import org.astoolkit.workflow.plugin.audit.AuditData;
 import org.astoolkit.workflow.plugin.audit.AuditPlugIn;
 import org.astoolkit.workflow.plugin.audit.AuditTask;
 
-class Watcher implements ITaskLiveCycleWatcher, IContextAwareElement
+class AuditPlugInWatcher implements ITaskLiveCycleWatcher, IContextAwareElement
 {
 	private const LOGGER : ILogger = getLogger( AuditPlugIn );
 
@@ -75,7 +78,9 @@ class Watcher implements ITaskLiveCycleWatcher, IContextAwareElement
 
 	private var _context : IWorkflowContext;
 
-	public function Watcher( inPlugIn : AuditPlugIn )
+	private var _auditData : AuditData;
+
+	public function AuditPlugInWatcher( inPlugIn : AuditPlugIn )
 	{
 		_plugIn = inPlugIn;
 	}
@@ -90,20 +95,26 @@ class Watcher implements ITaskLiveCycleWatcher, IContextAwareElement
 		return _context;
 	}
 
-	public function onTaskPhase( inTask : IWorkflowTask, inPhase : String, inData : Object = null ) : void
+	public function onTaskPhase( inTask : IWorkflowTask, inPhase : String, inData : * = undefined ) : void
 	{
+		if( !_context )
+			return;
 
+		if( !_auditData )
+			_auditData = AuditData( _context.getPluginData( AuditPlugIn ) );
 
-		var info : AuditTask = getAuditSetting( inTask ); 
+		var info : AuditTask = getAuditSetting( inTask );
+
 		if( !info )
-			return
-		if( info.recordOutput && inPhase == TaskPhase.COMPLETED )
-		{
-			LOGGER.warn( "********** auditing " + inPhase + " : " + inTask.description );
+			return;
 
-			if( !_plugIn.INTERNAL::_tasksOutput[ inTask ] )
-				_plugIn.INTERNAL::_tasksOutput[ inTask ] = [];
-			_plugIn.INTERNAL::_tasksOutput[ inTask ].push( inTask.output );
+		if( info.recordOutput && inPhase == TaskPhase.OUTPUT )
+		{
+			_auditData.pushOutputData( inTask.id, inData );
+		}
+
+		if( info.recordExitStatus && inPhase == TaskPhase.EXIT_STATUS )
+		{
 		}
 	}
 

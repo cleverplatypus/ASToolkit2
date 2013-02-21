@@ -55,7 +55,7 @@ package org.astoolkit.workflow.config
 		{
 		}
 
-		public function onTaskPhase( inTask : IWorkflowTask, inPhase : String, inData : Object = null ) : void
+		public function onTaskPhase( inTask : IWorkflowTask, inPhase : String, inData : * = undefined ) : void
 		{
 
 		}

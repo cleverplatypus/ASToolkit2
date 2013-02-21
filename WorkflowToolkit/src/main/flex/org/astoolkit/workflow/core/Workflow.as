@@ -183,6 +183,7 @@ package org.astoolkit.workflow.core
 			}
 			catch( e : Error )
 			{
+				LOGGER.error( e.getStackTrace() );
 				throw new Error( "Workflow initialization failed.\nCause:\n" +
 					e.message + "\n" +
 					e.getStackTrace() );

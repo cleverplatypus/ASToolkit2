@@ -27,7 +27,7 @@ package org.astoolkit.workflow.api
 		function get taskWatcherPriority() : int;
 		function set taskWatcherPriority( inValue : int ) : void;
 
-		function onTaskPhase( inTask : IWorkflowTask, inPhase : String, inData : Object = null ) : void;
+		function onTaskPhase( inTask : IWorkflowTask, inPhase : String, inData : * = undefined ) : void;
 
 	}
 }

@@ -68,8 +68,6 @@ package org.astoolkit.workflow.internals
 
 		private var _config : IContextConfig;
 
-		private var _data : Object;
-
 		private var _dataSourceResolverDelegate : IIODataSourceResolverDelegate;
 
 		private var _dropIns : Vector.<Object>;
@@ -100,6 +98,8 @@ package org.astoolkit.workflow.internals
 
 		private var _variables : ContextVariablesProvider;
 
+		private var _plugInData : Object;
+
 		public function get config() : IContextConfig
 		{
 			return _config;
@@ -109,11 +109,6 @@ package org.astoolkit.workflow.internals
 		{
 			if( !_config )
 				_config = inValue;
-		}
-
-		public function get data() : Object
-		{
-			return _data;
 		}
 
 		public function get dataSourceResolverDelegate() : IIODataSourceResolverDelegate
@@ -218,7 +213,6 @@ package org.astoolkit.workflow.internals
 
 		public function cleanup() : void
 		{
-			_data = null;
 			_pooledFactories = null;
 
 			if( _config.dataTransformerRegistry is IPooledFactory )
@@ -262,7 +256,7 @@ package org.astoolkit.workflow.internals
 			_variables = new ContextVariablesProvider( this );
 			_dataSourceResolverDelegate = new WorkflowDataSourceResolverDelegate( this );
 			_pooledFactories = {};
-			_data = {};
+			_plugInData = {};
 			_taskLiveCycleWatchers = new Vector.<ITaskLiveCycleWatcher>();
 			_taskLiveCycleWatchers.push( _variables );
 
@@ -324,6 +318,9 @@ package org.astoolkit.workflow.internals
 		private function inspectExtension( inObject : Object ) : void
 		{
 
+			if( inObject is IContextAwareElement )
+				IContextAwareElement( inObject ).context = this;
+
 			if( inObject is IObjectConfigurer )
 			{
 				if( !_config.objectConfigurers )
@@ -336,18 +333,24 @@ package org.astoolkit.workflow.internals
 				_plugIns.push( inObject );
 				LOGGER.info( "Adding context plug-in: " +
 					getQualifiedClassName( inObject ) );
-				IContextPlugIn( inObject ).init();
+				_plugInData[ getClass( inObject ) ] = IContextPlugIn( inObject ).getInitialStateData( this );
 
-				for each( var e : Object in IContextPlugIn( inObject ).extensions )
+				//TODO: config and stateful extensions must be loaded at different phases
+				for each( var ce : Object in IContextPlugIn( inObject ).getConfigExtensions() )
 				{
-					inspectExtension( e );
+					inspectExtension( ce );
+				}
+
+				for each( var se : Object in IContextPlugIn( inObject ).getStatefulExtensions() )
+				{
+					inspectExtension( se );
 				}
 			}
 			var classInfo : Type = Type.forType( inObject );
 
-			if( classInfo )
+			if( classInfo ) //the inspected object might be an instance of an inner class, i.e. not public
 			{
-				//the inspected object might be an instance of an inner class, i.e. not public
+
 				var templateInterfaces : Vector.<Type> =
 					classInfo.getInterfacesWithAnnotationsOfType( Template );
 
@@ -382,6 +385,17 @@ package org.astoolkit.workflow.internals
 				LOGGER.info( "Registering IRuntimeExpressionEvaluator : " +
 					getQualifiedClassName( inObject ) );
 			}
+		}
+
+		public function getPluginData( inPlugIn : Class ) : Object
+		{
+			if( !inPlugIn )
+				return null;
+
+			if( _plugInData.hasOwnProperty( inPlugIn ) )
+				return _plugInData[ inPlugIn ];
+			return null;
+
 		}
 	}
 }

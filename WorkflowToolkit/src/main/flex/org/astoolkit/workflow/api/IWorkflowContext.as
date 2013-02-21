@@ -95,5 +95,7 @@ package org.astoolkit.workflow.api
 		 */
 		function removeTaskLiveCycleWatcher( inValue : ITaskLiveCycleWatcher ) : void;
 		function resolveIterator( inSource : Object, inConfig : Object = null ) : IIterator;
+
+		function getPluginData( inPlugIn : Class ) : Object;
 	}
 }

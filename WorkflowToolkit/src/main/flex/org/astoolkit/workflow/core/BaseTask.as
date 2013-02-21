@@ -948,6 +948,9 @@ package org.astoolkit.workflow.core
 			_thread++;
 			_status = TaskStatus.IDLE;
 
+			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+				w.onTaskPhase( this, TaskPhase.COMPLETED );
+
 			if( _delegate )
 				_delegate.onTaskPhase( this, TaskPhase.COMPLETED );
 		}
@@ -1003,7 +1006,7 @@ package org.astoolkit.workflow.core
 				return;
 
 			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
-				w.onTaskPhase( this, TaskPhase.COMPLETED );
+				w.onTaskPhase( this, TaskPhase.OUTPUT, inOutputData );
 
 			if( inOutputData != UNDEFINED && inOutputData !== undefined )
 				_pipelineData = inOutputData;

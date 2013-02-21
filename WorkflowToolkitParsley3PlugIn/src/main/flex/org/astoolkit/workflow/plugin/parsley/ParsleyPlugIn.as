@@ -95,12 +95,18 @@ package org.astoolkit.workflow.plugin.parsley
 		/**
 		 * @private
 		 */
-		public function get extensions() : Array
+		public function getConfigExtensions() : Array
 		{
 			_contextWatcher = new DynamicTaskLiveCycleWatcher();
 			_contextWatcher.contextBoundWatcher = onTaskContextBond;
 			return [ SendParsleyMessage, _contextWatcher ];
 		}
+
+		public function getStatefulExtensions() : Array
+		{
+			return null;
+		}
+
 
 		public function configureObjects( inObjects : Array, inDocument : Object ) : void
 		{
@@ -114,8 +120,9 @@ package org.astoolkit.workflow.plugin.parsley
 		/**
 		 * @private
 		 */
-		public function init() : void
+		public function getInitialStateData( inContext : IWorkflowContext ) : Object
 		{
+			return {};
 		}
 
 		private function configureManagedObject( inObject : Object ) : void

@@ -90,21 +90,21 @@ package org.astoolkit.workflow.plugin.parsley
 
 		private var _contextWatcher : DynamicTaskLiveCycleWatcher;
 
-		/**
-		 * @private
-		 */
-		public function get extensions() : Array
+		public function getConfigExtensions() : Array
 		{
 			_contextWatcher = new DynamicTaskLiveCycleWatcher();
 			_contextWatcher.contextBoundWatcher = onTaskContextBond;
 			return [ SendParsleyMessage, _contextWatcher ];
 		}
 
-		/**
-		 * @private
-		 */
-		public function init() : void
+		public function getStatefulExtensions() : Array
 		{
+			return null;
+		}
+
+		public function getInitialStateData( inContext : IWorkflowContext ) : Object
+		{
+			return {};
 		}
 
 		private function onTaskContextBond( inTask : IWorkflowTask ) : void

@@ -26,6 +26,7 @@ package org.astoolkit.workflow.plugin.xpath
 	import org.astoolkit.commons.io.transform.BaseDataTransformer;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 	import org.astoolkit.workflow.api.IContextPlugIn;
+	import org.astoolkit.workflow.api.IWorkflowContext;
 
 	/**
 	 * Input filter for XPath expressions support.
@@ -47,10 +48,16 @@ package org.astoolkit.workflow.plugin.xpath
 		/**
 		 * @private
 		 */
-		public function get extensions() : Array
+		public function getConfigExtensions() : Array
 		{
 			return [ XPathDataTransform ];
 		}
+
+		public function getStatefulExtensions() : Array
+		{
+			return null;
+		}
+
 
 		/**
 		 * @private
@@ -63,8 +70,9 @@ package org.astoolkit.workflow.plugin.xpath
 		/**
 		 * @private
 		 */
-		public function init() : void
+		public function getInitialStateData( inContext : IWorkflowContext ) : Object
 		{
+			return {}
 		}
 
 		/**
