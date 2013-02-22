@@ -11,14 +11,20 @@
 			<plugin>
 				<groupId>org.sonatype.flexmojos</groupId>
 				<artifactId>flexmojos-maven-plugin</artifactId>
-				<version>3.8</version>
+				<version>${flexmojos.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<includeAsClasses>
-						<sources>
-							<directory>${basedir}/src/main/flex</directory>
-						</sources>
-					</includeAsClasses>
+					<includeClasses>
+					  <scan>
+					    <includes>
+					      <include>**/*.as</include>
+					    </includes>
+					    <excludes>
+					      <exclude>**.*Include.as</exclude>
+					      <exclude>**/includes/*</exclude>
+					    </excludes>
+					  </scan>
+					</includeClasses>
 					<namespaces>
 						<namespace>
 							<uri>http://www.astoolkit.org/ns/2012/wfml</uri>
@@ -26,7 +32,7 @@
 						</namespace>
 					</namespaces>
 					<includeNamespaces>
-						<namespace>http://www.astoolkit.org/ns/2012/wfml</namespace>
+						<uri>http://www.astoolkit.org/ns/2012/wfml</uri>
 					</includeNamespaces>
 				</configuration>
 			</plugin>
@@ -40,6 +46,12 @@
 	<dependencies>
 		<dependency>
 			<artifactId>ASToolkitCommons</artifactId>
+			<groupId>org.astoolkit</groupId>
+			<version>0.0.0-SNAPSHOT</version>
+			<type>swc</type>
+		</dependency>
+		<dependency>
+			<artifactId>ASToolkitAirCommons</artifactId>
 			<groupId>org.astoolkit</groupId>
 			<version>0.0.0-SNAPSHOT</version>
 			<type>swc</type>

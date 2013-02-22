@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<componentPackage>
+	<component 
+		id="ParsleyPlugIn"
+		class="org.astoolkit.workflow.plugin.parsley.ParsleyPlugIn"
+		/>
+	<component 
+		id="MessageDrivenTaskTrigger"
+		class="org.astoolkit.workflow.parsleysupport.MessageDrivenTaskTrigger"
+		/>
+	<component 
+		id="ParsleyContextObjectFactory"
+		class="org.astoolkit.workflow.parsleysupport.ParsleyContextObjectFactory"
+		/>
+</componentPackage>

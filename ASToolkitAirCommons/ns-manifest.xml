@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<componentPackage>
+	<component 
+		id="File"
+		class="org.astoolkit.commons.wfml.filesystem.FileNode"
+		/>
+</componentPackage>

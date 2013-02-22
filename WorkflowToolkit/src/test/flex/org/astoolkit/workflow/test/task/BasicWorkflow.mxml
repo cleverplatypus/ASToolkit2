@@ -1,0 +1,21 @@
+<Workflow 
+	xmlns="http://www.astoolkit.org/ns/2012/wfml"
+	xmlns:audit="org.astoolkit.workflow.plugin.audit.*"
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:internals="org.astoolkit.workflow.internals.*"
+	>
+	<contextFactory>
+		<internals:DefaultContextFactory>
+			<internals:dropIns>
+				<audit:AuditPlugIn />
+			</internals:dropIns>
+		</internals:DefaultContextFactory>
+	</contextFactory>
+	<Do>
+		<SetPipeline 
+			id="setPipeline"
+			delay="500"
+			value="{ 'nanni' }"
+			/>
+	</Do>
+</Workflow>

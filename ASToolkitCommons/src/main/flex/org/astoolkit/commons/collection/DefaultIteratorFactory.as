@@ -65,7 +65,6 @@ package org.astoolkit.commons.collection
 			_registeredIteratorClasses.push( CountIterator );
 			_registeredIteratorClasses.push( ByteArrayIterator );
 			_registeredIteratorClasses.push( InfiniteIterator );
-			_registeredIteratorClasses.push( FileStreamIterator );
 		}
 
 		private var _registeredIteratorClasses : Vector.<Class>;

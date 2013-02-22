@@ -1,10 +1,6 @@
 <?xml version="1.0"?>
 <componentPackage>
 	<component 
-		id="File"
-		class="org.astoolkit.commons.wfml.filesystem.FileNode"
-		/>
-	<component 
 		id="Eq"
 		class="org.astoolkit.commons.conditional.Eq"
 		/>

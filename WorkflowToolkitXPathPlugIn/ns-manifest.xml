@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<componentPackage>
+	<component 
+		id="XPathDataTransform"
+		class="org.astoolkit.workflow.plugin.xpath.XPathDataTransform"
+		/>
+</componentPackage>

@@ -3,11 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.astoolkit</groupId>
 	<version>0.0.0-SNAPSHOT</version>
-	<artifactId>ASToolkitCommons</artifactId>
-	<name>ASToolkit Commons</name>
+	<artifactId>ASToolkitAirCommons</artifactId>
+	<name>ASToolkit AIR Commons</name>
 	<packaging>swc</packaging>
 	<build>
-		<testSourceDirectory>src/test/flex</testSourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.sonatype.flexmojos</groupId>
@@ -38,10 +37,18 @@
 				</configuration>
 			</plugin>
 		</plugins>
-	</build>	
+	</build>
 	<parent>
 		<artifactId>astoolkit</artifactId>
 		<groupId>org.astoolkit</groupId>
 		<version>0.0.0-SNAPSHOT</version>
 	</parent>
+	<dependencies>
+		<dependency>
+			<artifactId>ASToolkitCommons</artifactId>
+			<groupId>org.astoolkit</groupId>
+			<version>0.0.0-SNAPSHOT</version>
+			<type>swc</type>
+		</dependency>
+	</dependencies>
 </project>

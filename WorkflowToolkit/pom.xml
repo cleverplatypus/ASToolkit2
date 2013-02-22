@@ -7,22 +7,26 @@
 	<name>Workflow Toolkit</name>
 	<packaging>swc</packaging>
 	<build>
+		<sourceDirectory>src/main/flex</sourceDirectory>
+		<testSourceDirectory>src/test/flex</testSourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.sonatype.flexmojos</groupId>
 				<artifactId>flexmojos-maven-plugin</artifactId>
-				<version>3.8</version>
+				<version>${flexmojos.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<includeAsClasses>
-						<sources>
-							<directory>${basedir}/src/main/flex</directory>
-							<excludes>
-								<exclude>**/includes/*.as</exclude>
-								<exclude>**/*Include.as</exclude>
-	      					</excludes>
-      					</sources>
-					</includeAsClasses>
+					<includeClasses>
+					  <scan>
+					    <includes>
+					      <include>**/*.as</include>
+					    </includes>
+					    <excludes>
+					      <exclude>**.*Include.as</exclude>
+					      <exclude>**/includes/*</exclude>
+					    </excludes>
+					  </scan>
+					</includeClasses>
 					<namespaces>
 						<namespace>
 							<uri>http://www.astoolkit.org/ns/2012/wfml</uri>
@@ -30,7 +34,7 @@
 						</namespace>
 					</namespaces>
 					<includeNamespaces>
-						<namespace>http://www.astoolkit.org/ns/2012/wfml</namespace>
+						<uri>http://www.astoolkit.org/ns/2012/wfml</uri>
 					</includeNamespaces>
 				</configuration>
 			</plugin>

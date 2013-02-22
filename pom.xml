@@ -13,16 +13,19 @@
 	<properties>
 		<flex.flashPlayer.command>FlashPlayerDebugger.exe</flex.flashPlayer.command>
 		<flex.version>${FLEX_VERSION}</flex.version>
+		<flexmojos.version>4.0-RC2</flexmojos.version>
 		<sonar.language>flex</sonar.language>
 		<sonar.dynamicAnalysis>false</sonar.dynamicAnalysis>
 		<sonar.branch>astoolkit</sonar.branch>
+		<flex.flashPlayer.command>${FLASH_PLAYER}</flex.flashPlayer.command>
 	</properties>
 	<modules>
 		<module>ASToolkitCommons</module>
+		<module>ASToolkitAirCommons</module>
 		<module>WorkflowToolkit</module>
 		<module>WorkflowToolkitFlex4</module>
 		<module>WorkflowAirToolkit</module>
-                <module>WorkflowToolkitParsley2PlugIn</module>
+        <module>WorkflowToolkitParsley2PlugIn</module>
 		<module>WorkflowToolkitParsley3PlugIn</module>
 		<module>WorkflowToolkitXPathPlugIn</module>
 		<module>RuntimeExpressionEvalPlugin</module>
@@ -30,7 +33,6 @@
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<sourceDirectory>src/main/flex</sourceDirectory>
-		<testSourceDirectory>src/test/flex</testSourceDirectory>
 		<extensions>
 		<extension>
 			<groupId>org.apache.maven.wagon</groupId>
@@ -86,7 +88,7 @@
 				<plugin>
 					<groupId>org.sonatype.flexmojos</groupId>
 					<artifactId>flexmojos-maven-plugin</artifactId>
-					<version>4.0-RC2</version>
+					<version>${flexmojos.version}</version>
 					<dependencies>
 						<dependency>
 							<groupId>com.adobe.flex</groupId>
@@ -141,5 +143,13 @@
 			<version>${flex.version}</version>
 			<type>pom</type>
 		</dependency>
+		<dependency>
+  <groupId>com.adobe.flexunit</groupId>
+  <artifactId>flexunit</artifactId>
+  <version>4.0-rc-1</version>
+  <type>swc</type>
+  <scope>test</scope>
+</dependency>
 	</dependencies>	
 </project>
+
