@@ -46,6 +46,7 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.conditional.WorkflowDataSourceResolverDelegate;
 	import org.astoolkit.workflow.constant.TaskStatus;
+	import org.astoolkit.workflow.core.WorkflowEvent;
 
 	[Event( name = "initialized", type = "flash.events.Event" )]
 	/**
@@ -267,7 +268,7 @@ package org.astoolkit.workflow.internals
 			_factoryResolver = _config;
 			_plugIns = new Vector.<IContextPlugIn>();
 
-			var allDropIns : Vector.<Object> = _dropIns;
+			var allDropIns : Vector.<Object> = _dropIns ? _dropIns : new Vector.<Object>();
 
 			if( inAdditionalDropIns )
 				allDropIns = allDropIns.concat( inAdditionalDropIns );
@@ -281,7 +282,7 @@ package org.astoolkit.workflow.internals
 			_suspendableFunctions = new SuspendableFunctionRegistry();
 			_suspendableFunctions.initResumeCallBacks();
 			_initialized = true;
-			dispatchEvent( new Event( "initialized" ) );
+			dispatchEvent( new Event( WorkflowEvent.INITIALIZED ) );
 			LOGGER.info( "Context initialized" );
 		}
 

@@ -1,0 +1,43 @@
+<Workflow 
+	xmlns="http://www.astoolkit.org/ns/2012/wfml"
+	xmlns:audit="org.astoolkit.workflow.plugin.audit.*"
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:xpath="org.astoolkit.workflow.plugin.xpath.*"
+	>
+	<fx:Metadata>
+		/**
+		 * this workflow aims to test the use of XPathDataTransform extension
+		 * to feed task groups and to transform the pipeline
+		 */
+	</fx:Metadata>
+	<contextDropIns>
+		<xpath:XPathDataTransform />
+		<audit:AuditPlugIn />
+	</contextDropIns>
+	<Do>
+		<!---
+			ignoreOutput set to true otherwise the next Do node
+			would receive the last output of SetPipeline instead
+			of the original xml input
+		-->
+		<Do 
+			iterate="data"
+			inputFilter="//contact[@type='person']"
+			ignoreOutput="true"
+			>
+			<SetPipeline 
+				id="personTransform"
+				inputFilter="./@name"
+				/>
+		</Do>
+		<Do 
+			iterate="data"
+			inputFilter="//contact[@type='company']"
+			>
+			<SetPipeline 
+				id="companyTransform"
+				inputFilter="./@name"
+				/>
+		</Do>
+	</Do>
+</Workflow>
