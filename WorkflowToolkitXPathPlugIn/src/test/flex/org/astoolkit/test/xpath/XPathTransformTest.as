@@ -1,20 +1,20 @@
-package org.astoolkit.workflow.test
+package org.astoolkit.test.xpath
 {
 
 	import org.astoolkit.workflow.core.WorkflowEvent;
 	import org.astoolkit.workflow.plugin.audit.AuditData;
 	import org.astoolkit.workflow.plugin.audit.AuditPlugIn;
-	import org.astoolkit.workflow.test.task.XPathContactsTransformTestWorkflow;
+	import org.astoolkit.test.xpath.task.XPathContactsTransformTestWorkflow;
 	import org.flexunit.asserts.assertEquals;
 	import org.flexunit.asserts.assertTrue;
 	import org.flexunit.async.Async;
 
 	public class XPathTransformTest
 	{
-		private static const _contactsInput : XML =
+		private static const CONTACTS_INPUT : XML =
 			<contacts>
 				<contact type="person" name="Victor Lehman"/>
-				<contact type="company" name="Adobe Inc."/>
+				<contact type="company" name="Monsters Inc."/>
 				<contact type="person" name="Sarah Michelle Gellar"/>
 				<contact type="company" name="Krusty Burgers"/>
 			</contacts>;
@@ -48,7 +48,7 @@ package org.astoolkit.workflow.test
 			var f : Function = Async.asyncHandler( this, onWorkflowComplete, 1000 );
 			_contactsTestWf.addEventListener( WorkflowEvent.COMPLETED, f );
 			_contactsTestWf.addEventListener( WorkflowEvent.FAULT, f );
-			_contactsTestWf.run( _contactsInput );
+			_contactsTestWf.run( CONTACTS_INPUT );
 		}
 
 		private function onWorkflowComplete( inEvent : WorkflowEvent, inPassThroughData : Object ) : void
@@ -67,10 +67,10 @@ package org.astoolkit.workflow.test
 
 			var companiesNames : Array = auditData.getOuputData( "companyTransform" );
 			assertEquals(
-				"Company contact[0] name is 'Adobe Inc.'",
-				companiesNames[ 0 ], "Adobe Inc." );
+				"Company contact[0] name is 'Monsters Inc.'",
+				companiesNames[ 0 ], "Monsters Inc." );
 			assertEquals(
-				"Person contact[1] name is 'Krusty Burgers'",
+				"Company contact[1] name is 'Krusty Burgers'",
 				companiesNames[ 1 ], "Krusty Burgers" );
 		}
 
