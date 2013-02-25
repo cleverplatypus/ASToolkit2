@@ -42,8 +42,8 @@ package org.astoolkit.test.xpath
 		{
 		}
 
-		[Test( async, description = "XPath contacts xml test" )]
-		public function basicTest() : void
+		[Test( async, description = "Filtering XML contacts with xpath plugin" )]
+		public function xpathContactsInputFilterTest() : void
 		{
 			var f : Function = Async.asyncHandler( this, onWorkflowComplete, 1000 );
 			_contactsTestWf.addEventListener( WorkflowEvent.COMPLETED, f );

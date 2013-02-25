@@ -24,19 +24,18 @@ package org.astoolkit.commons.reflection
 
 	import mx.logging.ILogger;
 
+	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.commons.io.data.api.IDataBuilder;
 	import org.astoolkit.commons.utils.ObjectCompare;
 	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.commons.utils.isVector;
-	import org.astoolkit.commons.configuration.api.ISelfWiring;
+	import org.astoolkit.commons.wfml.api.IComponent;
 
-	public final class SelfWireUtil
+	public final class AutoAssignUtil
 	{
-		private static const LOGGER : ILogger = getLogger( SelfWireUtil );
+		private static const LOGGER : ILogger = getLogger( AutoAssignUtil );
 
 		//TODO: implement inheritance-tree-safe auto-config fields assignment to best match target fields
-		// 		implement support for IComponent.pid (pid marked children can be assigned even to 
-		//		fields with no [AutoAssign] annotation)
 		public static function autoAssign(
 			inTarget : ISelfWiring,
 			inChildren : Array ) : Vector.<PropertyDataBuilderInfo>
@@ -86,6 +85,20 @@ package org.astoolkit.commons.reflection
 					if( child.assigned )
 						continue;
 
+					var annotations : Vector.<IAnnotation> = f.getAnnotationsOfType( AutoAssign );
+					var annotation : AutoAssign = annotations != null && annotations.length > 0 ?
+						annotations[ 0 ] as AutoAssign : null;
+					var type : Class = annotation.match ? annotation.match : f.type;
+
+
+					if( type && child.object is type )
+					{
+						inTarget[ f.name ] = child.object;
+						child.name = f.name;
+						child.assigned = true;
+						break;
+					}
+
 					if( isVector( f.type ) && child.object is f.subtype )
 					{
 						if( !collectionsInfo.hasOwnProperty( f.name ) )
@@ -98,21 +111,10 @@ package org.astoolkit.commons.reflection
 						child.assigned = true;
 						continue;
 					}
-					var annotations : Vector.<IAnnotation> = f.getAnnotationsOfType( AutoAssign );
-					var annotation : AutoAssign = annotations != null && annotations.length > 0 ?
-						annotations[ 0 ] as AutoAssign : null;
-					var type : Class = annotation.match ? annotation.match : f.type;
-
-					if( child.object is type )
-					{
-						inTarget[ f.name ] = child.object;
-						child.name = f.name;
-						child.assigned = true;
-						break;
-					}
 
 					if( child.object is IDataBuilder &&
-						IDataBuilder( child.object ).builtDataType == type )
+						( child.object is IComponent && f.name == IComponent( child.object ).pid ) ||
+						( type && IDataBuilder( child.object ).builtDataType == type ) )
 					{
 						deferredConfigs.push(
 							PropertyDataBuilderInfo.create(

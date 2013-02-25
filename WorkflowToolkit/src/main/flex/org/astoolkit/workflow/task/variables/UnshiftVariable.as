@@ -21,7 +21,10 @@ package org.astoolkit.workflow.task.variables
 {
 
 	import flash.utils.getQualifiedClassName;
+
 	import mx.collections.IList;
+
+	import org.astoolkit.commons.utils.isVector;
 	import org.astoolkit.workflow.core.BaseTask;
 
 	/**
@@ -48,7 +51,7 @@ package org.astoolkit.workflow.task.variables
 	 * 			<p>In the following example a set of quiz questions
 	 * 			are presented to the user and the answers pushed to an ArrayCollection</p>
 	 * <listing version="3.0">
-	 *     &lt;Workflow dataProvider="{ _questions }"&gt;
+	 *     &lt;Do dataProvider="{ _questions }"&gt;
 	 *         &lt;dialog:ShowSimpleDecisionDialog
 	 *             cancelButton="false"
 	 *             yesButton="true"
@@ -59,74 +62,18 @@ package org.astoolkit.workflow.task.variables
 	 *             name="answers"
 	 *             listType="mx.collections.ArrayCollection"
 	 *             /&gt;
-	 *     &lt;/Workflow&gt;
+	 *     &lt;/Do&gt;
 	 * </listing>
 	 */
-	public class UnshiftVariable extends BaseTask
+	public class UnshiftVariable extends AbstractAddToListVariable
 	{
-		public var listType : Class;
-
-		public var value : *;
-
-		private var _name : String;
-
-		override public function begin() : void
+		override protected function addValue( inList : Object, inValue : Object ) : void
 		{
-			super.begin();
+			if( inList is Array || isVector( inList ) )
+				inList.unshift( inValue );
+			else if( inList is IList )
+				IList( inList ).addItemAt( inValue, 0 );
 
-			if( !_name || _name == "" )
-			{
-				fail( "Variable name not provided" );
-				return;
-			}
-			var varInstance : *;
-			var localValue : Object =
-				value === undefined ? filteredInput : value;
-
-			if( listType )
-			{
-				if( !( listType !== Array ||
-					getQualifiedClassName( listType ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) ||
-					listType is IList ) )
-				{
-					fail( "Attempt to push data to an unknown list type" );
-					return;
-				}
-			}
-
-			if( context.variables.hasOwnProperty( _name ) )
-			{
-				if( listType )
-				{
-					if( getQualifiedClassName( listType ) != getQualifiedClassName( context.variables[ _name ] ) )
-					{
-						fail( "Destination list type and listType classes don't match" );
-						return;
-					}
-					else
-						varInstance = context.variables[ _name ];
-				}
-			}
-
-			if( !varInstance )
-				varInstance = listType ? new listType() : [];
-
-			if( !context.variables.variableIsDefined( _name ) )
-				context.variables[ _name ] = varInstance;
-
-			if( varInstance is Array || getQualifiedClassName( varInstance ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) )
-				varInstance.unshift( localValue );
-			else if( varInstance is IList )
-				IList( varInstance ).addItemAt( localValue, 0 );
-			complete();
-		}
-
-		public function set name( inValue : String ) : void
-		{
-			if( inValue )
-				_name = inValue.match( /^\$/ ) ? inValue : "$" + inValue;
-			else
-				_name = null;
 		}
 	}
 }

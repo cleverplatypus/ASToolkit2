@@ -478,11 +478,13 @@ package org.astoolkit.workflow.core
 		 */
 		public function set inlet( inInlet : Object ) : void
 		{
+			_onPropertySet( "inlet" );
 			_inlet = inInlet;
 		}
 
 		public function set input( inData : * ) : void
 		{
+			_onPropertySet( "input" );
 			_pipelineData = _inputData = inData;
 		}
 
@@ -921,19 +923,20 @@ package org.astoolkit.workflow.core
 		{
 			if( inThread != _thread )
 				return;
+			var w : ITaskLiveCycleWatcher;
 
 			if( !exitStatus )
 			{
 				exitStatus = new ExitStatus( ExitStatus.COMPLETE, null, _pipelineData );
 
-				for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+				for each( w in _context.taskLiveCycleWatchers )
 					w.onTaskPhase( this, TaskPhase.EXIT_STATUS, _exitStatus );
 			}
 			LOGGER.debug(
 				"Task '{0}' completed", description );
 
-			if( suspendBinding && _document != null )
-				BindingUtility.disableAllBindings( _document, this );
+			/*if( suspendBinding && _document != null )
+				BindingUtility.disableAllBindings( _document, this );*/
 
 			if( _status == TaskStatus.SUSPENDED )
 			{
@@ -948,7 +951,7 @@ package org.astoolkit.workflow.core
 			_thread++;
 			_status = TaskStatus.IDLE;
 
-			for each( var w : ITaskLiveCycleWatcher in _context.taskLiveCycleWatchers )
+			for each( w in _context.taskLiveCycleWatchers )
 				w.onTaskPhase( this, TaskPhase.COMPLETED );
 
 			if( _delegate )

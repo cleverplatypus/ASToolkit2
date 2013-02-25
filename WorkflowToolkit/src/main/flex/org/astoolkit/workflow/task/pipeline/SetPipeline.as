@@ -19,6 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.pipeline
 {
+
 	import org.astoolkit.workflow.core.BaseTask;
 
 	/**
@@ -46,14 +47,22 @@ package org.astoolkit.workflow.task.pipeline
 	 */
 	public class SetPipeline extends BaseTask
 	{
-		public static const TASKDESCRIPTOR : XML = <taskdescriptor version="1.0" xmlns="http//www.astoolkit.org/ns/taskdescriptor"></taskdescriptor>;
 
-		public var value : *;
+		private var _value : *;
+
+		[AutoAssign]
+
+		public function set value( value : * ) : void
+		{
+			_onPropertySet( "value" );
+			_value = value;
+		}
+
 
 		override public function begin() : void
 		{
 			super.begin();
-			complete( value !== undefined ? value : filteredInput );
+			complete( _value !== undefined ? _value : filteredInput );
 		}
 	}
 }

@@ -1,0 +1,62 @@
+<Workflow 
+	xmlns="http://www.astoolkit.org/ns/2012/wfml"
+	xmlns:audit="org.astoolkit.workflow.plugin.audit.*"
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	>
+	<fx:Metadata>
+		/**
+		* this workflow aims to test the use of Invoke task
+		*/
+	</fx:Metadata>
+	<fx:Script>
+		<![CDATA[
+			import org.astoolkit.workflow.api.IWorkflowElement;
+			import org.astoolkit.workflow.api.IWorkflowTask;
+
+			public function enableOnly( inTask : IWorkflowTask ) : void
+			{
+				for each( var element : IWorkflowElement in TasksGroup( _rootTask ).children )
+				{
+					element.enabled = element == inTask;
+				}
+			}
+		]]>
+	</fx:Script>
+	<contextDropIns>
+		<audit:AuditPlugIn />
+	</contextDropIns>
+	<Do>
+		<Invoke 
+			id="simpleInvoke"
+			targetType="org.astoolkit.test.invoke.controller.InvokeTestController"
+			method="simpleCall()"
+			/>
+		<Invoke 
+			id="squareRootInvoke"
+			input="{ 81 }"
+			targetType="org.astoolkit.test.invoke.controller.InvokeTestController"
+			method="squareRoot( $data )"
+			/>
+		<Invoke 
+			id="squareRootMethodBuilderInvoke"
+			input="{ 144 }"
+			targetType="org.astoolkit.test.invoke.controller.InvokeTestController"
+			>
+			<MethodBuilder name="squareRoot">
+				<Resolve>$data</Resolve>
+			</MethodBuilder>
+		</Invoke>
+		<Invoke 
+			id="stringToUppercaseAsyncInvoke"
+			input="{ 'I am async' }"
+			targetType="org.astoolkit.test.invoke.controller.InvokeTestController"
+			method="stringToUppercaseAsync( $data )"
+			/>
+		<Invoke 
+			id="undefinedMethodInvoke"
+			targetType="org.astoolkit.test.invoke.controller.InvokeTestController"
+			method="undefinedMethod()"
+			failurePolicy="ignore"
+			/>
+	</Do>
+</Workflow>

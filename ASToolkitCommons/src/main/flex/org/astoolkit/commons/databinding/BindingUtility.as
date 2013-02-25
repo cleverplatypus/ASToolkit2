@@ -106,8 +106,7 @@ package org.astoolkit.commons.databinding
 		private static function getId( inOwner : Object, inTarget : Object ) : String
 		{
 			if( inTarget.hasOwnProperty( "id" ) &&
-				inOwner.hasOwnProperty( inTarget[ "id" ] ) &&
-				inOwner[ inTarget[ "id" ] ] == inTarget )
+				inOwner.hasOwnProperty( inTarget[ "id" ] ) )
 				return inTarget[ "id" ];
 
 			if( !_cache.hasOwnProperty( inTarget ) )

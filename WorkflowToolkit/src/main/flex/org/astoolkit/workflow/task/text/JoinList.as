@@ -20,60 +20,43 @@ Version 2.x
 package org.astoolkit.workflow.task.text
 {
 
+	import mx.collections.IList;
+
+	import org.astoolkit.commons.utils.isCollection;
 	import org.astoolkit.workflow.core.BaseTask;
 
-	public class ReplaceText extends BaseTask
+	public class JoinList extends BaseTask
 	{
+		private var _source : Object;
 
-		private var _text : String;
+		private var _separator : String;
 
-		private var _regexp : RegExp;
-
-		[AutoAssign]
-		public function set regexp( value : RegExp ) : void
+		public function set separator( value : String ) : void
 		{
-			_onPropertySet( "regexp" );
-			_regexp = value;
+			_onPropertySet( "separator" );
+			_separator = value;
 		}
-
-
-		private var _replacement : String = "";
-
-		[AutoAssign]
-		public function set replacement( value : String ) : void
-		{
-			_onPropertySet( "replacement" );
-			_replacement = value;
-		}
-
 
 		[InjectPipeline]
-		public function set text( inValue : String ) : void
+		[AutoAssign]
+		public function set source( value : Object ) : void
 		{
-			_onPropertySet( "text" );
-			_text = inValue;
+			_onPropertySet( "source" );
+			_source = value;
 		}
 
-		/**
-		 * @private
-		 */
 		override public function begin() : void
 		{
 			super.begin();
 
-			if( !_text )
+			if( !isCollection( _source ) )
 			{
-				fail( "Text not provided" );
+				fail( "No input list provided" );
 				return;
 			}
-
-			if( !_regexp )
-			{
-				fail( "Regexp not provided" );
-				return;
-			}
-
-			complete( _text.replace( _regexp, _replacement ) );
+			var joinable : Object =
+				_source is IList ? _source.toArray() : _source;
+			complete( joinable.join( _separator ? _separator : "" ) );
 		}
 	}
 }

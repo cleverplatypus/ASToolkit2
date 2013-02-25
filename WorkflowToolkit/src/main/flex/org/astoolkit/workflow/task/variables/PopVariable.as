@@ -21,10 +21,13 @@ package org.astoolkit.workflow.task.variables
 {
 
 	import flash.utils.getQualifiedClassName;
+
 	import mx.collections.IList;
+
+	import org.astoolkit.commons.utils.isVector;
 	import org.astoolkit.workflow.constant.UNDEFINED;
-	import org.astoolkit.workflow.internals.GroupUtil;
 	import org.astoolkit.workflow.core.BaseTask;
+	import org.astoolkit.workflow.internals.GroupUtil;
 
 	/**
 	 * Removes and outputs the last element of the list variable <code>name</code>.
@@ -80,78 +83,21 @@ package org.astoolkit.workflow.task.variables
 	 * &lt;/Workflow&gt;
 	 * </listing>
 	 */
-	public class PopVariable extends BaseTask
+	public class PopVariable extends AbstractGetFromListVariable
 	{
-
-		[Inspectable( enumeration="lastIteration,fail,break,returnNull", defaultValue="fail" )]
-		public var emptyListPolicy : String = "fail";
-
-		/**
-		 * @private
-		 */
-		private var _name : String;
-
-		/**
-		 * @private
-		 */
-		override public function begin() : void
+		override protected function getValue( inList : Object ) : *
 		{
-			super.begin();
 
-			if( !_name || _name == "" )
-			{
-				fail( "Variable name not provided" );
-				return;
-			}
+			if( inList.length == 0 )
+				return undefined;
 
-			if( !context.variables.variableIsDefined( _name ) )
-			{
-				fail( "Variable {0} doesn't exist", _name );
-				return;
-			}
-			var varInstance : * = context.variables[ _name ];
+			if( inList is Array || isVector( inList ) )
+				return inList.pop();
+			else if( inList is IList )
+				return IList( inList ).removeItemAt( IList( inList ).length - 1 );
 
-			if( !( varInstance is Array ||
-				getQualifiedClassName( varInstance ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) ||
-				varInstance is IList ) )
-			{
-				fail( "Attempt to pop data from an unknown list type" );
-				return;
-			}
-			var out : *;
-
-			if( varInstance is Array || getQualifiedClassName( varInstance ).match( /^__AS3__\.vec::Vector\.<.+>$/ ) )
-				out = varInstance.length > 0 ? varInstance.pop() : UNDEFINED;
-			else if( varInstance is IList )
-				out = IList( varInstance ).length > 0 ?
-					IList( varInstance ).removeItemAt( IList( varInstance ).length - 1 ) :
-					undefined;
-
-			if( out !== undefined )
-				complete( out );
-			else
-			{
-				if( emptyListPolicy == "fail" ||
-					_currentIterator == null )
-				{
-					fail( "Destination list is empty" );
-					return;
-				}
-				else if( _currentIterator != null && emptyListPolicy == "lastIteration" )
-					_currentIterator.abort();
-				else if( emptyListPolicy == "break" )
-					GroupUtil.getParentWorkflow( this ).abort();
-				else if( emptyListPolicy == "returnNull" )
-					complete( null );
-			}
+			return undefined;
 		}
 
-		public function set name( inValue : String ) : void
-		{
-			if( inValue )
-				_name = inValue.match( /^\$/ ) ? inValue : "$" + inValue;
-			else
-				_name = null;
-		}
 	}
 }

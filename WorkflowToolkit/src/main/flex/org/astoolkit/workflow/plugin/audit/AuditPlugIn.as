@@ -115,6 +115,7 @@ class AuditPlugInWatcher implements ITaskLiveCycleWatcher, IContextAwareElement
 
 		if( info.recordExitStatus && inPhase == TaskPhase.EXIT_STATUS )
 		{
+			_auditData.pushExitStatus( inTask.id, inData );
 		}
 	}
 

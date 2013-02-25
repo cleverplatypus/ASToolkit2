@@ -121,6 +121,22 @@
 		class="org.astoolkit.workflow.task.log.WriteLog"
 		/>
 	<component 
+		id="ReplaceText"
+		class="org.astoolkit.workflow.task.text.ReplaceText"
+		/>
+	<component 
+		id="JoinList"
+		class="org.astoolkit.workflow.task.text.JoinList"
+		/>
+	<component 
+		id="SplitString"
+		class="org.astoolkit.workflow.task.text.SplitString"
+		/>
+	<component 
+		id="AuditPlugIn"
+		class="org.astoolkit.workflow.plugin.audit.AuditPlugIn"
+		/>
+	<component 
 		id="ConvertList"
 		class="org.astoolkit.workflow.task.misc.ConvertList"
 		/>

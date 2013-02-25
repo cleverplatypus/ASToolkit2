@@ -1,11 +1,11 @@
-package org.astoolkit.workflow.test
+package org.astoolkit.test.basic
 {
 
 	import org.astoolkit.workflow.api.IWorkflow;
 	import org.astoolkit.workflow.core.WorkflowEvent;
 	import org.astoolkit.workflow.plugin.audit.AuditData;
 	import org.astoolkit.workflow.plugin.audit.AuditPlugIn;
-	import org.astoolkit.workflow.test.task.BasicWorkflow;
+	import org.astoolkit.test.basic.task.BasicWorkflow;
 	import org.flexunit.asserts.assertTrue;
 	import org.flexunit.async.Async;
 
@@ -46,8 +46,8 @@ package org.astoolkit.workflow.test
 		{
 			var auditData : AuditData =
 				_workflow.context.getPluginData( AuditPlugIn ) as AuditData;
-			assertTrue( "setPipeline output == 'nanni'", auditData.getOuputData( "setPipeline" ) );
-			assertTrue( "Output = 'nanni'", inEvent.data == 'nanni' );
+			assertTrue( "setPipeline output == 'my output'", auditData.getOuputData( "setPipeline" ) );
+			assertTrue( "Workflow output = 'my output'", inEvent.data == 'my output' );
 		}
 
 

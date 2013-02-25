@@ -84,77 +84,20 @@ package org.astoolkit.workflow.task.variables
 	 * &lt;/Workflow&gt;
 	 * </listing>
 	 */
-	public class ShiftVariable extends BaseTask
+	public class ShiftVariable extends AbstractGetFromListVariable
 	{
-
-		[Inspectable( enumeration = "lastIteration,fail,break,returnNull", defaultValue = "fail" )]
-		public var emptyListPolicy : String = "fail";
-
-		/**
-		 * @private
-		 */
-		private var _name : String;
-
-		/**
-		 * @private
-		 */
-		override public function begin() : void
+		override protected function getValue( inList : Object ) : *
 		{
-			super.begin();
 
-			if( !_name || _name == "" )
-			{
-				fail( "Variable name not provided" );
-				return;
-			}
+			if( inList.length == 0 )
+				return undefined;
 
-			if( !context.variables.variableIsDefined( _name ) )
-			{
-				fail( "Variable {0} doesn't exist", _name );
-				return;
-			}
-			var varInstance : * = context.variables[ _name ];
+			if( inList is Array || isVector( inList ) )
+				return inList.shift();
+			else if( inList is IList )
+				return IList( inList ).removeItemAt( 0 );
 
-			//TODO: use isCollection/isVector functions to simplify code below
-			if( !isCollection( varInstance ) )
-			{
-				fail( "Attempt to shift data from an unknown list type" );
-				return;
-			}
-			var out : *;
-
-			if( varInstance is Array || isVector( varInstance ) )
-				out = varInstance.length > 0 ? varInstance.shift() : UNDEFINED;
-			else if( varInstance is IList )
-				out = IList( varInstance ).length > 0 ?
-					IList( varInstance ).removeItemAt( 0 ) :
-					undefined;
-
-			if( out !== undefined )
-				complete( out );
-			else
-			{
-				if( emptyListPolicy == "fail" ||
-					_currentIterator == null )
-				{
-					fail( "Destination list is empty" );
-					return;
-				}
-				else if( _currentIterator != null && emptyListPolicy == "lastIteration" )
-					_currentIterator.abort();
-				else if( emptyListPolicy == "break" )
-					GroupUtil.getParentWorkflow( this ).abort();
-				else if( emptyListPolicy == "returnNull" )
-					complete( null );
-			}
-		}
-
-		public function set name( inValue : String ) : void
-		{
-			if( inValue )
-				_name = inValue.match( /^\$/ ) ? inValue : "$" + inValue;
-			else
-				_name = null;
+			return undefined;
 		}
 	}
 }

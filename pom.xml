@@ -25,7 +25,7 @@
 		<module>WorkflowToolkit</module>
 		<module>WorkflowToolkitFlex4</module>
 		<module>WorkflowAirToolkit</module>
-        <module>WorkflowToolkitParsley2PlugIn</module>
+        	<module>WorkflowToolkitParsley2PlugIn</module>
 		<module>WorkflowToolkitParsley3PlugIn</module>
 		<module>WorkflowToolkitXPathPlugIn</module>
 		<module>RuntimeExpressionEvalPlugin</module>

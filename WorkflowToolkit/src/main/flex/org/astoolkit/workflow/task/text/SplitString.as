@@ -22,58 +22,36 @@ package org.astoolkit.workflow.task.text
 
 	import org.astoolkit.workflow.core.BaseTask;
 
-	public class ReplaceText extends BaseTask
+	public class SplitString extends BaseTask
 	{
+		private var _source : String;
 
-		private var _text : String;
-
-		private var _regexp : RegExp;
-
-		[AutoAssign]
-		public function set regexp( value : RegExp ) : void
-		{
-			_onPropertySet( "regexp" );
-			_regexp = value;
-		}
-
-
-		private var _replacement : String = "";
-
-		[AutoAssign]
-		public function set replacement( value : String ) : void
-		{
-			_onPropertySet( "replacement" );
-			_replacement = value;
-		}
-
+		private var _delimiter : Object;
 
 		[InjectPipeline]
-		public function set text( inValue : String ) : void
+		[AutoAssign]
+		public function set source( inValue : String ) : void
 		{
-			_onPropertySet( "text" );
-			_text = inValue;
+			_onPropertySet( "source" );
+			_source = inValue;
 		}
 
-		/**
-		 * @private
-		 */
+		public function set delimiter( inValue : Object ) : void
+		{
+			_onPropertySet( "delimiter" );
+			_delimiter = inValue;
+		}
+
 		override public function begin() : void
 		{
 			super.begin();
 
-			if( !_text )
+			if( !_source )
 			{
-				fail( "Text not provided" );
+				fail( "No source provided" );
 				return;
 			}
-
-			if( !_regexp )
-			{
-				fail( "Regexp not provided" );
-				return;
-			}
-
-			complete( _text.replace( _regexp, _replacement ) );
+			complete( _source.split( _delimiter ) );
 		}
 	}
 }

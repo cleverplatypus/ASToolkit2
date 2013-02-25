@@ -15,7 +15,7 @@
 		<SetPipeline 
 			id="setPipeline"
 			delay="500"
-			value="{ 'nanni' }"
+			value="{ 'my output' }"
 			/>
 	</Do>
 </Workflow>

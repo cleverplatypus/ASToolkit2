@@ -24,7 +24,7 @@ package org.astoolkit.workflow.internals
 	import mx.core.ClassFactory;
 	import mx.core.IFactory;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.reflection.SelfWireUtil;
+	import org.astoolkit.commons.reflection.AutoAssignUtil;
 	import org.astoolkit.commons.reflection.PropertyDataBuilderInfo;
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.workflow.api.IContextConfig;
@@ -76,7 +76,7 @@ package org.astoolkit.workflow.internals
 
 				if( _selfWiringChildren && _selfWiringChildren.length > 0 )
 					_propertiesDataProviderInfo = 
-						SelfWireUtil.autoAssign( this, _selfWiringChildren );
+						AutoAssignUtil.autoAssign( this, _selfWiringChildren );
 			}
 
 			if( _propertiesDataProviderInfo )

@@ -201,11 +201,11 @@ package org.astoolkit.workflow.core
 			for each( w in _context.taskLiveCycleWatchers )
 				w.onTaskPhase( _rootTask, TaskPhase.BEFORE_BEGIN );
 			_rootTask.liveCycleDelegate = _delegate;
-			var out : * = _rootTask.begin();
+			_rootTask.begin();
 
 			if( !_rootTask.running )
 			{
-				return out;
+				return _rootTask.output;
 			}
 			else
 			{

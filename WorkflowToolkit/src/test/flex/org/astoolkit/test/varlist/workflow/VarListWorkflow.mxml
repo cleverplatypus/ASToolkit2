@@ -1,0 +1,60 @@
+<Workflow 
+	xmlns="http://www.astoolkit.org/ns/2012/wfml"
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	>
+	<Do>
+		<PushVariable 
+			listType="Array"
+			name="outList"
+			/>
+		<PushVariable 
+			name="outList"
+			value="{ 'L' }"
+			/>
+		<PushVariable 
+			name="outList"
+			value="{ 'I' }"
+			/>
+		<PushVariable 
+			name="outList"
+			value="{ 'S' }"
+			/>
+		<PushVariable 
+			name="outList"
+			value="{ 'T' }"
+			/>
+		<PushVariable 
+			name="outList"
+			value="{ 'PUSHBOGUS' }"
+			/>
+		<PopVariable name="outList" />
+		<PushVariable 
+			name="outList"
+			value="{ 'T' }"
+			/>
+		<PushVariable 
+			name="outList"
+			value="{ 'E' }"
+			/>
+		<PushVariable 
+			name="outList"
+			value="{ 'S' }"
+			/>
+		<PushVariable 
+			name="outList"
+			value="{ 'T' }"
+			/>
+		<UnshiftVariable 
+			name="outList"
+			value="{ 'MY' }"
+			/>
+		<UnshiftVariable 
+			name="outList"
+			value="{ 'SHIFTBOGUS' }"
+			/>
+		<ShiftVariable name="outList" />
+
+		<GetVariable name="outList" />
+		<JoinList />
+	</Do>
+</Workflow>

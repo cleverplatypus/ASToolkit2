@@ -22,7 +22,7 @@ package org.astoolkit.commons.io.data
 
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
 	import org.astoolkit.commons.io.data.api.IDataBuilder;
-	import org.astoolkit.commons.reflection.SelfWireUtil;
+	import org.astoolkit.commons.reflection.AutoAssignUtil;
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.commons.wfml.api.IComponent;
 
@@ -80,7 +80,7 @@ package org.astoolkit.commons.io.data
 		public function initialized( inDocument : Object, inId : String ) : void
 		{
 			_document  = inDocument;
-			SelfWireUtil.autoAssign( this, _selfWiringChildren );
+			AutoAssignUtil.autoAssign( this, _selfWiringChildren );
 		}
 	}
 }

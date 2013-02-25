@@ -20,10 +20,19 @@ Version 2.x
 package org.astoolkit.commons.utils
 {
 
+	import flash.utils.getQualifiedClassName;
+
 	import mx.collections.IList;
+
+	import org.astoolkit.commons.reflection.Type;
 
 	public function isCollection( inSource : Object ) : Boolean
 	{
-		return isVector( inSource ) || inSource is Array || inSource is IList || inSource is XMLList;
+		return isVector( inSource ) ||
+			inSource is Array || inSource === Array ||
+			inSource is IList ||
+			( inSource is Class &&
+			Type.forType( inSource ).implementsInterface( IList ) ) ||
+			inSource is XMLList || inSource === XMLList;
 	}
 }

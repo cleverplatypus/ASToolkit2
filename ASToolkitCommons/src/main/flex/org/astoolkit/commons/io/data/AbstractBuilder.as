@@ -28,7 +28,7 @@ package org.astoolkit.commons.io.data
 	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
 	import org.astoolkit.commons.io.data.api.IDataBuilder;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.reflection.SelfWireUtil;
+	import org.astoolkit.commons.reflection.AutoAssignUtil;
 	import org.astoolkit.commons.reflection.PropertyDataBuilderInfo;
 	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
@@ -122,7 +122,7 @@ package org.astoolkit.commons.io.data
 
 		protected function initAutoConfigContainer() : void
 		{
-			_propertiesDataProviderInfo = SelfWireUtil.autoAssign( this, _selfWiringChildren );
+			_propertiesDataProviderInfo = AutoAssignUtil.autoAssign( this, _selfWiringChildren );
 		}
 
 		protected function notifyDeferredProcessWatchers() : void

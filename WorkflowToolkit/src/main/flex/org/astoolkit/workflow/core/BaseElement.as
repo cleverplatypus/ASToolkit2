@@ -277,12 +277,11 @@ package org.astoolkit.workflow.core
 		 */
 		public function initialize() : void
 		{
-			if( suspendBinding && _document != null )
-				BindingUtility.disableAllBindings( _document, this );
-
+			/*if( suspendBinding && _document != null )
+				BindingUtility.disableAllBindings( _document, this );*/
 			if( _selfWiringChildren && _selfWiringChildren.length > 0 )
 			{
-				_propertiesDataProviderInfo = SelfWireUtil.autoAssign( this, _selfWiringChildren );
+				_propertiesDataProviderInfo = AutoAssignUtil.autoAssign( this, _selfWiringChildren );
 			}
 		}
 

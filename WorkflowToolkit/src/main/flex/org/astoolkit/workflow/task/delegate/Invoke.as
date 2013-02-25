@@ -21,18 +21,21 @@ package org.astoolkit.workflow.task.delegate
 {
 
 	import flash.utils.getQualifiedClassName;
+
 	import mx.core.IFactory;
 	import mx.rpc.AsyncToken;
 	import mx.rpc.Responder;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
+
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.io.data.MethodBuilder;
+	import org.astoolkit.commons.process.api.IResponseSource;
 	import org.astoolkit.commons.wfml.api.IChildrenAwareDocument;
 	import org.astoolkit.workflow.api.IFactoryResolverClientTask;
 	import org.astoolkit.workflow.core.BaseTask;
 
-	[ExDoc(version="2.0")]
+	[ExDoc( version = "2.0" )]
 	/**
 	 * Calls <code>method</code> on the specified target.
 	 * The target object can be specified as:
@@ -76,10 +79,10 @@ package org.astoolkit.workflow.task.delegate
 	 */
 	public class Invoke extends BaseTask implements IFactoryResolverClientTask
 	{
-		private var _allowDefaultFactory:Boolean;
+		private var _allowDefaultFactory : Boolean;
 
 		//TODO: conform implementation to standard IFactoryResolverClientTask
-		private var _factoryResolver:IFactoryResolver;
+		private var _factoryResolver : IFactoryResolver;
 
 		private var _methodBuilder : MethodBuilder;
 
@@ -141,7 +144,7 @@ package org.astoolkit.workflow.task.delegate
 
 				if( _document is IChildrenAwareDocument )
 					IChildrenAwareDocument( _document ).childNodeAdded( builder );
-				methodName = method.match( /^(\w+)/g )[1];
+				methodName = method.match( /^(\w+)/g )[ 1 ];
 			}
 			else if( _methodBuilder )
 			{
@@ -160,18 +163,20 @@ package org.astoolkit.workflow.task.delegate
 				var result : * = ( builder.getData() as Function )();
 
 				if( result is AsyncToken )
-				{
-					AsyncToken( result ).addResponder( 
+					AsyncToken( result ).addResponder(
 						new Responder( threadSafe( onResult ), threadSafe( onFault ) ) );
-				}
+				else if( result is IResponseSource )
+					IResponseSource( result ).addResponder(
+						new Responder( threadSafe( onResult ), threadSafe( onFault ) ) );
+
 				else
 					complete( result );
 			}
 			catch( e : Error )
 			{
-				fail( "Error calling method \"{0}\" on target \"{1}\"\nRoot cause:\n{2} ", 
-					methodName, 
-					getQualifiedClassName( localTarget ), 
+				fail( "Error calling method \"{0}\" on target \"{1}\"\nRoot cause:\n{2} ",
+					methodName,
+					getQualifiedClassName( localTarget ),
 					e.getStackTrace() );
 			}
 		}

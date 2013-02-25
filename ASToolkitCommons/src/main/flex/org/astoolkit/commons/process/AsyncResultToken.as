@@ -20,8 +20,12 @@ Version 2.x
 package org.astoolkit.commons.process
 {
 
+	import mx.core.mx_internal;
 	import mx.rpc.AsyncToken;
+	import mx.rpc.Fault;
 	import mx.rpc.IResponder;
+	import mx.rpc.events.FaultEvent;
+	import mx.rpc.events.ResultEvent;
 
 	import org.astoolkit.commons.process.api.IResponseSource;
 
@@ -48,6 +52,17 @@ package org.astoolkit.commons.process
 		public function AsyncResultToken()
 		{
 			super();
+		}
+
+		public function dispatchResult( inValue : Object ) : void
+		{
+			mx_internal::applyResult( ResultEvent.createEvent( inValue, this ) );
+		}
+
+		public function dispatchFault( inValue : Fault ) : void
+		{
+			mx_internal::applyFault(
+				FaultEvent.createEvent( inValue, this ) );
 		}
 
 		INTERNAL function onWrappedFault( inInfo : Object ) : void

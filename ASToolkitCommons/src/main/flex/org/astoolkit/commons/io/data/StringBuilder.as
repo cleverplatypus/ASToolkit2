@@ -24,7 +24,7 @@ package org.astoolkit.commons.io.data
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
 	import org.astoolkit.commons.io.data.api.IDataBuilder;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.reflection.SelfWireUtil;
+	import org.astoolkit.commons.reflection.AutoAssignUtil;
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.commons.wfml.api.IComponent;
 

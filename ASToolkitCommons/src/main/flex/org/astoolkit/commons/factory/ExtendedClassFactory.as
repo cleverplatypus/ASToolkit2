@@ -25,7 +25,7 @@ package org.astoolkit.commons.factory
 	import org.astoolkit.commons.factory.api.IExtendedFactory;
 	import org.astoolkit.commons.io.data.api.IDataBuilder;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.reflection.SelfWireUtil;
+	import org.astoolkit.commons.reflection.AutoAssignUtil;
 	import org.astoolkit.commons.reflection.PropertyDataBuilderInfo;
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
 
@@ -163,13 +163,13 @@ package org.astoolkit.commons.factory
 		{
 			_document = inDocument;
 			_id = inId;
-			_autoConfigDataProviders = SelfWireUtil.autoAssign( this, _selfWiringChildren );
+			_autoConfigDataProviders = AutoAssignUtil.autoAssign( this, _selfWiringChildren );
 		}
 
 		public function newInstance() : *
 		{
 			if( _autoConfigDataProviders )
-				SelfWireUtil.processDataBuilders( this, _autoConfigDataProviders );
+				AutoAssignUtil.processDataBuilders( this, _autoConfigDataProviders );
 
 			return getInstance( _type, _defaultProperties, _factoryMethodArguments, _factoryMethod );
 		}
