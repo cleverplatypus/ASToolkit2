@@ -30,12 +30,25 @@ package org.astoolkit.workflow.config
 
 		private var _value : *;
 
+		private var _strictClassMatch : Boolean = true;
+
+		public function get strictClassMatch() : Boolean
+		{
+			return _strictClassMatch;
+		}
+
+		public function set strictClassMatch( inValue : Boolean ) : void
+		{
+			_strictClassMatch = inValue;
+		}
+
+
 		public function get property() : String
 		{
 			return _property;
 		}
 
-		public function set property(value:String) : void
+		public function set property( value : String ) : void
 		{
 			_property = value;
 		}
@@ -45,7 +58,7 @@ package org.astoolkit.workflow.config
 			return _targetClass;
 		}
 
-		public function set targetClass(value:Class) : void
+		public function set targetClass( value : Class ) : void
 		{
 			_targetClass = value;
 		}
@@ -55,7 +68,7 @@ package org.astoolkit.workflow.config
 			return _value;
 		}
 
-		public function set value(value:*) : void
+		public function set value( value : * ) : void
 		{
 			_value = value;
 		}

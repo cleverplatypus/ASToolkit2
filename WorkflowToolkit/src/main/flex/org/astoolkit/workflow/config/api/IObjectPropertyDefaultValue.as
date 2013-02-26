@@ -31,6 +31,9 @@ package org.astoolkit.workflow.config.api
 		function get targetClass() : Class;
 		function set targetClass( inValue : Class ) : void;
 
+		function get strictClassMatch() : Boolean;
+		function set strictClassMatch( inValue : Boolean ) : void;
+
 		function get value() : *;
 		function set value( inValue : * ) : void;
 	}
