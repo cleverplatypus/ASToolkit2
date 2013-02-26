@@ -2,7 +2,7 @@
 <componentPackage>
 	<component 
 		id="Do"
-		class="org.astoolkit.workflow.core.TasksGroup"
+		class="org.astoolkit.workflow.core.Do"
 		/>
 	<component 
 		id="Workflow"

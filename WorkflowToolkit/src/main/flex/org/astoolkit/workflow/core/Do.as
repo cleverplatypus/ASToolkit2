@@ -32,6 +32,7 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.mapping.MappingError;
 	import org.astoolkit.commons.mapping.SimplePropertiesMapper;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
+	import org.astoolkit.commons.mapping.api.IPropertiesMapperFactory;
 	import org.astoolkit.commons.mapping.api.IPropertyMappingDescriptor;
 	import org.astoolkit.commons.ns.astoolkit_private;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
@@ -54,11 +55,11 @@ package org.astoolkit.workflow.core
 	 * XMLList</code>.</p>
 	 *
 	 */
-	public class TasksGroup extends BaseTask implements ITasksGroup, IRepeater
+	public class Do extends BaseTask implements ITasksGroup, IRepeater
 	{
 		use namespace astoolkit_private;
 
-		protected static const LOGGER : ILogger = getLogger( TasksGroup );
+		protected static const LOGGER : ILogger = getLogger( Do );
 
 		private var _elementsQueue : ElementsQueue;
 
@@ -244,7 +245,7 @@ package org.astoolkit.workflow.core
 			_iteratorConfig = inValue;
 		}
 
-		public function TasksGroup()
+		public function Do()
 		{
 			super();
 			_childrenDelegate = new ChildTaskWatcher( this );
@@ -531,13 +532,21 @@ package org.astoolkit.workflow.core
 								}
 							}
 						}
-						else if( inTask.outlet is IPropertiesMapper )
+						else if( inTask.outlet is IPropertiesMapperFactory ||
+							inTask.outlet is IPropertiesMapper )
 						{
+							var localMapper : IPropertiesMapper;
+
+							if( inTask.outlet is IPropertiesMapperFactory )
+								localMapper =
+									IPropertiesMapperFactory( inTask.outlet ).getInstance();
+							else
+								localMapper = IPropertiesMapper( inTask.outlet )
 							var mapped : *;
 
 							try
 							{
-								mapped = IPropertiesMapper( inTask.outlet ).map( inTask.output );
+								mapped = localMapper.map( inTask.output );
 							}
 							catch( e : Error )
 							{

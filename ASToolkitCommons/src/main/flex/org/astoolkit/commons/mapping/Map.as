@@ -21,7 +21,10 @@ package org.astoolkit.commons.mapping
 {
 
 	import mx.core.IMXMLObject;
+	import mx.utils.UIDUtil;
+
 	import org.astoolkit.commons.mapping.api.*;
+	import org.astoolkit.commons.wfml.api.IChildrenAwareDocument;
 	import org.astoolkit.commons.wfml.api.IComponent;
 
 	/**
@@ -32,13 +35,15 @@ package org.astoolkit.commons.mapping
 	 */
 	public dynamic class Map implements IPropertiesMapperFactory, IComponent, IMXMLObject
 	{
-		private var _document:Object;
+		private var _document : Object;
 
-		private var _id:String;
+		private var _id : String;
 
 		private var _pid : String;
 
 		private var _target : *;
+
+		private var _strict : Boolean;
 
 		public function set mappingTarget( inValue : * ) : void
 		{
@@ -61,12 +66,15 @@ package org.astoolkit.commons.mapping
 			_id = inId;
 		}
 
-		public function object( 
-			inTarget : Object, 
-			inMapping : Object, 
+		public function object(
+			inTarget : Object,
+			inMapping : Object,
 			inStrict : Boolean = true ) : IPropertiesMapper
 		{
-			var mapper:SimplePropertiesMapper = new SimplePropertiesMapper();
+			var mapper : SimplePropertiesMapper = new SimplePropertiesMapper();
+
+			if( _document is IChildrenAwareDocument )
+				IChildrenAwareDocument( _document ).childNodeAdded( mapper );
 			mapper.mapping = this;
 			mapper.target = resolveTarget( inTarget );
 			mapper.strict = inStrict;
@@ -74,7 +82,7 @@ package org.astoolkit.commons.mapping
 		}
 
 		public function property(
-			inTarget : Object, 
+			inTarget : Object,
 			inPropertyName : String ) : IPropertiesMapper
 		{
 			return null;
@@ -89,5 +97,18 @@ package org.astoolkit.commons.mapping
 				return _document[ _target ];
 			return _target;
 		}
+
+		public function getInstance() : IPropertiesMapper
+		{
+			var mapper : SimplePropertiesMapper = new SimplePropertiesMapper();
+
+			if( _document is IChildrenAwareDocument )
+				IChildrenAwareDocument( _document ).childNodeAdded( mapper );
+			mapper.mapping = this;
+			mapper.target = _target;
+			mapper.strict = _strict;
+			return mapper;
+		}
+
 	}
 }

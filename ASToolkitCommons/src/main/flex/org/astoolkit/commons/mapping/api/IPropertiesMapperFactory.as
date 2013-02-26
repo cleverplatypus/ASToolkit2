@@ -29,5 +29,7 @@ package org.astoolkit.commons.mapping.api
 		function property(
 		inTarget : Object,
 			inPropertyName : String ) : IPropertiesMapper;
+
+		function getInstance() : IPropertiesMapper;
 	}
 }
