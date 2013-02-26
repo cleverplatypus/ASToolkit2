@@ -52,7 +52,7 @@ package org.astoolkit.workflow.task.parsley
 
 		private var _errorObserver : CommandObserver;
 
-		private var _factoryResolver:IFactoryResolver;
+		private var _factoryResolver : IFactoryResolver;
 
 		private var _hasAsyncResult : Boolean = false;
 
@@ -94,7 +94,7 @@ package org.astoolkit.workflow.task.parsley
 		 * Otherwise, for a <code>[MessageHandler]</code> tagged function we set
 		 *  <code>isCommand="false"</code>.
 		 */
-		public function set hasAsyncResult(value:Boolean) : void
+		public function set hasAsyncResult( value : Boolean ) : void
 		{
 			_hasAsyncResult = value;
 		}
@@ -104,12 +104,12 @@ package org.astoolkit.workflow.task.parsley
 		 *
 		 * @see messageFactory
 		 */
-		public function set message(value:Object) : void
+		public function set message( value : Object ) : void
 		{
 			_message = value;
 		}
 
-		public function set messageClass(value:Class) : void
+		public function set messageClass( value : Class ) : void
 		{
 			_messageClass = value;
 		}
@@ -121,13 +121,13 @@ package org.astoolkit.workflow.task.parsley
 		 * the task input for either <code>IFactory</code> instances or other types of object
 		 * that will be use as message .</p>
 		 */
-		public function set messageFactory(value:IFactory) : void
+		public function set messageFactory( value : IFactory ) : void
 		{
 			_messageFactory = value;
 		}
 
-		[Inspectable( enumeration="abort,ignore,log-error,log-warn,log-info,log-debug", defaultValue="abort" )]
-		public function set messageMappingFailurePolicy(value:String) : void
+		[Inspectable( enumeration = "abort,ignore,log-error,log-warn,log-info,log-debug", defaultValue = "abort" )]
+		public function set messageMappingFailurePolicy( value : String ) : void
 		{
 			_messageMappingFailurePolicy = value;
 		}
@@ -161,7 +161,7 @@ package org.astoolkit.workflow.task.parsley
 		/**
 		 * the message handler selector value
 		 */
-		public function set selector(value:*) : void
+		public function set selector( value : * ) : void
 		{
 			_selector = value;
 		}
@@ -255,16 +255,6 @@ package org.astoolkit.workflow.task.parsley
 				_completeObserver = null;
 				_errorObserver = null;
 			}
-		}
-
-		override public function prepare() : void
-		{
-			super.prepare();
-		}
-
-		override protected function complete( inOutputData : * = null ) : void
-		{
-			super.complete( inOutputData );
 		}
 
 		private function getMappingErrorMessage( inSource : Object, inTarget : Object, inProperty : String ) : String

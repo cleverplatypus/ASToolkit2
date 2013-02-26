@@ -73,7 +73,7 @@ package org.astoolkit.workflow.parsleysupport
 
 		private var _parsleyContext : Context;
 
-		[Inspectable( enumeration="messageHandler,command,resultOverride,managed" )]
+		[Inspectable( enumeration = "messageHandler,command,resultOverride,managed" )]
 		public var behaviour : String = "messageHandler";
 
 		[Inject]
@@ -122,7 +122,7 @@ package org.astoolkit.workflow.parsleysupport
 		{
 			_factory = new PooledFactory();
 			_factory.backupProperties = [ "inputFilter" ];
-			var parsleyContextFactory : ParsleyContextObjectFactory = 
+			var parsleyContextFactory : ParsleyContextObjectFactory =
 				new ParsleyContextObjectFactory();
 			parsleyContextFactory.context = _parsleyContext;
 			parsleyContextFactory.singletonInstance = false;
@@ -135,18 +135,18 @@ package org.astoolkit.workflow.parsleysupport
 			_id = inId;
 		}
 
-		public function managedHandler( 
-			inMessage : Object, 
+		public function managedHandler(
+			inMessage : Object,
 			inProcessor : MessageProcessor ) : void
 		{
 			if( !enabled )
 				return;
-			var workflow : IWorkflow = resolveWorkflow();
-			var outResult : * = workflow.run( inMessage );
+			var localWorkflow : IWorkflow = resolveWorkflow();
+			localWorkflow.run( inMessage );
 
-			if( workflow.context.status != TaskStatus.RUNNING )
+			if( localWorkflow.context.status != TaskStatus.RUNNING )
 			{
-				if( workflow.rootTask.exitStatus.code == ExitStatus.ABORTED )
+				if( localWorkflow.rootTask.exitStatus.code == ExitStatus.ABORTED )
 				{
 					inProcessor.resume();
 					return;
@@ -154,9 +154,9 @@ package org.astoolkit.workflow.parsleysupport
 				else
 				{
 					inProcessor.suspend();
-					workflow.addEventListener( WorkflowEvent.COMPLETED, onTaskComplete );
-					_commandsCache[ UIDUtil.getUID( workflow ) ] = inProcessor;
-					workflow.addEventListener( WorkflowEvent.COMPLETED, onTaskComplete );
+					localWorkflow.addEventListener( WorkflowEvent.COMPLETED, onTaskComplete );
+					_commandsCache[ UIDUtil.getUID( localWorkflow ) ] = inProcessor;
+					localWorkflow.addEventListener( WorkflowEvent.COMPLETED, onTaskComplete );
 				}
 			}
 			else
@@ -165,9 +165,9 @@ package org.astoolkit.workflow.parsleysupport
 			}
 		}
 
-		public function resultOverride( 
-			inResult : Object, 
-			inMessage : Object, 
+		public function resultOverride(
+			inResult : Object,
+			inMessage : Object,
 			inProcessor : CommandObserverProcessor ) : void
 		{
 			if( !enabled )
@@ -191,15 +191,15 @@ package org.astoolkit.workflow.parsleysupport
 		 */
 		private function onTaskComplete( inEvent : WorkflowEvent ) : void
 		{
-			var workflow : ITasksGroup = ITasksGroup( inEvent.target );
-			IEventDispatcher( workflow ).removeEventListener(
+			var localWorkflow : ITasksGroup = ITasksGroup( inEvent.target );
+			IEventDispatcher( localWorkflow ).removeEventListener(
 				WorkflowEvent.COMPLETED,
 				onTaskComplete );
 			var processor : CommandObserverProcessor;
 
 			if( behaviour == "command" )
 			{
-				var token : AsyncToken = 
+				var token : AsyncToken =
 					_commandsCache[ UIDUtil.getUID( inEvent.target ) ] as AsyncToken;
 				setTimeout( function() : void
 				{
@@ -213,19 +213,19 @@ package org.astoolkit.workflow.parsleysupport
 			}
 			else if( behaviour == "resultOverride" )
 			{
-				processor = 
-					_commandsCache[ UIDUtil.getUID( inEvent.target ) ] 
+				processor =
+					_commandsCache[ UIDUtil.getUID( inEvent.target ) ]
 					as CommandObserverProcessor;
 				processor.command.setResult( inEvent.data );
 				processor.resume();
 			}
 			else if( behaviour == "managed" )
 			{
-				processor = 
-					_commandsCache[ UIDUtil.getUID( inEvent.target ) ] 
+				processor =
+					_commandsCache[ UIDUtil.getUID( inEvent.target ) ]
 					as CommandObserverProcessor;
 
-				if( workflow.exitStatus.code == ExitStatus.ABORTED )
+				if( localWorkflow.exitStatus.code == ExitStatus.ABORTED )
 					processor.resume();
 				else
 					processor.cancel();
@@ -244,8 +244,8 @@ package org.astoolkit.workflow.parsleysupport
 			if( behaviour == "managed" )
 			{
 				var handler : DefaultMessageHandler = new DefaultMessageHandler( info );
-				handler.init( 
-					Provider.forInstance( this ), 
+				handler.init(
+					Provider.forInstance( this ),
 					ClassInfo.forInstance( this )
 					.getMethod( "managedHandler" ) );
 				_parsleyContext.scopeManager.getScope( scope ).messageReceivers.addTarget( handler );
@@ -254,8 +254,8 @@ package org.astoolkit.workflow.parsleysupport
 			if( behaviour == "command" )
 			{
 				var cHandler : DefaultMessageHandler = new DefaultMessageHandler( info );
-				cHandler.init( 
-					Provider.forInstance( this ), 
+				cHandler.init(
+					Provider.forInstance( this ),
 					ClassInfo
 					.forInstance( this )
 					.getMethod( "commandHandler " ) );
@@ -268,8 +268,8 @@ package org.astoolkit.workflow.parsleysupport
 			else if( behaviour == "messageHandler" )
 			{
 				var mHandler : DefaultMessageHandler = new DefaultMessageHandler( info );
-				mHandler.init( 
-					Provider.forInstance( this ), 
+				mHandler.init(
+					Provider.forInstance( this ),
 					ClassInfo
 					.forInstance( this )
 					.getMethod( "handler" ) );

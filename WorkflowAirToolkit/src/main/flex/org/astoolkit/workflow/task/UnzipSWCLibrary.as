@@ -37,14 +37,14 @@ package org.astoolkit.workflow.task
 
 		private var _swcFile : File;
 
-		[Inspectable( enumeration="bytearray,tempfile" )]
+		[Inspectable( enumeration = "bytearray,tempfile" )]
 		override public function set outputKind( inValue : String ) : void
 		{
 			super.outputKind = inValue;
 		}
 
 		[InjectPipeline]
-		public function set swcFile( inValue :File) : void
+		public function set swcFile( inValue : File ) : void
 		{
 			_onPropertySet( "swcFile" );
 			_swcFile = inValue;

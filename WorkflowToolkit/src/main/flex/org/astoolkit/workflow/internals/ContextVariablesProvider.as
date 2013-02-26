@@ -22,12 +22,14 @@ package org.astoolkit.workflow.internals
 
 	import flash.utils.flash_proxy;
 
+	import mx.logging.ILogger;
 	import mx.utils.ObjectProxy;
 	import mx.utils.UIDUtil;
 
 	import org.astoolkit.commons.collection.api.IRepeater;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 	import org.astoolkit.commons.ns.astoolkit_private;
+	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.TaskPhase;
 	import org.astoolkit.workflow.core.ExitStatus;
@@ -48,6 +50,7 @@ package org.astoolkit.workflow.internals
 	 */
 	public dynamic class ContextVariablesProvider extends ObjectProxy implements ITaskLiveCycleWatcher
 	{
+		private static const LOGGER : ILogger = getLogger( ContextVariablesProvider );
 
 		/**
 		 * @private
@@ -490,17 +493,20 @@ package org.astoolkit.workflow.internals
 		{
 			if( inPhase == TaskPhase.PREPARED )
 			{
-
+				LOGGER.debug( "Task phase '{0}' ignored by ContextVariablesProvider", inPhase );
 			}
 			else if( inPhase == TaskPhase.RESUMED_DEFERRED_EXECUTION )
 			{
+				LOGGER.debug( "Task phase '{0}' ignored by ContextVariablesProvider", inPhase );
 
 			}
 			else if( inPhase == TaskPhase.AFTER_BEGIN )
 			{
+				LOGGER.debug( "Task phase '{0}' ignored by ContextVariablesProvider", inPhase );
 			}
 			else if( inPhase == TaskPhase.DEFERRING_EXECUTION )
 			{
+				LOGGER.debug( "Task phase '{0}' ignored by ContextVariablesProvider", inPhase );
 			}
 			else if( inPhase == TaskPhase.COMPLETED )
 			{
@@ -509,9 +515,11 @@ package org.astoolkit.workflow.internals
 			}
 			else if( inPhase == TaskPhase.BEGUN )
 			{
+				LOGGER.debug( "Task phase '{0}' ignored by ContextVariablesProvider", inPhase );
 			}
 			else if( inPhase == TaskPhase.CONTEXT_BOND )
 			{
+				LOGGER.debug( "Task phase '{0}' ignored by ContextVariablesProvider", inPhase );
 			}
 			else if( inPhase == TaskPhase.BEFORE_BEGIN )
 			{
@@ -523,18 +531,23 @@ package org.astoolkit.workflow.internals
 			}
 			else if( inPhase == TaskPhase.DATA_SET )
 			{
+				LOGGER.debug( "Task phase '{0}' ignored by ContextVariablesProvider", inPhase );
 			}
 			else if( inPhase == TaskPhase.RESUMED )
 			{
+				LOGGER.debug( "Task phase '{0}' ignored by ContextVariablesProvider", inPhase );
 			}
 			else if( inPhase == TaskPhase.PROGRESS )
 			{
+				LOGGER.debug( "Task phase '{0}' ignored by ContextVariablesProvider", inPhase );
 			}
 			else if( inPhase == TaskPhase.SUSPENDED )
 			{
+				LOGGER.debug( "Task phase '{0}' ignored by ContextVariablesProvider", inPhase );
 			}
 			else if( inPhase == TaskPhase.INITIALISED )
 			{
+				LOGGER.debug( "Task phase '{0}' ignored by ContextVariablesProvider", inPhase );
 			}
 			else if( inPhase == TaskPhase.FAILED )
 			{
@@ -543,6 +556,7 @@ package org.astoolkit.workflow.internals
 			}
 			else if( inPhase == TaskPhase.ABORTED )
 			{
+				LOGGER.debug( "Task phase '{0}' ignored by ContextVariablesProvider", inPhase );
 			}
 			else if( inPhase == TaskPhase.EXIT_STATUS )
 			{

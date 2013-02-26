@@ -37,7 +37,7 @@ package org.astoolkit.workflow.api
 		 */
 		function set currentIterator( inValue : IIterator ) : void;
 
-		function set liveCycleDelegate( inValue : ITaskLiveCycleWatcher ) : void; //TODO: change name to something more meaningful (e.g. livecycleDelegate)
+		function set liveCycleDelegate( inValue : ITaskLiveCycleWatcher ) : void;
 		/**
 		 * an optional human readable description for this element.
 		 * <p>If not defined, a string containing the branch this element

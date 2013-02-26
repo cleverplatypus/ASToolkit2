@@ -41,7 +41,7 @@ package org.astoolkit.workflow.task.io
 	 * <li>a <code>flash.filesystem.File</code> object</li>
 	 * </ul>
    * <b>Output</b><br><br>
-						  * either a <code>String</code> or a <code>XML</code> object
+							 * either a <code>String</code> or a <code>XML</code> object
 	 * depending on the value of <code>contentType</code>
 	 * </p>
 	 * <p>
@@ -60,18 +60,18 @@ package org.astoolkit.workflow.task.io
 
 		private var _url : String;
 
-		[Inspectable( enumeration="text,e4x", defaultValue="text" )]
+		[Inspectable( enumeration = "text,e4x", defaultValue = "text" )]
 		public var contentType : String = "text";
 
 		[InjectPipeline]
-		public function set file( inValue :File) : void
+		public function set file( inValue : File ) : void
 		{
 			_onPropertySet( "file" );
 			_file = inValue;
 		}
 
 		[InjectPipeline]
-		public function set url( inValue :String) : void
+		public function set url( inValue : String ) : void
 		{
 			_onPropertySet( "url" );
 			_url = inValue;
@@ -125,11 +125,6 @@ package org.astoolkit.workflow.task.io
 				}
 				textLoaded( fileText );
 			}
-		}
-
-		override public function prepare() : void
-		{
-			super.prepare();
 		}
 
 		private function onDownloadProgress( inEvent : ProgressEvent ) : void

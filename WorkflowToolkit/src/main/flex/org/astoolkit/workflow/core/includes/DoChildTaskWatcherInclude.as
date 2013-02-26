@@ -20,16 +20,16 @@ Version 2.x
 import org.astoolkit.workflow.api.*;
 import org.astoolkit.workflow.constant.TaskPhase;
 import org.astoolkit.workflow.core.ExitStatus;
-import org.astoolkit.workflow.core.TasksGroup;
+import org.astoolkit.workflow.core.Do;
 
 namespace INTERNAL = "org.astoolkit.workflow.core.do::INTERNAL";
 
 [ExcludeClass]
 class ChildTaskWatcher implements ITaskLiveCycleWatcher
 {
-	private var _group : TasksGroup;
+	private var _group : Do;
 
-	public function ChildTaskWatcher( inGroup : TasksGroup )
+	public function ChildTaskWatcher( inGroup : Do )
 	{
 		_group = inGroup;
 	}

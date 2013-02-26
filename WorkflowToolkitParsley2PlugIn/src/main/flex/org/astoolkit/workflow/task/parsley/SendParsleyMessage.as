@@ -255,16 +255,6 @@ package org.astoolkit.workflow.task.parsley
 			}
 		}
 
-		override public function prepare() : void
-		{
-			super.prepare();
-		}
-
-		override protected function complete( inOutputData : * = null ) : void
-		{
-			super.complete( inOutputData );
-		}
-
 		private function getMappingErrorMessage( inSource : Object, inTarget : Object, inProperty : String ) : String
 		{
 			return StringUtil.substitute(

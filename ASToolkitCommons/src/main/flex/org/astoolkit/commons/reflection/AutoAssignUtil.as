@@ -113,8 +113,8 @@ package org.astoolkit.commons.reflection
 					}
 
 					if( child.object is IDataBuilder &&
-						( child.object is IComponent && f.name == IComponent( child.object ).pid ) ||
-						( type && IDataBuilder( child.object ).builtDataType == type ) )
+						( ( child.object is IComponent && f.name == IComponent( child.object ).pid ) ||
+						( type && IDataBuilder( child.object ).builtDataType == type ) ) )
 					{
 						deferredConfigs.push(
 							PropertyDataBuilderInfo.create(

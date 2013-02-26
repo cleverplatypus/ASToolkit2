@@ -167,15 +167,7 @@ package org.astoolkit.workflow.core
 			_delegate = new ChildTaskWatcher( this );
 			var w : ITaskLiveCycleWatcher;
 
-			if( !_contextFactory )
-				_contextFactory = new ClassFactory( DefaultWorkflowContext );
-
-			if( !_context )
-			{
-				_context = _contextFactory.newInstance() as IWorkflowContext;
-			}
-
-			_context.init( this, _contextDropIns );
+			initContext();
 
 			try
 			{
@@ -201,7 +193,16 @@ package org.astoolkit.workflow.core
 			for each( w in _context.taskLiveCycleWatchers )
 				w.onTaskPhase( _rootTask, TaskPhase.BEFORE_BEGIN );
 			_rootTask.liveCycleDelegate = _delegate;
-			_rootTask.begin();
+
+			try
+			{
+				_rootTask.begin();
+			}
+			catch( rootTaskError : Error )
+			{
+				INTERNAL::onRootTaskFault( _rootTask, "Root task failed:\n" + rootTaskError.getStackTrace() );
+				return;
+			}
 
 			if( !_rootTask.running )
 			{
@@ -213,6 +214,19 @@ package org.astoolkit.workflow.core
 					w.onTaskPhase( _rootTask, TaskPhase.AFTER_BEGIN );
 				_retainedWorkflows[ this ] = this;
 			}
+		}
+
+		private function initContext() : void
+		{
+			if( !_contextFactory )
+				_contextFactory = new ClassFactory( DefaultWorkflowContext );
+
+			if( !_context )
+			{
+				_context = _contextFactory.newInstance() as IWorkflowContext;
+			}
+
+			_context.init( this, _contextDropIns );
 		}
 
 		public function set contextDropIns( inValue : Vector.<Object> ) : void

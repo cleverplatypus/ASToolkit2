@@ -32,7 +32,7 @@ package org.astoolkit.commons.mapping
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 	import org.astoolkit.commons.reflection.Type;
 
-	[DefaultProperty("mapping")]
+	[DefaultProperty( "mapping" )]
 	public class SimplePropertiesMapper implements IPropertiesMapper, IMXMLObject
 	{
 		protected var _id : String;
@@ -80,8 +80,8 @@ package org.astoolkit.commons.mapping
 			if( !localTarget )
 				localTarget = _target;
 
-			if( localTarget is String && 
-				_document && 
+			if( localTarget is String &&
+				_document &&
 				_document.hasOwnProperty( _target ) )
 				localTarget = _document[ localTarget ];
 
@@ -90,32 +90,32 @@ package org.astoolkit.commons.mapping
 
 			var transformer : IIODataTransformer;
 			var value : *;
-			var mapping : Object;
+			var localMapping : Object;
 			var mapKey : String;
 
 			if( inMapping is Array )
 			{
-				mapping = {};
+				localMapping = {};
 
 				for each( mapKey in inMapping )
 				{
-					mapping[ mapKey ] = mapKey;
+					localMapping[ mapKey ] = mapKey;
 				}
 			}
 			else if( inMapping is String )
 			{
-				mapping = {};
-				mapping[ inMapping ] = inMapping;
+				localMapping = {};
+				localMapping[ inMapping ] = inMapping;
 			}
 			else
-				mapping = inMapping;
+				localMapping = inMapping;
 
-			for( mapKey in mapping )
+			for( mapKey in localMapping )
 			{
 				try
 				{
-					transformer = _transformerRegistry.getTransformer( inSource, mapping[ mapKey ] );
-					value = transformer.transform( inSource, mapping[ mapKey ] )
+					transformer = _transformerRegistry.getTransformer( inSource, localMapping[ mapKey ] );
+					value = transformer.transform( inSource, localMapping[ mapKey ] )
 					localTarget[ mapKey ] = value;
 				}
 				catch( e : Error )
@@ -123,8 +123,8 @@ package org.astoolkit.commons.mapping
 					if( _strict )
 					{
 						//TODO : error message is wrong. if the destination hasn't the property  the "source doesn't have property" error is thrown 
-						var className : String = getQualifiedClassName( !inSource.hasOwnProperty( mapping[ mapKey ] ) ? inSource : localTarget );
-						var propName : String = !inSource.hasOwnProperty( mapping[ mapKey ] ) ? mapping[ mapKey ] : mapKey;
+						var className : String = getQualifiedClassName( !inSource.hasOwnProperty( localMapping[ mapKey ] ) ? inSource : localTarget );
+						var propName : String = !inSource.hasOwnProperty( localMapping[ mapKey ] ) ? localMapping[ mapKey ] : mapKey;
 						throw new MappingError( className + " has no \"" + propName + "\" property" );
 					}
 					else

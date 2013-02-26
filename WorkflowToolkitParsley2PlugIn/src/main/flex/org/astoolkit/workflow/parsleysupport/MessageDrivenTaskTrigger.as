@@ -24,13 +24,13 @@ package org.astoolkit.workflow.parsleysupport
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
-	
+
 	import mx.core.IMXMLObject;
 	import mx.core.mx_internal;
 	import mx.rpc.AsyncToken;
 	import mx.rpc.events.ResultEvent;
 	import mx.utils.UIDUtil;
-	
+
 	import org.astoolkit.commons.factory.DynamicPoolFactoryDelegate;
 	import org.astoolkit.commons.factory.PooledFactory;
 	import org.astoolkit.commons.factory.api.IPooledFactory;
@@ -77,7 +77,7 @@ package org.astoolkit.workflow.parsleysupport
 
 		public var taskRefId : String;
 
-		[Inspectable( enumeration="messageHandler,command,resultOverride,managed" )]
+		[Inspectable( enumeration = "messageHandler,command,resultOverride,managed" )]
 		public var behaviour : String = "messageHandler";
 
 		public var workflow : IWorkflow;
@@ -132,12 +132,12 @@ package org.astoolkit.workflow.parsleysupport
 		{
 			if( !enabled )
 				return;
-			var workflow : IWorkflow = resolveWorkflow();
-			var outResult : * = workflow.run( inMessage );
+			var localWorkflow : IWorkflow = resolveWorkflow();
+			localWorkflow.run( inMessage );
 
-			if( workflow.context.status != TaskStatus.RUNNING )
+			if( localWorkflow.context.status != TaskStatus.RUNNING )
 			{
-				if( workflow.rootTask.exitStatus.code == ExitStatus.ABORTED )
+				if( localWorkflow.rootTask.exitStatus.code == ExitStatus.ABORTED )
 				{
 					inProcessor.resume();
 					return;
@@ -145,9 +145,8 @@ package org.astoolkit.workflow.parsleysupport
 				else
 				{
 					inProcessor.suspend();
-					workflow.addEventListener( WorkflowEvent.COMPLETED, onTaskComplete );
-					_commandsCache[ UIDUtil.getUID( workflow ) ] = inProcessor;
-					workflow.addEventListener( WorkflowEvent.COMPLETED, onTaskComplete );
+					localWorkflow.addEventListener( WorkflowEvent.COMPLETED, onTaskComplete );
+					_commandsCache[ UIDUtil.getUID( localWorkflow ) ] = inProcessor;
 				}
 			}
 			else
@@ -176,8 +175,8 @@ package org.astoolkit.workflow.parsleysupport
 
 		private function onTaskComplete( inEvent : WorkflowEvent ) : void
 		{
-			var workflow : ITasksGroup = ITasksGroup( inEvent.target );
-			IEventDispatcher( workflow ).removeEventListener(
+			var localWorkflow : ITasksGroup = ITasksGroup( inEvent.target );
+			IEventDispatcher( localWorkflow ).removeEventListener(
 				WorkflowEvent.COMPLETED,
 				onTaskComplete );
 			var processor : CommandObserverProcessor;
@@ -205,7 +204,7 @@ package org.astoolkit.workflow.parsleysupport
 			{
 				processor = _commandsCache[ UIDUtil.getUID( inEvent.target ) ] as CommandObserverProcessor;
 
-				if( workflow.exitStatus.code == ExitStatus.ABORTED )
+				if( localWorkflow.exitStatus.code == ExitStatus.ABORTED )
 					processor.resume();
 				else
 					processor.cancel();

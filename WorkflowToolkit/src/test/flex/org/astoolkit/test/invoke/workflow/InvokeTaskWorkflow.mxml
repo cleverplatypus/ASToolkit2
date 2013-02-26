@@ -15,7 +15,7 @@
 
 			public function enableOnly( inTask : IWorkflowTask ) : void
 			{
-				for each( var element : IWorkflowElement in TasksGroup( _rootTask ).children )
+				for each( var element : IWorkflowElement in Do( _rootTask ).children )
 				{
 					element.enabled = element == inTask;
 				}
