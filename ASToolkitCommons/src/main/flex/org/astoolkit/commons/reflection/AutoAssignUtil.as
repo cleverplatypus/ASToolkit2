@@ -23,10 +23,12 @@ package org.astoolkit.commons.reflection
 	import flash.utils.getQualifiedClassName;
 
 	import mx.logging.ILogger;
+	import mx.utils.object_proxy;
 
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.commons.io.data.api.IDataBuilder;
 	import org.astoolkit.commons.utils.ObjectCompare;
+	import org.astoolkit.commons.utils.getClass;
 	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.commons.utils.isVector;
 	import org.astoolkit.commons.wfml.api.IComponent;
@@ -67,62 +69,107 @@ package org.astoolkit.commons.reflection
 							aAnnotation.order,
 							bAnnotation.order );
 				} );
-			var childrenInfo : Array = inChildren.map(
+
+			var childrenInfo : Vector.<PropertyInfo> = Vector.<PropertyInfo>(inChildren.map(
 				function( inItem : Object, inIndex : int, inArray : Array ) : Object
 				{
-					return {
-							assigned: false,
-							object: inItem
-						};
-				} );
-			var child : Object;
+					return new PropertyInfo( inItem );
+				} ) );
+			var child : PropertyInfo;
 			var collectionsInfo : Object = {};
 
 			for each( var f : Field in autoConfigFields )
 			{
-				for each( child in childrenInfo )
+				for each( var processPid : Boolean in[ true, false ] )
 				{
-					if( child.assigned )
-						continue;
-
-					var annotations : Vector.<IAnnotation> = f.getAnnotationsOfType( AutoAssign );
-					var annotation : AutoAssign = annotations != null && annotations.length > 0 ?
-						annotations[ 0 ] as AutoAssign : null;
-					var type : Class = annotation.match ? annotation.match : f.type;
-
-
-					if( type && child.object is type )
+					for each( child in childrenInfo )
 					{
-						inTarget[ f.name ] = child.object;
-						child.name = f.name;
-						child.assigned = true;
-						break;
-					}
+						trace( "******* ",
+							getQualifiedClassName( inTarget ),
+							" : ", f.name,
+							" -> ", getQualifiedClassName( child ),
+							" pid: ", processPid );
 
-					if( isVector( f.type ) && child.object is f.subtype )
-					{
-						if( !collectionsInfo.hasOwnProperty( f.name ) )
+						if( processPid && ( !( child.object is IComponent ) || !IComponent( child.object ).pid ) )
+							continue;
+
+						if( !processPid && child.object is IComponent && IComponent( child.object ).pid )
+							continue;
+
+						if( child.assigned )
+							continue;
+						trace( "processing...");
+
+						if( processPid )
 						{
-							collectionsInfo[ f.name ] = new ( f.type )();
-							inTarget[ f.name ] = collectionsInfo[ f.name ];
+							if( IComponent( child.object ).pid == f.name )
+							{
+								if( !( child.object is IDataBuilder ) ||
+									( f.type && Type.forType( f.type ).implementsInterface( IDataBuilder ) ) )
+								{
+									inTarget[ IComponent( child.object ).pid ] = child.object;
+								}
+								else if( f.type && isVector( f.type ) &&
+									Type.forType( f.subtype ).implementsInterface( IDataBuilder ) )
+								{
+									if( inTarget[ f.name ] == null )
+										inTarget[ f.name ] = new ( f.type )();
+									inTarget[ f.name ].push( child.object );
+									child.object.assigned = true;
+								}
+								else
+								{
+									deferredConfigs.push(
+										PropertyDataBuilderInfo.create(
+										f.name,
+										child.object as IDataBuilder ) );
+								}
+								child.name = f.name;
+								child.assigned = true;
+							}
 						}
-						collectionsInfo[ f.name ].push( child.object );
-						child.name = f.name;
-						child.assigned = true;
-						continue;
-					}
+						else
+						{
+							var annotations : Vector.<IAnnotation> = f.getAnnotationsOfType( AutoAssign );
+							var annotation : AutoAssign = annotations != null && annotations.length > 0 ?
+								annotations[ 0 ] as AutoAssign : null;
+							var type : Class = annotation.match ? annotation.match : f.type;
 
-					if( child.object is IDataBuilder &&
-						( ( child.object is IComponent && f.name == IComponent( child.object ).pid ) ||
-						( type && IDataBuilder( child.object ).builtDataType == type ) ) )
-					{
-						deferredConfigs.push(
-							PropertyDataBuilderInfo.create(
-							f.name,
-							child.object as IDataBuilder ) );
-						child.name = f.name;
-						child.assigned = true;
-						break;
+
+							if( type && child.object is type )
+							{
+								inTarget[ f.name ] = child.object;
+								child.name = f.name;
+								child.assigned = true;
+								break;
+							}
+
+							if( isVector( f.type ) && child.object is f.subtype )
+							{
+								if( !collectionsInfo.hasOwnProperty( f.name ) )
+								{
+									collectionsInfo[ f.name ] = new ( f.type )();
+									inTarget[ f.name ] = collectionsInfo[ f.name ];
+								}
+								collectionsInfo[ f.name ].push( child.object );
+								child.name = f.name;
+								child.assigned = true;
+								continue;
+							}
+
+							if( child.object is IDataBuilder &&
+								( ( child.object is IComponent && f.name == IComponent( child.object ).pid ) ||
+								( type && IDataBuilder( child.object ).builtDataType == type ) ) )
+							{
+								deferredConfigs.push(
+									PropertyDataBuilderInfo.create(
+									f.name,
+									child.object as IDataBuilder ) );
+								child.name = f.name;
+								child.assigned = true;
+								break;
+							}
+						}
 					}
 				}
 			}
@@ -143,4 +190,18 @@ package org.astoolkit.commons.reflection
 			}
 		}
 	}
+}
+
+class PropertyInfo
+{
+	public function PropertyInfo( inObject : Object )
+	{
+		object = inObject;
+	}
+
+	public var object : Object;
+
+	public var name : String;
+
+	public var assigned : Boolean;
 }
