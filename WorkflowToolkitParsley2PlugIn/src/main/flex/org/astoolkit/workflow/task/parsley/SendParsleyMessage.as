@@ -30,6 +30,7 @@ package org.astoolkit.workflow.task.parsley
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.mapping.MappingError;
+	import org.astoolkit.commons.mapping.SimplePropertiesMapper;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.workflow.constant.FailurePolicy;
@@ -73,7 +74,8 @@ package org.astoolkit.workflow.task.parsley
 		{
 			if( !_mapper && _mappingInfo )
 			{
-				_mapper = ENV.mapTo.object( null, _mappingInfo );
+				_mapper = new SimplePropertiesMapper();
+				SimplePropertiesMapper( _mapper ).mapping = _mappingInfo;
 			}
 			return _mapper;
 		}
@@ -125,7 +127,7 @@ package org.astoolkit.workflow.task.parsley
 			_messageFactory = value;
 		}
 
-		[Inspectable( enumeration = "abort,ignore,log-error,log-warn,log-info,log-debug", defaultValue = "abort" )]
+		[Inspectable( enumeration="abort,ignore,log-error,log-warn,log-info,log-debug", defaultValue="abort" )]
 		public function set messageMappingFailurePolicy( value : String ) : void
 		{
 			_messageMappingFailurePolicy = value;

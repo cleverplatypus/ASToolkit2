@@ -71,73 +71,22 @@ package org.astoolkit.commons.mapping
 			inMapping : Object,
 			inTarget : Object = null ) : *
 		{
-			if( !_transformerRegistry )
-			{
-				_transformerRegistry = new DefaultDataTransformRegistry();
-			}
-			var localTarget : Object = inTarget;
+			var localTarget : Object = inTarget ? inTarget : null;
 
 			if( !localTarget )
-				localTarget = _target;
+				localTarget = _classFactory ? _classFactory.newInstance() : _target;
+			var transformerRegistry : IIODataTransformerRegistry =
+				_transformerRegistry ? _transformerRegistry : new DefaultDataTransformRegistry();
+			var config : MappingConfig = new MappingConfig();
+			config.source = inSource;
+			config.mapping = inMapping;
+			config.target = localTarget;
+			config.strict = _strict;
+			config.transformerRegistry = transformerRegistry;
+			config.document = _document;
+			return mapWithConfig( config );
 
-			if( localTarget is String &&
-				_document &&
-				_document.hasOwnProperty( _target ) )
-				localTarget = _document[ localTarget ];
 
-			if( !localTarget )
-				localTarget = _classFactory ? _classFactory.newInstance() : {};
-
-			var transformer : IIODataTransformer;
-			var value : *;
-			var localMapping : Object;
-			var mapKey : String;
-
-			if( inMapping is Array )
-			{
-				localMapping = {};
-
-				for each( mapKey in inMapping )
-				{
-					localMapping[ mapKey ] = mapKey;
-				}
-			}
-			else if( inMapping is String )
-			{
-				localMapping = {};
-				localMapping[ inMapping ] = inMapping;
-			}
-			else
-				localMapping = inMapping;
-
-			for( mapKey in localMapping )
-			{
-				try
-				{
-					transformer = _transformerRegistry.getTransformer( inSource, localMapping[ mapKey ] );
-					value = transformer.transform( inSource, localMapping[ mapKey ] )
-					localTarget[ mapKey ] = value;
-				}
-				catch( e : Error )
-				{
-					if( _strict )
-					{
-						//TODO : error message is wrong. if the destination hasn't the property  the "source doesn't have property" error is thrown 
-						var className : String = getQualifiedClassName( !inSource.hasOwnProperty( localMapping[ mapKey ] ) ? inSource : localTarget );
-						var propName : String = !inSource.hasOwnProperty( localMapping[ mapKey ] ) ? localMapping[ mapKey ] : mapKey;
-						throw new MappingError( className + " has no \"" + propName + "\" property" );
-					}
-					else
-					{
-						if( _failDelegate is Function )
-							_failDelegate( mapKey );
-						continue;
-					}
-				}
-			}
-
-			if( inTarget == null && _target == null )
-				return localTarget;
 		}
 
 		public function set strict( inValue : Boolean ) : void
@@ -166,5 +115,70 @@ package org.astoolkit.commons.mapping
 			_id = inId;
 		}
 
+		public static function mapWithConfig(
+			inConfig : MappingConfig ) : *
+		{
+			var localTarget : Object = inConfig.target;
+
+			if( !localTarget )
+				localTarget = inConfig.target;
+
+			if( localTarget is String &&
+				inConfig.document &&
+				inConfig.document.hasOwnProperty( localTarget ) )
+				localTarget = inConfig.document[ localTarget ];
+
+			var transformer : IIODataTransformer;
+			var value : *;
+			var localMapping : Object;
+			var mapKey : String;
+
+			if( inConfig.mapping is Array )
+			{
+				localMapping = {};
+
+				for each( mapKey in inConfig.mapping )
+				{
+					localMapping[ mapKey ] = mapKey;
+				}
+			}
+			else if( inConfig.mapping is String )
+			{
+				localMapping = {};
+				localMapping[ inConfig.mapping ] = inConfig.mapping;
+			}
+			else
+				localMapping = inConfig.mapping;
+
+			for( mapKey in localMapping )
+			{
+				try
+				{
+					transformer = inConfig.transformerRegistry.getTransformer( inConfig.source, localMapping[ mapKey ] );
+					value = transformer.transform( inConfig.source, localMapping[ mapKey ] )
+					localTarget[ mapKey ] = value;
+				}
+				catch( e : Error )
+				{
+					if( inConfig.strict )
+					{
+						//TODO : error message is wrong. if the destination hasn't the property  the "source doesn't have property" error is thrown 
+						var className : String = getQualifiedClassName( !inConfig.source.hasOwnProperty( localMapping[ mapKey ] ) ? inConfig.source : localTarget );
+						var propName : String = !inConfig.source.hasOwnProperty( localMapping[ mapKey ] ) ? localMapping[ mapKey ] : mapKey;
+						throw new MappingError( className + " has no \"" + propName + "\" property" );
+					}
+					else
+					{
+						/*
+						//TODO: implement this?
+						if( _failDelegate is Function )
+							_failDelegate( mapKey );*/
+						continue;
+					}
+				}
+			}
+			return localTarget;
+		}
 	}
 }
+

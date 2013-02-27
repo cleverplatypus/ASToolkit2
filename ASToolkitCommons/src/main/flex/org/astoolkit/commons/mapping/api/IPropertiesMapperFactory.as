@@ -20,6 +20,7 @@ Version 2.x
 package org.astoolkit.commons.mapping.api
 {
 
+	//TODO: Refactor this interface
 	public interface IPropertiesMapperFactory
 	{
 		function object(

@@ -25,14 +25,18 @@ package org.astoolkit.workflow.core
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
 
+	import mx.core.IFactory;
 	import mx.events.PropertyChangeEvent;
 	import mx.events.PropertyChangeEventKind;
 	import mx.logging.ILogger;
 	import mx.utils.StringUtil;
 
 	import org.astoolkit.commons.databinding.BindingUtility;
+	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
+	import org.astoolkit.commons.mapping.MappingConfig;
+	import org.astoolkit.commons.mapping.SimplePropertiesMapper;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.reflection.Field;
@@ -44,11 +48,11 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.workflow.constant.*;
 	import org.astoolkit.workflow.internals.ContextVariablesProvider;
 
-	[Exclude( name = "ENV", kind = "property" )]
-	[Exclude( name = "delegate", kind = "property" )]
-	[Exclude( name = "currentProgress", kind = "property" )]
-	[Exclude( name = "context", kind = "property" )]
-	[Exclude( name = "parent", kind = "property" )]
+	[Exclude( name="ENV", kind="property" )]
+	[Exclude( name="delegate", kind="property" )]
+	[Exclude( name="currentProgress", kind="property" )]
+	[Exclude( name="context", kind="property" )]
+	[Exclude( name="parent", kind="property" )]
 	/**
 	 * dispatched only once, when the root workflow begins.
 	 *
@@ -372,8 +376,8 @@ package org.astoolkit.workflow.core
 		}
 
 		[Inspectable(
-			defaultValue = "cascade",
-			enumeration = "cascade,abort,suspend,ignore,continue,log-debug,log-info,log-warn,log-error" )]
+			defaultValue="cascade",
+			enumeration="cascade,abort,suspend,ignore,continue,log-debug,log-info,log-warn,log-error" )]
 		/**
 		 * @inheritDoc
 		 */
@@ -568,7 +572,7 @@ package org.astoolkit.workflow.core
 		 * <code>fail</code>: call fail()<br>
 		 * <code>skip</code>: ignore this task and go ahead<br>
 		 */
-		[Inspectable( defaultValue = "ignore", enumeration = "ignore,skip,fail" )]
+		[Inspectable( defaultValue="ignore", enumeration="ignore,skip,fail" )]
 		public function set invalidPipelinePolicy( inValue : String ) : void
 		{
 			_invalidPipelinePolicy = inValue;
@@ -579,8 +583,8 @@ package org.astoolkit.workflow.core
 			return _outlet;
 		}
 
-		[AutoAssign( match = "org.astoolkit.commons.mapping.api.IPropertiesMapper" )]
-		[AutoAssign( match = "org.astoolkit.commons.mapping.api.IPropertiesMapperFactory" )]
+		[AutoAssign( match="org.astoolkit.commons.mapping.api.IPropertiesMapper" )]
+		[AutoAssign( match="org.astoolkit.commons.mapping.api.IPropertiesMapperFactory" )]
 		/**
 		 * the destination of the task's output data.
 		 * <p>Possible values:
@@ -636,7 +640,7 @@ package org.astoolkit.workflow.core
 			_outputFilter = inValue;
 		}
 
-		[Inspectable( enumeration = "auto", defaultValue = "auto" )]
+		[Inspectable( enumeration="auto", defaultValue="auto" )]
 		public function set outputKind( inValue : String ) : void
 		{
 			_outputKind = inValue;
@@ -763,7 +767,19 @@ package org.astoolkit.workflow.core
 				if( _taskParametersMapping is IPropertiesMapper )
 					IPropertiesMapper( _taskParametersMapping ).map( filteredInput, this );
 				else
-					ENV.mapTo.object( this, _taskParametersMapping ).map( filteredInput, this );
+				{
+					var factory : IFactory = _context.config.getFactoryForType( MappingConfig );
+					var mappingConfig : MappingConfig = factory.newInstance();
+					mappingConfig.mapping = _taskParametersMapping;
+					mappingConfig.source = filteredInput;
+					mappingConfig.target = this;
+					mappingConfig.transformerRegistry = _context.config.dataTransformerRegistry;
+					mappingConfig.document = _document;
+
+					if( factory is IPooledFactory )
+						IPooledFactory( factory ).release( mappingConfig );
+					SimplePropertiesMapper.mapWithConfig( mappingConfig );
+				}
 			}
 
 			if( _delegate )
