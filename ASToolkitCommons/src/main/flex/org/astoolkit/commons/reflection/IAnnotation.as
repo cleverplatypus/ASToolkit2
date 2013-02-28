@@ -31,5 +31,6 @@ package org.astoolkit.commons.reflection
 		function getString( inArgName : String = "", inOrDefault : Boolean = false ) : String;
 		function initialize( inMetadata : XML ) : void;
 		function get tagName() : String;
+		function validate() : Boolean;
 	}
 }

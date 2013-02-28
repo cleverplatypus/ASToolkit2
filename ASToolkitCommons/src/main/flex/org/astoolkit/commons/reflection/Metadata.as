@@ -180,5 +180,11 @@ package org.astoolkit.commons.reflection
 		{
 			_metadata = inMetadata;
 		}
+
+		public function validate() : Boolean
+		{
+			return true;
+		}
+
 	}
 }

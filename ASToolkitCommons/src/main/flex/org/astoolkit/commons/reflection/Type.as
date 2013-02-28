@@ -24,6 +24,7 @@ package org.astoolkit.commons.reflection
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
+
 	import org.astoolkit.commons.utils.ObjectCompare;
 
 	public class Type extends AbstractReflection
@@ -129,6 +130,23 @@ package org.astoolkit.commons.reflection
 		{
 			return _type;
 		}
+
+		public function getMethod( inName : String ) : Method
+		{
+			if( !_methods.hasOwnProperty( inName ) )
+				return null;
+			return _methods[ inName ] as Method;
+		}
+
+		public function getMethods() : Vector.<Method>
+		{
+			var out : Vector.<Method> = new Vector.<Method>();
+
+			for each( var m : Method in _methods )
+				out.push( m );
+			return out;
+		}
+
 
 		public function getField( inName : String ) : Field
 		{
@@ -270,6 +288,13 @@ package org.astoolkit.commons.reflection
 					_annotationsForType[ getQualifiedClassName( annotation ) ] =
 						new Vector.<IAnnotation>();
 				_annotationsForType[ getQualifiedClassName( annotation ) ].push( annotation );
+			}
+
+			for each( var methodXml : XML in xml.descendants().( name().toString() == "method" ) )
+			{
+				var methodName : String = methodXml.@name.toString();
+				var method : Method = Method.create( methodName );
+				_methods[ methodName ] = method;
 			}
 
 			for each( var accessor : XML in xml.descendants().( name().toString() == "accessor" || name().toString() == "variable" ) )
