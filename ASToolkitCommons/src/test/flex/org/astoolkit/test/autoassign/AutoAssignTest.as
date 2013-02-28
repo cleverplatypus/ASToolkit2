@@ -1,7 +1,10 @@
 package org.astoolkit.test.autoassign
 {
 
+	import org.astoolkit.commons.utils.getClass;
 	import org.flexunit.asserts.assertEquals;
+	import org.flexunit.asserts.assertStrictlyEquals;
+	import org.flexunit.asserts.assertTrue;
 
 	public class AutoAssignTest
 	{
@@ -19,6 +22,7 @@ package org.astoolkit.test.autoassign
 		[BeforeClass]
 		public static function setUpBeforeClass() : void
 		{
+
 		}
 
 		[AfterClass]
@@ -31,6 +35,7 @@ package org.astoolkit.test.autoassign
 		{
 			var doc : Document1 = new Document1();
 			doc.build();
+
 			assertEquals( 
 				"mappedWithPid property == 'mappedWithPid:success'",
 				"mappedWithPid:success",
@@ -43,6 +48,15 @@ package org.astoolkit.test.autoassign
 				"secondaryString property == 'secondaryString:success'",
 				"secondaryString:success",
 				doc.secondaryString );
+			assertStrictlyEquals(
+				"classOrFactory === Number",
+				Number,
+				doc.classOrFactory );
+			assertTrue( 
+				"genericObject is Object and genericObject.prop == 'success'",
+				doc.genericObject &&
+				getClass( doc.genericObject ) === Object &&
+				doc.genericObject.prop == "success" )
 		}
 	}
 }

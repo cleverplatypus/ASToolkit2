@@ -4,10 +4,12 @@
 	xmlns:fx="http://ns.adobe.com/mxml/2009"
 	xmlns:ns="http://www.astoolkit.org/ns/2012/wfml"
 	>
+	<fx:Class>Number</fx:Class>
 	<ns:StringBuilder 
 		pid="mappedWithPid"
 		source="mappedWithPid:success"
 		/>
 	<ns:StringBuilder source="builtString:success" />
 	<fx:String>secondaryString:success</fx:String>
+	<fx:Object prop="success" />
 </BaseSelfWiringDocument>

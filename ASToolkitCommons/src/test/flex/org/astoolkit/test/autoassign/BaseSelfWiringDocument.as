@@ -18,15 +18,17 @@ package org.astoolkit.test.autoassign
 			_selfWiringChildren = inValue;
 		}
 
+		public function get selfWiringChildren() : Array
+		{
+			return _selfWiringChildren;
+		}
+
 		public function build() : void
 		{
 			var buildersInfo : Vector.<PropertyDataBuilderInfo> =
 				AutoAssignUtil.autoAssign( this, _selfWiringChildren );
 
-			for each( var builderInfo : PropertyDataBuilderInfo in buildersInfo )
-			{
-				this[ builderInfo.name ] = builderInfo.dataProvider.getData();
-			}
+			AutoAssignUtil.processDataBuilders( this, buildersInfo );
 		}
 
 		[AutoAssign]

@@ -22,6 +22,7 @@ package org.astoolkit.commons.reflection
 
 	import flash.utils.getQualifiedClassName;
 
+	import mx.core.ClassFactory;
 	import mx.logging.ILogger;
 	import mx.utils.object_proxy;
 
@@ -36,6 +37,15 @@ package org.astoolkit.commons.reflection
 	public final class AutoAssignUtil
 	{
 		private static const LOGGER : ILogger = getLogger( AutoAssignUtil );
+
+		private static var collectionsInfo : Object = {};
+
+		private static const ANNOTATIONS_INITIALIZED : Boolean = (
+			function() : Boolean
+			{
+				AnnotationUtil.registerAnnotation( new ClassFactory( AutoAssign ) );
+				return true;
+			} )();
 
 		//TODO: implement inheritance-tree-safe auto-config fields assignment to best match target fields
 		public static function autoAssign(
@@ -75,106 +85,133 @@ package org.astoolkit.commons.reflection
 				{
 					return new PropertyInfo( inItem );
 				} ) );
+			var pidded : Vector.<PropertyInfo> = new Vector.<PropertyInfo>();
+			var unpidded : Vector.<PropertyInfo> = new Vector.<PropertyInfo>();
 			var child : PropertyInfo;
-			var collectionsInfo : Object = {};
 
-			for each( var f : Field in autoConfigFields )
+			for each( child in childrenInfo )
 			{
-				for each( var processPid : Boolean in[ true, false ] )
+				if( child.object is IComponent && IComponent( child.object ).pid )
+					pidded.push( child );
+				else
+					unpidded.push( child );
+			}
+			collectionsInfo[ inTarget ] = {};
+
+			var assignedFields : Object = {};
+
+			var f : Field;
+			var deferred : PropertyDataBuilderInfo;
+
+
+
+			for each( f in autoConfigFields )
+			{
+				for each( child in pidded )
 				{
-					for each( child in childrenInfo )
+					if( child.assigned )
+						continue;
+
+					if( IComponent( child.object ).pid == f.name )
 					{
-						trace( "******* ",
-							getQualifiedClassName( inTarget ),
-							" : ", f.name,
-							" -> ", getQualifiedClassName( child ),
-							" pid: ", processPid );
+						deferred = processPidded( child, f, inTarget );
 
-						if( processPid && ( !( child.object is IComponent ) || !IComponent( child.object ).pid ) )
-							continue;
-
-						if( !processPid && child.object is IComponent && IComponent( child.object ).pid )
-							continue;
-
-						if( child.assigned )
-							continue;
-						trace( "processing...");
-
-						if( processPid )
-						{
-							if( IComponent( child.object ).pid == f.name )
-							{
-								if( !( child.object is IDataBuilder ) ||
-									( f.type && Type.forType( f.type ).implementsInterface( IDataBuilder ) ) )
-								{
-									inTarget[ IComponent( child.object ).pid ] = child.object;
-								}
-								else if( f.type && isVector( f.type ) &&
-									Type.forType( f.subtype ).implementsInterface( IDataBuilder ) )
-								{
-									if( inTarget[ f.name ] == null )
-										inTarget[ f.name ] = new ( f.type )();
-									inTarget[ f.name ].push( child.object );
-									child.object.assigned = true;
-								}
-								else
-								{
-									deferredConfigs.push(
-										PropertyDataBuilderInfo.create(
-										f.name,
-										child.object as IDataBuilder ) );
-								}
-								child.name = f.name;
-								child.assigned = true;
-							}
-						}
-						else
-						{
-							var annotations : Vector.<IAnnotation> = f.getAnnotationsOfType( AutoAssign );
-							var annotation : AutoAssign = annotations != null && annotations.length > 0 ?
-								annotations[ 0 ] as AutoAssign : null;
-							var type : Class = annotation.match ? annotation.match : f.type;
-
-
-							if( type && child.object is type )
-							{
-								inTarget[ f.name ] = child.object;
-								child.name = f.name;
-								child.assigned = true;
-								break;
-							}
-
-							if( isVector( f.type ) && child.object is f.subtype )
-							{
-								if( !collectionsInfo.hasOwnProperty( f.name ) )
-								{
-									collectionsInfo[ f.name ] = new ( f.type )();
-									inTarget[ f.name ] = collectionsInfo[ f.name ];
-								}
-								collectionsInfo[ f.name ].push( child.object );
-								child.name = f.name;
-								child.assigned = true;
-								continue;
-							}
-
-							if( child.object is IDataBuilder &&
-								( ( child.object is IComponent && f.name == IComponent( child.object ).pid ) ||
-								( type && IDataBuilder( child.object ).builtDataType == type ) ) )
-							{
-								deferredConfigs.push(
-									PropertyDataBuilderInfo.create(
-									f.name,
-									child.object as IDataBuilder ) );
-								child.name = f.name;
-								child.assigned = true;
-								break;
-							}
-						}
+						if( deferred )
+							deferredConfigs.push( deferred );
 					}
 				}
 			}
+
+			for each( f in autoConfigFields )
+			{
+				for each( child in unpidded )
+				{
+					if( child.assigned )
+						continue;
+					deferred = processUnpidded( child, f, inTarget );
+
+					if( deferred )
+						deferredConfigs.push( deferred );
+				}
+			}
+			delete collectionsInfo[ inTarget ];
 			return deferredConfigs;
 		}
+
+		private static function processPidded( inInfo : PropertyInfo, inField : Field, inTarget : Object ) : PropertyDataBuilderInfo
+		{
+			var deferred : PropertyDataBuilderInfo;
+
+			if( !( inInfo.object is IDataBuilder ) ||
+				( inField.type && Type.forType( inField.type ).implementsInterface( IDataBuilder ) ) )
+			{
+				inTarget[ IComponent( inInfo.object ).pid ] = inInfo.object;
+			}
+			else if( inField.type && isVector( inField.type ) &&
+				Type.forType( inField.subtype ).implementsInterface( IDataBuilder ) )
+			{
+				if( inTarget[ inField.name ] == null )
+					inTarget[ inField.name ] = new ( inField.type )();
+				inTarget[ inField.name ].push( inInfo.object );
+			}
+			else
+			{
+				deferred =
+					PropertyDataBuilderInfo.create(
+					inField.name,
+					inInfo.object as IDataBuilder );
+			}
+			inInfo.name = inField.name;
+			inInfo.assigned = true;
+			return deferred;
+		}
+
+
+		private static function processUnpidded( inInfo : PropertyInfo, inField : Field , inTarget : Object) : PropertyDataBuilderInfo
+		{
+			var annotations : Vector.<IAnnotation> = inField.getAnnotationsOfType( AutoAssign );
+			var annotation : AutoAssign = annotations != null && annotations.length > 0 ?
+				annotations[ 0 ] as AutoAssign : null;
+			var type : Class = annotation.match ? annotation.match : inField.type;
+
+			var deferred : PropertyDataBuilderInfo;
+
+			if( type && inInfo.object is type )
+			{
+				inTarget[ inField.name ] = inInfo.object;
+				inInfo.name = inField.name;
+				inInfo.assigned = true;
+				return null;
+			}
+
+			if( isVector( inField.type ) && inInfo.object is inField.subtype )
+			{
+				if( !collectionsInfo[ inTarget ].hasOwnProperty( inField.name ) )
+				{
+					collectionsInfo[ inTarget ][ inField.name ] = new ( inField.type )();
+					inTarget[ inField.name ] = collectionsInfo[ inTarget ][ inField.name ];
+				}
+				collectionsInfo[ inTarget ][ inField.name ].push( inInfo.object );
+				inInfo.name = inField.name;
+				inInfo.assigned = true;
+				return null;
+			}
+
+			if( inInfo.object is IDataBuilder &&
+				( ( inInfo.object is IComponent && inField.name == IComponent( inInfo.object ).pid ) ||
+				( type && IDataBuilder( inInfo.object ).builtDataType == type ) ) )
+			{
+				deferred =
+					PropertyDataBuilderInfo.create(
+					inField.name,
+					inInfo.object as IDataBuilder  );
+				inInfo.name = inField.name;
+				inInfo.assigned = true;
+				return deferred;
+			}
+			return null;
+		}
+
 
 		/**
 		 * Processes <code>IDataBuilder</code> descriptors on the target object.
