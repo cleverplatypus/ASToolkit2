@@ -16,7 +16,8 @@ limitations under the License.
 
 Version 2.x
 
-*/package org.astoolkit.commons.io.transform
+*/
+package org.astoolkit.commons.io.transform
 {
 
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;

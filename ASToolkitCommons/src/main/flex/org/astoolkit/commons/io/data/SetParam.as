@@ -26,7 +26,7 @@ package org.astoolkit.commons.io.data
 
 	public class SetParam extends Resolve implements IDataBuilder, IDeferrableProcess
 	{
-		private var _deferredExecutionWatchers:Vector.<Function>;
+		private var _deferredExecutionWatchers : Vector.<Function>;
 
 		private var _type : Class = Object;
 
@@ -35,7 +35,7 @@ package org.astoolkit.commons.io.data
 			return _type;
 		}
 
-		public function set type(value:Class) : void
+		public function set type( value : Class ) : void
 		{
 			_type = value;
 		}
@@ -49,7 +49,7 @@ package org.astoolkit.commons.io.data
 
 		public function getData() : *
 		{
-			return resolve( null, _document).result;
+			return resolve( null, _document ).result;
 		}
 
 		public function isProcessDeferred() : Boolean

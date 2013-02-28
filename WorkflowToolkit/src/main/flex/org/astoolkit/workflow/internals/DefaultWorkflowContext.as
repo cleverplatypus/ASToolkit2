@@ -48,7 +48,7 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.workflow.constant.TaskStatus;
 	import org.astoolkit.workflow.core.WorkflowEvent;
 
-	[Event( name = "initialized", type = "flash.events.Event" )]
+	[Event( name="initialized", type="flash.events.Event" )]
 	/**
 	 * @inherit
 	 */

@@ -33,7 +33,7 @@ package org.astoolkit.workflow.task.variables
 	internal class AbstractGetFromListVariable extends BaseTask
 	{
 
-		[Inspectable( enumeration = "lastIteration,fail,break,returnNull", defaultValue = "fail" )]
+		[Inspectable( enumeration="lastIteration,fail,break,returnNull", defaultValue="fail" )]
 		public var emptyListPolicy : String = "fail";
 
 		/**

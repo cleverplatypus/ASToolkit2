@@ -32,7 +32,7 @@ package org.astoolkit.commons.conditional
 			var compared : * = resolveSource( inComparisonValue );
 
 			if( !children )
-				return true  && !_negate;
+				return true && !_negate;
 
 			for each( var child : IConditionalExpression in children )
 			{
@@ -46,7 +46,7 @@ package org.astoolkit.commons.conditional
 					result = child.evaluate( compared );
 
 				if( result == false )
-					return false  && !_negate;
+					return false && !_negate;
 
 				if( result is AsyncExpressionToken )
 				{
@@ -56,7 +56,7 @@ package org.astoolkit.commons.conditional
 						return result;
 				}
 			}
-			return true  && !_negate;
+			return true && !_negate;
 		}
 	}
 }

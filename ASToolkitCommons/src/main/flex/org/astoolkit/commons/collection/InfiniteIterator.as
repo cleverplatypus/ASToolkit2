@@ -31,7 +31,7 @@ package org.astoolkit.commons.collection
 
 		private var _isAborted : Boolean;
 
-		override public function set cycle( inValue :Boolean) : void
+		override public function set cycle( inValue : Boolean ) : void
 		{
 			_cycle = inValue;
 		}

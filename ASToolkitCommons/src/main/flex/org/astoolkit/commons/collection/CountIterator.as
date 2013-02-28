@@ -37,7 +37,7 @@ package org.astoolkit.commons.collection
 
 		public var countTo : int;
 
-		override public function set cycle( inValue :Boolean) : void
+		override public function set cycle( inValue : Boolean ) : void
 		{
 			_cycle = inValue;
 		}
@@ -97,7 +97,7 @@ package org.astoolkit.commons.collection
 
 		override public function pushBack() : void
 		{
-			_currentCount --;
+			_currentCount--;
 		}
 
 		override public function reset() : void

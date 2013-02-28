@@ -24,7 +24,7 @@ package org.astoolkit.workflow.conditional
 	import org.astoolkit.workflow.api.IContextAwareElement;
 	import org.astoolkit.workflow.api.IWorkflowContext;
 
-	[XDoc("2.1")]
+	[XDoc( "2.1" )]
 	public class ExitStatusEq extends Eq implements IContextAwareElement
 	{
 		private var _context : IWorkflowContext;

@@ -39,7 +39,7 @@ package org.astoolkit.workflow.conditional
 			_context = inContext;
 		}
 
-		public function resolveDataSource(inSourceDescriptor:Object, inNextDelegate:IIODataSourceResolverDelegate) : *
+		public function resolveDataSource( inSourceDescriptor : Object, inNextDelegate : IIODataSourceResolverDelegate ) : *
 		{
 			//TODO: implement use of inNextDelegate
 			if( inSourceDescriptor is String )

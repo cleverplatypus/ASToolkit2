@@ -19,9 +19,9 @@ Version 2.x
 */
 package org.astoolkit.commons.factory.api
 {
-	
+
 	public interface IFactoryResolverClient
 	{
-		function set factoryResolver( inValue: IFactoryResolver ) : void;
+		function set factoryResolver( inValue : IFactoryResolver ) : void;
 	}
 }

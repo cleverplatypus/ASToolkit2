@@ -105,7 +105,7 @@ package org.astoolkit.workflow.task.misc
 		 * the object to which to set the <code>property</code>.
 		 * Defaults to the current document
 		 */
-		public function set target(value:Object) : void
+		public function set target( value : Object ) : void
 		{
 			_target = value;
 		}
@@ -155,7 +155,7 @@ package org.astoolkit.workflow.task.misc
 						factory = new ClassFactory( _targetClass );
 					else
 					{
-						fail( "No factories found for '{0}'", 
+						fail( "No factories found for '{0}'",
 							getQualifiedClassName( _targetClass ) );
 						return;
 					}

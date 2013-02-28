@@ -26,7 +26,7 @@ package org.astoolkit.workflow.api
 	import org.astoolkit.workflow.core.Insert;
 
 	[Bindable]
-	public interface ITasksGroup extends IWorkflowTask,  IChildrenAwareDocument
+	public interface ITasksGroup extends IWorkflowTask, IChildrenAwareDocument
 	{
 		/**
 		 * the declared elements

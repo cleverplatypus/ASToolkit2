@@ -19,22 +19,23 @@ Version 2.x
 */
 package org.astoolkit.commons.io.data
 {
+
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
 
 	public class ConditionBuilder extends AbstractBuilder
 	{
 		private var _expression : Object;
-		
+
 		public function set expression( inValue : Object ) : void
 		{
-			_expression  = inValue;
+			_expression = inValue;
 		}
-		
-		override public function getData():*
+
+		override public function getData() : *
 		{
 			return null;
 		}
-		
+
 		override public function get builtDataType() : Class
 		{
 			return Boolean;

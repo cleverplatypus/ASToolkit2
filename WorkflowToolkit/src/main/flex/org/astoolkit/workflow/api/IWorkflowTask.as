@@ -121,7 +121,7 @@ package org.astoolkit.workflow.api
 		function get outputFilter() : Object;
 		function set outputFilter( inValue : Object ) : void;
 
-		[Inspectable( enumeration = "auto", defaultValue = "auto" )]
+		[Inspectable( enumeration="auto", defaultValue="auto" )]
 		/**
 		 * an arbitrary string used by the task to decide what to output.
 		 * Typically, a task implementation would implement/override this

@@ -40,7 +40,7 @@ package org.astoolkit.workflow.task.misc
 		/**
 		 * a <code>Array, Vector.&lt;&#42;&gt;, IList</code> object
 		 */
-		public function set source( inValue :Object) : void
+		public function set source( inValue : Object ) : void
 		{
 			_onPropertySet( "source" );
 			_source = inValue;

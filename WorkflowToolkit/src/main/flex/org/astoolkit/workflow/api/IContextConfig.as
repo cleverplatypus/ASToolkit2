@@ -35,7 +35,7 @@ package org.astoolkit.workflow.api
 	public interface IContextConfig extends IFactoryResolver
 	{
 
-		[ArrayItemType("org.astoolkit.commons.factory.ClassFactoryMapping")]
+		[ArrayItemType( "org.astoolkit.commons.factory.ClassFactoryMapping" )]
 		function set classFactoryMappings( inValue : Array ) : void;
 		/**
 		 * an instance of <code>IIODataTransformerRegistry</code> providing

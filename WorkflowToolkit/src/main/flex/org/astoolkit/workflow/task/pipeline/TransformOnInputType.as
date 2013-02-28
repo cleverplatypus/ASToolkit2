@@ -26,10 +26,12 @@ package org.astoolkit.workflow.task.pipeline
 
 	import flash.utils.getQualifiedClassName;
 
+	import mx.core.IFactory;
 	import mx.logging.ILogger;
 	import mx.logging.Log;
 
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
+	import org.astoolkit.commons.mapping.MappingConfig;
 	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.workflow.core.BaseTask;
 
@@ -46,8 +48,6 @@ package org.astoolkit.workflow.task.pipeline
 		 */
 		[Featured]
 		public var transformer : Object;
-
-		public var transformerPropertiesMapping : Object;
 
 		/**
 		 * the type to compare the (filtered) input data's class to
@@ -70,7 +70,7 @@ package org.astoolkit.workflow.task.pipeline
 
 			if( !type )
 			{
-				fail("No type declared for comparison");
+				fail( "No type declared for comparison" );
 				return;
 			}
 
@@ -79,20 +79,10 @@ package org.astoolkit.workflow.task.pipeline
 				var usedTransformer : IIODataTransformer =
 					transformer is IIODataTransformer ?
 					transformer as IIODataTransformer :
-					_dataTransformerRegistry.getTransformer( 
-					filteredInput, 
-					transformer );
+					_dataTransformerRegistry.getTransformer( filteredInput, transformer );
 
 				if( usedTransformer )
 				{
-					if( transformerPropertiesMapping )
-					{
-						ENV.mapTo.object( 
-							usedTransformer, 
-							transformerPropertiesMapping ).map( 
-							transformerPropertiesMapping, 
-							usedTransformer );
-					}
 					complete( usedTransformer.transform( filteredInput, transformer ) );
 					return;
 				}

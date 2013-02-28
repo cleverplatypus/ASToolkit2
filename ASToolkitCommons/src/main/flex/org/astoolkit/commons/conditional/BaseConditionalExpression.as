@@ -27,7 +27,7 @@ package org.astoolkit.commons.conditional
 
 	public class BaseConditionalExpression implements IConditionalExpression, IIODataSourceClient
 	{
-		private var _document:Object;
+		private var _document : Object;
 
 		protected var _dataTransformerRegistry : IIODataTransformerRegistry;
 
@@ -54,12 +54,12 @@ package org.astoolkit.commons.conditional
 			return false;
 		}
 
-		public function set dataTransformerRegistry(inRegistry:IIODataTransformerRegistry) : void
+		public function set dataTransformerRegistry( inRegistry : IIODataTransformerRegistry ) : void
 		{
 			_dataTransformerRegistry = inRegistry;
 		}
 
-		public function set delegate( inValue :Function) : void
+		public function set delegate( inValue : Function ) : void
 		{
 			_delegate = inValue;
 		}
@@ -94,7 +94,7 @@ package org.astoolkit.commons.conditional
 			return _pid;
 		}
 
-		public function set pid(value:String) : void
+		public function set pid( value : String ) : void
 		{
 			_pid = value;
 		}
@@ -193,7 +193,7 @@ package org.astoolkit.commons.conditional
 		{
 			if( _source != null && _sourceResolverDelegate == null )
 			{
-				throw new Error( "No data source resolver for source=\"" + _source + "\"");
+				throw new Error( "No data source resolver for source=\"" + _source + "\"" );
 			}
 
 			if( _source != null )

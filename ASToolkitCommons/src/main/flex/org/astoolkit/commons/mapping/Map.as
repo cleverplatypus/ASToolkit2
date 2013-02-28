@@ -50,6 +50,11 @@ package org.astoolkit.commons.mapping
 			_target = inValue;
 		}
 
+		public function set strict( inValue : Boolean ) : void
+		{
+			_strict = inValue;
+		}
+
 		public function get pid() : String
 		{
 			return _pid;
@@ -108,6 +113,11 @@ package org.astoolkit.commons.mapping
 			mapper.target = _target;
 			mapper.strict = _strict;
 			return mapper;
+		}
+
+		public function propertyIsEnumerable( inValue : * = null ) : Boolean
+		{
+			return inValue != "pid";
 		}
 
 	}

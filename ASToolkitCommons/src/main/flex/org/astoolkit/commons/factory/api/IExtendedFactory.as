@@ -25,15 +25,15 @@ package org.astoolkit.commons.factory.api
 
 	public interface IExtendedFactory extends IFactory, IComponent
 	{
-		function set factoryMethod( inValue :String ) : void;
+		function set factoryMethod( inValue : String ) : void;
 		function set factoryMethodArguments( inValue : Array ) : void;
 		function set properties( inValue : Object ) : void;
 		function set type( inValue : Class ) : void;
 
-		function getInstance( 
-		inType : Class, 
-			inProperties : Object = null, 
-			inFactoryMethodArguments : Array = null, 
+		function getInstance(
+		inType : Class,
+			inProperties : Object = null,
+			inFactoryMethodArguments : Array = null,
 			inFactoryMethod : String = null ) : *;
 	}
 }

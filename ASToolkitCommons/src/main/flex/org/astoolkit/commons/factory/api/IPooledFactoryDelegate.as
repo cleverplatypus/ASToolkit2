@@ -19,6 +19,7 @@ Version 2.x
 */
 package org.astoolkit.commons.factory.api
 {
+
 	import mx.core.IFactory;
 
 	public interface IPooledFactoryDelegate

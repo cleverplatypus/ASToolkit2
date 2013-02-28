@@ -35,7 +35,7 @@ package org.astoolkit.workflow.task.misc
 	 */
 	public class GetProperty extends BaseTask implements IFactoryResolverClientTask
 	{
-		private var _allowDefaultFactory:Boolean;
+		private var _allowDefaultFactory : Boolean;
 
 		private var _factoryResolver : IFactoryResolver;
 
@@ -101,7 +101,7 @@ package org.astoolkit.workflow.task.misc
 						factory = new ClassFactory( _targetClass );
 					else
 					{
-						fail( "No factories found for '{0}'", 
+						fail( "No factories found for '{0}'",
 							getQualifiedClassName( _targetClass ) );
 						return;
 					}

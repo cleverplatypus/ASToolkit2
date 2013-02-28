@@ -16,7 +16,8 @@ limitations under the License.
 
 Version 2.x
 
-*/package org.astoolkit.commons.eval.api
+*/
+package org.astoolkit.commons.eval.api
 {
 
 	public interface IRuntimeExpressionEvaluatorRegistry

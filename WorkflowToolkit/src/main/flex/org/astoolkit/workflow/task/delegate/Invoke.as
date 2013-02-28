@@ -35,7 +35,7 @@ package org.astoolkit.workflow.task.delegate
 	import org.astoolkit.workflow.api.IFactoryResolverClientTask;
 	import org.astoolkit.workflow.core.BaseTask;
 
-	[ExDoc( version = "2.0" )]
+	[ExDoc( version="2.0" )]
 	/**
 	 * Calls <code>method</code> on the specified target.
 	 * The target object can be specified as:

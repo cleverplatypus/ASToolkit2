@@ -25,7 +25,7 @@ package org.astoolkit.commons.eval
 	import org.astoolkit.commons.wfml.api.IChildrenAwareDocument;
 	import org.astoolkit.commons.wfml.api.IComponent;
 
-	[DefaultProperty("expression")]
+	[DefaultProperty( "expression" )]
 	public class Resolve implements IComponent, IExpressionResolver, IMXMLObject
 	{
 		private var _destination : *;
@@ -40,7 +40,7 @@ package org.astoolkit.commons.eval
 
 		public function set delegate( inValue : IExpressionResolver ) : void
 		{
-			_delegate  = inValue;
+			_delegate = inValue;
 		}
 
 		public function set expression( inValue : Object ) : void

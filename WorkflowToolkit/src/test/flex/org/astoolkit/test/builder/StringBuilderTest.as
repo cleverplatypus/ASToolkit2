@@ -31,7 +31,7 @@ package org.astoolkit.test.builder
 		{
 		}
 
-		[Test( async, description = "Testing async stringBuilder" )]
+		[Test( async, description="Testing async stringBuilder" )]
 		public function asyncStringBuilderTest() : void
 		{
 			var f : Function = Async.asyncHandler( this, onAsyncStringBuilderTestComplete, 1000 );

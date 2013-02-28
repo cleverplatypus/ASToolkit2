@@ -37,7 +37,7 @@ package org.astoolkit.commons.io.transform
 			return _next;
 		}
 
-		public function set next( inValue :IIODataTransformer) : void
+		public function set next( inValue : IIODataTransformer ) : void
 		{
 			_next = inValue;
 		}
@@ -57,7 +57,7 @@ package org.astoolkit.commons.io.transform
 			return _pid;
 		}
 
-		public function set pid(value:String) : void
+		public function set pid( value : String ) : void
 		{
 			_pid = value;
 		}

@@ -81,7 +81,7 @@ package org.astoolkit.workflow.task.events
 		}
 
 		[InjectPipeline]
-		public function set target( inValue :IList) : void
+		public function set target( inValue : IList ) : void
 		{
 			_onPropertySet( "target" );
 			_target = inValue;

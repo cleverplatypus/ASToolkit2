@@ -39,7 +39,7 @@ package org.astoolkit.commons.reflection
 			if( getQualifiedClassName( this ).match( /\:\:AbstractReflection$/ ) )
 				throw new Error( "AbstractReflection cannot be instanciated" );
 		}
-		
+
 		public function get annotations() : Vector.<IAnnotation>
 		{
 			return _annotations;

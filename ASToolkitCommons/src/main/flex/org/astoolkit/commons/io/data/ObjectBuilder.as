@@ -20,7 +20,7 @@ Version 2.x
 package org.astoolkit.commons.io.data
 {
 
-	[DefaultProperty("selfWiringChildren")]
+	[DefaultProperty( "selfWiringChildren" )]
 	public class ObjectBuilder extends AbstractBuilder
 	{
 		public function set type( inValue : Class ) : void

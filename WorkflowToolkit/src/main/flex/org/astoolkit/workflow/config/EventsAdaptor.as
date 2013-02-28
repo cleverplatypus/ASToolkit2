@@ -26,23 +26,23 @@ package org.astoolkit.workflow.config
 	import org.astoolkit.workflow.core.ExitStatus;
 
 	[Event(
-		name = "started",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
+		name="started",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name = "warning",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
+		name="warning",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name = "fault",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
+		name="fault",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name = "completed",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
+		name="completed",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name = "progress",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
+		name="progress",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	[Event(
-		name = "prepare",
-		type = "org.astoolkit.workflow.core.WorkflowEvent" )]
+		name="prepare",
+		type="org.astoolkit.workflow.core.WorkflowEvent" )]
 	public class EventsAdaptor extends EventDispatcher implements ITaskLiveCycleWatcher
 	{
 

@@ -35,7 +35,7 @@ package org.astoolkit.commons.collection
 
 		protected var _isAborted : Boolean;
 
-		override public function set cycle( inValue :Boolean) : void
+		override public function set cycle( inValue : Boolean ) : void
 		{
 			_cycle = inValue;
 		}
@@ -90,7 +90,7 @@ package org.astoolkit.commons.collection
 
 		override public function next() : Object
 		{
-			if( _cycle && !_list &&  
+			if( _cycle && !_list &&
 				_currentDataIndex + 1 >= getListLength() )
 				reset();
 

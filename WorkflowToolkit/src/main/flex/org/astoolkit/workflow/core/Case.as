@@ -35,7 +35,7 @@ package org.astoolkit.workflow.core
 
 		private var _task : IWorkflowTask
 
-		private var _value:*;
+		private var _value : *;
 
 		private var _values : Array;
 

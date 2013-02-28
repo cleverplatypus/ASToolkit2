@@ -16,7 +16,8 @@ limitations under the License.
 
 Version 2.x
 
-*/package org.astoolkit.workflow.task.events
+*/
+package org.astoolkit.workflow.task.events
 {
 
 	import mx.core.FlexGlobals;

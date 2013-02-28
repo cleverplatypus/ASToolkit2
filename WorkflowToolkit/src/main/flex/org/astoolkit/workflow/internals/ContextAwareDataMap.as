@@ -70,7 +70,7 @@ dynamic class SelfWrapper extends ObjectProxy
 
 	private var _currentSelf : Object;
 
-	private var _listener : DynamicTaskLiveCycleWatcher 
+	private var _listener : DynamicTaskLiveCycleWatcher
 		= new DynamicTaskLiveCycleWatcher();
 
 	public function SelfWrapper( inContext : IWorkflowContext )

@@ -68,7 +68,7 @@ package org.astoolkit.workflow.task.text
 		/**
 		 * @private
 		 */
-		public function set text( inValue :String) : void
+		public function set text( inValue : String ) : void
 		{
 			_onPropertySet( "text" );
 			_text = inValue;

@@ -16,15 +16,15 @@
 				<extensions>true</extensions>
 				<configuration>
 					<includeClasses>
-					  <scan>
-					    <includes>
-					      <include>**/*.as</include>
-					    </includes>
-					    <excludes>
-					      <exclude>**.*Include.as</exclude>
-					      <exclude>**/includes/*</exclude>
-					    </excludes>
-					  </scan>
+						<scan>
+							<includes>
+								<include>**/*.as</include>
+							</includes>
+							<excludes>
+								<exclude>**.*Include.as</exclude>
+								<exclude>**/includes/*</exclude>
+							</excludes>
+						</scan>
 					</includeClasses>
 					<namespaces>
 						<namespace>
@@ -38,7 +38,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-	</build>	
+	</build>
 	<parent>
 		<artifactId>astoolkit</artifactId>
 		<groupId>org.astoolkit</groupId>

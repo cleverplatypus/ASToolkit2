@@ -87,7 +87,7 @@ package org.astoolkit.workflow.core
 		 */
 		private var _default : Default;
 
-		private var _input:*;
+		private var _input : *;
 
 		/**
 		 * @private
@@ -126,19 +126,19 @@ package org.astoolkit.workflow.core
 			}
 		}
 
-		public function set dataTransformerRegistry(inRegistry:IIODataTransformerRegistry) : void
+		public function set dataTransformerRegistry( inRegistry : IIODataTransformerRegistry ) : void
 		{
 			// TODO Auto Generated method stub
 
 		}
 
-		public function set input(inData:*) : void
+		public function set input( inData : * ) : void
 		{
 			// TODO Auto Generated method stub
 
 		}
 
-		public function set inputFilter(inValue:Object) : void
+		public function set inputFilter( inValue : Object ) : void
 		{
 			// TODO Auto Generated method stub
 

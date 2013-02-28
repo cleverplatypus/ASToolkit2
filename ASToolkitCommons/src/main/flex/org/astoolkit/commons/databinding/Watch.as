@@ -112,15 +112,15 @@ package org.astoolkit.commons.databinding
 
 			if( _document is DisplayObject )
 			{
-				_document.addEventListener( 
-					Event.ADDED_TO_STAGE, 
-					onAddedToStage, 
-					false, 
+				_document.addEventListener(
+					Event.ADDED_TO_STAGE,
+					onAddedToStage,
+					false,
 					int.MAX_VALUE );
-				_document.addEventListener( 
-					Event.REMOVED_FROM_STAGE, 
-					onRemovedFromStage, 
-					false, 
+				_document.addEventListener(
+					Event.REMOVED_FROM_STAGE,
+					onRemovedFromStage,
+					false,
 					int.MAX_VALUE );
 			}
 			else
@@ -147,7 +147,7 @@ package org.astoolkit.commons.databinding
 		/**
 		 * @private
 		 */
-		private function createWeakFunction( inFunction  : Function ) : Function
+		private function createWeakFunction( inFunction : Function ) : Function
 		{
 			var fn : Function = function( inValue : * ) : void
 			{

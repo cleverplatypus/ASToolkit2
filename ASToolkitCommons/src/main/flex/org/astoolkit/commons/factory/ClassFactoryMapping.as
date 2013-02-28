@@ -32,7 +32,7 @@ package org.astoolkit.commons.factory
 
 		public var pattern : String;
 
-		[Inspectable(enumeration="annotationDriven,true,false", defaultValue="annotationDriven")]
+		[Inspectable( enumeration="annotationDriven,true,false", defaultValue="annotationDriven" )]
 		public function set pooled( inValue : String ) : void
 		{
 			_pooled = inValue;

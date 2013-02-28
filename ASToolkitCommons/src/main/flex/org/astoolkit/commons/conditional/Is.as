@@ -34,7 +34,7 @@ package org.astoolkit.commons.conditional
 			if( _lastResult !== undefined )
 				return _lastResult;
 			var compared : * = base === undefined ? resolveSource( inComparisonValue ) : base;
-			_lastResult = negateSafeResult( compared is type  );
+			_lastResult = negateSafeResult( compared is type );
 			return _lastResult;
 		}
 	}

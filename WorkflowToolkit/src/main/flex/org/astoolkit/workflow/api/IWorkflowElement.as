@@ -52,7 +52,7 @@ package org.astoolkit.workflow.api
 		/**
 		 * if false this element will be skipped
 		 */
-		[Inspectable( defaultValue = "true" )]
+		[Inspectable( defaultValue="true" )]
 		function get enabled() : Boolean;
 		function set enabled( inEnabled : Boolean ) : void;
 		/**

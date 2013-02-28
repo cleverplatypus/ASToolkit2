@@ -24,7 +24,7 @@ package org.astoolkit.commons.factory.api
 
 	public interface IPooledFactory extends IExtendedFactory
 	{
-		/* 
+		/*
 		* TODO: not sure backupProperties property is necessary
 		*		It was allegedly added to allow properties restore.
 		*/

@@ -21,42 +21,44 @@ package org.astoolkit.commons.factory
 {
 
 	import mx.core.IMXMLObject;
-	
+
 	import org.astoolkit.commons.factory.api.IExtendedFactory;
 
 	public class ClassFactoryFacade implements IExtendedFactory, IMXMLObject
 	{
 		private static const POOLED_TRUE : String = "true";
+
 		private static const POOLED_FALSE : String = "false";
+
 		private static const POOLED_ANNOTATION_DRIVEN : String = "annotationDriven";
 
 		private var _pid : String;
 
-		public function get pid():String
+		public function get pid() : String
 		{
 			return _pid;
 		}
 
-		public function set pid(value:String):void
+		public function set pid( value : String ) : void
 		{
 			_pid = value;
 		}
 
-		
+
 		private var _factory : IExtendedFactory;
 
 		private var _pooled : String;
 
 		public function set factoryMethod( inValue : String ) : void
 		{
-			
+
 		}
 
-		public function set factoryMethodArguments(inValue:Array) : void
+		public function set factoryMethodArguments( inValue : Array ) : void
 		{
 		}
 
-		[Inspectable(enumeration="annotationDriven,true,false", defaultValue="annotationDriven")]
+		[Inspectable( enumeration="annotationDriven,true,false", defaultValue="annotationDriven" )]
 		public function set pooled( inValue : String ) : void
 		{
 			_pooled = inValue;
@@ -67,7 +69,7 @@ package org.astoolkit.commons.factory
 
 		}
 
-		public function set type(inValue:Class) : void
+		public function set type( inValue : Class ) : void
 		{
 		}
 
@@ -81,19 +83,19 @@ package org.astoolkit.commons.factory
 				}
 				else if( _pooled == POOLED_FALSE )
 				{
-					
+
 				}
-					
+
 			}
 			return _factory;
 		}
 
-		public function getInstance(inType:Class, inProperties:Object=null, inFactoryMethodArguments:Array=null, inFactoryMethod:String=null) : *
+		public function getInstance( inType : Class, inProperties : Object = null, inFactoryMethodArguments : Array = null, inFactoryMethod : String = null ) : *
 		{
 			return null;
 		}
 
-		public function initialized(document:Object, id:String) : void
+		public function initialized( document : Object, id : String ) : void
 		{
 		}
 

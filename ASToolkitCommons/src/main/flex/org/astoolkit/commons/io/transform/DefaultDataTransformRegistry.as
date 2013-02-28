@@ -21,7 +21,7 @@ package org.astoolkit.commons.io.transform
 {
 
 	import flash.utils.getQualifiedClassName;
-	
+
 	import org.astoolkit.commons.io.transform.api.*;
 
 	public class DefaultDataTransformRegistry implements IIODataTransformerRegistry
@@ -46,10 +46,11 @@ package org.astoolkit.commons.io.transform
 				{
 					if( inData is dataType )
 					{
-						var expressions : Array = 
-							inExpression is Array ? 
-								inExpression as Array : 
-								[ inExpression ];
+						var expressions : Array =
+							inExpression is Array ?
+							inExpression as Array :
+							[ inExpression ];
+
 						for each( var expression : Object in expressions )
 						{
 							for each( var filterType : Class in f.supportedExpressionTypes )

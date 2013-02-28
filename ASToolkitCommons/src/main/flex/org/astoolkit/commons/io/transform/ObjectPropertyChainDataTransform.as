@@ -22,7 +22,7 @@ package org.astoolkit.commons.io.transform
 
 	import mx.utils.ObjectUtil;
 	import mx.utils.StringUtil;
-	
+
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 
 	/**
@@ -80,7 +80,7 @@ package org.astoolkit.commons.io.transform
 			if( inExpression == "." )
 				return inData;
 			var val : Object = inData;
-			
+
 			for each( var k : String in inExpression.split( "." ) )
 			{
 				if( k.match( /^\s*\w*(\.\w+)*(\s*\[\s*\d+\s*\])+\s*$/ ) )
@@ -90,6 +90,7 @@ package org.astoolkit.commons.io.transform
 					var indices : Array = StringUtil.trim( k ).match( /(\s*\[\s*\d+\s*\])/g )
 					{
 						var i : int = 0;
+
 						while( i < indices.length )
 						{
 							val = val[ int( indices[ i ].match( /\d+/ ) ) ];

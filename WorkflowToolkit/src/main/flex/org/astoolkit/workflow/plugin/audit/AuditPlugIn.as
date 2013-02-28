@@ -122,7 +122,7 @@ class AuditPlugInWatcher implements ITaskLiveCycleWatcher, IContextAwareElement
 	private function getAuditSetting( inTask : IWorkflowTask ) : AuditTask
 	{
 		if( !_plugIn.targetTasks )
-			return AuditTask.auditAll;
+			return AuditTask.AUDIT_ALL;
 
 		for each( var info : AuditTask in _plugIn.targetTasks )
 		{

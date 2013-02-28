@@ -24,7 +24,7 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.workflow.api.IPropertyOverrideRule;
 	import org.astoolkit.workflow.api.IWorkflowElement;
 
-	[Deprecated("Property override is not used anymore")]
+	[Deprecated( "Property override is not used anymore" )]
 	public class DefaultPropertyOverrideRule implements IPropertyOverrideRule
 	{
 		public function shouldOverride( inProperty : String, inTarget : IWorkflowElement, inParent : ITasksGroup, inCurrentValue : Object ) : Boolean

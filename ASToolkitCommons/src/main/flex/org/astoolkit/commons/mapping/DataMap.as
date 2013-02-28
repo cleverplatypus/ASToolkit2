@@ -157,10 +157,10 @@ class MapperWrapper implements IPropertiesMapper
 	public function mapWith( inSource : Object, inMapping : Object, inTarget : Object = null ) : *
 	{
 		var mapper : IPropertiesMapper = create();
-		var out : * = mapper.mapWith( 
-			inSource, 
-			inMapping, 
-			inTarget != null ? inTarget : _target 
+		var out : * = mapper.mapWith(
+			inSource,
+			inMapping,
+			inTarget != null ? inTarget : _target
 			);
 		_factory.release( mapper );
 		return out;

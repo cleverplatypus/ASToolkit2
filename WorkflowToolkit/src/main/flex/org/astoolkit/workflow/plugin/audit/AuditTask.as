@@ -22,7 +22,7 @@ package org.astoolkit.workflow.plugin.audit
 
 	public class AuditTask
 	{
-		public static const auditAll : AuditTask = createAuditAll();
+		public static const AUDIT_ALL : AuditTask = createAuditAll();
 
 		public var task : Object;
 

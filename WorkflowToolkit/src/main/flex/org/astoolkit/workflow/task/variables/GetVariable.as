@@ -19,6 +19,7 @@ Version 2.x
 */
 package org.astoolkit.workflow.task.variables
 {
+
 	import org.astoolkit.workflow.core.BaseTask;
 
 	/**

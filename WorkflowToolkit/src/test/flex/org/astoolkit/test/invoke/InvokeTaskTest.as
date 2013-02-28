@@ -35,7 +35,7 @@ package org.astoolkit.test.invoke
 		{
 		}
 
-		[Test( async, description = "Testing simpleInvoke task" )]
+		[Test( async, description="Testing simpleInvoke task" )]
 		public function simpleInvoke() : void
 		{
 			var f : Function = Async.asyncHandler( this, onSimpleInvokeComplete, 1000 );
@@ -53,7 +53,7 @@ package org.astoolkit.test.invoke
 				auditData.getOuputData( "simpleInvoke" )[ 0 ] );
 		}
 
-		[Test( async, description = "Testing squareRootInvoke task with parameter" )]
+		[Test( async, description="Testing squareRootInvoke task with parameter" )]
 		public function squareRootInvoke() : void
 		{
 			var f : Function = Async.asyncHandler( this, onSquareRootInvokeComplete, 1000 );
@@ -72,7 +72,7 @@ package org.astoolkit.test.invoke
 				auditData.getOuputData( "squareRootInvoke" )[ 0 ] );
 		}
 
-		[Test( async, description = "Testing squareRootInvoke task with parameter and method builder" )]
+		[Test( async, description="Testing squareRootInvoke task with parameter and method builder" )]
 		public function squareRootMethodBuilderInvoke() : void
 		{
 			var f : Function = Async.asyncHandler( this, onSquareRootInvokeMethodBuilderComplete, 1000 );
@@ -91,7 +91,7 @@ package org.astoolkit.test.invoke
 				auditData.getOuputData( "squareRootMethodBuilderInvoke" )[ 0 ] );
 		}
 
-		[Test( async, description = "Testing stringToUppercaseAsync task with parameter" )]
+		[Test( async, description="Testing stringToUppercaseAsync task with parameter" )]
 		public function stringToUppercaseAsync() : void
 		{
 			var f : Function = Async.asyncHandler( this, onStringToUppercaseAsyncComplete, 10000 );
@@ -110,7 +110,7 @@ package org.astoolkit.test.invoke
 				auditData.getOuputData( "stringToUppercaseAsyncInvoke" )[ 0 ] );
 		}
 
-		[Test( async, description = "Testing ExitStatus for Invoke with undefined method" )]
+		[Test( async, description="Testing ExitStatus for Invoke with undefined method" )]
 		public function undefinedMethodTest() : void
 		{
 			var f : Function = Async.asyncHandler( this, onUndefinedMethodTestComplete, 1000 );

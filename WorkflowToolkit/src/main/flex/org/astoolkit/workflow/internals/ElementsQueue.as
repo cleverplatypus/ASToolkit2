@@ -37,17 +37,17 @@ package org.astoolkit.workflow.internals
 
 		private var _executingTasks : Object;
 
-		private var _resumed: Vector.<IWorkflowElement>;
+		private var _resumed : Vector.<IWorkflowElement>;
 
-		public function ElementsQueue(  inElements : Vector.<IWorkflowElement>  )
+		public function ElementsQueue( inElements : Vector.<IWorkflowElement> )
 		{
 			_elements = inElements;
 		}
 
 		public function hasNext() : Boolean
 		{
-			return ( _resumed && _resumed.length > 0 ) || ( _elements != null && 
-				_elements.length > _currentElementsIndex+1 );
+			return ( _resumed && _resumed.length > 0 ) || ( _elements != null &&
+				_elements.length > _currentElementsIndex + 1 );
 		}
 
 		public function hasPendingElements() : Boolean

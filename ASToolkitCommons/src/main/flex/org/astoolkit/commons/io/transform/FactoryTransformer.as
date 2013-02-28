@@ -44,7 +44,7 @@ package org.astoolkit.commons.io.transform
 
 		public var factoryMethodArguments : Array;
 
-		public function set factoryResolver( inValue: IFactoryResolver ) : void
+		public function set factoryResolver( inValue : IFactoryResolver ) : void
 		{
 			_factoryDelegate = inValue
 		}
@@ -56,12 +56,12 @@ package org.astoolkit.commons.io.transform
 		 */
 		override public function get supportedDataTypes() : Vector.<Class>
 		{
-			return Vector.<Class>([ Object ]);
+			return Vector.<Class>( [ Object ] );
 		}
 
 		public var type : Class;
 
-		override public function transform(inData : Object, inExpression:Object, inTarget:Object=null) : Object
+		override public function transform( inData : Object, inExpression : Object, inTarget : Object = null ) : Object
 		{
 			var usedFactory : IFactory = factory ? factory : null;
 
@@ -86,9 +86,9 @@ package org.astoolkit.commons.io.transform
 			else
 			{
 				if( properties )
-					LOGGER.warn( 
+					LOGGER.warn(
 						"Ignore factory properties. \n" +
-						"Unknown properties set method for factory class: {0}", 
+						"Unknown properties set method for factory class: {0}",
 						getQualifiedClassName( usedFactory ) );
 				return usedFactory.newInstance();
 			}

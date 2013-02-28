@@ -42,14 +42,14 @@ package org.astoolkit.workflow.internals
 		 */
 		protected var _selfWiringChildren : Array;
 
-		protected var _propertiesDataProviderInfo:Vector.<PropertyDataBuilderInfo>;
+		protected var _propertiesDataProviderInfo : Vector.<PropertyDataBuilderInfo>;
 
 		public function set selfWiringChildren( inValue : Array ) : void
 		{
 			_selfWiringChildren = inValue;
 		}
 
-		[ArrayItemType("org.astoolkit.commons.factory.ClassFactoryMapping")]
+		[ArrayItemType( "org.astoolkit.commons.factory.ClassFactoryMapping" )]
 		public function set classFactoryMappings( inValue : Array ) : void
 		{
 			_classFactoryMappings = inValue;
@@ -75,7 +75,7 @@ package org.astoolkit.workflow.internals
 				_factory = new ClassFactory( DefaultWorkflowContext );
 
 				if( _selfWiringChildren && _selfWiringChildren.length > 0 )
-					_propertiesDataProviderInfo = 
+					_propertiesDataProviderInfo =
 						AutoAssignUtil.autoAssign( this, _selfWiringChildren );
 			}
 
@@ -87,7 +87,7 @@ package org.astoolkit.workflow.internals
 				{
 					value = prop.dataProvider.getData();
 
-					if( value  === undefined )
+					if( value === undefined )
 					{
 						if( prop.dataProvider is IDeferrableProcess && IDeferrableProcess( prop.dataProvider ).isProcessDeferred() )
 						{
@@ -106,14 +106,14 @@ package org.astoolkit.workflow.internals
 					dropIns: dropIns
 				};
 			var context : IWorkflowContext = _factory.newInstance() as IWorkflowContext;
-			context.addEventListener( 
-				"initialized", 
+			context.addEventListener(
+				"initialized",
 				function( inEvent : Event ) : void
 				{
 					context.removeEventListener( "initialized", arguments.callee );
 					context.config.defaults = defaults;
-					context.config.classFactoryMappings = _classFactoryMappings;					
-				},false, int.MAX_VALUE );
+					context.config.classFactoryMappings = _classFactoryMappings;
+				}, false, int.MAX_VALUE );
 
 			return context;
 		}

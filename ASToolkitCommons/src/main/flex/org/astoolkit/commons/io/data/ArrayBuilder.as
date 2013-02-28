@@ -26,7 +26,7 @@ package org.astoolkit.commons.io.data
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.commons.wfml.api.IComponent;
 
-	[DefaultProperty("selfWiringChildren")]
+	[DefaultProperty( "selfWiringChildren" )]
 	public class ArrayBuilder implements IDataBuilder, IComponent, ISelfWiring
 	{
 		private var _selfWiringChildren : Array;
@@ -35,7 +35,7 @@ package org.astoolkit.commons.io.data
 
 		private var _expressionResolvers : Vector.<IExpressionResolver>;
 
-		private var _pid:String;
+		private var _pid : String;
 
 		public function set selfWiringChildren( inValue : Array ) : void
 		{
@@ -79,7 +79,7 @@ package org.astoolkit.commons.io.data
 
 		public function initialized( inDocument : Object, inId : String ) : void
 		{
-			_document  = inDocument;
+			_document = inDocument;
 			AutoAssignUtil.autoAssign( this, _selfWiringChildren );
 		}
 	}

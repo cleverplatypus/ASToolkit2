@@ -72,7 +72,7 @@ package org.astoolkit.workflow.core
 		 */
 		private var _stringExpression : String;
 
-		[AutoAssign( order = "2" )]
+		[AutoAssign( order="2" )]
 		/**
 		 * (optional) the tasks to enable with <code>condition == false</code>
 		 */
@@ -81,7 +81,7 @@ package org.astoolkit.workflow.core
 			_isFalseTask = inValue;
 		}
 
-		[AutoAssign( order = "1" )]
+		[AutoAssign( order="1" )]
 		/**
 		 * the tasks to enable with <code>condition == true</code>
 		 */
@@ -90,7 +90,7 @@ package org.astoolkit.workflow.core
 			_isTrueTask = inValue;
 		}
 
-		[AutoAssign( type = "org.astoolkit.commons.conditional.api.IConditionalExpression" )]
+		[AutoAssign( match="org.astoolkit.commons.conditional.api.IConditionalExpression" )]
 		public function set condition( inValue : Object ) : void
 		{
 			if( inValue is Boolean )
@@ -117,12 +117,12 @@ package org.astoolkit.workflow.core
 
 		public function set input( inData : * ) : void
 		{
-			_input  = inData;
+			_input = inData;
 		}
 
 		public function set inputFilter( inValue : Object ) : void
 		{
-			_inputFilter  = inValue;
+			_inputFilter = inValue;
 		}
 
 		override public function set parent( inValue : ITasksGroup ) : void
@@ -145,7 +145,7 @@ package org.astoolkit.workflow.core
 		public function getTask() : IWorkflowTask
 		{
 			if( _executionIsDeferred )
-				throw new Error(  "Cannot get proxied task while in deferred execution state" );
+				throw new Error( "Cannot get proxied task while in deferred execution state" );
 			return _cachedConditionResult ?
 				_isTrueTask : _isFalseTask;
 		}
@@ -206,7 +206,7 @@ package org.astoolkit.workflow.core
 			var result : Object;
 
 			if( _expression )
-				result = _expression.isAsync && 
+				result = _expression.isAsync &&
 					_expression.lastResult !== undefined ?
 					_expression.lastResult :
 					_expression.evaluate();
@@ -241,8 +241,8 @@ package org.astoolkit.workflow.core
 			}
 			else if( result is Error )
 			{
-				_context.fail( 
-					this, 
+				_context.fail(
+					this,
 					"Async evaluation failed" + ( result as Error ).getStackTrace() );
 				return;
 			}

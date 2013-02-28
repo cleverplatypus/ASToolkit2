@@ -46,7 +46,7 @@ package org.astoolkit.workflow.core
 	/**
 	 * This is one of the core Workflow Toolkit's classes.
 	 *
-	 * <p>A <code>TasksGroup</code> (<b>Do</b> node) represents a group of tasks executed either as a sequence or in
+	 * <p>A <code>Do</code> node represents a group of tasks executed either as a sequence or in
 	 * parellel according to <code>flow</code> property.</p>
 	 * <p>They can iterate over an <code>IIterator</code> or in a infinite loop.
 	 * The <code>dataProvider</code> property can be set to any value for which a
@@ -190,7 +190,7 @@ package org.astoolkit.workflow.core
 			return _feed;
 		}
 
-		[Inspectable( defaultValue = "auto", enumeration = "auto,pipeline,currentData" )]
+		[Inspectable( defaultValue="auto", enumeration="auto,pipeline,currentData" )]
 		public function set feed( inFeed : String ) : void
 		{
 			_feed = inFeed;
@@ -201,7 +201,7 @@ package org.astoolkit.workflow.core
 			return _flow;
 		}
 
-		[Inspectable( defaultValue = "serial", enumeration = "parallel,serial" )]
+		[Inspectable( defaultValue="serial", enumeration="parallel,serial" )]
 		public function set flow( inFlow : String ) : void
 		{
 			_flow = inFlow;
@@ -215,7 +215,7 @@ package org.astoolkit.workflow.core
 			return _iterate;
 		}
 
-		[Inspectable( enumeration = "once,loop,data" )]
+		[Inspectable( enumeration="once,loop,data" )]
 		public function set iterate( inIterate : String ) : void
 		{
 			_iterate = inIterate;
@@ -226,7 +226,7 @@ package org.astoolkit.workflow.core
 			return _iterator;
 		}
 
-		[AutoAssign( type = "org.astoolkit.commons.collection.api.IIterator" )]
+		[AutoAssign( type="org.astoolkit.commons.collection.api.IIterator" )]
 		public function set iterator( inValue : IIterator ) : void
 		{
 			_onPropertySet( "iterator" );

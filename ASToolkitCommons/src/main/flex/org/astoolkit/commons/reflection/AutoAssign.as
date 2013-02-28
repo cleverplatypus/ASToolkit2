@@ -21,12 +21,12 @@ package org.astoolkit.commons.reflection
 {
 
 	[Metadata(
-		name = "AutoAssign",
-		target = "setter,property",
-		ownerType = "org.astoolkit.commons.configuration.api.ISelfWiring",
-		repeatable = "true" )]
-	[MetaArg( name = "match", type = "Class", mandatory = "false" )]
-	[MetaArg( name = "order", type = "int", mandatory = "false" )]
+		name="AutoAssign",
+		target="setter,property",
+		ownerType="org.astoolkit.commons.configuration.api.ISelfWiring",
+		repeatable="true" )]
+	[MetaArg( name="match", type="Class", mandatory="false" )]
+	[MetaArg( name="order", type="int", mandatory="false" )]
 	public class AutoAssign extends Metadata
 	{
 

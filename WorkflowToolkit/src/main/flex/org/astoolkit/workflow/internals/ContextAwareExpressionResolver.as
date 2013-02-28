@@ -41,7 +41,7 @@ package org.astoolkit.workflow.internals
 			return _context;
 		}
 
-		public function set context(inValue:IWorkflowContext) : void
+		public function set context( inValue : IWorkflowContext ) : void
 		{
 			_context = inValue;
 		}
@@ -61,9 +61,9 @@ package org.astoolkit.workflow.internals
 				{
 					if( !segment.match( /^\$/ ) && ( dest == null || !dest.hasOwnProperty( segment ) ) )
 					{
-						LOGGER.warn( 
-							"Property '{0}' not found in class {0}", 
-							segment, 
+						LOGGER.warn(
+							"Property '{0}' not found in class {0}",
+							segment,
 							getQualifiedClassName( dest ) );
 						return null;
 					}

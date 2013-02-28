@@ -330,8 +330,8 @@ package org.astoolkit.workflow.core
 
 		private function onImplementationDataSet( inTask : IWorkflowTask ) : void
 		{
-			/*BindingUtility.enableAllBindings( _document, this );
-			BindingUtility.disableAllBindings( _document, this );*/
+		/*BindingUtility.enableAllBindings( _document, this );
+		BindingUtility.disableAllBindings( _document, this );*/
 		}
 	}
 }

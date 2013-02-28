@@ -17,14 +17,15 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.utils 
+package org.astoolkit.commons.utils
 {
+
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
-	
+
 	public function getClass( inObject : Object ) : Class
 	{
-		return  getDefinitionByName( 
+		return getDefinitionByName(
 			getQualifiedClassName( inObject ) ) as Class;
 	}
 }

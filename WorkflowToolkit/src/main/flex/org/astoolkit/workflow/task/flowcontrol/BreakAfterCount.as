@@ -57,7 +57,7 @@ package org.astoolkit.workflow.task.flowcontrol
 
 			if( _lastParentThread != _parent.currentThread )
 			{
-				_lastParentThread = _parent .currentThread;
+				_lastParentThread = _parent.currentThread;
 				_currentCount = 0;
 			}
 		}

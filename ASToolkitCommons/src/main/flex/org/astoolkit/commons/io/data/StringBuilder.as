@@ -28,7 +28,7 @@ package org.astoolkit.commons.io.data
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.commons.wfml.api.IComponent;
 
-	[DefaultProperty("selfWiringChildren")]
+	[DefaultProperty( "selfWiringChildren" )]
 	public class StringBuilder extends AbstractBuilder
 	{
 		private var _source : String;
@@ -53,6 +53,11 @@ package org.astoolkit.commons.io.data
 				out = StringUtil.substitute.apply( null, params );
 			}
 			return out;
+		}
+
+		override public function get builtDataType() : Class
+		{
+			return String;
 		}
 	}
 }

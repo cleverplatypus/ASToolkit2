@@ -43,7 +43,7 @@ package org.astoolkit.commons.collection
 			return 0;
 		}
 
-		public function set source(inValue:*) : void
+		public function set source( inValue : * ) : void
 		{
 		}
 
@@ -79,7 +79,7 @@ package org.astoolkit.commons.collection
 		{
 		}
 
-		public function supportsSource(inObject:*) : Boolean
+		public function supportsSource( inObject : * ) : Boolean
 		{
 			return false;
 		}
@@ -89,7 +89,7 @@ package org.astoolkit.commons.collection
 			return null;
 		}
 
-		public function set pid(inValue:String) : void
+		public function set pid( inValue : String ) : void
 		{
 		}
 	}

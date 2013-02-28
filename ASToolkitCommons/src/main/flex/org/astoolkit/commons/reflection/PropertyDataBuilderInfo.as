@@ -25,8 +25,8 @@ package org.astoolkit.commons.reflection
 	public class PropertyDataBuilderInfo
 	{
 
-		public static function create( 
-			inName : String, 
+		public static function create(
+			inName : String,
 			inDataProvider : IDataBuilder ) : PropertyDataBuilderInfo
 		{
 			var out : PropertyDataBuilderInfo = new PropertyDataBuilderInfo();

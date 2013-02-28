@@ -19,6 +19,7 @@ Version 2.x
 */
 package org.astoolkit.commons.conditional.api
 {
+
 	public interface IConditional
 	{
 		function set condition( inValue : IConditionalExpression ) : void;

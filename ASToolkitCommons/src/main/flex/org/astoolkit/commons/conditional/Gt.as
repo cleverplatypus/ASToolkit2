@@ -33,7 +33,7 @@ package org.astoolkit.commons.conditional
 			if( _lastResult !== undefined )
 				return _lastResult;
 			var compared : * = base === undefined ? resolveSource( inComparisonValue ) : base;
-			_lastResult = negateSafeResult( ObjectCompare.compare( compared, than ) == 1  );
+			_lastResult = negateSafeResult( ObjectCompare.compare( compared, than ) == 1 );
 			return _lastResult;
 		}
 	}

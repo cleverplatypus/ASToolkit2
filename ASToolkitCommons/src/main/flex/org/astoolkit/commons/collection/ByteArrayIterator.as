@@ -35,7 +35,7 @@ package org.astoolkit.commons.collection
 
 		private var _source : ByteArray;
 
-		override public function set cycle( inValue :Boolean) : void
+		override public function set cycle( inValue : Boolean ) : void
 		{
 			_cycle = inValue;
 		}

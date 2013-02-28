@@ -34,7 +34,7 @@ package org.astoolkit.test.basic
 		{
 		}
 
-		[Test( async, description = "SetPipeline basic test" )]
+		[Test( async, description="SetPipeline basic test" )]
 		public function basicTest() : void
 		{
 			var f : Function = Async.asyncHandler( this, onWorkflowComplete, 1000 );

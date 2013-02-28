@@ -19,6 +19,7 @@ Version 2.x
 */
 package org.astoolkit.commons.factory
 {
+
 	import mx.core.IFactory;
 	import org.astoolkit.commons.factory.api.IPooledFactoryDelegate;
 
@@ -38,19 +39,19 @@ package org.astoolkit.commons.factory
 		}
 
 		private var _destroyHandler : Function;
-		
+
 		private var _factory : IFactory;
 
 
 		private var _postCreateHandler : Function;
 
 		private var _releaseHandler : Function;
-		
+
 		public function get factory() : IFactory
 		{
 			return _factory;
 		}
-		
+
 		public function onDestroy( inTask : Object ) : void
 		{
 		}
