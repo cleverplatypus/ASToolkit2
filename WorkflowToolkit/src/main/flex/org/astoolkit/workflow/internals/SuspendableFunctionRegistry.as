@@ -32,7 +32,7 @@ package org.astoolkit.workflow.internals
 	import mx.rpc.events.ResultEvent;
 	import mx.utils.UIDUtil;
 
-	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.lang.util.getLogger;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.TaskStatus;
 

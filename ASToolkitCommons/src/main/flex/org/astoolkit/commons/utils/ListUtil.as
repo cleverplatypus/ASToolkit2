@@ -23,6 +23,8 @@ package org.astoolkit.commons.utils
 	import flash.utils.getQualifiedClassName;
 
 	import mx.collections.IList;
+	import org.astoolkit.lang.util.isCollection;
+	import org.astoolkit.lang.util.isVector;
 
 	/**
 	 * Utility static class to convert between two list types

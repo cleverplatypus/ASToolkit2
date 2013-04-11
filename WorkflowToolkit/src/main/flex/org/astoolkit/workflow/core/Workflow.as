@@ -28,8 +28,10 @@ package org.astoolkit.workflow.core
 
 	import org.astoolkit.commons.collection.annotation.IteratorSource;
 	import org.astoolkit.commons.io.transform.api.*;
-	import org.astoolkit.commons.reflection.*;
-	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.commons.wfml.ManagedObject;
+	import org.astoolkit.commons.wfml.autoassign.AutoAssign;
+	import org.astoolkit.lang.reflection.*;
+	import org.astoolkit.lang.util.getLogger;
 	import org.astoolkit.workflow.annotation.*;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.*;

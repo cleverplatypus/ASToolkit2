@@ -21,6 +21,7 @@ package org.astoolkit.workflow.core
 {
 
 	import mx.skins.spark.DefaultButtonSkin;
+
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 	import org.astoolkit.workflow.api.IPipelineConsumer;
@@ -28,6 +29,7 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.workflow.api.ITaskProxy;
 	import org.astoolkit.workflow.api.IWorkflowElement;
 	import org.astoolkit.workflow.api.IWorkflowTask;
+	import org.astoolkit.workflow.constant.UNDEFINED;
 
 	[DefaultProperty( "cases" )]
 	/**
@@ -94,6 +96,8 @@ package org.astoolkit.workflow.core
 		 */
 		private var _source : *;
 
+		private var _inputFiter : Object;
+
 		/**
 		 * @private
 		 */
@@ -134,14 +138,19 @@ package org.astoolkit.workflow.core
 
 		public function set input( inData : * ) : void
 		{
-			// TODO Auto Generated method stub
-
+			_input = inData;
 		}
+
+
+		public function pipelineIsSet() : Boolean
+		{
+			return _input != UNDEFINED;
+		}
+
 
 		public function set inputFilter( inValue : Object ) : void
 		{
-			// TODO Auto Generated method stub
-
+			_inputFiter = inValue;
 		}
 
 		/**

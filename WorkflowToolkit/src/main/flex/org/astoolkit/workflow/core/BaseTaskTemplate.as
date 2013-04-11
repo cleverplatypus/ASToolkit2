@@ -30,7 +30,7 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.databinding.Watch;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.reflection.Type;
+	import org.astoolkit.lang.reflection.Type;
 	import org.astoolkit.workflow.api.IContextAwareElement;
 	import org.astoolkit.workflow.api.ITaskTemplate;
 	import org.astoolkit.workflow.api.IWorkflowElement;
@@ -333,5 +333,11 @@ package org.astoolkit.workflow.core
 		/*BindingUtility.enableAllBindings( _document, this );
 		BindingUtility.disableAllBindings( _document, this );*/
 		}
+
+		public function pipelineIsSet() : Boolean
+		{
+			return false;
+		}
+
 	}
 }

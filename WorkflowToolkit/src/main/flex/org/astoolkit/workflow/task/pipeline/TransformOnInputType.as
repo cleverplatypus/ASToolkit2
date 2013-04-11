@@ -32,7 +32,7 @@ package org.astoolkit.workflow.task.pipeline
 
 	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 	import org.astoolkit.commons.mapping.MappingConfig;
-	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.lang.util.getLogger;
 	import org.astoolkit.workflow.core.BaseTask;
 
 	[DefaultProperty( "transformer" )]

@@ -17,10 +17,8 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.reflection
+package org.astoolkit.lang.reflection.api
 {
-
-	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
 
 	public interface IAnnotation
 	{

@@ -31,7 +31,7 @@ package org.astoolkit.commons.factory
 	import org.astoolkit.commons.factory.api.IExtendedFactory;
 	import org.astoolkit.commons.factory.api.IPooledFactory;
 	import org.astoolkit.commons.factory.api.IPooledFactoryDelegate;
-	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.lang.util.getLogger;
 
 	public class PooledFactory extends ExtendedClassFactory implements IPooledFactory
 	{

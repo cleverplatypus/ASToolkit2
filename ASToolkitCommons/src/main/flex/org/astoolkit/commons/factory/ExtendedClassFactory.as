@@ -22,12 +22,12 @@ package org.astoolkit.commons.factory
 
 	import flash.utils.getQualifiedClassName;
 
+	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.commons.factory.api.IExtendedFactory;
 	import org.astoolkit.commons.io.data.api.IDataBuilder;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.reflection.AutoAssignUtil;
-	import org.astoolkit.commons.reflection.PropertyDataBuilderInfo;
-	import org.astoolkit.commons.configuration.api.ISelfWiring;
+	import org.astoolkit.commons.wfml.autoassign.PropertyDataBuilderInfo;
+	import org.astoolkit.commons.wfml.autoassign.AutoAssignUtil;
 
 	[DefaultProperty( "selfWiringChildren" )]
 	public class ExtendedClassFactory implements IExtendedFactory, ISelfWiring
@@ -91,6 +91,7 @@ package org.astoolkit.commons.factory
 			_pid = value;
 		}
 
+		[AutoAssign]
 		public function set properties( inValue : Object ) : void
 		{
 			_defaultProperties = inValue;
@@ -148,6 +149,8 @@ package org.astoolkit.commons.factory
 					throw new Error( "Factory method '" + inFactoryMethod + "' not defined for type " +
 						getQualifiedClassName( inType ) );
 			}
+			else
+				out = new _type();
 
 			if( out && inProperties )
 			{

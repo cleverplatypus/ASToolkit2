@@ -27,9 +27,11 @@ package org.astoolkit.workflow.core
 
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.databinding.BindingUtility;
-	import org.astoolkit.commons.reflection.*;
-	import org.astoolkit.commons.utils.getLogger;
 	import org.astoolkit.commons.wfml.api.IChildrenAwareDocument;
+	import org.astoolkit.commons.wfml.autoassign.AutoAssignUtil;
+	import org.astoolkit.commons.wfml.autoassign.PropertyDataBuilderInfo;
+	import org.astoolkit.lang.reflection.*;
+	import org.astoolkit.lang.util.getLogger;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.NO_DESCRIPTION;
 	import org.astoolkit.workflow.constant.TaskPhase;

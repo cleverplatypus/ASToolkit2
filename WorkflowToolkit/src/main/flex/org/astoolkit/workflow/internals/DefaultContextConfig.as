@@ -156,8 +156,8 @@ package org.astoolkit.workflow.internals
 					{
 						factory = mapping.factory;
 
-						if( factory is IExtendedFactory )
-							IExtendedFactory( factory ).type = inType;
+						/*if( factory is IExtendedFactory )
+							IExtendedFactory( factory ).type = inType;*/
 						return factory;
 					}
 

@@ -53,6 +53,11 @@ package org.astoolkit.commons.eval
 			_destination = inValue;
 		}
 
+		public function get key() : *
+		{
+			return _destination;
+		}
+
 		public function get pid() : String
 		{
 			return _pid;

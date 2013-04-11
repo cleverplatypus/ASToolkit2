@@ -20,6 +20,7 @@
 		<flex.flashPlayer.command>${FLASH_PLAYER}</flex.flashPlayer.command>
 	</properties>
 	<modules>
+		<module>ASToolkitLang</module>
 		<module>ASToolkitCommons</module>
 		<module>ASToolkitAirCommons</module>
 		<module>WorkflowToolkit</module>

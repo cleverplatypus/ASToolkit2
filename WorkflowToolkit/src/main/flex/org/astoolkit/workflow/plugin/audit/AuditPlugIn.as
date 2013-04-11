@@ -22,7 +22,7 @@ package org.astoolkit.workflow.plugin.audit
 
 	import mx.logging.ILogger;
 
-	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.lang.util.getLogger;
 	import org.astoolkit.workflow.api.IContextAwareElement;
 	import org.astoolkit.workflow.api.IContextPlugIn;
 	import org.astoolkit.workflow.api.IWorkflowContext;
@@ -60,7 +60,7 @@ package org.astoolkit.workflow.plugin.audit
 
 import mx.logging.ILogger;
 
-import org.astoolkit.commons.utils.getLogger;
+import org.astoolkit.lang.util.getLogger;
 import org.astoolkit.workflow.api.IContextAwareElement;
 import org.astoolkit.workflow.api.ITaskLiveCycleWatcher;
 import org.astoolkit.workflow.api.IWorkflowContext;

@@ -27,7 +27,7 @@ package org.astoolkit.workflow.task.log
 	import mx.logging.LogEventLevel;
 	import mx.utils.ObjectUtil;
 
-	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.lang.util.getLogger;
 	import org.astoolkit.workflow.core.BaseTask;
 
 	/**

@@ -20,7 +20,7 @@ Version 2.x
 package org.astoolkit.workflow.annotation
 {
 
-	import org.astoolkit.commons.reflection.Metadata;
+	import org.astoolkit.lang.reflection.Metadata;
 
 	[Metadata( name="Featured", target="field" )]
 	/**

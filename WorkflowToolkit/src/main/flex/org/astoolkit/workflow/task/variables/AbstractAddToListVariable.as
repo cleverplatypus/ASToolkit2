@@ -24,7 +24,7 @@ package org.astoolkit.workflow.task.variables
 
 	import mx.collections.IList;
 
-	import org.astoolkit.commons.utils.isCollection;
+	import org.astoolkit.lang.util.isCollection;
 	import org.astoolkit.workflow.core.BaseTask;
 
 	internal class AbstractAddToListVariable extends BaseTask

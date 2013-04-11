@@ -27,9 +27,9 @@ package org.astoolkit.commons.collection
 	import org.astoolkit.commons.collection.api.IIterator;
 	import org.astoolkit.commons.collection.api.IIteratorFactory;
 	import org.astoolkit.commons.factory.PooledFactory;
-	import org.astoolkit.commons.reflection.Type;
-	import org.astoolkit.commons.reflection.IAnnotation;
-	import org.astoolkit.commons.reflection.Metadata;
+	import org.astoolkit.lang.reflection.Type;
+	import org.astoolkit.lang.reflection.api.IAnnotation;
+	import org.astoolkit.lang.reflection.Metadata;
 
 	public class DefaultIteratorFactory extends PooledFactory implements IIteratorFactory
 	{

@@ -17,7 +17,7 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.reflection
+package org.astoolkit.commons.wfml.autoassign
 {
 
 	import org.astoolkit.commons.io.data.api.IDataBuilder;

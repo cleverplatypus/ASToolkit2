@@ -24,16 +24,16 @@ package org.astoolkit.commons.io.data
 	import mx.logging.ILogger;
 
 	import org.astoolkit.commons.conditional.api.IExpressionResolver;
+	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
 	import org.astoolkit.commons.io.data.api.IDataBuilder;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.reflection.AutoAssignUtil;
-	import org.astoolkit.commons.reflection.PropertyDataBuilderInfo;
-	import org.astoolkit.commons.utils.getLogger;
-	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.commons.wfml.api.IChildrenAwareDocument;
 	import org.astoolkit.commons.wfml.api.IComponent;
+	import org.astoolkit.commons.wfml.autoassign.PropertyDataBuilderInfo;
+	import org.astoolkit.commons.wfml.autoassign.AutoAssignUtil;
+	import org.astoolkit.lang.util.getLogger;
 
 	[DefaultProperty( "selfWiringChildren" )]
 	public class AbstractBuilder implements IDataBuilder, ISelfWiring, IFactoryResolverClient, IComponent, IDeferrableProcess

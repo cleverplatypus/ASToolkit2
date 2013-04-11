@@ -20,6 +20,8 @@ Version 2.x
 package org.astoolkit.commons.io.data
 {
 
+	import org.astoolkit.commons.conditional.api.IExpressionResolver;
+
 	[DefaultProperty( "selfWiringChildren" )]
 	public class ObjectBuilder extends AbstractBuilder
 	{
@@ -27,5 +29,22 @@ package org.astoolkit.commons.io.data
 		{
 			_providedType = inValue;
 		}
+
+		override public function getData() : *
+		{
+			var localType : Class = _providedType ? _providedType : Object;
+
+			var target : Object = new localType();
+
+			for each( var resolver : IExpressionResolver in _expressionResolvers )
+			{
+				if( !resolver.key )
+					throw new Error( "Resolvers must have a key in ObjectBuilder" );
+				target[ resolver.key ] = resolver.resolve().result;
+			}
+			return target;
+		}
+
+
 	}
 }

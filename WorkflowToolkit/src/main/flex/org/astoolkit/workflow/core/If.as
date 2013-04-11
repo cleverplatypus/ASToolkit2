@@ -22,13 +22,15 @@ package org.astoolkit.workflow.core
 
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
+
 	import org.astoolkit.commons.conditional.AsyncExpressionToken;
 	import org.astoolkit.commons.conditional.api.IConditionalExpression;
+	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerRegistry;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.workflow.api.*;
+	import org.astoolkit.workflow.constant.UNDEFINED;
 
 	public class If extends BaseElement implements ITaskProxy,
 		IDeferrableProcess,
@@ -118,6 +120,11 @@ package org.astoolkit.workflow.core
 		public function set input( inData : * ) : void
 		{
 			_input = inData;
+		}
+
+		public function pipelineIsSet() : Boolean
+		{
+			return _input != UNDEFINED;
 		}
 
 		public function set inputFilter( inValue : Object ) : void

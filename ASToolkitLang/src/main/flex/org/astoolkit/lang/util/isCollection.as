@@ -17,14 +17,14 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.utils
+package org.astoolkit.lang.util
 {
 
 	import flash.utils.getQualifiedClassName;
 
 	import mx.collections.IList;
 
-	import org.astoolkit.commons.reflection.Type;
+	import org.astoolkit.lang.reflection.Type;
 
 	public function isCollection( inSource : Object ) : Boolean
 	{

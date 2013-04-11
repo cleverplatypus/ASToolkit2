@@ -39,10 +39,10 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.mapping.SimplePropertiesMapper;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.reflection.Field;
-	import org.astoolkit.commons.reflection.PropertyDataBuilderInfo;
-	import org.astoolkit.commons.reflection.Type;
-	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.commons.wfml.autoassign.PropertyDataBuilderInfo;
+	import org.astoolkit.lang.reflection.Field;
+	import org.astoolkit.lang.reflection.Type;
+	import org.astoolkit.lang.util.getLogger;
 	import org.astoolkit.workflow.annotation.InjectPipeline;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.*;
@@ -490,6 +490,11 @@ package org.astoolkit.workflow.core
 		{
 			_onPropertySet( "input" );
 			_pipelineData = _inputData = inData;
+		}
+
+		public function pipelineIsSet() : Boolean
+		{
+			return _pipelineData != UNDEFINED;
 		}
 
 		public function get inputFilter() : Object

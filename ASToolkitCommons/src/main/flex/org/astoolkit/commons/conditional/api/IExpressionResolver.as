@@ -29,6 +29,7 @@ package org.astoolkit.commons.conditional.api
 		function set expression( inValue : Object ) : void;
 
 		function set key( inValue : * ) : void;
+		function get key() : *;
 
 		function resolve( inExpression : Object = null, inSource : Object = null ) : ExpressionResolverResult;
 	}

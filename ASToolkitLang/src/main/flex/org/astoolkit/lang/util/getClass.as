@@ -17,11 +17,15 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.reflection
+package org.astoolkit.lang.util
 {
 
-	[Metadata( target="class" )]
-	public class ManagedObject extends Metadata
+	import flash.utils.getDefinitionByName;
+	import flash.utils.getQualifiedClassName;
+
+	public function getClass( inObject : Object ) : Class
 	{
+		return getDefinitionByName(
+			getQualifiedClassName( inObject ) ) as Class;
 	}
 }

@@ -17,12 +17,15 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.reflection
+package org.astoolkit.lang.reflection
 {
 
 	import flash.utils.getQualifiedClassName;
 
-	internal class AbstractReflection
+	import org.astoolkit.lang.reflection.api.IASSymbol;
+	import org.astoolkit.lang.reflection.api.IAnnotation;
+
+	internal class AbstractReflection implements IASSymbol
 	{
 		protected var _annotations : Vector.<IAnnotation>;
 
@@ -34,10 +37,27 @@ package org.astoolkit.commons.reflection
 
 		protected var _name : String;
 
+		protected var _scope : String;
+
+		public function get owner() : Type
+		{
+			return _owner;
+		}
+
+
+		protected var _isStatic : Boolean;
+
+		protected var _owner : Type;
+
 		public function AbstractReflection()
 		{
 			if( getQualifiedClassName( this ).match( /\:\:AbstractReflection$/ ) )
 				throw new Error( "AbstractReflection cannot be instanciated" );
+		}
+
+		public function get scope() : String
+		{
+			return _scope;
 		}
 
 		public function get annotations() : Vector.<IAnnotation>
@@ -77,5 +97,11 @@ package org.astoolkit.commons.reflection
 		{
 			return _name;
 		}
+
+		public function get isStatic() : Boolean
+		{
+			return _isStatic;
+		}
+
 	}
 }

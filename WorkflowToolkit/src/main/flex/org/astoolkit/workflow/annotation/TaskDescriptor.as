@@ -22,7 +22,7 @@ package org.astoolkit.workflow.annotation
 
 	import flash.utils.ByteArray;
 	import mx.utils.Base64Decoder;
-	import org.astoolkit.commons.reflection.Metadata;
+	import org.astoolkit.lang.reflection.Metadata;
 
 	[Metadata( name="TaskDescriptor", target="class" )]
 	[MetaArg( name="data", type="String", mandatory="true" )]

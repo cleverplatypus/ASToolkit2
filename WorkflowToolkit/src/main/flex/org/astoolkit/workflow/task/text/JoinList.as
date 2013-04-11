@@ -22,7 +22,7 @@ package org.astoolkit.workflow.task.text
 
 	import mx.collections.IList;
 
-	import org.astoolkit.commons.utils.isCollection;
+	import org.astoolkit.lang.util.isCollection;
 	import org.astoolkit.workflow.core.BaseTask;
 
 	public class JoinList extends BaseTask

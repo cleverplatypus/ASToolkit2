@@ -28,6 +28,7 @@ package org.astoolkit.workflow.task.delegate
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 
+	import org.astoolkit.commons.factory.api.IExtendedFactory;
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.io.data.MethodBuilder;
 	import org.astoolkit.commons.process.api.IResponseSource;
@@ -124,7 +125,10 @@ package org.astoolkit.workflow.task.delegate
 
 			if( _usedFactory )
 			{
-				localTarget = _usedFactory.newInstance();
+				if( _usedFactory is IExtendedFactory && targetType )
+					localTarget = IExtendedFactory( _usedFactory ).getInstance( targetType );
+				else
+					localTarget = _usedFactory.newInstance();
 			}
 			else if( target )
 			{

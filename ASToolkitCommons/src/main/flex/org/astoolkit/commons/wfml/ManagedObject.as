@@ -17,15 +17,13 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.utils
+package org.astoolkit.commons.wfml
 {
 
-	import flash.utils.getDefinitionByName;
-	import flash.utils.getQualifiedClassName;
+	import org.astoolkit.lang.reflection.Metadata;
 
-	public function getClass( inObject : Object ) : Class
+	[Metadata( target="class" )]
+	public class ManagedObject extends Metadata
 	{
-		return getDefinitionByName(
-			getQualifiedClassName( inObject ) ) as Class;
 	}
 }

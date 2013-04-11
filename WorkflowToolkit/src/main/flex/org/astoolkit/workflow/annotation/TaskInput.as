@@ -21,7 +21,7 @@ package org.astoolkit.workflow.annotation
 {
 
 	import flash.utils.getDefinitionByName;
-	import org.astoolkit.commons.reflection.Metadata;
+	import org.astoolkit.lang.reflection.Metadata;
 
 	[Metadata( name="TaskInput", target="field" )]
 	[MetaArg( name="types", target="class" )]

@@ -17,7 +17,7 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.reflection
+package org.astoolkit.lang.reflection
 {
 
 	import flash.utils.describeType;
@@ -25,11 +25,31 @@ package org.astoolkit.commons.reflection
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.setTimeout;
 
-	import org.astoolkit.commons.utils.ObjectCompare;
+	import org.astoolkit.lang.reflection.api.IAnnotation;
+	import org.astoolkit.lang.util.isVector;
 
 	public class Type extends AbstractReflection
 	{
 		private static var _classes : Object = {};
+
+		private static var _undefinedType : UndefinedType;
+
+		private static var _voidType : VoidType;
+
+		public static function get UNDEFINED() : UndefinedType
+		{
+			if( !_undefinedType )
+				_undefinedType = new UndefinedType();
+			return _undefinedType;
+		}
+
+		public static function get VOID() : VoidType
+		{
+			if( !_voidType )
+				_voidType = new VoidType();
+			return _voidType;
+
+		}
 
 		private static var _willClearCache : Boolean;
 
@@ -100,7 +120,19 @@ package org.astoolkit.commons.reflection
 
 		private var _subtype : Class;
 
+		public function get subtype() : Class
+		{
+			return _subtype;
+		}
+
 		private var _subtypeInfo : Type;
+
+		public function get subtypeInfo() : Type
+		{
+			if( !_subtypeInfo )
+				_subtypeInfo = Type.forType( _subtype );
+			return _subtypeInfo;
+		}
 
 		private var _superClass : Type;
 
@@ -223,13 +255,12 @@ package org.astoolkit.commons.reflection
 		{
 			var aTypeText : String = getQualifiedClassName( _type );
 
-			if( aTypeText.match( /Vector\.</ ) )
+			if( isVector( _type ) )
 			{
-				_subtype = getDefinitionByName( aTypeText.match( /<(.+?)>/ )[ 1 ] ) as Class;
-				_subtypeInfo = Type.forType( _subtype );
+				_subtype = classByName( aTypeText.match( /<(\w.+?)>$/ )[ 1 ] );
 			}
 			var xml : XML = describeType( _type );
-			_isDynamic = xml.@isDynamic.toString() == "true";
+			_isDynamic = xml.@isDynamic.toString() == true.toString();
 			_fullName = xml.@name.toString();
 
 			_name = _fullName.match( "::" ) ? _fullName.split( "::" )[ 1 ] : _fullName;
@@ -245,14 +276,8 @@ package org.astoolkit.commons.reflection
 				{
 					if( xml.factory.extendsClass.length() > 0 )
 					{
-						var superType : String =
-							String( xml.factory.extendsClass[ 0 ].@type.toXMLString() )
-							.replace( /&lt;/, '<' );
-
-						if( superType == "__AS3__.vec::Vector.<*>" )
-							_superClass = Type.forType( Vector );
-						else
-							_superClass = Type.forType( getDefinitionByName( superType ) );
+						_superClass = Type.byName( 
+							xml.factory.extendsClass[ 0 ].@type.toXMLString() );
 					}
 				}
 				catch( e : Error )
@@ -271,7 +296,7 @@ package org.astoolkit.commons.reflection
 
 			for each( var contractNode : XML in contracts )
 			{
-				var contract : Type = Type.forType( getDefinitionByName( contractNode.@type.toString() ) );
+				var contract : Type = byName( contractNode.@type.toString() );
 				_interfacesByName[ contract.fullName ] = contract;
 				_interfaces.push( contract );
 				contract._implementors.push( this );
@@ -293,7 +318,19 @@ package org.astoolkit.commons.reflection
 			for each( var methodXml : XML in xml.descendants().( name().toString() == "method" ) )
 			{
 				var methodName : String = methodXml.@name.toString();
-				var method : Method = Method.create( methodName );
+
+				if( methodName == "propertyIsEnumerable" )
+					continue;
+				var scope : String = methodXml.@uri.toString() ==
+					"http://www.adobe.com/2006/flex/mx/internal" ?
+					Field.SCOPE_INTERNAL : Field.SCOPE_PUBLIC;
+				var method : Method = Method.create( 
+					methodName,
+					scope,
+					byName( methodXml.@returnType.toString() ),
+					null,
+					methodXml.parent().@name.toString() == "type",
+					this);
 				_methods[ methodName ] = method;
 			}
 
@@ -302,31 +339,20 @@ package org.astoolkit.commons.reflection
 				var declarer : Type =
 					accessor.@declaredBy == fullName ?
 					this : null;
-				aTypeText = accessor.@type.toXMLString().replace( /&lt;/, '<' );
-				var aType : Class;
-				var aSubtype : Class;
 
-				if( aTypeText == "*" )
-				{
-					aType = null;
-				}
-				else
-				{
-					aType = getDefinitionByName( aTypeText ) as Class;
+				var aClass : Class = classByName( accessor.@type.toXMLString() );
+				var aSubClass : Class;
 
-					if( aTypeText.match( /Vector\.</ ) )
-					{
-						aSubtype = getDefinitionByName( aTypeText.match( /<(.+?)>/ )[ 1 ] ) as Class;
-					}
-				}
+				/*if( isVector( aClass ) )
+					aSubClass = aType.subtype*/
+
 				var scope : String = accessor.@uri.toString() ==
 					"http://www.adobe.com/2006/flex/mx/internal" ?
 					Field.SCOPE_INTERNAL : Field.SCOPE_PUBLIC;
 				_fields[ accessor.@name.toString() ] =
 					Field.create(
 					accessor.@name.toString(),
-					aType,
-					aSubtype,
+					aClass,
 					accessor.@access.toString() == "readonly",
 					accessor.@access.toString() == "writeonly",
 					scope,
@@ -337,5 +363,60 @@ package org.astoolkit.commons.reflection
 
 			}
 		}
+
+		public static function byName( inName : String ) : Type
+		{
+			//Fixing bug in sdk's describeType's Vector type strings
+			inName = inName.replace( /&lt;/, '<' );
+
+
+
+			if( inName == "*" )
+				return UNDEFINED;
+
+			if( inName == "void" )
+				return VOID;
+
+			var clazz : Class;
+
+			try
+			{
+				clazz = classByName( inName );
+			}
+			catch( e : Error )
+			{
+				return null;
+			}
+
+			return Type.forType( clazz );
+		}
+
+		private static function classByName( inName : String ) : Class
+		{
+			//Fixing bug in sdk's describeType's Vector type strings
+			inName = inName.replace( /&lt;/, '<' );
+
+			if( inName == "__AS3__.vec::Vector.<*>" )
+				return Vector;
+
+			try
+			{
+				return getDefinitionByName( inName ) as Class
+			}
+			catch( e : Error )
+			{
+				return null;
+			}
+			return null;
+		}
 	}
+}
+import org.astoolkit.lang.reflection.Type;
+
+class UndefinedType extends Type
+{
+}
+
+class VoidType extends Type
+{
 }

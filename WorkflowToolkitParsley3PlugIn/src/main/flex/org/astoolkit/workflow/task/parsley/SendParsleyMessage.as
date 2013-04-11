@@ -31,8 +31,8 @@ package org.astoolkit.workflow.task.parsley
 	import org.astoolkit.commons.mapping.MappingError;
 	import org.astoolkit.commons.mapping.SimplePropertiesMapper;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
-	import org.astoolkit.commons.utils.getClass;
-	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.lang.util.getClass;
+	import org.astoolkit.lang.util.getLogger;
 	import org.astoolkit.workflow.constant.FailurePolicy;
 	import org.astoolkit.workflow.task.api.ISendMessage;
 	import org.spicefactory.parsley.core.command.CommandStatus;
@@ -116,6 +116,7 @@ package org.astoolkit.workflow.task.parsley
 			_messageClass = value;
 		}
 
+		[AutoConfig]
 		/**
 		 * a factory to create messages. If set, the <code>message</code> property is ignored.
 		 *

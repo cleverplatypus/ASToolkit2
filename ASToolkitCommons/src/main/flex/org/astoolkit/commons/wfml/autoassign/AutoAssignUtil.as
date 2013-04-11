@@ -17,7 +17,7 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.reflection
+package org.astoolkit.commons.wfml.autoassign
 {
 
 	import flash.utils.getQualifiedClassName;
@@ -29,10 +29,13 @@ package org.astoolkit.commons.reflection
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
 	import org.astoolkit.commons.io.data.api.IDataBuilder;
 	import org.astoolkit.commons.utils.ObjectCompare;
-	import org.astoolkit.commons.utils.getClass;
-	import org.astoolkit.commons.utils.getLogger;
-	import org.astoolkit.commons.utils.isVector;
 	import org.astoolkit.commons.wfml.api.IComponent;
+	import org.astoolkit.lang.reflection.AnnotationUtil;
+	import org.astoolkit.lang.reflection.Field;
+	import org.astoolkit.lang.reflection.api.IAnnotation;
+	import org.astoolkit.lang.reflection.Type;
+	import org.astoolkit.lang.util.getLogger;
+	import org.astoolkit.lang.util.isVector;
 
 	public final class AutoAssignUtil
 	{
@@ -148,7 +151,7 @@ package org.astoolkit.commons.reflection
 				inTarget[ IComponent( inInfo.object ).pid ] = inInfo.object;
 			}
 			else if( inField.type && isVector( inField.type ) &&
-				Type.forType( inField.subtype ).implementsInterface( IDataBuilder ) )
+				Type.forType( Type.forType( inField.type ).subtype ).implementsInterface( IDataBuilder ) )
 			{
 				if( inTarget[ inField.name ] == null )
 					inTarget[ inField.name ] = new ( inField.type )();
@@ -184,7 +187,7 @@ package org.astoolkit.commons.reflection
 				return null;
 			}
 
-			if( isVector( inField.type ) && inInfo.object is inField.subtype )
+			if( isVector( inField.type ) && inInfo.object is Type.forType( inField.type ).subtype )
 			{
 				if( !collectionsInfo[ inTarget ].hasOwnProperty( inField.name ) )
 				{

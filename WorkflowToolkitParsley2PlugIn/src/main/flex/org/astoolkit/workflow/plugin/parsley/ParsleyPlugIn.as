@@ -23,8 +23,8 @@ package org.astoolkit.workflow.plugin.parsley
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 
-	import org.astoolkit.commons.reflection.ManagedObject;
-	import org.astoolkit.commons.reflection.Type;
+	import org.astoolkit.commons.wfml.ManagedObject;
+	import org.astoolkit.lang.reflection.Type;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.internals.DynamicTaskLiveCycleWatcher;
 	import org.astoolkit.workflow.task.parsley.SendParsleyMessage;

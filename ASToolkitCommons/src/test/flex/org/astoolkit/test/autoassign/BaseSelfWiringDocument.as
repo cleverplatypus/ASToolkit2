@@ -2,8 +2,8 @@ package org.astoolkit.test.autoassign
 {
 
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
-	import org.astoolkit.commons.reflection.AutoAssignUtil;
-	import org.astoolkit.commons.reflection.PropertyDataBuilderInfo;
+	import org.astoolkit.commons.wfml.autoassign.AutoAssignUtil;
+	import org.astoolkit.commons.wfml.autoassign.PropertyDataBuilderInfo;
 
 	[DefaultProperty( "selfWiringChildren" )]
 	[Exclude( kind="property", name="selfWiringChildren" )]

@@ -6,7 +6,7 @@ package org.astoolkit.workflow.plugin.audit
 	import mx.logging.ILogger;
 	import mx.utils.ObjectUtil;
 
-	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.lang.util.getLogger;
 	import org.astoolkit.workflow.core.ExitStatus;
 
 	public class AuditData

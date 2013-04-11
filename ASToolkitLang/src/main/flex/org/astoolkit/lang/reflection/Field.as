@@ -17,11 +17,12 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.reflection
+package org.astoolkit.lang.reflection
 {
 
 	import flash.sampler.Sample;
 	import flash.utils.getQualifiedClassName;
+	import org.astoolkit.lang.reflection.api.IAnnotation;
 
 	public class Field extends AbstractReflection
 	{
@@ -32,7 +33,6 @@ package org.astoolkit.commons.reflection
 		public static function create(
 			inName : String,
 			inType : Class,
-			inSubtype : Class,
 			inReadOnly : Boolean,
 			inWriteOnly : Boolean,
 			inScope : String,
@@ -46,7 +46,6 @@ package org.astoolkit.commons.reflection
 			outField._writeOnly = inWriteOnly;
 			outField._scope = inScope;
 			outField._type = inType;
-			outField._subtype = inSubtype;
 			outField._annotationsForName = {};
 			outField._annotations = inAnnotations.concat();
 			outField._owner = inOwner;
@@ -72,13 +71,8 @@ package org.astoolkit.commons.reflection
 
 		private var _local : Boolean;
 
-		private var _owner : Type;
 
 		private var _readOnly : Boolean;
-
-		private var _scope : String;
-
-		private var _subtype : Class;
 
 		private var _type : Class;
 
@@ -94,15 +88,11 @@ package org.astoolkit.commons.reflection
 			return _readOnly;
 		}
 
-		public function get scope() : String
-		{
-			return _scope;
-		}
 
-		public function get subtype() : Class
+		/*public function get subtype() : Class
 		{
 			return _subtype;
-		}
+		}*/
 
 		public function get type() : Class
 		{

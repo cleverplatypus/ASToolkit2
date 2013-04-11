@@ -17,8 +17,9 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.reflection
+package org.astoolkit.commons.wfml.autoassign
 {
+	import org.astoolkit.lang.reflection.Metadata;
 
 	[Metadata(
 		name="AutoAssign",

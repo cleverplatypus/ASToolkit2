@@ -4,7 +4,7 @@ package org.astoolkit.test.listutil
 	import mx.collections.ArrayCollection;
 
 	import org.astoolkit.commons.utils.ListUtil;
-	import org.astoolkit.commons.utils.getClass;
+	import org.astoolkit.lang.util.getClass;
 	import org.flexunit.asserts.assertEquals;
 	import org.flexunit.asserts.assertTrue;
 

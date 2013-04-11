@@ -24,11 +24,12 @@ package org.astoolkit.workflow.plugin.parsley
 	import flash.utils.getQualifiedClassName;
 
 	import org.astoolkit.commons.configuration.api.IObjectConfigurer;
-	import org.astoolkit.commons.reflection.ManagedObject;
-	import org.astoolkit.commons.reflection.Type;
+	import org.astoolkit.commons.wfml.ManagedObject;
+	import org.astoolkit.lang.reflection.Type;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.internals.DynamicTaskLiveCycleWatcher;
 	import org.astoolkit.workflow.task.parsley.SendParsleyMessage;
+	import org.astoolkit.workflow.task.parsley.WaitForMessage;
 	import org.spicefactory.parsley.core.context.Context;
 
 	/**
@@ -99,7 +100,7 @@ package org.astoolkit.workflow.plugin.parsley
 		{
 			_contextWatcher = new DynamicTaskLiveCycleWatcher();
 			_contextWatcher.contextBoundWatcher = onTaskContextBond;
-			return [ SendParsleyMessage, _contextWatcher ];
+			return [ SendParsleyMessage, WaitForMessage, _contextWatcher ];
 		}
 
 		public function getStatefulExtensions() : Array

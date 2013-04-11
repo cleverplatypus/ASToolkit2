@@ -35,12 +35,12 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.commons.factory.*;
 	import org.astoolkit.commons.factory.api.*;
 	import org.astoolkit.commons.io.transform.api.*;
-	import org.astoolkit.commons.reflection.Field;
-	import org.astoolkit.commons.reflection.Type;
+	import org.astoolkit.lang.reflection.Field;
+	import org.astoolkit.lang.reflection.Type;
 	import org.astoolkit.commons.utils.ListUtil;
 	import org.astoolkit.commons.utils.ObjectCompare;
-	import org.astoolkit.commons.utils.getClass;
-	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.lang.util.getClass;
+	import org.astoolkit.lang.util.getLogger;
 	import org.astoolkit.workflow.annotation.Featured;
 	import org.astoolkit.workflow.annotation.Template;
 	import org.astoolkit.workflow.api.*;

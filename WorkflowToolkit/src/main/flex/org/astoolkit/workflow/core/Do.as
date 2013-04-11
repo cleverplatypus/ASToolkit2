@@ -37,7 +37,7 @@ package org.astoolkit.workflow.core
 	import org.astoolkit.commons.ns.astoolkit_private;
 	import org.astoolkit.commons.process.api.IDeferrableProcess;
 	import org.astoolkit.commons.utils.Range;
-	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.lang.util.getLogger;
 	import org.astoolkit.workflow.annotation.*;
 	import org.astoolkit.workflow.api.*;
 	import org.astoolkit.workflow.constant.*;
@@ -774,10 +774,7 @@ package org.astoolkit.workflow.core
 				}
 
 				if( element is IPipelineConsumer )
-				{
 					setSubtaskPipelineData( IPipelineConsumer( element ) );
-						//REMOVE: dispatchTaskEvent( WorkflowEvent.DATA_SET, task );
-				}
 
 				if( element is ITaskProxy )
 					task = ITaskProxy( element ).getTask();
@@ -887,67 +884,53 @@ package org.astoolkit.workflow.core
 			}
 			var taskData : Object = _subPipelineData;
 
-			if( inElement is IWorkflowTask )
+
+			if( !inElement.pipelineIsSet() )
 			{
-				var task : IWorkflowTask = inElement as IWorkflowTask;
-
-				//TODO: consider whether to remove this feature for the sake of removing
-				//		IEventDispatcher contract from tasks
-				if( IEventDispatcher( task ).hasEventListener( WorkflowEvent.TRANSFORM_INPUT ) )
+				if( inElement is IWorkflowTask )
 				{
-					var transformEvent : WorkflowEvent =
-						new WorkflowEvent(
-						WorkflowEvent.TRANSFORM_INPUT,
-						context,
-						task,
-						taskData );
-
-					IEventDispatcher( task ).dispatchEvent( transformEvent );
-					taskData = transformEvent.data;
+					var task : IWorkflowTask = IWorkflowTask( inElement );
 				}
 
-				if( task.output == UNDEFINED )
+				if( task.inlet is String )
 				{
-					if( task.inlet is String )
+					try
 					{
-						try
+						if( Object( inElement ).hasOwnProperty( task.inlet ) )
 						{
-							if( Object( inElement ).hasOwnProperty( task.inlet ) )
+							if( inElement[ task.inlet ] is Function )
 							{
-								if( inElement[ task.inlet ] is Function )
-								{
-									var f : Function = inElement[ task.inlet ] as Function;
-									f.apply( task, [ taskData ] );
-								}
-								else
-									inElement[ task.inlet ] = taskData;
+								var f : Function = inElement[ task.inlet ] as Function;
+								f.apply( inElement, [ taskData ] );
 							}
-						}
-						catch( e : Error )
-						{
-							throw new Error( "Error while trying to set pipeline data to  " +
-								"task's property/function '" + task.inlet + "'\n\n" +
-								e.getStackTrace() );
+							else
+								inElement[ task.inlet ] = taskData;
 						}
 					}
-					else if( task.inlet is IPropertiesMapper )
+					catch( e : Error )
 					{
-						var mapper : IPropertiesMapper = task.inlet as IPropertiesMapper;
-
-						try
-						{
-							mapper.map( taskData, inElement );
-						}
-						catch( e : Error )
-						{
-							throw new Error( "Error while trying to map pipeline " +
-								"data properties to task properties with IPropertiesMapper.\n\n" +
-								e.getStackTrace() );
-						}
+						throw new Error( "Error while trying to set pipeline data to  " +
+							"task's property/function '" + task.inlet + "'\n\n" +
+							e.getStackTrace() );
 					}
 				}
-				inElement.input = taskData;
+				else if( task.inlet is IPropertiesMapper )
+				{
+					var mapper : IPropertiesMapper = task.inlet as IPropertiesMapper;
+
+					try
+					{
+						mapper.map( taskData, inElement );
+					}
+					catch( e : Error )
+					{
+						throw new Error( "Error while trying to map pipeline " +
+							"data properties to task properties with IPropertiesMapper.\n\n" +
+							e.getStackTrace() );
+					}
+				}
 			}
+			inElement.input = taskData;
 		}
 
 		private function onDeferredProcessResume( inProcess : IDeferrableProcess ) : void

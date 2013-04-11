@@ -26,7 +26,7 @@ package org.astoolkit.workflow.internals
 
 	import org.astoolkit.commons.eval.ExpressionResolverResult;
 	import org.astoolkit.commons.eval.Resolve;
-	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.lang.util.getLogger;
 	import org.astoolkit.workflow.api.IContextAwareElement;
 	import org.astoolkit.workflow.api.IWorkflowContext;
 

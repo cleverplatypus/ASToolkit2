@@ -22,7 +22,7 @@ package org.astoolkit.commons.collection.annotation
 
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
-	import org.astoolkit.commons.reflection.Metadata;
+	import org.astoolkit.lang.reflection.Metadata;
 
 	[Metadata( target="class" )]
 	[MetaArg( name="types", type="[Class]", mandatory="true" )]

@@ -24,7 +24,7 @@ package org.astoolkit.workflow.task.variables
 
 	import mx.collections.IList;
 
-	import org.astoolkit.commons.utils.isVector;
+	import org.astoolkit.lang.util.isVector;
 	import org.astoolkit.workflow.constant.UNDEFINED;
 	import org.astoolkit.workflow.core.BaseTask;
 	import org.astoolkit.workflow.internals.GroupUtil;

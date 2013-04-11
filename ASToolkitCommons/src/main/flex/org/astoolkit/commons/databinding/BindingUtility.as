@@ -29,8 +29,8 @@ package org.astoolkit.commons.databinding
 	import mx.events.PropertyChangeEvent;
 	import mx.events.PropertyChangeEventKind;
 
-	import org.astoolkit.commons.reflection.Type;
-	import org.astoolkit.commons.reflection.Field;
+	import org.astoolkit.lang.reflection.Type;
+	import org.astoolkit.lang.reflection.Field;
 
 	use namespace mx_internal;
 

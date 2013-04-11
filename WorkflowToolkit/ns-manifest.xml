@@ -172,6 +172,10 @@
 		id="SendMessage"
 		class="org.astoolkit.workflow.template.message.SendMessage"
 		/>
+	<!-- 	<component  -->
+	<!-- 		id="WaitForMessage" -->
+	<!-- 		class="org.astoolkit.workflow.template.message.WaitForMessage" -->
+	<!-- 		/> -->
 	<component 
 		id="ExitStatusEq"
 		class="org.astoolkit.workflow.conditional.ExitStatusEq"

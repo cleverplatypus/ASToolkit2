@@ -32,7 +32,7 @@ package org.astoolkit.workflow.task.parsley
 	import org.astoolkit.commons.mapping.MappingError;
 	import org.astoolkit.commons.mapping.SimplePropertiesMapper;
 	import org.astoolkit.commons.mapping.api.IPropertiesMapper;
-	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.lang.util.getLogger;
 	import org.astoolkit.workflow.constant.FailurePolicy;
 	import org.astoolkit.workflow.task.api.ISendMessage;
 	import org.spicefactory.parsley.core.messaging.command.CommandStatus;

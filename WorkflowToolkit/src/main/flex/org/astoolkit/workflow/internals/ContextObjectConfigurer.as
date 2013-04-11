@@ -30,10 +30,10 @@ package org.astoolkit.workflow.internals
 	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
 	import org.astoolkit.commons.io.transform.api.IIODataSourceClient;
 	import org.astoolkit.commons.io.transform.api.IIODataTransformerClient;
-	import org.astoolkit.commons.reflection.*;
+	import org.astoolkit.lang.reflection.*;
 	import org.astoolkit.commons.utils.ListUtil;
-	import org.astoolkit.commons.utils.getLogger;
-	import org.astoolkit.commons.utils.isCollection;
+	import org.astoolkit.lang.util.getLogger;
+	import org.astoolkit.lang.util.isCollection;
 	import org.astoolkit.workflow.annotation.Featured;
 	import org.astoolkit.workflow.api.IContextAwareElement;
 	import org.astoolkit.commons.configuration.api.IObjectConfigurer;

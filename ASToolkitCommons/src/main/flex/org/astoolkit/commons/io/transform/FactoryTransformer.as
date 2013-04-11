@@ -30,7 +30,7 @@ package org.astoolkit.commons.io.transform
 	import org.astoolkit.commons.factory.api.IFactoryResolver;
 	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
 	import org.astoolkit.commons.factory.api.IPooledFactory;
-	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.lang.util.getLogger;
 
 	public class FactoryTransformer extends BaseDataTransformer implements IFactoryResolverClient
 	{

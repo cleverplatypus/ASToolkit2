@@ -21,12 +21,14 @@ package org.astoolkit.workflow.internals
 {
 
 	import flash.events.Event;
+
 	import mx.core.ClassFactory;
 	import mx.core.IFactory;
-	import org.astoolkit.commons.process.api.IDeferrableProcess;
-	import org.astoolkit.commons.reflection.AutoAssignUtil;
-	import org.astoolkit.commons.reflection.PropertyDataBuilderInfo;
+
 	import org.astoolkit.commons.configuration.api.ISelfWiring;
+	import org.astoolkit.commons.process.api.IDeferrableProcess;
+	import org.astoolkit.commons.wfml.autoassign.AutoAssignUtil;
+	import org.astoolkit.commons.wfml.autoassign.PropertyDataBuilderInfo;
 	import org.astoolkit.workflow.api.IContextConfig;
 	import org.astoolkit.workflow.api.IWorkflowContext;
 	import org.astoolkit.workflow.config.api.IObjectPropertyDefaultValue;

@@ -23,17 +23,20 @@ package org.astoolkit.commons.mapping
 	import mx.core.IMXMLObject;
 	import mx.utils.UIDUtil;
 
+	import org.astoolkit.commons.factory.api.IFactoryResolver;
+	import org.astoolkit.commons.factory.api.IFactoryResolverClient;
 	import org.astoolkit.commons.mapping.api.*;
 	import org.astoolkit.commons.wfml.api.IChildrenAwareDocument;
 	import org.astoolkit.commons.wfml.api.IComponent;
 
+	//TODO: add support for classFactory injection
 	/**
 	 * Dynamic class to define a <code>IPropertiesMapperFactory</code>
 	 * and mapping at the same time.
 	 * The dynamic properties are used to create the mapping object used
 	 * by the mapper returned by this factory.
 	 */
-	public dynamic class Map implements IPropertiesMapperFactory, IComponent, IMXMLObject
+	public dynamic class Map implements IPropertiesMapperFactory, IComponent, IMXMLObject, IFactoryResolverClient
 	{
 		private var _document : Object;
 
@@ -44,6 +47,8 @@ package org.astoolkit.commons.mapping
 		private var _target : *;
 
 		private var _strict : Boolean;
+
+		private var _factoryResolver : IFactoryResolver;
 
 		public function set mappingTarget( inValue : * ) : void
 		{
@@ -118,6 +123,11 @@ package org.astoolkit.commons.mapping
 		public function propertyIsEnumerable( inValue : * = null ) : Boolean
 		{
 			return inValue != "pid";
+		}
+
+		public function set factoryResolver(inValue:IFactoryResolver) : void
+		{
+			_factoryResolver = inValue;
 		}
 
 	}

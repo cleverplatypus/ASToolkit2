@@ -27,29 +27,30 @@ package org.astoolkit.workflow.task.parsley
 	import org.spicefactory.parsley.messaging.receiver.DefaultMessageHandler;
 	import org.spicefactory.parsley.messaging.receiver.MessageReceiverInfo;
 
+	[ManagedObject]
 	public class WaitForMessage extends AbstractParsleyTask
 	{
 
 		private var _messageTarget : MessageTarget;
 
-		public var messageType : IFactory;
+		public var messageType : Class;
 
 		public var selector : String;
 
 		override public function begin() : void
 		{
 			super.begin();
-			var listener : Listener = new Listener( onMessage );
 			var info : MessageReceiverInfo = new MessageReceiverInfo();
 			info.selector = selector;
-			info.type = ClassInfo.forClass( Listener );
+			info.type = ClassInfo.forClass( messageType );
 			info.order = int.MAX_VALUE;
 			var handler : DefaultMessageHandler = new DefaultMessageHandler( info );
-			handler.init( Provider.forInstance( this ), ClassInfo.forInstance( listener ).getMethod( "handler" ) );
+			handler.init( Provider.forInstance( this ), ClassInfo.forInstance( this ).getMethod( "onMessage" ) );
+			_messageTarget = handler;
 			_parsleyContext.scopeManager.getScope( ( scope as String ) ).messageReceivers.addTarget( handler );
 		}
 
-		private function onMessage() : void
+		public function onMessage( inMessage : Object ) : void
 		{
 			_parsleyContext
 				.scopeManager

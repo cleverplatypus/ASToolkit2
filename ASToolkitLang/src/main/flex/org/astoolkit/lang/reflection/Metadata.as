@@ -17,7 +17,7 @@ limitations under the License.
 Version 2.x
 
 */
-package org.astoolkit.commons.reflection
+package org.astoolkit.lang.reflection
 {
 
 	import flash.utils.describeType;
@@ -28,8 +28,8 @@ package org.astoolkit.commons.reflection
 	import mx.logging.Log;
 	import mx.utils.StringUtil;
 
-	import org.astoolkit.commons.io.transform.api.IIODataTransformer;
-	import org.astoolkit.commons.utils.getLogger;
+	import org.astoolkit.lang.util.getLogger;
+	import org.astoolkit.lang.reflection.api.IAnnotation;
 
 	public class Metadata implements IAnnotation
 	{
